@@ -1,0 +1,10 @@
+D:\Temp\TodoSort\bin\Debug\TodoSort.exe
+D:\Temp\TodoSort\bin\Debug\TodoSort.pdb
+D:\Temp\TodoSort\obj\Debug\ResolveAssemblyReference.cache
+D:\Temp\TodoSort\obj\Debug\TodoSort.exe
+D:\Temp\TodoSort\obj\Debug\TodoSort.pdb
+C:\Users\jnickerson.SNOWDEN\Documents\My Dropbox\Code\TodoSort\obj\Debug\TodoSort.exe
+C:\Users\jnickerson.SNOWDEN\Documents\My Dropbox\Code\TodoSort\obj\Debug\TodoSort.pdb
+C:\Users\jnickerson.SNOWDEN\Documents\My Dropbox\Code\TodoSort\bin\Debug\TodoSort.exe
+C:\Users\jnickerson.SNOWDEN\Documents\My Dropbox\Code\TodoSort\bin\Debug\TodoSort.pdb
+C:\Users\jnickerson.SNOWDEN\Documents\My Dropbox\Code\TodoSort\obj\Debug\ResolveAssemblyReference.cache
