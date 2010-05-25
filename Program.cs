@@ -45,7 +45,6 @@ namespace TodoSort
 
                 File.Delete(filename);
                 Block inbox = new Block();
-                inbox.Title = "@inbox";
                 foreach (Block b in from s in allblocks orderby s.Title select s)
                 {
                     if (b.Title.Equals("@inbox"))
@@ -69,14 +68,17 @@ namespace TodoSort
                         }
                     }
                 }
-                // Write out inbox.
-                File.AppendAllText(filename, inbox.Title);
-                File.AppendAllText(filename, Environment.NewLine);
-                foreach (Item i in inbox.Items)
+                if (inbox.Title != null)
                 {
-                    File.AppendAllText(filename, i.Text);
+                    // Write out inbox.
+                    File.AppendAllText(filename, inbox.Title);
                     File.AppendAllText(filename, Environment.NewLine);
-                    // Sub-items not supported for inbox.
+                    foreach (Item i in inbox.Items)
+                    {
+                        File.AppendAllText(filename, i.Text);
+                        File.AppendAllText(filename, Environment.NewLine);
+                        // Sub-items not supported for inbox.
+                    }
                 }
             }
         }
