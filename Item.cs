@@ -8,6 +8,7 @@ namespace TodoSort
     class Item
     {
         public string Text;
+        public string Context;
         public List<string> SubItems = new List<string>();
     }
 }
