@@ -52,18 +52,62 @@ namespace TodoSort
                 {
                     string command = args[0];
                     // Search for a matching item in all contexts.
-                    var matches = from c in allblocks.Values
-                                  from i in c.Items
-                                  where i.Text.Contains(args[1])
-                                  select i;
-                    // Disambiguate if required.
                     Item selected = null;
-                    if (matches.Count() == 1)
+                    if (args.Length > 1)
                     {
-                        selected = matches.First();
+                        var matches = from c in allblocks.Values
+                                      from i in c.Items
+                                      where i.Text.Contains(args[1])
+                                      select i;
+                        // Disambiguate if required.
+                        if (matches.Count() == 1)
+                        {
+                            selected = matches.First();
+                        }
+                        else if (matches.Count() > 5)
+                        {
+                            Console.WriteLine("Too many search matches. Try to be more specific. No action will be taken this time.");
+                        }
+                        else
+                        {
+                            for (int i = 0; i < matches.Count(); i++)
+                            {
+                                Console.WriteLine("{0}: {1}", i, matches.ElementAt(i).Text);
+                            }
+                            char choice = Console.ReadKey().KeyChar;
+                            int dex = Int32.Parse(choice.ToString());
+                            selected = matches.ElementAt(dex);
+                        }
                     }
                     switch (command)
                     {
+                        case "process":
+                            // Go over the @inbox items and assign them to contexts.
+                            while (allblocks["@inbox"].Items.Count > 0)
+                            {
+                                Console.WriteLine("To which context should this item go?");
+                                Item first = allblocks["@inbox"].Items[0];
+                                Console.WriteLine(first.Text);
+                                string newcontext = Console.ReadLine();
+                                if (!newcontext.StartsWith("@"))
+                                {
+                                    newcontext = "@" + newcontext;
+                                }
+                                Console.WriteLine();
+                                allblocks["@inbox"].Items.Remove(first);
+                                if (!allblocks.ContainsKey(newcontext))
+                                {
+                                    allblocks[newcontext] = new Block();
+                                    allblocks[newcontext].Title = newcontext;
+                                }
+                                allblocks[newcontext].Items.Add(first);
+                                first.Context = newcontext;
+                                if (!first.Text.StartsWith("\t"))
+                                {
+                                    first.Text = "\t" + first.Text;
+                                }
+                            }
+                            break;
                         case "defer":
                             // Move the selected item and its sub-items to the "someday" file.
                             WriteToFile("someday", selected.Text);

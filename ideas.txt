@@ -1,2 +1,1 @@
 Automatic merging of contexts if multiples are found.
-Command-line logging of completed actions including next action filing (from "&@context" sub-items).
