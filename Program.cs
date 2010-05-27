@@ -95,27 +95,29 @@ namespace TodoSort
                                 }
                                 Console.WriteLine();
                                 allblocks["@inbox"].Items.Remove(first);
-                                if (!allblocks.ContainsKey(newcontext))
+                                if (newcontext.Equals("someday"))
                                 {
-                                    allblocks[newcontext] = new Block();
-                                    allblocks[newcontext].Title = newcontext;
+                                    Defer(allblocks, first);
                                 }
-                                allblocks[newcontext].Items.Add(first);
-                                first.Context = newcontext;
-                                if (!first.Text.StartsWith("\t"))
+                                else
                                 {
-                                    first.Text = "\t" + first.Text;
+                                    if (!allblocks.ContainsKey(newcontext))
+                                    {
+                                        allblocks[newcontext] = new Block();
+                                        allblocks[newcontext].Title = newcontext;
+                                    }
+                                    allblocks[newcontext].Items.Add(first);
+                                    first.Context = newcontext;
+                                    if (!first.Text.StartsWith("\t"))
+                                    {
+                                        first.Text = "\t" + first.Text;
+                                    }
                                 }
                             }
                             break;
                         case "defer":
                             // Move the selected item and its sub-items to the "someday" file.
-                            WriteToFile("someday", selected.Text);
-                            foreach (string s in selected.SubItems)
-                            {
-                                WriteToFile("someday", s);
-                            }
-                            allblocks[selected.Context].Items.Remove(selected);
+                            Defer(allblocks, selected);
                             break;
                         case "done":
                             // If there is a next action, create a new item and add it to the correct context.
@@ -181,6 +183,16 @@ namespace TodoSort
                 }
                 #endregion
             }
+        }
+
+        private static void Defer(Dictionary<string, Block> allblocks, Item selected)
+        {
+            WriteToFile("someday", selected.Text);
+            foreach (string s in selected.SubItems)
+            {
+                WriteToFile("someday", s);
+            }
+            allblocks[selected.Context].Items.Remove(selected);
         }
 
         /// <summary>
