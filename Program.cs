@@ -91,6 +91,7 @@ namespace TodoSort
                                 Item next = new Item(string.Empty, string.Empty);
                                 next.SubItems = selected.SubItems;
                                 string newcontext = next.SubItems[0].Split(' ')[0].Trim().Remove(0, 1);
+                                next.Context = newcontext;
                                 next.Text = next.SubItems[0].Remove(1, 2 + newcontext.Length + 1);
                                 next.SubItems.RemoveAt(0);
                                 todolist.Add(next);
