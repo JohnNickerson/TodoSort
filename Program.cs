@@ -18,7 +18,7 @@ namespace TodoSort
                 #region Deserialise the file
                 string[] items = File.ReadAllLines(filename);
 
-                Dictionary<string, Block> allblocks = new Dictionary<string, Block>();
+                List<Item> allitems = new List<Item>();
                 string context = string.Empty;
                 Item curitem = new Item();
                 curitem.Text = "(item out of order)";
@@ -28,8 +28,6 @@ namespace TodoSort
                     {
                         // New context.
                         context = items[x];
-                        allblocks.Add(context, new Block());
-                        allblocks[context].Title = items[x];
                     }
                     else if (items[x].StartsWith("\t\t"))
                     {
@@ -42,7 +40,7 @@ namespace TodoSort
                         curitem = new Item();
                         curitem.Text = items[x];
                         curitem.Context = context;
-                        allblocks[context].Items.Add(curitem);
+                        allitems.Add(curitem);
                     }
                 }
                 #endregion
@@ -55,8 +53,7 @@ namespace TodoSort
                     Item selected = null;
                     if (args.Length > 1)
                     {
-                        var matches = from c in allblocks.Values
-                                      from i in c.Items
+                        var matches = from i in allitems
                                       where i.Text.Contains(args[1])
                                       select i;
                         // Disambiguate if required.
@@ -83,41 +80,37 @@ namespace TodoSort
                     {
                         case "process":
                             // Go over the @inbox items and assign them to contexts.
-                            while (allblocks["@inbox"].Items.Count > 0)
+                            for (int i = 0; i < allitems.Count; i++)
                             {
-                                Console.WriteLine("To which context should this item go?");
-                                Item first = allblocks["@inbox"].Items[0];
-                                Console.WriteLine(first.Text);
-                                string newcontext = Console.ReadLine();
-                                if (!newcontext.StartsWith("@"))
+                                if (allitems[i].Context == "@inbox")
                                 {
-                                    newcontext = "@" + newcontext;
-                                }
-                                Console.WriteLine();
-                                allblocks["@inbox"].Items.Remove(first);
-                                if (newcontext.Equals("someday"))
-                                {
-                                    Defer(allblocks, first);
-                                }
-                                else
-                                {
-                                    if (!allblocks.ContainsKey(newcontext))
+                                    Console.WriteLine("To which context should this item go?");
+                                    Item first = allitems[i];
+                                    Console.WriteLine(first.Text);
+                                    string newcontext = Console.ReadLine();
+                                    if (!newcontext.StartsWith("@"))
                                     {
-                                        allblocks[newcontext] = new Block();
-                                        allblocks[newcontext].Title = newcontext;
+                                        newcontext = "@" + newcontext;
                                     }
-                                    allblocks[newcontext].Items.Add(first);
-                                    first.Context = newcontext;
-                                    if (!first.Text.StartsWith("\t"))
+                                    Console.WriteLine();
+                                    if (newcontext.Equals("someday"))
                                     {
-                                        first.Text = "\t" + first.Text;
+                                        Defer(allitems, first);
+                                    }
+                                    else
+                                    {
+                                        first.Context = newcontext;
+                                        if (!first.Text.StartsWith("\t"))
+                                        {
+                                            first.Text = "\t" + first.Text;
+                                        }
                                     }
                                 }
                             }
                             break;
                         case "defer":
                             // Move the selected item and its sub-items to the "someday" file.
-                            Defer(allblocks, selected);
+                            Defer(allitems, selected);
                             break;
                         case "done":
                             // If there is a next action, create a new item and add it to the correct context.
@@ -130,11 +123,11 @@ namespace TodoSort
                                     string newcontext = next.SubItems[0].Split(' ')[0].Trim().Remove(0, 1);
                                     next.Text = next.SubItems[0].Remove(1, 2 + newcontext.Length + 1);
                                     next.SubItems.RemoveAt(0);
-                                    allblocks[newcontext].Items.Add(next);
+                                    allitems.Add(next);
                                 }
                                 // Log the completed action to the Done file.
                                 WriteToFile("done", string.Format("{0}: {1}", DateTime.Now, selected.Text));
-                                allblocks[selected.Context].Items.Remove(selected);
+                                allitems.Remove(selected);
                             }
                             break;
                         default:
@@ -145,19 +138,14 @@ namespace TodoSort
 
                 #region Rewrite the file
                 File.Delete(filename);
-                Block inbox = new Block();
-                foreach (Block b in from s in allblocks.Values orderby s.Title select s)
+                foreach (string b in (from s in allitems orderby s.Context select s.Context).Distinct())
                 {
-                    if (b.Title.Equals("@inbox"))
-                    {
-                        inbox = b;
-                    }
-                    else if (b.Items.Count > 0) // If a context is empty, remove it.
+                    if (!b.Equals("@inbox"))
                     {
                         // Write out block.
-                        File.AppendAllText(filename, b.Title);
+                        File.AppendAllText(filename, b);
                         File.AppendAllText(filename, Environment.NewLine);
-                        foreach (Item i in from t in b.Items orderby t.Text select t)
+                        foreach (Item i in from t in allitems orderby t.Text where t.Context == b select t)
                         {
                             File.AppendAllText(filename, i.Text);
                             File.AppendAllText(filename, Environment.NewLine);
@@ -169,30 +157,27 @@ namespace TodoSort
                         }
                     }
                 }
-                if (inbox.Title != null)
+                // Write out inbox.
+                File.AppendAllText(filename, "@inbox");
+                File.AppendAllText(filename, Environment.NewLine);
+                foreach (Item i in from t in allitems orderby t.Text where t.Context == "@inbox" select t)
                 {
-                    // Write out inbox.
-                    File.AppendAllText(filename, inbox.Title);
+                    File.AppendAllText(filename, i.Text);
                     File.AppendAllText(filename, Environment.NewLine);
-                    foreach (Item i in inbox.Items)
-                    {
-                        File.AppendAllText(filename, i.Text);
-                        File.AppendAllText(filename, Environment.NewLine);
-                        // Sub-items not supported for inbox.
-                    }
+                    // Sub-items not supported for inbox.
                 }
                 #endregion
             }
         }
 
-        private static void Defer(Dictionary<string, Block> allblocks, Item selected)
+        private static void Defer(List<Item> allblocks, Item selected)
         {
             WriteToFile("someday", selected.Text);
             foreach (string s in selected.SubItems)
             {
                 WriteToFile("someday", s);
             }
-            allblocks[selected.Context].Items.Remove(selected);
+            allblocks.Remove(selected);
         }
 
         /// <summary>
