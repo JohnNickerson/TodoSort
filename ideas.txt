@@ -1,5 +1,6 @@
-Automatic merging of contexts if multiples are found.
-Allow moving straight to Someday from inbox when processing.
 Show a context or contexts by name.
-Search for a single item.
+Search items.
 	- This may mean disambiguation becomes a separate method, not always needed.
+Feedback when marking items done.
+Ability to cancel an action rather than confirming or selecting one search result.
+GUI

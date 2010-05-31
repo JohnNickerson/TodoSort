@@ -26,12 +26,8 @@ namespace TodoSort
                     var matches = from i in todolist
                                   where i.Text.Contains(args[1])
                                   select i;
-                    // Disambiguate if required.
-                    if (matches.Count() == 1)
-                    {
-                        selected = matches.First();
-                    }
-                    else if (matches.Count() > 5)
+                    // Disambiguate or verify search results.
+                    if (matches.Count() > 5)
                     {
                         Console.WriteLine("Too many search matches. Try to be more specific. No action will be taken this time.");
                     }
@@ -106,8 +102,7 @@ namespace TodoSort
                 }
             }
             #endregion
-           
-
+            
             // Rewrite the files
             Item.WriteToFile(ConfigurationManager.AppSettings["todo"], todolist, true);
             // Sort the Someday file.
