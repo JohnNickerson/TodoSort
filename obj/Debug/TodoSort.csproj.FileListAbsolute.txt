@@ -10,3 +10,9 @@ C:\Users\jnickerson.SNOWDEN\Documents\My Dropbox\Code\TodoSort\bin\Debug\TodoSor
 C:\Users\jnickerson.SNOWDEN\Documents\My Dropbox\Code\TodoSort\obj\Debug\ResolveAssemblyReference.cache
 C:\Users\jnickerson.SNOWDEN\Documents\My Dropbox\Code\TodoSort\bin\Debug\TodoSort.exe.config
 D:\Temp\TodoSort\bin\Debug\TodoSort.exe.config
+C:\Users\jnickerson.SNOWDEN\Documents\My Dropbox\Projects\Task Trackers\TodoSort\bin\Debug\TodoSort.exe.config
+C:\Users\jnickerson.SNOWDEN\Documents\My Dropbox\Projects\Task Trackers\TodoSort\obj\Debug\TodoSort.exe
+C:\Users\jnickerson.SNOWDEN\Documents\My Dropbox\Projects\Task Trackers\TodoSort\obj\Debug\TodoSort.pdb
+C:\Users\jnickerson.SNOWDEN\Documents\My Dropbox\Projects\Task Trackers\TodoSort\bin\Debug\TodoSort.exe
+C:\Users\jnickerson.SNOWDEN\Documents\My Dropbox\Projects\Task Trackers\TodoSort\bin\Debug\TodoSort.pdb
+C:\Users\jnickerson.SNOWDEN\Documents\My Dropbox\Projects\Task Trackers\TodoSort\obj\Debug\ResolveAssemblyReference.cache

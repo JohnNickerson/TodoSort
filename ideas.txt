@@ -1,6 +1,8 @@
+Have TodoSort's successor automatically defer question-marked items.
 Show a context or contexts by name.
 Search items.
 	- This may mean disambiguation becomes a separate method, not always needed.
 Feedback when marking items done.
 Ability to cancel an action rather than confirming or selecting one search result.
 GUI
+	- The one thing I find myself doing most often is looking up actions in Notepad++, then marking them as done with the command line.

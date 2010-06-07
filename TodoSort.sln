@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TodoSort", "TodoSort.csproj", "{73610637-57B2-4210-852E-FBF7D361A42F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ActionList", "WindowsFormsApplication1\ActionList.csproj", "{68218C44-4058-4D48-92CF-73BF8C6B6CFC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -13,6 +15,10 @@ Global
 		{73610637-57B2-4210-852E-FBF7D361A42F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{73610637-57B2-4210-852E-FBF7D361A42F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{73610637-57B2-4210-852E-FBF7D361A42F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{68218C44-4058-4D48-92CF-73BF8C6B6CFC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{68218C44-4058-4D48-92CF-73BF8C6B6CFC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{68218C44-4058-4D48-92CF-73BF8C6B6CFC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{68218C44-4058-4D48-92CF-73BF8C6B6CFC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

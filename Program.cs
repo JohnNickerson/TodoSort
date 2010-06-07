@@ -102,8 +102,30 @@ namespace TodoSort
                 }
             }
             #endregion
-            
-            // Rewrite the files
+
+			#region Tidy up
+			// Move to the someday file any items with a context of "defer" or "someday".
+			for (int x = 0; x < todolist.Count;)
+			{
+				Item i = todolist[x];
+				if (i.Context.Equals("@defer") || i.Context.Equals("@someday"))
+				{
+					Defer(todolist, someday, i);
+				}
+				else
+				{
+					x++;
+				}
+			}
+
+			// Change all items in the someday file to have "someday" as a context.
+			foreach (Item i in someday)
+			{
+				i.Context = "@someday";
+			}
+			#endregion
+
+			// Rewrite the files
             Item.WriteToFile(ConfigurationManager.AppSettings["todo"], todolist, true);
             // Sort the Someday file.
             Item.WriteToFile(ConfigurationManager.AppSettings["someday"], someday, false);
