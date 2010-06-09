@@ -14,6 +14,8 @@ namespace TodoSort
             // Deserialise the files
             List<Item> todolist = Item.ReadFile(ConfigurationManager.AppSettings["todo"]);
             List<Item> someday = Item.ReadFile(ConfigurationManager.AppSettings["someday"]);
+			// Track whether changes have been made to the "someday" file, to avoid rewriting it if possible.
+			bool someday_changes = false;
 
             #region Manipulate the file items
             if (args.Length > 0)
@@ -24,10 +26,14 @@ namespace TodoSort
                 if (args.Length > 1)
                 {
                     var matches = from i in todolist
-                                  where i.Text.Contains(args[1])
+                                  where i.Text.ToLower().Contains(args[1].ToLower())
                                   select i;
                     // Disambiguate or verify search results.
-                    if (matches.Count() > 5)
+					if (matches.Count() == 0)
+					{
+						Console.WriteLine("No search matches. No action will be taken.");
+					}
+                    else if (matches.Count() > 5)
                     {
                         Console.WriteLine("Too many search matches. Try to be more specific. No action will be taken this time.");
                     }
@@ -62,6 +68,7 @@ namespace TodoSort
                                 if (newcontext.Equals("someday"))
                                 {
                                     Defer(todolist, someday, first);
+									someday_changes = true;
                                 }
                                 else
                                 {
@@ -77,6 +84,7 @@ namespace TodoSort
                     case "defer":
                         // Move the selected item and its sub-items to the "someday" file.
                         Defer(todolist, someday, selected);
+						someday_changes = true;
                         break;
                     case "done":
                         // If there is a next action, create a new item and add it to the correct context.
@@ -111,6 +119,7 @@ namespace TodoSort
 				if (i.Context.Equals("@defer") || i.Context.Equals("@someday"))
 				{
 					Defer(todolist, someday, i);
+					someday_changes = true;
 				}
 				else
 				{
@@ -127,8 +136,11 @@ namespace TodoSort
 
 			// Rewrite the files
             Item.WriteToFile(ConfigurationManager.AppSettings["todo"], todolist, true);
-            // Sort the Someday file.
-            Item.WriteToFile(ConfigurationManager.AppSettings["someday"], someday, false);
+			if (someday_changes)
+			{
+				// Sort the Someday file.
+				Item.WriteToFile(ConfigurationManager.AppSettings["someday"], someday, false);
+			}
         }
 
         private static void Defer(List<Item> from, List<Item> to, Item selected)
