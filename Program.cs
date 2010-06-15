@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using System.Configuration;
+using TodoSort.Properties;
 
 namespace TodoSort
 {
@@ -11,9 +12,37 @@ namespace TodoSort
     {
         static void Main(string[] args)
         {
+			// Check settings
+			bool reconfig = false;
+			foreach (string name in new string[] { "todo", "someday", "done" })
+			{
+				if (Settings.Default[name].ToString().Contains("{MyDocs}"))
+				{
+					reconfig = true;
+					// Replace with path to My Documents.
+					Settings.Default[name] = Settings.Default[name].ToString().Replace("{MyDocs}", Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments));
+					// Confirm file path.
+					Console.WriteLine("Configure path to '{0}' file:", name);
+					Console.WriteLine(Settings.Default[name]);
+					Console.WriteLine("Is this correct?");
+					var response = Console.ReadKey();
+					if (!response.KeyChar.ToString().ToLower().Equals("y"))
+					{
+						Console.WriteLine("Please provide the correct full path:");
+						Settings.Default[name] = Console.ReadLine();
+					}
+					Console.WriteLine();
+				}
+			}
+			if (reconfig)
+			{
+				// Save settings.
+				Settings.Default.Save();
+			}
+
             // Deserialise the files
-            List<Item> todolist = Item.ReadFile(ConfigurationManager.AppSettings["todo"]);
-            List<Item> someday = Item.ReadFile(ConfigurationManager.AppSettings["someday"]);
+            List<Item> todolist = Item.ReadFile(Settings.Default["todo"].ToString());
+            List<Item> someday = Item.ReadFile(Settings.Default["someday"].ToString());
 			// Track whether changes have been made to the "someday" file, to avoid rewriting it if possible.
 			bool someday_changes = false;
 
@@ -135,11 +164,11 @@ namespace TodoSort
 			#endregion
 
 			// Rewrite the files
-            Item.WriteToFile(ConfigurationManager.AppSettings["todo"], todolist, true);
+            Item.WriteToFile(Settings.Default["todo"].ToString(), todolist, true);
 			if (someday_changes)
 			{
 				// Sort the Someday file.
-				Item.WriteToFile(ConfigurationManager.AppSettings["someday"], someday, false);
+				Item.WriteToFile(Settings.Default["someday"].ToString(), someday, false);
 			}
         }
 
@@ -156,8 +185,8 @@ namespace TodoSort
         /// <param name="output">The string to write out.</param>
         private static void WriteToFile(string filetag, string output)
         {
-            File.AppendAllText(ConfigurationManager.AppSettings[filetag], output);
-            File.AppendAllText(ConfigurationManager.AppSettings[filetag], Environment.NewLine);
+            File.AppendAllText(Settings.Default[filetag].ToString(), output);
+            File.AppendAllText(Settings.Default[filetag].ToString(), Environment.NewLine);
         }
     }
 }
