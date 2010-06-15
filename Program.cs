@@ -41,8 +41,8 @@ namespace TodoSort
 			}
 
             // Deserialise the files
-            List<Item> todolist = Item.ReadFile(Settings.Default["todo"].ToString());
-            List<Item> someday = Item.ReadFile(Settings.Default["someday"].ToString());
+            List<Item> todolist = Item.ReadFile(Settings.Default.Todo);
+            List<Item> someday = Item.ReadFile(Settings.Default.Someday);
 			// Track whether changes have been made to the "someday" file, to avoid rewriting it if possible.
 			bool someday_changes = false;
 
@@ -164,11 +164,11 @@ namespace TodoSort
 			#endregion
 
 			// Rewrite the files
-            Item.WriteToFile(Settings.Default["todo"].ToString(), todolist, true);
+            Item.WriteToFile(Settings.Default.Todo, todolist, true);
 			if (someday_changes)
 			{
 				// Sort the Someday file.
-				Item.WriteToFile(Settings.Default["someday"].ToString(), someday, false);
+				Item.WriteToFile(Settings.Default.Someday, someday, false);
 			}
         }
 
