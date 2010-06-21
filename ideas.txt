@@ -7,7 +7,10 @@ GUI
 	- The one thing I find myself doing most often is looking up actions in Notepad++, then marking them as done with the command line.
 Don't rewrite files if no changes are made.
 	- Someday file already done.
+	- Harder to detect changes to main list, especially if items are out of order.
 Selections of next actions, depending on the results of previous ones.
 	- eg "Check something" then "|@shopping Buy this" and "|@home Set up that".
 Move option to change contexts?
 	- Might not be all that useful.
+Allow multiple actions per invocation.
+Always process inbox?
