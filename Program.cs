@@ -64,7 +64,6 @@ namespace TodoSort
 						break;
                     case "process":
                         // Go over the @inbox items and assign them to contexts.
-						selected = Disambiguate(args[1], todolist);
 						for (int i = 0; i < todolist.Count; i++)
                         {
                             if (todolist[i].Context == "@inbox")
