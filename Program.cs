@@ -94,7 +94,7 @@ namespace TodoSort
                         }
                         break;
                     case "defer":
-                        // Move the selected item and its sub-items to the "someday" file.
+                        // Move the doneitem item and its sub-items to the "someday" file.
 						selected = Disambiguate(args[1], todolist);
 						Defer(todolist, someday, selected);
 						someday_changes = true;
@@ -104,19 +104,7 @@ namespace TodoSort
 						selected = Disambiguate(args[1], todolist);
 						if (selected != null)
                         {
-                            if (selected.SubItems.Count > 0 && selected.SubItems[0].Trim().StartsWith("&@"))
-                            {
-                                Item next = new Item(string.Empty, string.Empty);
-                                next.SubItems = selected.SubItems;
-                                string newcontext = next.SubItems[0].Split(' ')[0].Trim().Remove(0, 1);
-                                next.Context = newcontext;
-                                next.Text = next.SubItems[0].Remove(1, 2 + newcontext.Length + 1);
-                                next.SubItems.RemoveAt(0);
-                                todolist.Add(next);
-                            }
-                            // Log the completed action to the Done file.
-                            WriteToFile("done", string.Format("{0}: {1}", DateTime.Now, selected.Text));
-                            todolist.Remove(selected);
+							MarkDone(todolist, selected);
                         }
                         break;
                     default:
@@ -126,14 +114,19 @@ namespace TodoSort
             #endregion
 
 			#region Tidy up
-			// Move to the someday file any items with a context of "defer" or "someday".
 			for (int x = 0; x < todolist.Count;)
 			{
 				Item i = todolist[x];
 				if (i.Context.Equals("@defer") || i.Context.Equals("@someday"))
 				{
+					// Move to the someday file any items with a context of "defer" or "someday".
 					Defer(todolist, someday, i);
 					someday_changes = true;
+				}
+				else if (i.Context.Equals("@done"))
+				{
+					// Move to the "done" file any items with a context of @done.
+					MarkDone(todolist, i);
 				}
 				else
 				{
@@ -156,6 +149,28 @@ namespace TodoSort
 				Item.WriteToFile(Settings.Default.Someday, someday, false);
 			}
         }
+
+		/// <summary>
+		/// Mark an item as done.
+		/// </summary>
+		/// <param name="todolist">The list in which the item is found.</param>
+		/// <param name="doneitem">The item to mark as done.</param>
+		private static void MarkDone(List<Item> todolist, Item doneitem)
+		{
+			if (doneitem.SubItems.Count > 0 && doneitem.SubItems[0].Trim().StartsWith("&@"))
+			{
+				Item next = new Item(string.Empty, string.Empty);
+				next.SubItems = doneitem.SubItems;
+				string newcontext = next.SubItems[0].Split(' ')[0].Trim().Remove(0, 1);
+				next.Context = newcontext;
+				next.Text = next.SubItems[0].Remove(1, 2 + newcontext.Length + 1);
+				next.SubItems.RemoveAt(0);
+				todolist.Add(next);
+			}
+			// Log the completed action to the Done file.
+			WriteToFile("done", string.Format("{0}: {1}", DateTime.Now, doneitem.Text));
+			todolist.Remove(doneitem);
+		}
 
 		private static Item Disambiguate(string search, List<Item> todolist)
 		{
