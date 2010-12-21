@@ -1,15 +1,22 @@
-Have TodoSort's successor automatically defer question-marked items.
-Search items.
-Ability to cancel an action rather than confirming or selecting one search result.
-GUI
-	- The one thing I find myself doing most often is looking up actions in Notepad++, then marking them as done with the command line.
 Don't rewrite files if no changes are made.
 	- Someday file already done.
 	- Harder to detect changes to main list, especially if items are out of order.
 	- Don't rewrite on "show" action.
+Tickler file
+	- Automatic return to inbox from the Someday file on a certain date.
+	- Use contexts within the Someday file? (@tickler @[date] @tickler:[date])
+	- Specify another attribute on an action? (>2010-12-01)
+	- Any items in the todo list with dates should be deferred. Any in someday past their dates should be returned.
+	- Automatically defer question-marked items?
+Allow multiple actions per invocation.
+Search items.
+Ability to cancel an action rather than confirming or selecting one search result.
+GUI
+	- The one thing I find myself doing most often is looking up actions in Notepad++, then marking them as done with the command line.
+	- A GUI would need to allow all the things I do with the command-line app (processing, marking as done, deferring, reviewing someday items) and anything I do in Notepad++ (edit, move, add follow-up actions, make notes, review notes, delete items and other things I haven't codified).
 Selections of next actions, depending on the results of previous ones.
 	- eg "Check something" then "|@shopping Buy this" and "|@home Set up that".
 Move option to change contexts?
 	- Might not be all that useful.
-Allow multiple actions per invocation.
 Always process inbox?
+Abstract out the serialiser codec so it can be replaced by, say, a YAML one.

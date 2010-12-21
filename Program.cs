@@ -63,6 +63,27 @@ namespace TodoSort
 						}
 						break;
                     case "process":
+						// Go over the @someday items and look for tickle dates.
+						for (int i = 0; i < someday.Count; i++)
+						{
+							if (someday[i].Text.StartsWith(">"))
+							{
+								try
+								{
+									string d = someday[i].Text.Substring(1, 10);
+									DateTime tickle = DateTime.Parse(d);
+									if (tickle < DateTime.Now)
+									{
+										someday[i].Context = "@inbox";
+										Defer(someday, todolist, someday[i]);
+										someday_changes = true;
+									}
+								}
+								catch
+								{
+								}
+							}
+						}
                         // Go over the @inbox items and assign them to contexts.
 						for (int i = 0; i < todolist.Count; i++)
                         {
@@ -94,7 +115,7 @@ namespace TodoSort
                         }
                         break;
                     case "defer":
-                        // Move the doneitem item and its sub-items to the "someday" file.
+                        // Move the item and its sub-items to the "someday" file.
 						selected = Disambiguate(args[1], todolist);
 						Defer(todolist, someday, selected);
 						someday_changes = true;
@@ -107,6 +128,32 @@ namespace TodoSort
 							MarkDone(todolist, selected);
                         }
                         break;
+					case "someday":
+						// Display the whole Someday file, 10 items at a time, and either delete or do one per listing.
+						for (int offset = 0; offset <= someday.Count; offset += 9)
+						{
+							Console.Clear();
+							for (int index = 0; index < 10 && offset + index < someday.Count; index++)
+							{
+								Console.WriteLine("{0}: {1}", index, someday[offset + index].Text);
+							}
+							char choice = Console.ReadKey().KeyChar;
+							int dex;
+							if (Int32.TryParse(choice.ToString(), out dex))
+							{
+								selected = someday[offset + dex];
+							}
+							Console.WriteLine("To which context should this item go?");
+							string newcontext = Console.ReadLine();
+							if (!newcontext.StartsWith("@"))
+							{
+								newcontext = "@" + newcontext;
+							}
+							selected.Context = newcontext;
+							Defer(someday, todolist, selected);
+							someday_changes = true;
+						}
+						break;
                     default:
                         break;
                 }
@@ -194,8 +241,11 @@ namespace TodoSort
 					Console.WriteLine("{0}: {1}", i, matches.ElementAt(i).Text);
 				}
 				char choice = Console.ReadKey().KeyChar;
-				int dex = Int32.Parse(choice.ToString());
-				selected = matches.ElementAt(dex);
+				int dex;
+                if (Int32.TryParse(choice.ToString(), out dex))
+                {
+                    selected = matches.ElementAt(dex);
+                }
 			}
 			return selected;
 		}
