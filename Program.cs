@@ -188,13 +188,14 @@ namespace TodoSort
 		/// <param name="doneitem">The item to mark as done.</param>
 		private static void MarkDone(List<ActionItem> todolist, ActionItem doneitem)
 		{
-			if (doneitem.SubItems.Count > 0 && doneitem.SubItems[0].Trim().StartsWith("&@"))
+			if (doneitem.HasNextItem)
 			{
+                // TODO: Encapsulate this.
 				ActionItem next = new ActionItem(string.Empty, string.Empty);
 				next.SubItems = doneitem.SubItems;
 				string newcontext = next.SubItems[0].Split(' ')[0].Trim().Remove(0, 1);
 				next.Context = newcontext;
-				next.Title = next.SubItems[0].Remove(1, 2 + newcontext.Length + 1);
+                next.Title = next.SubItems[0].Remove(0, newcontext.Length + 2);
 				next.SubItems.RemoveAt(0);
 				todolist.Add(next);
 			}
@@ -229,7 +230,10 @@ namespace TodoSort
 				int dex;
                 if (Int32.TryParse(choice.ToString(), out dex))
                 {
-                    selected = matches.ElementAt(dex);
+                    if (matches.Count() > dex)
+                    {
+                        selected = matches.ElementAt(dex);
+                    }
                 }
 			}
 			return selected;
