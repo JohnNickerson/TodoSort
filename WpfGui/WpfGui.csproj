@@ -94,6 +94,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="app.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -101,9 +102,9 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\TodoSort.csproj">
-      <Project>{73610637-57B2-4210-852E-FBF7D361A42F}</Project>
-      <Name>TodoSort</Name>
+    <ProjectReference Include="..\..\PimData\PimData.csproj">
+      <Project>{03BB5D18-A00A-41C6-AF6F-A7A6A24B75EA}</Project>
+      <Name>PimData</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
