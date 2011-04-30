@@ -2,8 +2,17 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="WpfGui.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
-    <Setting Name="TodoFilename" Type="System.String" Scope="User">
+    <Setting Name="Todo" Type="System.String" Scope="User">
       <Value Profile="(Default)">C:\Users\jnickerson.SNOWDEN\Documents\My Dropbox\Thoughts\todo.txt</Value>
+    </Setting>
+    <Setting Name="Someday" Type="System.String" Scope="User">
+      <Value Profile="(Default)">C:\Users\jnickerson.SNOWDEN\Documents\My Dropbox\Actions\someday.txt</Value>
+    </Setting>
+    <Setting Name="Done" Type="System.String" Scope="User">
+      <Value Profile="(Default)">C:\Users\jnickerson.SNOWDEN\Documents\My Dropbox\Actions\done.txt</Value>
+    </Setting>
+    <Setting Name="Reconfigure" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
     </Setting>
   </Settings>
 </SettingsFile>

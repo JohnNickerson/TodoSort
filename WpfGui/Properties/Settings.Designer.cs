@@ -26,12 +26,48 @@ namespace WpfGui.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("C:\\Users\\jnickerson.SNOWDEN\\Documents\\My Dropbox\\Thoughts\\todo.txt")]
-        public string TodoFilename {
+        public string Todo {
             get {
-                return ((string)(this["TodoFilename"]));
+                return ((string)(this["Todo"]));
             }
             set {
-                this["TodoFilename"] = value;
+                this["Todo"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\Users\\jnickerson.SNOWDEN\\Documents\\My Dropbox\\Actions\\someday.txt")]
+        public string Someday {
+            get {
+                return ((string)(this["Someday"]));
+            }
+            set {
+                this["Someday"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\Users\\jnickerson.SNOWDEN\\Documents\\My Dropbox\\Actions\\done.txt")]
+        public string Done {
+            get {
+                return ((string)(this["Done"]));
+            }
+            set {
+                this["Done"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool Reconfigure {
+            get {
+                return ((bool)(this["Reconfigure"]));
+            }
+            set {
+                this["Reconfigure"] = value;
             }
         }
     }

@@ -21,16 +21,58 @@ namespace WpfGui
 	/// </summary>
 	public partial class Window1 : Window
 	{
-        private List<ActionItem> _todolist = ActionItem.ReadFile(Settings.Default.TodoFilename);
+        private List<ActionItem> _todolist;
+        private List<ActionItem> _donelist;
 
 		public Window1()
 		{
 			InitializeComponent();
 
+            if (Settings.Default.Reconfigure)
+            {
+                // Configure open file dialog box
+                Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
+                dlg.FileName = "Document"; // Default file name
+                dlg.DefaultExt = ".txt"; // Default file extension
+                dlg.Filter = "Text documents (.txt)|*.txt"; // Filter files by extension
+                dlg.Title = "Todo file";
 
-			// Test layout.
+                // Show open file dialog box
+                Nullable<bool> result = dlg.ShowDialog();
+                if (result == true)
+                {
+                    Settings.Default.Todo = dlg.FileName;
+                }
+
+                dlg.Title = "Done file";
+                result = dlg.ShowDialog();
+                if (result == true)
+                {
+                    Settings.Default.Done = dlg.FileName;
+                }
+
+                dlg.Title = "Someday file";
+                result = dlg.ShowDialog();
+                if (result == true)
+                {
+                    Settings.Default.Someday = dlg.FileName;
+                }
+
+                Settings.Default.Reconfigure = false;
+                Settings.Default.Save();
+            }
+            _todolist = ActionItem.Deserialise(Settings.Default.Todo);
+            _donelist = ActionItem.Deserialise(Settings.Default.Done);
+
+            // Display list.
+            RefreshTree();
+		}
+
+        private void RefreshTree()
+        {
             todotree.Items.Clear();
-			// foreach Context in todolist
+            _todolist = ActionItem.Deserialise(Settings.Default.Todo);
+            // foreach Context in todolist
             foreach (var c in (from a in _todolist orderby a.Context select a.Context).Distinct())
             {
                 // Add a TreeViewItem with Header=@Context
@@ -49,12 +91,15 @@ namespace WpfGui
                     item.Checked += new RoutedEventHandler(item_Checked);
                 }
             }
-		}
+        }
 
         void item_Checked(object sender, RoutedEventArgs e)
         {
             ActionItem item = (ActionItem)((CheckBox)sender).Tag;
-            //item.Done();
+            item.Done(_todolist, _donelist);
+            ActionItem.Serialise(Settings.Default.Todo, _todolist, true);
+            ActionItem.Serialise(Settings.Default.Done, _donelist, false);
+            RefreshTree();
         }
 	}
 }

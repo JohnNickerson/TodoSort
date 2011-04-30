@@ -39,8 +39,8 @@ namespace TodoSort
 			}
 
             // Deserialise the files
-            List<ActionItem> todolist = ActionItem.ReadFile(Settings.Default.Todo);
-            List<ActionItem> someday = ActionItem.ReadFile(Settings.Default.Someday);
+            List<ActionItem> todolist = ActionItem.Deserialise(Settings.Default.Todo);
+            List<ActionItem> someday = ActionItem.Deserialise(Settings.Default.Someday);
 			// Track whether changes have been made to the "someday" file, to avoid rewriting it if possible.
 			bool someday_changes = false;
 
@@ -64,14 +64,15 @@ namespace TodoSort
 						// Go over the @someday items and look for tickle dates.
 						for (int i = 0; i < someday.Count; i++)
 						{
-                            if (someday[i].TickleDate.HasValue && someday[i].TickleDate.Value < DateTime.Now)
+                            if (someday[i].TickleDate.HasValue && someday[i].TickleDate.Value <= DateTime.Now)
                             {
                                 someday[i].Context = "@inbox";
+                                someday[i].TickleDate = null;
                                 Defer(someday, todolist, someday[i]);
                                 someday_changes = true;
                             }
 						}
-						for (int i = 0; i < todolist.Count; i++)
+                        for (int i = 0; i < todolist.Count; i++)
                         {
                             // Assign the @inbox items to contexts.
                             if (todolist[i].Context == "@inbox")
@@ -144,16 +145,16 @@ namespace TodoSort
 			for (int x = 0; x < todolist.Count;)
 			{
 				ActionItem i = todolist[x];
-				if (i.Context.Equals("@defer") || i.Context.Equals("@someday"))
+				if (i.Context.Equals("@done"))
+				{
+					// Move to the "done" file any items with a context of @done.
+					MarkDone(todolist, i);
+				}
+                else if (i.Context.Equals("@defer") || i.Context.Equals("@someday") || (i.TickleDate.HasValue && i.TickleDate.Value > DateTime.Now))
 				{
 					// Move to the someday file any items with a context of "defer" or "someday".
 					Defer(todolist, someday, i);
 					someday_changes = true;
-				}
-				else if (i.Context.Equals("@done"))
-				{
-					// Move to the "done" file any items with a context of @done.
-					MarkDone(todolist, i);
 				}
 				else
 				{
@@ -173,11 +174,10 @@ namespace TodoSort
 			#endregion
 
 			// Rewrite the files
-            ActionItem.WriteToFile(Settings.Default.Todo, todolist, true);
+            ActionItem.Serialise(Settings.Default.Todo, todolist, true);
 			if (someday_changes)
 			{
-				// Sort the Someday file.
-				ActionItem.WriteToFile(Settings.Default.Someday, someday, false);
+                ActionItem.Serialise(Settings.Default.Someday, someday, false);
 			}
         }
 
@@ -188,21 +188,9 @@ namespace TodoSort
 		/// <param name="doneitem">The item to mark as done.</param>
 		private static void MarkDone(List<ActionItem> todolist, ActionItem doneitem)
 		{
-			if (doneitem.HasNextItem)
-			{
-                // TODO: Encapsulate this.
-				ActionItem next = new ActionItem(string.Empty, string.Empty);
-				next.SubItems = doneitem.SubItems;
-				string newcontext = next.SubItems[0].Split(' ')[0].Trim().Remove(0, 1);
-				next.Context = newcontext;
-                next.Title = next.SubItems[0].Remove(0, newcontext.Length + 2);
-				next.SubItems.RemoveAt(0);
-				todolist.Add(next);
-			}
-			// Log the completed action to the Done file.
-            File.AppendAllText(Settings.Default["done"].ToString(), string.Format("{0}: {1}", DateTime.Now, doneitem.Title));
-            File.AppendAllText(Settings.Default["done"].ToString(), Environment.NewLine);
-			todolist.Remove(doneitem);
+            List<ActionItem> donelist = ActionItem.Deserialise(Settings.Default.Done);
+            doneitem.Done(todolist, donelist);
+            ActionItem.Serialise(Settings.Default.Done, donelist, false);
 		}
 
 		private static ActionItem Disambiguate(string search, List<ActionItem> todolist)
@@ -239,7 +227,7 @@ namespace TodoSort
 			return selected;
 		}
 
-        private static void Defer(List<AssimilationSoftware.PimData.ActionItem> from, List<AssimilationSoftware.PimData.ActionItem> to, AssimilationSoftware.PimData.ActionItem selected)
+        private static void Defer(List<ActionItem> from, List<ActionItem> to, ActionItem selected)
         {
             to.Add(selected);
             from.Remove(selected);
