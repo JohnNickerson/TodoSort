@@ -5,7 +5,6 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -13,6 +12,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using AssimilationSoftware.PimData;
 using WpfGui.Properties;
+using AssimilationSoftware.PimData.Mappers;
 
 namespace WpfGui
 {
@@ -21,8 +21,8 @@ namespace WpfGui
 	/// </summary>
 	public partial class Window1 : Window
 	{
-        private List<ActionItem> _todolist;
-        private List<ActionItem> _donelist;
+        private List<ListItem> _todolist;
+        private List<ListItem> _donelist;
 
 		public Window1()
 		{
@@ -61,8 +61,8 @@ namespace WpfGui
                 Settings.Default.Reconfigure = false;
                 Settings.Default.Save();
             }
-            _todolist = ActionItem.Deserialise(Settings.Default.Todo);
-            _donelist = ActionItem.Deserialise(Settings.Default.Done);
+            _todolist = new ListItemDiskMapper().Deserialise(Settings.Default.Todo);
+            _donelist = new ListItemDiskMapper().Deserialise(Settings.Default.Done);
 
             // Display list.
             RefreshTree();
@@ -71,7 +71,7 @@ namespace WpfGui
         private void RefreshTree()
         {
             todotree.Items.Clear();
-            _todolist = ActionItem.Deserialise(Settings.Default.Todo);
+            _todolist = new ListItemDiskMapper().Deserialise(Settings.Default.Todo);
             // foreach Context in todolist
             foreach (var c in (from a in _todolist orderby a.Context select a.Context).Distinct())
             {
@@ -95,10 +95,11 @@ namespace WpfGui
 
         void item_Checked(object sender, RoutedEventArgs e)
         {
-            ActionItem item = (ActionItem)((CheckBox)sender).Tag;
+            ListItemDiskMapper mapper = new ListItemDiskMapper();
+            ListItem item = (ListItem)((CheckBox)sender).Tag;
             item.Done(_todolist, _donelist);
-            ActionItem.Serialise(Settings.Default.Todo, _todolist, true);
-            ActionItem.Serialise(Settings.Default.Done, _donelist, false);
+            mapper.Serialise(Settings.Default.Todo, _todolist);
+            mapper.Serialise(Settings.Default.Done, _donelist);
             RefreshTree();
         }
 	}

@@ -6,6 +6,7 @@ using System.IO;
 using System.Configuration;
 using TodoSort.Properties;
 using AssimilationSoftware.PimData;
+using AssimilationSoftware.PimData.Mappers;
 
 namespace TodoSort
 {
@@ -39,8 +40,8 @@ namespace TodoSort
 			}
 
             // Deserialise the files
-            List<ActionItem> todolist = ActionItem.Deserialise(Settings.Default.Todo);
-            List<ActionItem> someday = ActionItem.Deserialise(Settings.Default.Someday);
+            List<ListItem> todolist = new ListItemDiskMapper().Deserialise(Settings.Default.Todo);
+            List<ListItem> someday = new ListItemDiskMapper().Deserialise(Settings.Default.Someday);
 			// Track whether changes have been made to the "someday" file, to avoid rewriting it if possible.
 			bool someday_changes = false;
 
@@ -49,13 +50,13 @@ namespace TodoSort
             {
                 string command = args[0];
                 // Search for a matching item in all contexts.
-                ActionItem selected = null;
+                ListItem selected = null;
                 switch (command)
                 {
 					case "show":
 						// Display one context.
 						Console.WriteLine("Showing context @{0}", args[1]);
-						foreach (ActionItem i in from m in todolist where m.Context.EndsWith(args[1]) select m)
+						foreach (ListItem i in from m in todolist where m.Context.EndsWith(args[1]) select m)
 						{
 							Console.WriteLine(i.Title);
 						}
@@ -78,7 +79,7 @@ namespace TodoSort
                             if (todolist[i].Context == "@inbox")
                             {
                                 Console.WriteLine("To which context should this item go?");
-                                ActionItem first = todolist[i];
+                                ListItem first = todolist[i];
                                 Console.WriteLine(first.Title);
                                 string newcontext = Console.ReadLine();
                                 Console.WriteLine();
@@ -88,13 +89,22 @@ namespace TodoSort
                             else if (todolist[i].Context == "@projects")
                             {
                                 Console.WriteLine("What is the next action required on this project?");
-                                ActionItem first = todolist[i];
+                                ListItem first = todolist[i];
                                 Console.WriteLine(first.Title);
                                 string nextaction = Console.ReadLine();
-                                first.SubItems.Insert(0, string.Format("&@projects {0}", first.Title));
-                                first.Title = nextaction;
                                 Console.WriteLine("...and to what context does it belong?");
-                                first.Context = Console.ReadLine();
+                                string newcontext = Console.ReadLine();
+                                if (nextaction == newcontext)
+                                {
+                                    // Wrote something like "someday"/"someday". Assume it is a new context.
+                                    first.Context = newcontext;
+                                }
+                                else
+                                {
+                                    first.SubItems.Insert(0, string.Format("&@projects {0}", first.Title));
+                                    first.Title = nextaction;
+                                    first.Context = newcontext;
+                                }
                                 Console.WriteLine();
                             }
                         }
@@ -144,7 +154,7 @@ namespace TodoSort
 			#region Tidy up
 			for (int x = 0; x < todolist.Count;)
 			{
-				ActionItem i = todolist[x];
+				ListItem i = todolist[x];
 				if (i.Context.Equals("@done"))
 				{
 					// Move to the "done" file any items with a context of @done.
@@ -163,7 +173,7 @@ namespace TodoSort
 			}
 
 			// Change all items in the someday file to have "someday" as a context.
-			foreach (ActionItem i in someday)
+			foreach (ListItem i in someday)
 			{
                 if (i.Context != "@someday")
                 {
@@ -174,10 +184,11 @@ namespace TodoSort
 			#endregion
 
 			// Rewrite the files
-            ActionItem.Serialise(Settings.Default.Todo, todolist, true);
+            ListItemDiskMapper mapper = new ListItemDiskMapper();
+            mapper.Serialise(Settings.Default.Todo, todolist);
 			if (someday_changes)
 			{
-                ActionItem.Serialise(Settings.Default.Someday, someday, false);
+                mapper.Serialise(Settings.Default.Someday, someday);
 			}
         }
 
@@ -186,16 +197,17 @@ namespace TodoSort
 		/// </summary>
 		/// <param name="todolist">The list in which the item is found.</param>
 		/// <param name="doneitem">The item to mark as done.</param>
-		private static void MarkDone(List<ActionItem> todolist, ActionItem doneitem)
+		private static void MarkDone(List<ListItem> todolist, ListItem doneitem)
 		{
-            List<ActionItem> donelist = ActionItem.Deserialise(Settings.Default.Done);
+            ListItemDiskMapper mapper = new ListItemDiskMapper();
+            List<ListItem> donelist = mapper.Deserialise(Settings.Default.Done);
             doneitem.Done(todolist, donelist);
-            ActionItem.Serialise(Settings.Default.Done, donelist, false);
+            mapper.Serialise(Settings.Default.Done, donelist);
 		}
 
-		private static ActionItem Disambiguate(string search, List<ActionItem> todolist)
+		private static ListItem Disambiguate(string search, List<ListItem> todolist)
 		{
-			ActionItem selected = null;
+			ListItem selected = null;
 			var matches = from i in todolist
 						  where i.Title.ToLower().Contains(search.ToLower())
 						  select i;
@@ -227,7 +239,7 @@ namespace TodoSort
 			return selected;
 		}
 
-        private static void Defer(List<ActionItem> from, List<ActionItem> to, ActionItem selected)
+        private static void Defer(List<ListItem> from, List<ListItem> to, ListItem selected)
         {
             to.Add(selected);
             from.Remove(selected);
