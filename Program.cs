@@ -16,7 +16,7 @@ namespace TodoSort
         static void Main(string[] args)
         {
 			// Check settings
-            if (!Settings.Default.Configured || args[0] == "reconfigure")
+            if (!Settings.Default.Configured || args.Contains("reconfigure"))
             {
                 foreach (string name in new string[] { "todo", "someday", "done" })
                 {
