@@ -11,8 +11,8 @@
     <Setting Name="Done" Type="System.String" Scope="User">
       <Value Profile="(Default)">{MyDocs}\My Dropbox\Actions\done.txt</Value>
     </Setting>
-    <Setting Name="Reconfigure" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
+    <Setting Name="Configured" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
     </Setting>
   </Settings>
 </SettingsFile>

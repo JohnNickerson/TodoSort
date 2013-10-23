@@ -16,26 +16,15 @@ namespace TodoSort
         static void Main(string[] args)
         {
 			// Check settings
-            if (Settings.Default.Reconfigure || args[0] == "reconfigure")
+            if (!Settings.Default.Configured || args[0] == "reconfigure")
             {
                 foreach (string name in new string[] { "todo", "someday", "done" })
                 {
-                    // Replace with path to My Documents.
-                    Settings.Default[name] = Settings.Default[name].ToString().Replace("{MyDocs}", Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments));
-                    // Confirm file path.
-                    Console.WriteLine("Configure path to '{0}' file:", name);
-                    Console.WriteLine(Settings.Default[name]);
-                    Console.WriteLine("Is this correct?");
-                    var response = Console.ReadKey();
-                    if (!response.KeyChar.ToString().ToLower().Equals("y"))
-                    {
-                        Console.WriteLine("Please provide the correct full path:");
-                        Settings.Default[name] = Console.ReadLine();
-                    }
+                    Settings.Default[name] = ConfigurePath(Settings.Default[name].ToString(), string.Format("Configure path to '{0}' file:", name));
                     Console.WriteLine();
                 }
 				// Save settings.
-                Settings.Default.Reconfigure = false;
+                Settings.Default.Configured = false;
 				Settings.Default.Save();
                 return;
 			}
@@ -244,6 +233,31 @@ namespace TodoSort
         {
             to.Add(selected);
             from.Remove(selected);
+        }
+
+        /// <summary>
+        /// Prompts to configure a path based on an existing value.
+        /// </summary>
+        /// <param name="path">The path as it exists. May include "{MyDocs}" as a placeholder.</param>
+        /// <param name="prompt">The human-friendly name of the folder to be used as a cue.</param>
+        /// <returns>The correct path as provided by the user.</returns>
+        public static string ConfigurePath(string path, string prompt)
+        {
+            // Special folder replacements.
+            path = path.Replace("{MyDocs}", Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments));
+            path = path.Replace("{MyPictures}", Environment.GetFolderPath(Environment.SpecialFolder.MyPictures));
+            path = path.Replace("{MachineName}", Environment.MachineName);
+
+            Console.WriteLine("Configure path to {0}:", prompt);
+            Console.WriteLine("Type correct value or [Enter] to accept default.");
+            Console.WriteLine(path);
+            var response = Console.ReadLine();
+            if (response.Trim().Length > 0)
+            {
+                path = response;
+                Console.WriteLine();
+            }
+            return path;
         }
     }
 }
