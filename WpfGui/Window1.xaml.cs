@@ -21,8 +21,8 @@ namespace WpfGui
 	/// </summary>
 	public partial class Window1 : Window
 	{
-        private List<ListItem> _todolist;
-        private List<ListItem> _donelist;
+        private List<ActionItem> _todolist;
+        private List<ActionItem> _donelist;
 
 		public Window1()
 		{
@@ -65,7 +65,9 @@ namespace WpfGui
             _donelist = new ListItemDiskMapper().Deserialise(Settings.Default.Done);
 
             // Display list.
-            RefreshTree();
+            ItemDisplay d = new ItemDisplay();
+            somedayGrid.Children.Add(d);
+            d.DataContext = _todolist[0];
 		}
 
         private void RefreshTree()
@@ -96,7 +98,7 @@ namespace WpfGui
         void item_Checked(object sender, RoutedEventArgs e)
         {
             ListItemDiskMapper mapper = new ListItemDiskMapper();
-            ListItem item = (ListItem)((CheckBox)sender).Tag;
+            ActionItem item = (ActionItem)((CheckBox)sender).Tag;
             item.Done(_todolist, _donelist);
             mapper.Serialise(Settings.Default.Todo, _todolist);
             mapper.Serialise(Settings.Default.Done, _donelist);

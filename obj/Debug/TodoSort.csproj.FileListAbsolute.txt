@@ -38,3 +38,10 @@ C:\Users\John\Documents\My Dropbox\Projects\TodoSort\bin\Debug\PimData.pdb
 C:\Users\John\Documents\My Dropbox\Projects\TodoSort\obj\Debug\ResolveAssemblyReference.cache
 C:\Users\John\Documents\My Dropbox\Projects\TodoSort\obj\Debug\TodoSort.exe
 C:\Users\John\Documents\My Dropbox\Projects\TodoSort\obj\Debug\TodoSort.pdb
+C:\Users\jnickerson\Dropbox\Projects\Code\TodoSort\obj\Debug\TodoSort.exe
+C:\Users\jnickerson\Dropbox\Projects\Code\TodoSort\obj\Debug\TodoSort.csprojResolveAssemblyReference.cache
+C:\Users\jnickerson\Dropbox\Projects\Code\TodoSort\bin\Debug\TodoSort.exe.config
+C:\Users\jnickerson\Dropbox\Projects\Code\TodoSort\bin\Debug\TodoSort.exe
+C:\Users\jnickerson\Dropbox\Projects\Code\TodoSort\bin\Debug\TodoSort.pdb
+C:\Users\jnickerson\Dropbox\Projects\Code\TodoSort\bin\Debug\PimData.dll
+C:\Users\jnickerson\Dropbox\Projects\Code\TodoSort\obj\Debug\TodoSort.pdb

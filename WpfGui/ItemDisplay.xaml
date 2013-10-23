@@ -17,16 +17,14 @@
             <RowDefinition />
         </Grid.RowDefinitions>
         
-        <TextBox Name="Title" Grid.Column="0" Grid.Row="0" Text="{Binding}" DataContext="{Binding}" />
+        <TextBox Name="Title" Grid.Column="0" Grid.Row="0" Text="{Binding ElementName=Title}" />
         
-        <TextBox Name="Context" Grid.Column="0" Grid.Row="1" Text="[@context]" />
-        <Button Name="Done" Grid.Column="1" Grid.Row="1" Margin="3">
-            <Image Source="Tick.png" />
-        </Button>
-        <Button Name="Delete" Grid.Column="2" Grid.Row="1" Margin="3">
+        <TextBox Name="Context" Grid.Column="0" Grid.Row="1" Text="{Binding ElementName=Context}" />
+        <CheckBox Name="Done" Grid.Column="1" Grid.Row="1" Margin="3" HorizontalAlignment="Center" VerticalAlignment="Center" ToolTip="Done?" />
+        <Button Name="Delete" Grid.Column="2" Grid.Row="1" Margin="3" ToolTip="Delete">
             <Image Source="Bin.png" />
         </Button>
         
-        <DataGrid Grid.Column="0" Grid.Row="2" />
+        <DataGrid Grid.Column="0" Grid.Row="2" Name="SubItems" ItemsSource="{Binding ElementName=SubItems}" />
     </Grid>
 </UserControl>

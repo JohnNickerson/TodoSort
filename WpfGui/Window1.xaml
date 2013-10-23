@@ -19,8 +19,10 @@
 				</Grid>
 			</TabItem>
 			<TabItem Header="someday" Name="somedaytab">
-				<Grid />
-			</TabItem>
+                <Grid Name="somedayGrid">
+                   
+                </Grid>
+            </TabItem>
 			<TabItem Header="done" Name="donetab">
 				<Grid />
 			</TabItem>
