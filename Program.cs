@@ -24,7 +24,7 @@ namespace TodoSort
                     Console.WriteLine();
                 }
 				// Save settings.
-                Settings.Default.Configured = false;
+                Settings.Default.Configured = true;
 				Settings.Default.Save();
                 return;
 			}
