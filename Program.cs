@@ -8,6 +8,7 @@ using TodoSort.Properties;
 using AssimilationSoftware.PimData;
 using AssimilationSoftware.PimData.Mappers;
 using AssimilationSoftware.PimData.Interfaces;
+using AssimilationSoftware.PimData.Model;
 
 namespace TodoSort
 {
@@ -30,7 +31,7 @@ namespace TodoSort
 			}
 
             // Deserialise the files
-            ListItemDiskMapper mapper = new ListItemDiskMapper();
+            ActionItemDiskMapper mapper = new ActionItemDiskMapper();
             List<ActionItem> todolist = (File.Exists(Settings.Default.Todo) ? mapper.Deserialise(Settings.Default.Todo) : new List<ActionItem>());
             List<ActionItem> someday = (File.Exists(Settings.Default.Someday) ? mapper.Deserialise(Settings.Default.Someday) : new List<ActionItem>());
 			// Track whether changes have been made to the "someday" file, to avoid rewriting it if possible.
@@ -189,7 +190,7 @@ namespace TodoSort
 		/// <param name="doneitem">The item to mark as done.</param>
 		private static void MarkDone(List<ActionItem> todolist, ActionItem doneitem)
 		{
-            IActionItemMapper mapper = new TodoTxtCompatibleMapper();
+            IActionItemMapper mapper = new ActionItemDiskMapper();
             List<ActionItem> donelist = (File.Exists(Settings.Default.Done) ? mapper.Deserialise(Settings.Default.Done) : new List<ActionItem>());
             doneitem.Done(todolist, donelist);
             mapper.Serialise(Settings.Default.Done, donelist);

@@ -13,6 +13,7 @@ using System.Windows.Shapes;
 using AssimilationSoftware.PimData;
 using WpfGui.Properties;
 using AssimilationSoftware.PimData.Mappers;
+using AssimilationSoftware.PimData.Model;
 
 namespace WpfGui
 {
@@ -61,8 +62,8 @@ namespace WpfGui
                 Settings.Default.Reconfigure = false;
                 Settings.Default.Save();
             }
-            _todolist = new ListItemDiskMapper().Deserialise(Settings.Default.Todo);
-            _donelist = new ListItemDiskMapper().Deserialise(Settings.Default.Done);
+            _todolist = new ActionItemDiskMapper().Deserialise(Settings.Default.Todo);
+            _donelist = new ActionItemDiskMapper().Deserialise(Settings.Default.Done);
 
             // Display list.
             ItemDisplay d = new ItemDisplay();
@@ -73,7 +74,7 @@ namespace WpfGui
         private void RefreshTree()
         {
             todotree.Items.Clear();
-            _todolist = new ListItemDiskMapper().Deserialise(Settings.Default.Todo);
+            _todolist = new ActionItemDiskMapper().Deserialise(Settings.Default.Todo);
             // foreach Context in todolist
             foreach (var c in (from a in _todolist orderby a.Context select a.Context).Distinct())
             {
@@ -97,7 +98,7 @@ namespace WpfGui
 
         void item_Checked(object sender, RoutedEventArgs e)
         {
-            ListItemDiskMapper mapper = new ListItemDiskMapper();
+            ActionItemDiskMapper mapper = new ActionItemDiskMapper();
             ActionItem item = (ActionItem)((CheckBox)sender).Tag;
             item.Done(_todolist, _donelist);
             mapper.Serialise(Settings.Default.Todo, _todolist);
