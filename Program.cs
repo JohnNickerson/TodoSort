@@ -30,8 +30,9 @@ namespace TodoSort
 			}
 
             // Deserialise the files
-            List<ActionItem> todolist = new ListItemDiskMapper().Deserialise(Settings.Default.Todo);
-            List<ActionItem> someday = new ListItemDiskMapper().Deserialise(Settings.Default.Someday);
+            ListItemDiskMapper mapper = new ListItemDiskMapper();
+            List<ActionItem> todolist = (File.Exists(Settings.Default.Todo) ? mapper.Deserialise(Settings.Default.Todo) : new List<ActionItem>());
+            List<ActionItem> someday = (File.Exists(Settings.Default.Someday) ? mapper.Deserialise(Settings.Default.Someday) : new List<ActionItem>());
 			// Track whether changes have been made to the "someday" file, to avoid rewriting it if possible.
 			bool someday_changes = false;
 
@@ -174,7 +175,6 @@ namespace TodoSort
 			#endregion
 
 			// Rewrite the files
-            ListItemDiskMapper mapper = new ListItemDiskMapper();
             mapper.Serialise(Settings.Default.Todo, todolist);
 			if (someday_changes)
 			{
@@ -190,7 +190,7 @@ namespace TodoSort
 		private static void MarkDone(List<ActionItem> todolist, ActionItem doneitem)
 		{
             IActionItemMapper mapper = new TodoTxtCompatibleMapper();
-            List<ActionItem> donelist = mapper.Deserialise(Settings.Default.Done);
+            List<ActionItem> donelist = (File.Exists(Settings.Default.Done) ? mapper.Deserialise(Settings.Default.Done) : new List<ActionItem>());
             doneitem.Done(todolist, donelist);
             mapper.Serialise(Settings.Default.Done, donelist);
 		}
