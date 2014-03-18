@@ -62,8 +62,8 @@ namespace WpfGui
                 Settings.Default.Reconfigure = false;
                 Settings.Default.Save();
             }
-            _todolist = new ActionItemDiskMapper().Deserialise(Settings.Default.Todo);
-            _donelist = new ActionItemDiskMapper().Deserialise(Settings.Default.Done);
+            _todolist = new ActionItemDiskMapper(Settings.Default.Todo).LoadAll();
+            _donelist = new ActionItemDiskMapper(Settings.Default.Done).LoadAll();
 
             // Display list.
             ItemDisplay d = new ItemDisplay();
@@ -74,7 +74,7 @@ namespace WpfGui
         private void RefreshTree()
         {
             todotree.Items.Clear();
-            _todolist = new ActionItemDiskMapper().Deserialise(Settings.Default.Todo);
+            _todolist = new ActionItemDiskMapper(Settings.Default.Todo).LoadAll();
             // foreach Context in todolist
             foreach (var c in (from a in _todolist orderby a.Context select a.Context).Distinct())
             {
@@ -91,19 +91,9 @@ namespace WpfGui
                     item.Content = t.Title;
                     item.Tag = t;
 
-                    item.Checked += new RoutedEventHandler(item_Checked);
+                    //item.Checked += new RoutedEventHandler(item_Checked);
                 }
             }
-        }
-
-        void item_Checked(object sender, RoutedEventArgs e)
-        {
-            ActionItemDiskMapper mapper = new ActionItemDiskMapper();
-            ActionItem item = (ActionItem)((CheckBox)sender).Tag;
-            item.Done(_todolist, _donelist);
-            mapper.Serialise(Settings.Default.Todo, _todolist);
-            mapper.Serialise(Settings.Default.Done, _donelist);
-            RefreshTree();
         }
 	}
 }

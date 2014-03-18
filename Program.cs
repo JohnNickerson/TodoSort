@@ -10,7 +10,7 @@ using AssimilationSoftware.PimData.Mappers;
 using AssimilationSoftware.PimData.Interfaces;
 using AssimilationSoftware.PimData.Model;
 
-namespace TodoSort
+namespace AssimilationSoftware.TodoSort
 {
     class Program
     {
@@ -30,12 +30,7 @@ namespace TodoSort
                 return;
 			}
 
-            // Deserialise the files
-            ActionItemDiskMapper mapper = new ActionItemDiskMapper();
-            List<ActionItem> todolist = (File.Exists(Settings.Default.Todo) ? mapper.Deserialise(Settings.Default.Todo) : new List<ActionItem>());
-            List<ActionItem> someday = (File.Exists(Settings.Default.Someday) ? mapper.Deserialise(Settings.Default.Someday) : new List<ActionItem>());
-			// Track whether changes have been made to the "someday" file, to avoid rewriting it if possible.
-			bool someday_changes = false;
+            ViewModel vm = new ViewModel(new ActionItemDiskMapper(Settings.Default.Todo), new ActionItemDiskMapper(Settings.Default.Done), new ActionItemDiskMapper(Settings.Default.Someday));
 
             #region Manipulate the file items
             if (args.Length > 0)
@@ -48,93 +43,89 @@ namespace TodoSort
 					case "show":
 						// Display one context.
 						Console.WriteLine("Showing context @{0}", args[1]);
-						foreach (ActionItem i in from m in todolist where m.Context.EndsWith(args[1]) select m)
+						foreach (ActionItem i in vm.GetContext(args[1]))
 						{
 							Console.WriteLine(i.Title);
 						}
 						break;
                     case "process":
 						// Go over the @someday items and look for tickle dates.
-						for (int i = 0; i < someday.Count; i++)
+						for (int i = 0; i < vm.SomedayItems.Count; i++)
 						{
-                            if (someday[i].TickleDate.HasValue && someday[i].TickleDate.Value <= DateTime.Now)
+                            if (vm.SomedayItems[i].TickleDate.HasValue && vm.SomedayItems[i].TickleDate.Value <= DateTime.Now)
                             {
-                                someday[i].Context = "@inbox";
-                                someday[i].TickleDate = null;
-                                Defer(someday, todolist, someday[i]);
-                                someday_changes = true;
+                                vm.SomedayItems[i].Context = "@inbox";
+                                vm.SomedayItems[i].TickleDate = null;
+                                vm.Undefer(vm.SomedayItems[i]);
                             }
 						}
-                        for (int i = 0; i < todolist.Count; i++)
+                        var inbox = vm.GetContext("inbox").ToList();
+                        for (int i = 0; i < inbox.Count; i++)
                         {
                             // Assign the @inbox items to contexts.
-                            if (todolist[i].Context == "@inbox")
+                            Console.WriteLine("To which context should this item go?");
+                            ActionItem first = inbox[i];
+                            Console.WriteLine(first.Title);
+                            string newcontext = Console.ReadLine();
+                            Console.WriteLine();
+                            first.Context = newcontext;
+                        }
+                        var projects = vm.GetContext("projects").ToList();
+                        for (int i = 0; i < projects.Count; i++)
+                        {
+                            // Add next actions for projects.
+                            Console.WriteLine("What is the next action required on this project?");
+                            ActionItem first = projects[i];
+                            Console.WriteLine(first.Title);
+                            string nextaction = Console.ReadLine();
+                            Console.WriteLine("...and to what context does it belong?");
+                            string newcontext = Console.ReadLine();
+                            if (nextaction == newcontext)
                             {
-                                Console.WriteLine("To which context should this item go?");
-                                ActionItem first = todolist[i];
-                                Console.WriteLine(first.Title);
-                                string newcontext = Console.ReadLine();
-                                Console.WriteLine();
+                                // Wrote something like "someday"/"someday". Assume it is a new context.
                                 first.Context = newcontext;
                             }
-                            // Add next actions for projects.
-                            else if (todolist[i].Context == "@projects")
+                            else
                             {
-                                Console.WriteLine("What is the next action required on this project?");
-                                ActionItem first = todolist[i];
-                                Console.WriteLine(first.Title);
-                                string nextaction = Console.ReadLine();
-                                Console.WriteLine("...and to what context does it belong?");
-                                string newcontext = Console.ReadLine();
-                                if (nextaction == newcontext)
-                                {
-                                    // Wrote something like "someday"/"someday". Assume it is a new context.
-                                    first.Context = newcontext;
-                                }
-                                else
-                                {
-                                    first.SubTasks.Insert(0, new ActionItem(first.Context, string.Format("&@projects {0}", first.Title)));
-                                    first.Title = nextaction;
-                                    first.Context = newcontext;
-                                }
-                                Console.WriteLine();
+                                var next = new ActionItem(newcontext, nextaction);
+                                next.Project = first;
+                                vm.AddItem(next);
                             }
+                            Console.WriteLine();
                         }
                         break;
                     case "defer":
                         // Move the item and its sub-items to the "someday" file.
-						selected = Disambiguate(args[1], todolist);
-						Defer(todolist, someday, selected);
-						someday_changes = true;
+						selected = Disambiguate(vm.Search(args[1]));
+						vm.Defer(selected);
                         break;
                     case "done":
                         // If there is a next action, create a new item and add it to the correct context.
-						selected = Disambiguate(args[1], todolist);
+						selected = Disambiguate(vm.Search(args[1]));
 						if (selected != null)
                         {
-							MarkDone(todolist, selected);
+							vm.MarkDone(selected);
                         }
                         break;
 					case "someday":
 						// Display the whole Someday file, 10 items at a time, and either delete or do one per listing.
-						for (int offset = 0; offset <= someday.Count; offset += 9)
+                        for (int offset = 0; offset <= vm.SomedayItems.Count; offset += 9)
 						{
 							Console.Clear();
-							for (int index = 0; index < 10 && offset + index < someday.Count; index++)
+                            for (int index = 0; index < 10 && offset + index < vm.SomedayItems.Count; index++)
 							{
-								Console.WriteLine("{0}: {1}", index, someday[offset + index].Title);
+                                Console.WriteLine("{0}: {1}", index, vm.SomedayItems.ElementAt(offset + index).Title);
 							}
 							char choice = Console.ReadKey().KeyChar;
 							int dex;
 							if (Int32.TryParse(choice.ToString(), out dex))
 							{
-								selected = someday[offset + dex];
+								selected = vm.SomedayItems.ElementAt(offset + dex);
 							}
 							Console.WriteLine("To which context should this item go?");
 							string newcontext = Console.ReadLine();
 							selected.Context = newcontext;
-							Defer(someday, todolist, selected);
-							someday_changes = true;
+							vm.Defer(selected);
 						}
 						break;
                     default:
@@ -144,86 +135,48 @@ namespace TodoSort
             #endregion
 
 			#region Tidy up
-			for (int x = 0; x < todolist.Count;)
-			{
-				ActionItem i = todolist[x];
-				if (i.Context.Equals("@done"))
-				{
-					// Move to the "done" file any items with a context of @done.
-					MarkDone(todolist, i);
-				}
-                else if (i.Context.Equals("@defer") || i.Context.Equals("@someday") || (i.TickleDate.HasValue && i.TickleDate.Value > DateTime.Now))
-				{
-					// Move to the someday file any items with a context of "defer" or "someday".
-					Defer(todolist, someday, i);
-					someday_changes = true;
-				}
-				else
-				{
-					x++;
-				}
-			}
-
-			// Change all items in the someday file to have "someday" as a context.
-			foreach (ActionItem i in someday)
-			{
-                if (i.Context != "@someday")
-                {
-                    i.Context = "@someday";
-                    someday_changes = true;
-                }
-			}
+            while (vm.GetContext("done").Count() > 0)
+            {
+				// Move to the "done" file any items with a context of @done.
+                vm.MarkDone(vm.GetContext("done").ElementAt(0));
+            }
+            while (vm.GetContext("someday").Count() > 0)
+            {
+                // Move any "someday" items in the main list to the someday file.
+                vm.Defer(vm.GetContext("someday").ElementAt(0));
+            }
 			#endregion
 
 			// Rewrite the files
-            mapper.Serialise(Settings.Default.Todo, todolist);
-			if (someday_changes)
-			{
-                mapper.Serialise(Settings.Default.Someday, someday);
-			}
+            vm.Save();
         }
 
-		/// <summary>
-		/// Mark an item as done.
-		/// </summary>
-		/// <param name="todolist">The list in which the item is found.</param>
-		/// <param name="doneitem">The item to mark as done.</param>
-		private static void MarkDone(List<ActionItem> todolist, ActionItem doneitem)
-		{
-            IActionItemMapper mapper = new ActionItemDiskMapper();
-            List<ActionItem> donelist = (File.Exists(Settings.Default.Done) ? mapper.Deserialise(Settings.Default.Done) : new List<ActionItem>());
-            doneitem.Done(todolist, donelist);
-            mapper.Serialise(Settings.Default.Done, donelist);
-		}
-
-		private static ActionItem Disambiguate(string search, List<ActionItem> todolist)
+		private static ActionItem Disambiguate(List<ActionItem> todolist)
 		{
 			ActionItem selected = null;
-			var matches = from i in todolist
-						  where i.Title.ToLower().Contains(search.ToLower())
-						  select i;
-			// Disambiguate or verify search results.
-			if (matches.Count() == 0)
+
+            // Disambiguate or verify search results.
+            if (todolist.Count() == 0)
 			{
 				Console.WriteLine("No search matches. No action will be taken.");
 			}
-			else if (matches.Count() > 5)
+            else if (todolist.Count() > 9)
 			{
 				Console.WriteLine("Too many search matches. Try to be more specific. No action will be taken this time.");
 			}
 			else
 			{
-				for (int i = 0; i < matches.Count(); i++)
+                for (int i = 0; i < todolist.Count(); i++)
 				{
-					Console.WriteLine("{0}: {1}", i, matches.ElementAt(i).Title);
+                    Console.WriteLine("{0}: {1}", i, todolist.ElementAt(i).Title);
 				}
 				char choice = Console.ReadKey().KeyChar;
 				int dex;
                 if (Int32.TryParse(choice.ToString(), out dex))
                 {
-                    if (matches.Count() > dex)
+                    if (todolist.Count() > dex)
                     {
-                        selected = matches.ElementAt(dex);
+                        selected = todolist.ElementAt(dex);
                     }
                 }
 			}
