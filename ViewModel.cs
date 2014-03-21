@@ -2,6 +2,7 @@
 using AssimilationSoftware.PimData.Model;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -38,25 +39,6 @@ namespace AssimilationSoftware.TodoSort
         internal IEnumerable<ActionItem> GetContext(string context)
         {
             return from m in todolist where m.Context.EndsWith(context) select m;
-        }
-
-        public List<ActionItem> SomedayItems
-        {
-            get
-            {
-                return someday_items;
-            }
-        }
-        
-        /// <summary>
-        /// Moves an item from the Someday list to the main list.
-        /// </summary>
-        /// <param name="actionItem"></param>
-        internal void Undefer(ActionItem actionItem)
-        {
-            todolist.Add(actionItem);
-            someday_items.Remove(actionItem);
-            someday_changes = true;
         }
 
         internal void Save()
@@ -97,10 +79,37 @@ namespace AssimilationSoftware.TodoSort
             todolist.Remove(selected);
             someday_changes = true;
         }
+        
+        /// <summary>
+        /// Moves an item from the Someday list to the main list.
+        /// </summary>
+        /// <param name="actionItem"></param>
+        internal void Undefer(ActionItem actionItem)
+        {
+            todolist.Add(actionItem);
+            someday_items.Remove(actionItem);
+            someday_changes = true;
+        }
+
+        internal void Delete(ActionItem selected)
+        {
+            todolist.Remove(selected);
+        }
 
         internal List<ActionItem> Search(string search)
         {
             return (from i in todolist where i.Title.ToLower().Contains(search.ToLower()) select i).ToList();
         }
+
+        #region Properties
+
+        public List<ActionItem> SomedayItems
+        {
+            get
+            {
+                return someday_items;
+            }
+        }
+        #endregion
     }
 }

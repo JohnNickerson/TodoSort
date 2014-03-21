@@ -9,6 +9,7 @@ using AssimilationSoftware.PimData;
 using AssimilationSoftware.PimData.Mappers;
 using AssimilationSoftware.PimData.Interfaces;
 using AssimilationSoftware.PimData.Model;
+using System.Reflection;
 
 namespace AssimilationSoftware.TodoSort
 {
@@ -30,7 +31,7 @@ namespace AssimilationSoftware.TodoSort
                 return;
 			}
 
-            ViewModel vm = new ViewModel(new ActionItemDiskMapper(Settings.Default.Todo), new ActionItemDiskMapper(Settings.Default.Done), new ActionItemDiskMapper(Settings.Default.Someday));
+            ViewModel vm = new ViewModel(new TodoTxtFileMapper(Settings.Default.Todo), new TodoTxtFileMapper(Settings.Default.Done), new TodoTxtFileMapper(Settings.Default.Someday));
 
             #region Manipulate the file items
             if (args.Length > 0)
@@ -40,12 +41,63 @@ namespace AssimilationSoftware.TodoSort
                 ActionItem selected = null;
                 switch (command)
                 {
+                    case "help":
+                        // Print usage text on the console.
+                        Console.WriteLine(string.Format(@"
+TodoSort v{0}
+
+usage:
+TodoSort.exe [command] [args]
+
+commands:
+    add         Add a new item to the list.
+    defer       Move an item to the someday file.
+    delete      Delete an item without doing it.
+    done        Move an item to the done file.
+    process     Housekeeping:
+                    + Assign inbox items to a context
+                    + Move done items to the done file
+                    + Ensure each project has a next action.
+    search      Search for matching text items.
+    show        Display all items in a context.
+    someday     Review the someday file, assigning 10% to an active context.
+", Assembly.GetExecutingAssembly().GetName().Version));
+                        break;
+                    case "search":
+                        // Search for matching items.
+                        var results = vm.Search(args[1]);
+                        string last_context = string.Empty;
+                        foreach (ActionItem i in from a in results orderby a.Context, a.Title select a)
+                        {
+                            if (i.Context == last_context)
+                            {
+                                Console.WriteLine(string.Format("\t{0}", i.Title));
+                            }
+                            else
+                            {
+                                Console.WriteLine(string.Format("@{0}\n\t{1}", i.Context, i.Title));
+                                last_context = i.Context;
+                            }
+                        }
+                        break;
+                    case "add":
+                        // Add a new item.
+                        string title = Console.ReadLine();
+                        string context = Console.ReadLine();
+                        var item = new ActionItem(context, title);
+                        vm.AddItem(item);
+                        break;
+                    case "delete":
+                        // Find a matching item to delete.
+                        selected = Disambiguate(vm.Search(args[1]));
+                        vm.Delete(selected);
+                        break;
 					case "show":
 						// Display one context.
-						Console.WriteLine("Showing context @{0}", args[1]);
+						Console.WriteLine("@{0}", args[1]);
 						foreach (ActionItem i in vm.GetContext(args[1]))
 						{
-							Console.WriteLine(i.Title);
+							Console.WriteLine(string.Format("\t{0}", i.Title));
 						}
 						break;
                     case "process":
@@ -109,7 +161,7 @@ namespace AssimilationSoftware.TodoSort
                         break;
 					case "someday":
 						// Display the whole Someday file, 10 items at a time, and either delete or do one per listing.
-                        for (int offset = 0; offset <= vm.SomedayItems.Count; offset += 9)
+                        for (int offset = 0; offset <= vm.SomedayItems.Count; offset += 10)
 						{
 							Console.Clear();
                             for (int index = 0; index < 10 && offset + index < vm.SomedayItems.Count; index++)
@@ -125,7 +177,7 @@ namespace AssimilationSoftware.TodoSort
 							Console.WriteLine("To which context should this item go?");
 							string newcontext = Console.ReadLine();
 							selected.Context = newcontext;
-							vm.Defer(selected);
+							vm.Undefer(selected);
 						}
 						break;
                     default:
@@ -182,12 +234,6 @@ namespace AssimilationSoftware.TodoSort
 			}
 			return selected;
 		}
-
-        private static void Defer(List<ActionItem> from, List<ActionItem> to, ActionItem selected)
-        {
-            to.Add(selected);
-            from.Remove(selected);
-        }
 
         /// <summary>
         /// Prompts to configure a path based on an existing value.

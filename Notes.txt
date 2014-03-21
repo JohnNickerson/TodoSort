@@ -49,6 +49,7 @@
 	Detect "[x]" marks as completed items
 	MVVM architecture
 		- Splitting functionality and view will help the transition to GUI.
+	Use a second viewmodel for reviewing the Someday list?
 @bugs
 	Assumes the existence of todo.txt.
 		- It should be created if it doesn't exist yet.
