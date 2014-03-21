@@ -1,7 +1,18 @@
 @interface
 	Allow multiple actions per invocation.
 	Ability to cancel an action rather than confirming or selecting one search result.
-	Search items.
+	Allow marking a project as "done" while processing, instead of needing a new action.
+		- If action matches new context, just assign context.
+	"Review" mode?
+		- Process inbox and projects
+		- Ask if each item is done or should be deferred
+		- Process someday list and see if any were done or should be done now
+	Keep processing while more items still in inbox or projects.
+	Open any list file rather than just the preconfigured ones
+	Ranking
+	Ask for a tickle date when deferring items
+		- Can be null.
+@gui
 	GUI
 		- Search
 		- Mark as done
@@ -11,26 +22,12 @@
 		- Delete items
 		- Defer items
 		- Add follow-up actions
-	Allow marking a project as "done" while processing, instead of needing a new action.
-		- If action matches new context, just assign context.
-	"Review" mode?
-		- Process inbox and projects
-		- Ask if each item is done or should be deferred
-		- Process someday list and see if any were done or should be done now
-	Keep processing while more items still in inbox or projects.
-@gui
 	Use a "go" button to separate the ticking of a box from the disk write, in case it is ticked accidentally.
 		- Or just don't clear the item immediately so that it can be unticked if required.
 		- Or include an "undo" action.
 @backend
 	Selections of next actions, depending on the results of previous ones.
 		- eg "Check something" then "|@shopping Buy this" and "|@home Set up that".
-	Abstract out the serialiser codec so it can be replaced by, say, a YAML one.
-		- Currently two static methods in the PIM library.
-	Don't rewrite files if no changes are made.
-		- Someday file already done.
-		- Can't do for main list, because items need sorting.
-		- Don't rewrite on "show" action.
 	Tickler file
 		- Automatic return to inbox from the Someday file on a certain date.
 		- Specify another attribute on an action? (>2010-12-01)
@@ -50,6 +47,3 @@
 	MVVM architecture
 		- Splitting functionality and view will help the transition to GUI.
 	Use a second viewmodel for reviewing the Someday list?
-@bugs
-	Assumes the existence of todo.txt.
-		- It should be created if it doesn't exist yet.

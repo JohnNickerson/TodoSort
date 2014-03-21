@@ -65,40 +65,57 @@ namespace AssimilationSoftware.TodoSort
         /// Mark an item as done.
         /// </summary>
         /// <param name="doneitem">The item to mark as done.</param>
-        internal void MarkDone(ActionItem doneitem)
+        internal void MarkDone(params ActionItem[] doneitems)
         {
-            doneitem.DoneDate = DateTime.Now;
-            done_items.Add(doneitem);
-            todolist.Remove(doneitem);
-            done_changes = true;
+            foreach (ActionItem doneitem in doneitems)
+            {
+                doneitem.DoneDate = DateTime.Now;
+                done_items.Add(doneitem);
+                todolist.Remove(doneitem);
+                done_changes = true;
+            }
         }
 
-        internal void Defer(ActionItem selected)
+        internal void Defer(params ActionItem[] selected)
         {
-            someday_items.Add(selected);
-            todolist.Remove(selected);
-            someday_changes = true;
+            foreach (ActionItem i in selected)
+            {
+                someday_items.Add(i);
+                todolist.Remove(i);
+                someday_changes = true;
+            }
         }
         
         /// <summary>
         /// Moves an item from the Someday list to the main list.
         /// </summary>
         /// <param name="actionItem"></param>
-        internal void Undefer(ActionItem actionItem)
+        internal void Undefer(params ActionItem[] selection)
         {
-            todolist.Add(actionItem);
-            someday_items.Remove(actionItem);
-            someday_changes = true;
+            foreach (ActionItem i in selection)
+            {
+                todolist.Add(i);
+                someday_items.Remove(i);
+                someday_changes = true;
+            }
         }
 
-        internal void Delete(ActionItem selected)
+        internal void Delete(params ActionItem[] selection)
         {
-            todolist.Remove(selected);
+            foreach (ActionItem i in selection)
+            {
+                todolist.Remove(i);
+            }
         }
 
         internal List<ActionItem> Search(string search)
         {
             return (from i in todolist where i.Title.ToLower().Contains(search.ToLower()) select i).ToList();
+        }
+
+        internal List<ActionItem> GetProjectChildren(ActionItem actionItem)
+        {
+            return (from i in todolist where i.Project == actionItem select i).ToList();
         }
 
         #region Properties

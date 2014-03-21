@@ -1,2 +1,10 @@
 @done
 	The Done list should be broken up into date sub lists rather than being a different format.
+	Search items.
+	Abstract out the serialiser codec so it can be replaced by, say, a YAML one.
+		- Currently two static methods in the PIM library.
+	Don't rewrite files if no changes are made.
+		- Someday file already done.
+		- Can't do for main list, because items need sorting.
+		- Don't rewrite on "show" action.
+	Create todo.txt if it doesn't exist yet.

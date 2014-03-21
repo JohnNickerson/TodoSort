@@ -82,7 +82,9 @@ commands:
                         break;
                     case "add":
                         // Add a new item.
+                        Console.WriteLine("What is the new action?");
                         string title = Console.ReadLine();
+                        Console.WriteLine("What context does it belong to?");
                         string context = Console.ReadLine();
                         var item = new ActionItem(context, title);
                         vm.AddItem(item);
@@ -122,28 +124,33 @@ commands:
                             Console.WriteLine();
                             first.Context = newcontext;
                         }
+                        // TODO: Update project handling. This isn't it any more.
+                        // Need to find projects for which there is no next action. I hate that kind of query. It's a "where not exists (subquery)".
                         var projects = vm.GetContext("projects").ToList();
                         for (int i = 0; i < projects.Count; i++)
                         {
-                            // Add next actions for projects.
-                            Console.WriteLine("What is the next action required on this project?");
-                            ActionItem first = projects[i];
-                            Console.WriteLine(first.Title);
-                            string nextaction = Console.ReadLine();
-                            Console.WriteLine("...and to what context does it belong?");
-                            string newcontext = Console.ReadLine();
-                            if (nextaction == newcontext)
+                            if (vm.GetProjectChildren(projects[i]).Count() == 0)
                             {
-                                // Wrote something like "someday"/"someday". Assume it is a new context.
-                                first.Context = newcontext;
+                                // Add next actions for projects.
+                                Console.WriteLine("What is the next action required on this project?");
+                                ActionItem first = projects[i];
+                                Console.WriteLine(first.Title);
+                                string nextaction = Console.ReadLine();
+                                Console.WriteLine("...and to what context does it belong?");
+                                string newcontext = Console.ReadLine();
+                                if (nextaction == newcontext)
+                                {
+                                    // Wrote something like "someday"/"someday". Assume it is a new context.
+                                    first.Context = newcontext;
+                                }
+                                else
+                                {
+                                    var next = new ActionItem(newcontext, nextaction);
+                                    next.Project = first;
+                                    vm.AddItem(next);
+                                }
+                                Console.WriteLine();
                             }
-                            else
-                            {
-                                var next = new ActionItem(newcontext, nextaction);
-                                next.Project = first;
-                                vm.AddItem(next);
-                            }
-                            Console.WriteLine();
                         }
                         break;
                     case "defer":
@@ -187,16 +194,14 @@ commands:
             #endregion
 
 			#region Tidy up
-            while (vm.GetContext("done").Count() > 0)
-            {
-				// Move to the "done" file any items with a context of @done.
-                vm.MarkDone(vm.GetContext("done").ElementAt(0));
-            }
-            while (vm.GetContext("someday").Count() > 0)
-            {
-                // Move any "someday" items in the main list to the someday file.
-                vm.Defer(vm.GetContext("someday").ElementAt(0));
-            }
+			// Move to the "done" file any items with a context of @done.
+            vm.MarkDone(vm.GetContext("done").ToArray());
+
+            // Move any "someday" items in the main list to the someday file.
+            vm.Defer(vm.GetContext("someday").ToArray());
+
+            // Delete any items with a context of "delete".
+            vm.Delete(vm.GetContext("delete").ToArray());
 			#endregion
 
 			// Rewrite the files
