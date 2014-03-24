@@ -10,7 +10,8 @@ namespace AssimilationSoftware.TodoSort
 {
     public class ViewModel
     {
-        List<ActionItem> todolist;
+        #region Fields
+        List<ActionItem> todo_items;
         List<ActionItem> someday_items;
         List<ActionItem> done_items;
 
@@ -21,6 +22,7 @@ namespace AssimilationSoftware.TodoSort
         // Track whether changes have been made to the "someday" file, to avoid rewriting it if possible.
         bool someday_changes;
         bool done_changes;
+        #endregion
 
         public ViewModel(IActionItemMapper todo, IActionItemMapper done, IActionItemMapper someday)
         {
@@ -28,7 +30,7 @@ namespace AssimilationSoftware.TodoSort
             done_mapper = done;
             someday_mapper = someday;
 
-            todolist = todo.LoadAll();
+            todo_items = todo.LoadAll();
             someday_items = someday.LoadAll();
             done_items = done.LoadAll();
             
@@ -36,14 +38,15 @@ namespace AssimilationSoftware.TodoSort
             done_changes = false;
         }
 
+        #region Methods
         internal IEnumerable<ActionItem> GetContext(string context)
         {
-            return from m in todolist where m.Context.EndsWith(context) select m;
+            return from m in todo_items where m.Context.EndsWith(context) select m;
         }
 
         internal void Save()
         {
-            todo_mapper.SaveAll(todolist);
+            todo_mapper.SaveAll(todo_items);
             if (someday_changes)
             {
                 someday_mapper.SaveAll(someday_items);
@@ -58,7 +61,7 @@ namespace AssimilationSoftware.TodoSort
 
         internal void AddItem(ActionItem next)
         {
-            todolist.Add(next);
+            todo_items.Add(next);
         }
 
         /// <summary>
@@ -71,17 +74,22 @@ namespace AssimilationSoftware.TodoSort
             {
                 doneitem.DoneDate = DateTime.Now;
                 done_items.Add(doneitem);
-                todolist.Remove(doneitem);
+                todo_items.Remove(doneitem);
                 done_changes = true;
             }
         }
 
+        /// <summary>
+        /// Moves a list of items to the Someday list.
+        /// </summary>
+        /// <param name="selected"></param>
         internal void Defer(params ActionItem[] selected)
         {
             foreach (ActionItem i in selected)
             {
+                i.Context = "someday";
                 someday_items.Add(i);
-                todolist.Remove(i);
+                todo_items.Remove(i);
                 someday_changes = true;
             }
         }
@@ -94,7 +102,8 @@ namespace AssimilationSoftware.TodoSort
         {
             foreach (ActionItem i in selection)
             {
-                todolist.Add(i);
+                i.Context = "inbox";
+                todo_items.Add(i);
                 someday_items.Remove(i);
                 someday_changes = true;
             }
@@ -104,19 +113,30 @@ namespace AssimilationSoftware.TodoSort
         {
             foreach (ActionItem i in selection)
             {
-                todolist.Remove(i);
+                todo_items.Remove(i);
             }
         }
 
+        /// <summary>
+        /// Finds items in the main list that match a given search term.
+        /// </summary>
+        /// <param name="search">The search term to look for.</param>
+        /// <returns>A list of matching items.</returns>
         internal List<ActionItem> Search(string search)
         {
-            return (from i in todolist where i.Title.ToLower().Contains(search.ToLower()) select i).ToList();
+            return (from i in todo_items where i.Title.ToLower().Contains(search.ToLower()) select i).ToList();
         }
 
         internal List<ActionItem> GetProjectChildren(ActionItem actionItem)
         {
-            return (from i in todolist where i.Project == actionItem select i).ToList();
+            return (from i in todo_items where i.Project == actionItem select i).ToList();
         }
+
+        internal List<ActionItem> GetTickleDueItems()
+        {
+            return (from i in someday_items where i.TickleDate <= DateTime.Now select i).ToList();
+        }
+        #endregion
 
         #region Properties
 

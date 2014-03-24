@@ -104,15 +104,8 @@ commands:
 						break;
                     case "process":
 						// Go over the @someday items and look for tickle dates.
-						for (int i = 0; i < vm.SomedayItems.Count; i++)
-						{
-                            if (vm.SomedayItems[i].TickleDate.HasValue && vm.SomedayItems[i].TickleDate.Value <= DateTime.Now)
-                            {
-                                vm.SomedayItems[i].Context = "@inbox";
-                                vm.SomedayItems[i].TickleDate = null;
-                                vm.Undefer(vm.SomedayItems[i]);
-                            }
-						}
+                        vm.Undefer(vm.GetTickleDueItems().ToArray());
+
                         var inbox = vm.GetContext("inbox").ToList();
                         for (int i = 0; i < inbox.Count; i++)
                         {
@@ -124,7 +117,7 @@ commands:
                             Console.WriteLine();
                             first.Context = newcontext;
                         }
-                        // TODO: Update project handling. This isn't it any more.
+
                         // Need to find projects for which there is no next action. I hate that kind of query. It's a "where not exists (subquery)".
                         var projects = vm.GetContext("projects").ToList();
                         for (int i = 0; i < projects.Count; i++)

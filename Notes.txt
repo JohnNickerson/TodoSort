@@ -12,6 +12,8 @@
 	Ranking
 	Ask for a tickle date when deferring items
 		- Can be null.
+	Search notes and tags
+		- Search not only titles but notes and tags, too.
 @gui
 	GUI
 		- Search
