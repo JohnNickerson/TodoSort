@@ -61,6 +61,8 @@ commands:
     search      Search for matching text items.
     show        Display all items in a context.
     someday     Review the someday file, assigning 10% to an active context.
+    rank        Vote on the relative importance of items to assign priorities.
+    unrank      Reset all ranking data.
 ", Assembly.GetExecutingAssembly().GetName().Version));
                         break;
                     case "search":
@@ -97,7 +99,7 @@ commands:
 					case "show":
 						// Display one context.
 						Console.WriteLine("@{0}", args[1]);
-						foreach (ActionItem i in vm.GetContext(args[1]))
+						foreach (ActionItem i in vm.GetContextItems(args[1]))
 						{
 							Console.WriteLine(string.Format("\t{0}", i.Title));
 						}
@@ -106,7 +108,7 @@ commands:
 						// Go over the @someday items and look for tickle dates.
                         vm.Undefer(vm.GetTickleDueItems().ToArray());
 
-                        var inbox = vm.GetContext("inbox").ToList();
+                        var inbox = vm.GetContextItems("inbox").ToList();
                         for (int i = 0; i < inbox.Count; i++)
                         {
                             // Assign the @inbox items to contexts.
@@ -119,7 +121,7 @@ commands:
                         }
 
                         // Need to find projects for which there is no next action. I hate that kind of query. It's a "where not exists (subquery)".
-                        var projects = vm.GetContext("projects").ToList();
+                        var projects = vm.GetContextItems("projects").ToList();
                         for (int i = 0; i < projects.Count; i++)
                         {
                             if (vm.GetProjectChildren(projects[i]).Count() == 0)
@@ -169,6 +171,7 @@ commands:
                                 Console.WriteLine("{0}: {1}", index, vm.SomedayItems.ElementAt(offset + index).Title);
 							}
 							char choice = Console.ReadKey().KeyChar;
+                            Console.WriteLine();
 							int dex;
 							if (Int32.TryParse(choice.ToString(), out dex))
 							{
@@ -180,6 +183,43 @@ commands:
 							vm.Undefer(selected);
 						}
 						break;
+                    case "rank":
+                        // for each context..
+                        foreach (string con in vm.GetContextNames("inbox"))
+                        {
+                            // select all items without rank parents
+                            var items = (from i in vm.GetContextItems(con) where i.PriorityParent == null select i).ToList();
+                            // TODO: randomise an index list
+                            // show pairs of items
+                            if (items.Count > 1)
+                            {
+                                Console.WriteLine(string.Format("\n\n@{0}", con));
+                            }
+                            for (int x = 0; x < items.Count - 1; x += 2)
+                            {
+                                // get vote
+                                Console.WriteLine(string.Format("\t1: {0}", items[x].Title));
+                                Console.WriteLine(string.Format("\t2: {0}", items[x + 1].Title));
+                                Console.Write("Which of these is more important? ");
+                                var k = Console.ReadKey();
+                                // assign parents based on vote
+                                switch (k.KeyChar)
+                                {
+                                    case '1':
+                                        items[x + 1].PriorityParent = items[x];
+                                        break;
+                                    case '2':
+                                        items[x].PriorityParent = items[x + 1];
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            }
+                        }
+                        break;
+                    case "unrank":
+                        vm.ResetPriorityParents();
+                        break;
                     default:
                         break;
                 }
@@ -188,13 +228,13 @@ commands:
 
 			#region Tidy up
 			// Move to the "done" file any items with a context of @done.
-            vm.MarkDone(vm.GetContext("done").ToArray());
+            vm.MarkDone(vm.GetContextItems("done").ToArray());
 
             // Move any "someday" items in the main list to the someday file.
-            vm.Defer(vm.GetContext("someday").ToArray());
+            vm.Defer(vm.GetContextItems("someday").ToArray());
 
             // Delete any items with a context of "delete".
-            vm.Delete(vm.GetContext("delete").ToArray());
+            vm.Delete(vm.GetContextItems("delete").ToArray());
 			#endregion
 
 			// Rewrite the files

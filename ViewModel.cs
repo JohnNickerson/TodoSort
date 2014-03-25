@@ -39,22 +39,22 @@ namespace AssimilationSoftware.TodoSort
         }
 
         #region Methods
-        internal IEnumerable<ActionItem> GetContext(string context)
+        internal IEnumerable<ActionItem> GetContextItems(string context)
         {
             return from m in todo_items where m.Context.EndsWith(context) select m;
         }
 
         internal void Save()
         {
-            todo_mapper.SaveAll(todo_items);
+            todo_mapper.SaveAll((from i in todo_items orderby i.PriorityDepth select i).ToList());
             if (someday_changes)
             {
-                someday_mapper.SaveAll(someday_items);
+                someday_mapper.SaveAll(someday_items, SortType.Alphanumeric);
                 someday_changes = false;
             }
             if (done_changes)
             {
-                done_mapper.SaveAll(done_items);
+                done_mapper.SaveAll(done_items, SortType.Time);
                 done_changes = false;
             }
         }
@@ -73,6 +73,7 @@ namespace AssimilationSoftware.TodoSort
             foreach (ActionItem doneitem in doneitems)
             {
                 doneitem.DoneDate = DateTime.Now;
+                doneitem.Context = string.Format("{0:yyyy-MM-dd}", doneitem.DoneDate);
                 done_items.Add(doneitem);
                 todo_items.Remove(doneitem);
                 done_changes = true;
@@ -148,5 +149,18 @@ namespace AssimilationSoftware.TodoSort
             }
         }
         #endregion
+
+        internal IEnumerable<string> GetContextNames(params string[] exclude)
+        {
+            return (from i in todo_items select i.Context).Distinct().Except(exclude);
+        }
+
+        internal void ResetPriorityParents()
+        {
+            foreach (var i in todo_items)
+            {
+                i.PriorityParent = null;
+            }
+        }
     }
 }
