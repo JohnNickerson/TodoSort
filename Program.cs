@@ -197,6 +197,7 @@ namespace AssimilationSoftware.TodoSort
                                     default:
                                         break;
                                 }
+                                Console.WriteLine();
                             }
                         }
                         break;

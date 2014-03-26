@@ -20,6 +20,8 @@
 		- Delete items
 		- Defer items
 		- Add follow-up actions
+		- Rank items for priority
+		- Add/edit tags
 	Use a "go" button to separate the ticking of a box from the disk write, in case it is ticked accidentally.
 		- Or just don't clear the item immediately so that it can be unticked if required.
 		- Or include an "undo" action.
@@ -39,6 +41,7 @@
 	MVVM architecture
 		- Splitting functionality and view will help the transition to GUI.
 	Use a second ViewModel for reviewing the Someday list?
+	Unit tests
 @done
 	Ability to cancel an action rather than confirming or selecting one search result.
 	Ranking

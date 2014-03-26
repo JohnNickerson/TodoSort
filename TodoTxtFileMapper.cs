@@ -77,9 +77,12 @@ namespace AssimilationSoftware.PimData.Mappers
                     if (ts.Length > 1)
                     {
                         string tag = ts[0].Replace("#", string.Empty).Trim();
-                        // TODO: Process "special" tags like parent item IDs.
+                        // Process "special" tags like parent item IDs.
                         switch (tag.ToLower())
                         {
+                            case "done-date":
+                                curitem.DoneDate = DateTime.Parse(ts[1]);
+                                break;
                             case "priority-parent":
                                 priorityparents[curitem] = Guid.Parse(ts[1]);
                                 break;
@@ -160,6 +163,10 @@ namespace AssimilationSoftware.PimData.Mappers
                     foreach (string key in i.Tags.Keys)
                     {
                         file.AppendLine(string.Format("\t\t#{0}:{1}", key, i.Tags[key]));
+                    }
+                    if (i.DoneDate.HasValue)
+                    {
+                        file.AppendLine(string.Format("\t\t#done-date:{0:yyyy-MM-dd}", i.DoneDate.Value));
                     }
                     file.AppendLine(string.Format("\t\t#id:{0}", i.ID));
                     if (i.Project != null)
