@@ -25,7 +25,7 @@ namespace AssimilationSoftware.TodoSort.CLI.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("{MyDocs}\\My Dropbox\\Thoughts\\todo.txt")]
+        [global::System.Configuration.DefaultSettingValueAttribute("{MyDocs}\\..\\Dropbox\\Thoughts\\todo.txt")]
         public string Todo {
             get {
                 return ((string)(this["Todo"]));
@@ -37,7 +37,7 @@ namespace AssimilationSoftware.TodoSort.CLI.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("{MyDocs}\\My Dropbox\\Actions\\someday.txt")]
+        [global::System.Configuration.DefaultSettingValueAttribute("{MyDocs}\\..\\Dropbox\\Reference\\Actions\\someday.txt")]
         public string Someday {
             get {
                 return ((string)(this["Someday"]));
@@ -49,7 +49,7 @@ namespace AssimilationSoftware.TodoSort.CLI.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("{MyDocs}\\My Dropbox\\Actions\\done.txt")]
+        [global::System.Configuration.DefaultSettingValueAttribute("{MyDocs}\\..\\Dropbox\\Reference\\Actions\\done.txt")]
         public string Done {
             get {
                 return ((string)(this["Done"]));

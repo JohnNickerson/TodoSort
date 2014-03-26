@@ -1,15 +1,15 @@
 ﻿<?xml version='1.0' encoding='utf-8'?>
-<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="TodoSort.Properties" GeneratedClassName="Settings">
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="AssimilationSoftware.TodoSort.CLI.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
     <Setting Name="Todo" Type="System.String" Scope="User">
-      <Value Profile="(Default)">{MyDocs}\My Dropbox\Thoughts\todo.txt</Value>
+      <Value Profile="(Default)">{MyDocs}\..\Dropbox\Thoughts\todo.txt</Value>
     </Setting>
     <Setting Name="Someday" Type="System.String" Scope="User">
-      <Value Profile="(Default)">{MyDocs}\My Dropbox\Actions\someday.txt</Value>
+      <Value Profile="(Default)">{MyDocs}\..\Dropbox\Reference\Actions\someday.txt</Value>
     </Setting>
     <Setting Name="Done" Type="System.String" Scope="User">
-      <Value Profile="(Default)">{MyDocs}\My Dropbox\Actions\done.txt</Value>
+      <Value Profile="(Default)">{MyDocs}\..\Dropbox\Reference\Actions\done.txt</Value>
     </Setting>
     <Setting Name="Configured" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>

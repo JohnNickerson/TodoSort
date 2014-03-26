@@ -4,6 +4,7 @@ using AssimilationSoftware.TodoSort.Core;
 using AssimilationSoftware.TodoSort.Core.Mappers;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 
@@ -309,7 +310,7 @@ commands:
 
             Console.WriteLine("Configure path to {0}:", prompt);
             Console.WriteLine("Type correct value or [Enter] to accept default.");
-            Console.WriteLine(path);
+            Console.WriteLine(Path.GetFullPath(path));
             var response = Console.ReadLine();
             if (response.Trim().Length > 0)
             {
