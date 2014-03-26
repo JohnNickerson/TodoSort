@@ -9,11 +9,12 @@
 		- Process someday list and see if any were done or should be done now
 	Keep processing while more items still in inbox or projects.
 	Open any list file rather than just the preconfigured ones
-	Ranking
 	Ask for a tickle date when deferring items
 		- Can be null.
 	Search notes and tags
 		- Search not only titles but notes and tags, too.
+	Add tags to an item
+		- Should be easy: search, tag name, tag value. All that code is already written.
 @gui
 	GUI
 		- Search
@@ -32,20 +33,16 @@
 		- eg "Check something" then "|@shopping Buy this" and "|@home Set up that".
 	Tickler file
 		- Automatic return to inbox from the Someday file on a certain date.
-		- Specify another attribute on an action? (>2010-12-01)
+		- Specify as a tag (#tickle-date:2010-12-01)
 		- Someday items with a date specified this way will be moved to the inbox after that date.
-		- Any items in the todo list with dates should be deferred. Any in someday past their dates should be returned.
-		- Automatically defer question-marked items?
 	Generic CRUD operations on any list file
 		- Move to another list file or sub-list, too
-	Should lists always come in threes?
-		- Defer, Do and Done.
-		- That way they can have special meanings.
-		- Or the list processor can just allow moving items between lists.
-	Sync with Outlook? Google Tasks? Astrid?
+	Sync with external services
+		- Outlook, Google Tasks, Wunderlist, Google Keep?
 	Add a timestamp when items are processed through the inbox.
-	Change to mostly manage an offline someday/maybe file and move items to and from Google Tasks.
 	Detect "[x]" marks as completed items
 	MVVM architecture
 		- Splitting functionality and view will help the transition to GUI.
-	Use a second viewmodel for reviewing the Someday list?
+	Use a second ViewModel for reviewing the Someday list?
+@done
+	Ranking

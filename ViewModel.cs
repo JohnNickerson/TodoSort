@@ -162,5 +162,10 @@ namespace AssimilationSoftware.TodoSort
                 i.PriorityParent = null;
             }
         }
+
+        internal void SetTag(ActionItem selected, string tagname, string value)
+        {
+            selected.Tags[tagname] = value;
+        }
     }
 }

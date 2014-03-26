@@ -42,28 +42,7 @@ namespace AssimilationSoftware.TodoSort
                 switch (command)
                 {
                     case "help":
-                        // Print usage text on the console.
-                        Console.WriteLine(string.Format(@"
-TodoSort v{0}
-
-usage:
-TodoSort.exe [command] [args]
-
-commands:
-    add         Add a new item to the list.
-    defer       Move an item to the someday file.
-    delete      Delete an item without doing it.
-    done        Move an item to the done file.
-    process     Housekeeping:
-                    + Assign inbox items to a context
-                    + Move done items to the done file
-                    + Ensure each project has a next action.
-    search      Search for matching text items.
-    show        Display all items in a context.
-    someday     Review the someday file, assigning 10% to an active context.
-    rank        Vote on the relative importance of items to assign priorities.
-    unrank      Reset all ranking data.
-", Assembly.GetExecutingAssembly().GetName().Version));
+                        PrintHelp();
                         break;
                     case "search":
                         // Search for matching items.
@@ -220,6 +199,28 @@ commands:
                     case "unrank":
                         vm.ResetPriorityParents();
                         break;
+                    case "tag":
+                        // Search for a matching item.
+                        if (args.Count() > 1)
+                        {
+                            selected = Disambiguate(vm.Search(args[1]));
+                        }
+                        else
+                        {
+                            Console.Write("Search for an item: ");
+                            var search = Console.ReadLine();
+                            selected = Disambiguate(vm.Search(search));
+                        }
+                        Console.WriteLine();
+                        if (selected != null)
+                        {
+                            Console.WriteLine("What should this new tag be called?");
+                            var tagname = Console.ReadLine().ToLower();
+                            Console.WriteLine("What is the value of the tag?");
+                            var value = Console.ReadLine();
+                            vm.SetTag(selected, tagname, value);
+                        }
+                        break;
                     default:
                         break;
                 }
@@ -239,6 +240,33 @@ commands:
 
 			// Rewrite the files
             vm.Save();
+        }
+
+        private static void PrintHelp()
+        {
+            // Print usage text on the console.
+            Console.WriteLine(string.Format(@"
+TodoSort v{0}
+
+usage:
+TodoSort.exe [command] [args]
+
+commands:
+    add         Add a new item to the list.
+    defer       Move an item to the someday file.
+    delete      Delete an item without doing it.
+    done        Move an item to the done file.
+    process     Housekeeping:
+                    + Assign inbox items to a context
+                    + Move done items to the done file
+                    + Ensure each project has a next action.
+    search      Search for matching text items.
+    show        Display all items in a context.
+    someday     Review the someday file, assigning 10% to an active context.
+    rank        Vote on the relative importance of items to assign priorities.
+    unrank      Reset all ranking data.
+    tag         Adds a tag to an item.
+", Assembly.GetExecutingAssembly().GetName().Version));
         }
 
 		private static ActionItem Disambiguate(List<ActionItem> todolist)
