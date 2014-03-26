@@ -11,11 +11,11 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using AssimilationSoftware.PimData;
-using WpfGui.Properties;
 using AssimilationSoftware.PimData.Mappers;
 using AssimilationSoftware.PimData.Model;
+using AssimilationSoftware.TodoSort.WpfGui.Properties;
 
-namespace WpfGui
+namespace AssimilationSoftware.TodoSort.WpfGui
 {
 	/// <summary>
 	/// Interaction logic for Window1.xaml

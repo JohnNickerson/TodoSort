@@ -1,4 +1,4 @@
-﻿<Application x:Class="WpfGui.App"
+﻿<Application x:Class="AssimilationSoftware.TodoSort.WpfGui.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     StartupUri="Window1.xaml">

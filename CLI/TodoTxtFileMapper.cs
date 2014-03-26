@@ -7,7 +7,7 @@ using System.IO;
 using AssimilationSoftware.PimData.Interfaces;
 using AssimilationSoftware.PimData.Model;
 
-namespace AssimilationSoftware.PimData.Mappers
+namespace AssimilationSoftware.TodoSort.Core.Mappers
 {
     public class TodoTxtFileMapper : IActionItemMapper
     {

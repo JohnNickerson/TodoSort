@@ -6,7 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace AssimilationSoftware.TodoSort
+namespace AssimilationSoftware.TodoSort.Core
 {
     public class ViewModel
     {

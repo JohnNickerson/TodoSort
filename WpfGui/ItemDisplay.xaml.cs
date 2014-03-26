@@ -12,7 +12,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using AssimilationSoftware.PimData;
 
-namespace WpfGui
+namespace AssimilationSoftware.TodoSort.WpfGui
 {
     /// <summary>
     /// Interaction logic for ItemDisplay.xaml
