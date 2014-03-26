@@ -41,12 +41,12 @@ namespace AssimilationSoftware.TodoSort.Core
         }
 
         #region Methods
-        internal IEnumerable<ActionItem> GetContextItems(string context)
+        public IEnumerable<ActionItem> GetContextItems(string context)
         {
             return from m in todo_items where m.Context.EndsWith(context) select m;
         }
 
-        internal void Save()
+        public void Save()
         {
             if (todo_changes)
             {
@@ -64,7 +64,7 @@ namespace AssimilationSoftware.TodoSort.Core
             }
         }
 
-        internal void AddItem(ActionItem next)
+        public void AddItem(ActionItem next)
         {
             todo_items.Add(next);
             todo_changes = true;
@@ -74,7 +74,7 @@ namespace AssimilationSoftware.TodoSort.Core
         /// Mark an item as done.
         /// </summary>
         /// <param name="doneitem">The item to mark as done.</param>
-        internal void MarkDone(params ActionItem[] doneitems)
+        public void MarkDone(params ActionItem[] doneitems)
         {
             foreach (ActionItem doneitem in doneitems)
             {
@@ -91,7 +91,7 @@ namespace AssimilationSoftware.TodoSort.Core
         /// Moves a list of items to the Someday list.
         /// </summary>
         /// <param name="selected"></param>
-        internal void Defer(params ActionItem[] selected)
+        public void Defer(params ActionItem[] selected)
         {
             foreach (ActionItem i in selected)
             {
@@ -107,7 +107,7 @@ namespace AssimilationSoftware.TodoSort.Core
         /// Moves an item from the Someday list to the main list.
         /// </summary>
         /// <param name="actionItem"></param>
-        internal void Undefer(string context, params ActionItem[] selection)
+        public void Undefer(string context, params ActionItem[] selection)
         {
             foreach (ActionItem i in selection)
             {
@@ -119,7 +119,7 @@ namespace AssimilationSoftware.TodoSort.Core
             }
         }
 
-        internal void Delete(params ActionItem[] selection)
+        public void Delete(params ActionItem[] selection)
         {
             foreach (ActionItem i in selection)
             {
@@ -133,7 +133,7 @@ namespace AssimilationSoftware.TodoSort.Core
         /// </summary>
         /// <param name="search">The search term to look for.</param>
         /// <returns>A list of matching items.</returns>
-        internal List<ActionItem> Search(string search)
+        public List<ActionItem> Search(string search)
         {
             return (from i in todo_items
                     where i.Title.ToLower().Contains(search.ToLower())
@@ -142,12 +142,12 @@ namespace AssimilationSoftware.TodoSort.Core
                     select i).ToList();
         }
 
-        internal List<ActionItem> GetProjectChildren(ActionItem actionItem)
+        public List<ActionItem> GetProjectChildren(ActionItem actionItem)
         {
             return (from i in todo_items where i.Project == actionItem select i).ToList();
         }
 
-        internal List<ActionItem> GetTickleDueItems()
+        public List<ActionItem> GetTickleDueItems()
         {
             return (from i in someday_items where i.TickleDate <= DateTime.Now select i).ToList();
         }
@@ -164,12 +164,12 @@ namespace AssimilationSoftware.TodoSort.Core
         }
         #endregion
 
-        internal IEnumerable<string> GetContextNames(params string[] exclude)
+        public IEnumerable<string> GetContextNames(params string[] exclude)
         {
             return (from i in todo_items select i.Context).Distinct().Except(exclude);
         }
 
-        internal void ResetPriorityParents()
+        public void ResetPriorityParents()
         {
             foreach (var i in todo_items)
             {
@@ -178,13 +178,13 @@ namespace AssimilationSoftware.TodoSort.Core
             }
         }
 
-        internal void SetTag(ActionItem selected, string tagname, string value)
+        public void SetTag(ActionItem selected, string tagname, string value)
         {
             selected.Tags[tagname] = value;
             todo_changes = true;
         }
 
-        internal void SetParent(ActionItem child, ActionItem parent)
+        public void SetParent(ActionItem child, ActionItem parent)
         {
             child.PriorityParent = parent;
             todo_changes = true;
