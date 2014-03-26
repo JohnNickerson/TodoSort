@@ -10,6 +10,10 @@
 	Open any list file rather than just the preconfigured ones
 	Ask for a tickle date when deferring items
 		- Can be null.
+	Implement an "open-url" command for items that contain a URL tag
+	Detailed help on each command
+		- Eg "todosort help defer" to bring up a page just on the "defer" command.
+		- This would allow detailed help when command parsing fails.
 @gui
 	GUI
 		- Search
@@ -42,6 +46,12 @@
 		- Splitting functionality and view will help the transition to GUI.
 	Use a second ViewModel for reviewing the Someday list?
 	Unit tests
+	Extensible command framework?
+		- Doesn't seem like a great idea, actually.
+	Recurring reminders
+@bugs
+	Allow tags to contain colons.
+		- At the moment, this inhibits the ability to store URLs and file paths.
 @done
 	Ability to cancel an action rather than confirming or selecting one search result.
 	Ranking
