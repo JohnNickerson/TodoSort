@@ -20,6 +20,7 @@ namespace AssimilationSoftware.TodoSort
         IActionItemMapper done_mapper;
 
         // Track whether changes have been made to the "someday" file, to avoid rewriting it if possible.
+        bool todo_changes;
         bool someday_changes;
         bool done_changes;
         #endregion
@@ -33,7 +34,8 @@ namespace AssimilationSoftware.TodoSort
             todo_items = todo.LoadAll();
             someday_items = someday.LoadAll();
             done_items = done.LoadAll();
-            
+
+            todo_changes = false;
             someday_changes = false;
             done_changes = false;
         }
@@ -46,7 +48,10 @@ namespace AssimilationSoftware.TodoSort
 
         internal void Save()
         {
-            todo_mapper.SaveAll((from i in todo_items orderby i.PriorityDepth select i).ToList());
+            if (todo_changes)
+            {
+                todo_mapper.SaveAll(todo_items, SortType.Priority);
+            }
             if (someday_changes)
             {
                 someday_mapper.SaveAll(someday_items, SortType.Alphanumeric);
@@ -62,6 +67,7 @@ namespace AssimilationSoftware.TodoSort
         internal void AddItem(ActionItem next)
         {
             todo_items.Add(next);
+            todo_changes = true;
         }
 
         /// <summary>
@@ -77,6 +83,7 @@ namespace AssimilationSoftware.TodoSort
                 done_items.Add(doneitem);
                 todo_items.Remove(doneitem);
                 done_changes = true;
+                todo_changes = true;
             }
         }
 
@@ -92,6 +99,7 @@ namespace AssimilationSoftware.TodoSort
                 someday_items.Add(i);
                 todo_items.Remove(i);
                 someday_changes = true;
+                todo_changes = true;
             }
         }
         
@@ -99,14 +107,15 @@ namespace AssimilationSoftware.TodoSort
         /// Moves an item from the Someday list to the main list.
         /// </summary>
         /// <param name="actionItem"></param>
-        internal void Undefer(params ActionItem[] selection)
+        internal void Undefer(string context, params ActionItem[] selection)
         {
             foreach (ActionItem i in selection)
             {
-                i.Context = "inbox";
+                i.Context = context;
                 todo_items.Add(i);
                 someday_items.Remove(i);
                 someday_changes = true;
+                todo_changes = true;
             }
         }
 
@@ -115,6 +124,7 @@ namespace AssimilationSoftware.TodoSort
             foreach (ActionItem i in selection)
             {
                 todo_items.Remove(i);
+                todo_changes = true;
             }
         }
 
@@ -125,7 +135,11 @@ namespace AssimilationSoftware.TodoSort
         /// <returns>A list of matching items.</returns>
         internal List<ActionItem> Search(string search)
         {
-            return (from i in todo_items where i.Title.ToLower().Contains(search.ToLower()) select i).ToList();
+            return (from i in todo_items
+                    where i.Title.ToLower().Contains(search.ToLower())
+                        || string.Join("\n", i.Notes).ToLower().Contains(search.ToLower())
+                        || string.Join("\n", (from k in i.Tags select k.Value)).ToLower().Contains(search.ToLower())
+                    select i).ToList();
         }
 
         internal List<ActionItem> GetProjectChildren(ActionItem actionItem)
@@ -160,12 +174,20 @@ namespace AssimilationSoftware.TodoSort
             foreach (var i in todo_items)
             {
                 i.PriorityParent = null;
+                todo_changes = true;
             }
         }
 
         internal void SetTag(ActionItem selected, string tagname, string value)
         {
             selected.Tags[tagname] = value;
+            todo_changes = true;
+        }
+
+        internal void SetParent(ActionItem child, ActionItem parent)
+        {
+            child.PriorityParent = parent;
+            todo_changes = true;
         }
     }
 }

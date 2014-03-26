@@ -46,6 +46,7 @@ namespace AssimilationSoftware.TodoSort
                         break;
                     case "search":
                         // Search for matching items.
+                        if (args.Count() < 2) { PrintHelp(); break; }
                         var results = vm.Search(args[1]);
                         string last_context = string.Empty;
                         foreach (ActionItem i in from a in results orderby a.Context, a.Title select a)
@@ -72,11 +73,13 @@ namespace AssimilationSoftware.TodoSort
                         break;
                     case "delete":
                         // Find a matching item to delete.
+                        if (args.Count() < 2) { PrintHelp(); break; }
                         selected = Disambiguate(vm.Search(args[1]));
                         vm.Delete(selected);
                         break;
 					case "show":
 						// Display one context.
+                        if (args.Count() < 2) { PrintHelp(); break; }
 						Console.WriteLine("@{0}", args[1]);
 						foreach (ActionItem i in vm.GetContextItems(args[1]))
 						{
@@ -85,7 +88,7 @@ namespace AssimilationSoftware.TodoSort
 						break;
                     case "process":
 						// Go over the @someday items and look for tickle dates.
-                        vm.Undefer(vm.GetTickleDueItems().ToArray());
+                        vm.Undefer("inbox", vm.GetTickleDueItems().ToArray());
 
                         var inbox = vm.GetContextItems("inbox").ToList();
                         for (int i = 0; i < inbox.Count; i++)
@@ -129,11 +132,13 @@ namespace AssimilationSoftware.TodoSort
                         break;
                     case "defer":
                         // Move the item and its sub-items to the "someday" file.
+                        if (args.Count() < 2) { PrintHelp(); break; }
 						selected = Disambiguate(vm.Search(args[1]));
 						vm.Defer(selected);
                         break;
                     case "done":
                         // If there is a next action, create a new item and add it to the correct context.
+                        if (args.Count() < 2) { PrintHelp(); break; }
 						selected = Disambiguate(vm.Search(args[1]));
 						if (selected != null)
                         {
@@ -158,8 +163,7 @@ namespace AssimilationSoftware.TodoSort
 							}
 							Console.WriteLine("To which context should this item go?");
 							string newcontext = Console.ReadLine();
-							selected.Context = newcontext;
-							vm.Undefer(selected);
+							vm.Undefer(newcontext, selected);
 						}
 						break;
                     case "rank":
@@ -185,10 +189,10 @@ namespace AssimilationSoftware.TodoSort
                                 switch (k.KeyChar)
                                 {
                                     case '1':
-                                        items[x + 1].PriorityParent = items[x];
+                                        vm.SetParent(items[x + 1], items[x]);
                                         break;
                                     case '2':
-                                        items[x].PriorityParent = items[x + 1];
+                                        vm.SetParent(items[x], items[x + 1]);
                                         break;
                                     default:
                                         break;
@@ -201,16 +205,8 @@ namespace AssimilationSoftware.TodoSort
                         break;
                     case "tag":
                         // Search for a matching item.
-                        if (args.Count() > 1)
-                        {
-                            selected = Disambiguate(vm.Search(args[1]));
-                        }
-                        else
-                        {
-                            Console.Write("Search for an item: ");
-                            var search = Console.ReadLine();
-                            selected = Disambiguate(vm.Search(search));
-                        }
+                        if (args.Count() < 2) { PrintHelp(); break; }
+                        selected = Disambiguate(vm.Search(args[1]));
                         Console.WriteLine();
                         if (selected != null)
                         {

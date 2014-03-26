@@ -1,6 +1,5 @@
 @interface
 	Allow multiple actions per invocation.
-	Ability to cancel an action rather than confirming or selecting one search result.
 	Allow marking a project as "done" while processing, instead of needing a new action.
 		- If action matches new context, just assign context.
 	"Review" mode?
@@ -11,10 +10,6 @@
 	Open any list file rather than just the preconfigured ones
 	Ask for a tickle date when deferring items
 		- Can be null.
-	Search notes and tags
-		- Search not only titles but notes and tags, too.
-	Add tags to an item
-		- Should be easy: search, tag name, tag value. All that code is already written.
 @gui
 	GUI
 		- Search
@@ -45,4 +40,9 @@
 		- Splitting functionality and view will help the transition to GUI.
 	Use a second ViewModel for reviewing the Someday list?
 @done
+	Ability to cancel an action rather than confirming or selecting one search result.
 	Ranking
+	Add tags to an item
+		- Should be easy: search, tag name, tag value. All that code is already written.
+	Search notes and tags
+		- Search not only titles but notes and tags, too.
