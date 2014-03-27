@@ -39,11 +39,11 @@ namespace AssimilationSoftware.TodoSort.CLI
                 switch (command)
                 {
                     case "help":
-                        PrintHelp();
+                        PrintHelp(null);
                         break;
                     case "search":
                         // Search for matching items.
-                        if (args.Count() < 2) { PrintHelp(); break; }
+                        if (args.Count() < 2) { PrintHelp(command); break; }
                         var results = vm.Search(args[1]);
                         string last_context = string.Empty;
                         foreach (ActionItem i in from a in results orderby a.Context, a.Title select a)
@@ -54,7 +54,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                             }
                             else
                             {
-                                Console.WriteLine(string.Format("@{0}\n\t{1}", i.Context, i.Title));
+                                Console.WriteLine(string.Format("@{0}{2}\t{1}", i.Context, i.Title, Environment.NewLine));
                                 last_context = i.Context;
                             }
                         }
@@ -70,17 +70,33 @@ namespace AssimilationSoftware.TodoSort.CLI
                         break;
                     case "delete":
                         // Find a matching item to delete.
-                        if (args.Count() < 2) { PrintHelp(); break; }
+                        if (args.Count() < 2) { PrintHelp(command); break; }
                         selected = Disambiguate(vm.Search(args[1]));
                         vm.Delete(selected);
                         break;
 					case "show":
 						// Display one context.
-                        if (args.Count() < 2) { PrintHelp(); break; }
+                        if (args.Count() < 2) { PrintHelp(command); break; }
 						Console.WriteLine("@{0}", args[1]);
-						foreach (ActionItem i in vm.GetContextItems(args[1]))
+                        var list = vm.GetContextItems(args[1]);
+                        if (args.Contains("--head"))
+                        {
+                            list = (from i in list where i.PriorityParent == null select i);
+                        }
+						foreach (ActionItem i in list)
 						{
 							Console.WriteLine(string.Format("\t{0}", i.Title));
+                            if (args.Contains("--verbose"))
+                            {
+                                if (i.Notes.Count > 0)
+                                {
+                                    Console.WriteLine(string.Format("\t\t- {0}", string.Join("\n\t\t- ", i.Notes)));
+                                }
+                                if (i.Tags.Count > 0)
+                                {
+                                    Console.WriteLine(string.Format("\t\t{0}", string.Join("\n\t\t", from t in i.Tags select string.Format("#{0}:{1}", t.Key, t.Value))));
+                                }
+                            }
 						}
 						break;
                     case "process":
@@ -129,13 +145,13 @@ namespace AssimilationSoftware.TodoSort.CLI
                         break;
                     case "defer":
                         // Move the item and its sub-items to the "someday" file.
-                        if (args.Count() < 2) { PrintHelp(); break; }
+                        if (args.Count() < 2) { PrintHelp(command); break; }
 						selected = Disambiguate(vm.Search(args[1]));
 						vm.Defer(selected);
                         break;
                     case "done":
                         // If there is a next action, create a new item and add it to the correct context.
-                        if (args.Count() < 2) { PrintHelp(); break; }
+                        if (args.Count() < 2) { PrintHelp(command); break; }
 						selected = Disambiguate(vm.Search(args[1]));
 						if (selected != null)
                         {
@@ -173,7 +189,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                             // show pairs of items
                             if (items.Count > 1)
                             {
-                                Console.WriteLine(string.Format("\n\n@{0}", con));
+                                Console.WriteLine(string.Format("{1}{1}@{0}", con, Environment.NewLine));
                             }
                             for (int x = 0; x < items.Count - 1; x += 2)
                             {
@@ -203,7 +219,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                         break;
                     case "tag":
                         // Search for a matching item.
-                        if (args.Count() < 2) { PrintHelp(); break; }
+                        if (args.Count() < 2) { PrintHelp(command); break; }
                         selected = Disambiguate(vm.Search(args[1]));
                         Console.WriteLine();
                         if (selected != null)
@@ -236,7 +252,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             vm.Save();
         }
 
-        private static void PrintHelp()
+        private static void PrintHelp(string command)
         {
             // Print usage text on the console.
             Console.WriteLine(string.Format(@"

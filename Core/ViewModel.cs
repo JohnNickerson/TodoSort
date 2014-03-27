@@ -2,6 +2,7 @@
 using AssimilationSoftware.PimData.Model;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -23,6 +24,8 @@ namespace AssimilationSoftware.TodoSort.Core
         bool todo_changes;
         bool someday_changes;
         bool done_changes;
+
+        string _searchTerm;
         #endregion
 
         public ViewModel(IActionItemMapper todo, IActionItemMapper done, IActionItemMapper someday)
@@ -38,7 +41,32 @@ namespace AssimilationSoftware.TodoSort.Core
             todo_changes = false;
             someday_changes = false;
             done_changes = false;
+
+            _searchTerm = string.Empty;
         }
+
+        #region Events
+        /// <summary>
+        /// An event that indicates a property has changed value.
+        /// </summary>
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        /// <summary>
+        /// Fires the PropertyChanged event with given arguments.
+        /// </summary>
+        /// <param name="e"></param>
+        public void RaisePropertyChanged(params string[] propnames)
+        {
+            foreach (string prop in propnames)
+            {
+                var e = new PropertyChangedEventArgs(prop);
+                if (PropertyChanged != null)
+                {
+                    PropertyChanged(this, e);
+                }
+            }
+        }
+        #endregion
 
         #region Methods
         public IEnumerable<ActionItem> GetContextItems(string context)
@@ -137,8 +165,8 @@ namespace AssimilationSoftware.TodoSort.Core
         {
             return (from i in todo_items
                     where i.Title.ToLower().Contains(search.ToLower())
-                        || string.Join("\n", i.Notes).ToLower().Contains(search.ToLower())
-                        || string.Join("\n", (from k in i.Tags select k.Value)).ToLower().Contains(search.ToLower())
+                        || string.Join(Environment.NewLine, i.Notes).ToLower().Contains(search.ToLower())
+                        || string.Join(Environment.NewLine, (from k in i.Tags select k.Value)).ToLower().Contains(search.ToLower())
                     select i).ToList();
         }
 
@@ -160,6 +188,27 @@ namespace AssimilationSoftware.TodoSort.Core
             get
             {
                 return someday_items;
+            }
+        }
+
+        public string SearchTerm
+        {
+            get
+            {
+                return _searchTerm;
+            }
+            set
+            {
+                _searchTerm = value;
+                RaisePropertyChanged("SearchTerm", "SearchResults");
+            }
+        }
+
+        public List<ActionItem> SearchResults
+        {
+            get
+            {
+                return this.Search(SearchTerm);
             }
         }
         #endregion

@@ -7,29 +7,12 @@
             <RowDefinition Height="30" />
             <RowDefinition />
         </Grid.RowDefinitions>
-		<TabControl Margin="0,0,0,0" Name="tabControl1" Grid.Row="1">
-			<TabItem Header="todo" Name="todotab">
-				<Grid>
-					<TreeView Margin="0,0,0,0" Name="todotree">
-						<TreeViewItem IsExpanded="True" Header="@home">
-							<CheckBox Height="16" Name="checkBox1" VerticalAlignment="Top">CheckBox</CheckBox>
-						</TreeViewItem>
-						<TreeViewItem IsExpanded="True" Header="@work">
-							<CheckBox Height="16" Name="checkBox2" VerticalAlignment="Top">CheckBox</CheckBox>
-							<CheckBox Height="16" Name="checkBox3" VerticalAlignment="Top">CheckBox</CheckBox>
-							<CheckBox Height="16" Name="checkBox4" VerticalAlignment="Top">CheckBox</CheckBox>
-						</TreeViewItem>
-					</TreeView>
-				</Grid>
-			</TabItem>
-			<TabItem Header="someday" Name="somedaytab">
-                <Grid Name="somedayGrid">
-                   
-                </Grid>
-            </TabItem>
-			<TabItem Header="done" Name="donetab">
-				<Grid />
-			</TabItem>
-		</TabControl>
+        <StackPanel Orientation="Horizontal">
+            <TextBox Name="SearchBox" Text="{Binding Path=SearchTerm}" Width="100" />
+            <Button Content="Search" Width="50" />
+        </StackPanel>
+        <ListView Grid.Row="1" ItemsSource="{Binding Path=SearchResults}">
+            <ListViewItem Content="{Binding Title}"></ListViewItem>
+        </ListView>
 	</Grid>
 </Window>
