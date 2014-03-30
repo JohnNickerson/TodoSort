@@ -73,7 +73,7 @@ namespace AssimilationSoftware.TodoSort.Core.Mappers
                 else if (items[x].Trim().StartsWith("#"))
                 {
                     // Name.
-                    string[] ts = items[x].Trim().Split(':');
+                    string[] ts = items[x].Trim().Split(new char[] { ':' }, 2);
                     if (ts.Length > 1)
                     {
                         string tag = ts[0].Replace("#", string.Empty).Trim();
