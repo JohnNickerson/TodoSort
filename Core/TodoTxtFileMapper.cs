@@ -149,7 +149,7 @@ namespace AssimilationSoftware.TodoSort.Core.Mappers
         public void SaveAll(List<ActionItem> items)
         {
             StringBuilder file = new StringBuilder();
-            foreach (string b in (from s in items orderby s.Context select s.Context).Distinct())
+            foreach (string b in (from s in items orderby s.Context select s.Context.ToLower()).Distinct())
             {
                 // Write out block.
                 file.AppendLine(string.Format("@{0}", b));

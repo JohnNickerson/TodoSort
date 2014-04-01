@@ -1,8 +1,8 @@
-@interface
+@command-line
 	Allow multiple actions per invocation.
 	Allow marking a project as "done" while processing, instead of needing a new action.
 		- If action matches new context, just assign context.
-	"Review" mode?
+	Review mode?
 		- Process inbox and projects
 		- Ask if each item is done or should be deferred
 		- Process someday list and see if any were done or should be done now
@@ -11,21 +11,29 @@
 	Ask for a tickle date when deferring items
 		- Can be null.
 	Implement an "open-url" command for items that contain a URL tag
+		- Or just something to read a tag value to stdout so it can be piped to another function.
+		- Need unambiguous search via command line.
+		- todosort show-tag url --search "YouTube Watch Later" | start
+		- Note: Piping a URL straight to "start" doesn't work. It needs a command line argument.
 	Detailed help on each command
 		- Eg "todosort help defer" to bring up a page just on the "defer" command.
 		- This would allow detailed help when command parsing fails.
+	Write a command line argument parser
+		- To turn a line of text arguments into a command and a list of argument pairs.
+		- I could use a library, but by then I might be going a bit too far down the CLI rabbit hole.
+	Make the CLI work on a single file only
+		- Take an argument for the file name to open.
 @gui
-	GUI
-		- Search
-		- Mark as done
-		- Process inbox
-		- Review Someday items
-		- Add notes
-		- Delete items
-		- Defer items
-		- Add follow-up actions
-		- Rank items for priority
-		- Add/edit tags
+	Search via GUI
+	Mark as done via GUI
+	Process inbox via GUI
+	Review Someday items via GUI
+	Add notes via GUI
+	Delete items via GUI
+	Defer items via GUI
+	Add follow-up actions via GUI
+	Rank items for priority via GUI
+	Add/edit tags via GUI
 	Use a "go" button to separate the ticking of a box from the disk write, in case it is ticked accidentally.
 		- Or just don't clear the item immediately so that it can be unticked if required.
 		- Or include an "undo" action.
@@ -48,10 +56,14 @@
 	Unit tests
 	Extensible command framework?
 		- Doesn't seem like a great idea, actually.
-	Recurring reminders
+	Recurring reminders and items
+		- "repeats" tags? That's just a way to serialise it.
+	Deferred projects should take all child items with them
+		- And un-deferring, too.
+	Import function
+		- To merge lists and add new items in bulk.
+		- Optionally assign all to a new context or keep in their existing contexts.
 @bugs
-	Allow tags to contain colons.
-		- At the moment, this inhibits the ability to store URLs and file paths.
 @done
 	Ability to cancel an action rather than confirming or selecting one search result.
 	Ranking
@@ -59,3 +71,5 @@
 		- Should be easy: search, tag name, tag value. All that code is already written.
 	Search notes and tags
 		- Search not only titles but notes and tags, too.
+	Allow tags to contain colons.
+		- At the moment, this inhibits the ability to store URLs and file paths.

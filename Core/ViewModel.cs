@@ -71,7 +71,7 @@ namespace AssimilationSoftware.TodoSort.Core
         #region Methods
         public IEnumerable<ActionItem> GetContextItems(string context)
         {
-            return from m in todo_items where m.Context.EndsWith(context) select m;
+            return from m in todo_items where m.Context.EndsWith(context.ToLower()) select m;
         }
 
         public void Save()
@@ -121,13 +121,18 @@ namespace AssimilationSoftware.TodoSort.Core
         /// <param name="selected"></param>
         public void Defer(params ActionItem[] selected)
         {
-            foreach (ActionItem i in selected)
+            List<ActionItem> to_defer = new List<ActionItem>(selected);
+            while (to_defer.Count > 0)
             {
+                ActionItem i = to_defer[0];
                 i.Context = "someday";
                 someday_items.Add(i);
                 todo_items.Remove(i);
                 someday_changes = true;
                 todo_changes = true;
+
+                //TODO: If this item was the project for another, defer that one too.
+                //to_defer.AddRange(from a in todo_items where a.Project == i select a);
             }
         }
         
@@ -137,13 +142,18 @@ namespace AssimilationSoftware.TodoSort.Core
         /// <param name="actionItem"></param>
         public void Undefer(string context, params ActionItem[] selection)
         {
-            foreach (ActionItem i in selection)
+            List<ActionItem> to_undefer = new List<ActionItem>(selection);
+            while (to_undefer.Count > 0)
             {
+                ActionItem i = to_undefer[0];
                 i.Context = context;
                 todo_items.Add(i);
                 someday_items.Remove(i);
                 someday_changes = true;
                 todo_changes = true;
+
+                //TODO: If this item was the project for another, undefer that one, too.
+                //to_undefer.AddRange(from a in someday_items where a.Project == i select a);
             }
         }
 

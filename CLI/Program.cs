@@ -77,7 +77,7 @@ namespace AssimilationSoftware.TodoSort.CLI
 					case "show":
 						// Display one context.
                         if (args.Count() < 2) { PrintHelp(command); break; }
-						Console.WriteLine("@{0}", args[1]);
+						Console.WriteLine("@{0}", args[1].ToLower());
                         var list = vm.GetContextItems(args[1]);
                         if (args.Contains("--head"))
                         {
