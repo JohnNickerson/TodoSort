@@ -23,6 +23,8 @@
 		- I could use a library, but by then I might be going a bit too far down the CLI rabbit hole.
 	Make the CLI work on a single file only
 		- Take an argument for the file name to open.
+	Make "--head" a ViewModel option
+		- To work across all search functions equally.
 @gui
 	Search via GUI
 	Mark as done via GUI

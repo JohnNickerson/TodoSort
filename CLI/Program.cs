@@ -78,10 +78,13 @@ namespace AssimilationSoftware.TodoSort.CLI
                         // Read a tag and pass it through to the "start" command. Intended for URLs.
                         if (args.Count() < 3) { PrintHelp(command); break; }
                         selected = Disambiguate(vm.Search(args[1]));
-                        string tagvalue = selected.Tags[args[2]];
-                        System.Diagnostics.Process p = new System.Diagnostics.Process();
-                        p.StartInfo.FileName = tagvalue;
-                        p.Start();
+                        if (selected != null && selected.Tags.ContainsKey(args[2]))
+                        {
+                            string tagvalue = selected.Tags[args[2]];
+                            System.Diagnostics.Process p = new System.Diagnostics.Process();
+                            p.StartInfo.FileName = tagvalue;
+                            p.Start();
+                        }
                         break;
 					case "show":
 						// Display one context.
@@ -99,7 +102,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                             {
                                 if (i.Notes.Count > 0)
                                 {
-                                    Console.WriteLine(string.Format("\t\t- {0}", string.Join("\n\t\t- ", i.Notes)));
+                                    Console.WriteLine(string.Format("\t\t{0}", string.Join("\n\t\t- ", i.Notes)));
                                 }
                                 if (i.Tags.Count > 0)
                                 {
