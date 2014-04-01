@@ -12,6 +12,9 @@ namespace AssimilationSoftware.TodoSort.CLI
 {
     class Program
     {
+        private static bool verbose = false;
+        private static bool showHeadOnly = false;
+
         static void Main(string[] args)
         {
 			// Check settings
@@ -30,6 +33,16 @@ namespace AssimilationSoftware.TodoSort.CLI
 
             ViewModel vm = new ViewModel(new TodoTxtFileMapper(Settings.Default.Todo), new TodoTxtFileMapper(Settings.Default.Done), new TodoTxtFileMapper(Settings.Default.Someday));
 
+            // Set universal options.
+            if (args.Contains("--verbose"))
+            {
+                verbose = true;
+            }
+            if (args.Contains("--head"))
+            {
+                showHeadOnly = true;
+            }
+
             #region Manipulate the file items
             if (args.Length > 0)
             {
@@ -45,19 +58,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                         // Search for matching items.
                         if (args.Count() < 2) { PrintHelp(command); break; }
                         var results = vm.Search(args[1]);
-                        string last_context = string.Empty;
-                        foreach (ActionItem i in from a in results orderby a.Context, a.Title select a)
-                        {
-                            if (i.Context == last_context)
-                            {
-                                Console.WriteLine(string.Format("\t{0}", i.Title));
-                            }
-                            else
-                            {
-                                Console.WriteLine(string.Format("@{0}{2}\t{1}", i.Context, i.Title, Environment.NewLine));
-                                last_context = i.Context;
-                            }
-                        }
+                        PrintItems(results);
                         break;
                     case "add":
                         // Add a new item.
@@ -89,27 +90,8 @@ namespace AssimilationSoftware.TodoSort.CLI
 					case "show":
 						// Display one context.
                         if (args.Count() < 2) { PrintHelp(command); break; }
-						Console.WriteLine("@{0}", args[1].ToLower());
                         var list = vm.GetContextItems(args[1]);
-                        if (args.Contains("--head"))
-                        {
-                            list = (from i in list where i.PriorityParent == null select i);
-                        }
-						foreach (ActionItem i in list)
-						{
-							Console.WriteLine(string.Format("\t{0}", i.Title));
-                            if (args.Contains("--verbose"))
-                            {
-                                if (i.Notes.Count > 0)
-                                {
-                                    Console.WriteLine(string.Format("\t\t{0}", string.Join("\n\t\t- ", i.Notes)));
-                                }
-                                if (i.Tags.Count > 0)
-                                {
-                                    Console.WriteLine(string.Format("\t\t{0}", string.Join("\n\t\t", from t in i.Tags select string.Format("#{0}:{1}", t.Key, t.Value))));
-                                }
-                            }
-						}
+                        PrintItems(list);
 						break;
                     case "process":
 						// Go over the @someday items and look for tickle dates.
@@ -262,6 +244,35 @@ namespace AssimilationSoftware.TodoSort.CLI
 
 			// Rewrite the files
             vm.Save();
+        }
+
+        private static void PrintItems(IEnumerable<ActionItem> list)
+        {
+            if (showHeadOnly)
+            {
+                list = (from i in list where i.PriorityParent == null select i);
+            }
+            string last_context = string.Empty;
+            foreach (ActionItem i in from a in list orderby a.Context, a.Title select a)
+            {
+                if (i.Context != last_context)
+                {
+                    Console.WriteLine(string.Format("@{0}", i.Context));
+                }
+                Console.WriteLine(string.Format("\t{0}", i.Title));
+                if (verbose)
+                {
+                    if (i.Notes.Count > 0)
+                    {
+                        Console.WriteLine(string.Format("\t\t{0}", string.Join("\n\t\t- ", i.Notes)));
+                    }
+                    if (i.Tags.Count > 0)
+                    {
+                        Console.WriteLine(string.Format("\t\t{0}", string.Join("\n\t\t", from t in i.Tags select string.Format("#{0}:{1}", t.Key, t.Value))));
+                    }
+                }
+                last_context = i.Context;
+            }
         }
 
         private static void PrintHelp(string command)
