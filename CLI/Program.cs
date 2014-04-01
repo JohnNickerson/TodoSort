@@ -74,6 +74,15 @@ namespace AssimilationSoftware.TodoSort.CLI
                         selected = Disambiguate(vm.Search(args[1]));
                         vm.Delete(selected);
                         break;
+                    case "open-tag":
+                        // Read a tag and pass it through to the "start" command. Intended for URLs.
+                        if (args.Count() < 3) { PrintHelp(command); break; }
+                        selected = Disambiguate(vm.Search(args[1]));
+                        string tagvalue = selected.Tags[args[2]];
+                        System.Diagnostics.Process p = new System.Diagnostics.Process();
+                        p.StartInfo.FileName = tagvalue;
+                        p.Start();
+                        break;
 					case "show":
 						// Display one context.
                         if (args.Count() < 2) { PrintHelp(command); break; }
@@ -266,6 +275,8 @@ commands:
     defer       Move an item to the someday file.
     delete      Delete an item without doing it.
     done        Move an item to the done file.
+    open-tag    Opens a given tag for a given item.
+                eg 'open-tag searchterm url'.
     process     Housekeeping:
                     + Assign inbox items to a context
                     + Move done items to the done file
