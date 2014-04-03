@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 
 namespace AssimilationSoftware.TodoSort.CLI
 {
@@ -57,8 +58,8 @@ namespace AssimilationSoftware.TodoSort.CLI
                     case "search":
                         // Search for matching items.
                         if (args.Count() < 2) { PrintHelp(command); break; }
-                        var results = vm.Search(args[1]);
-                        PrintItems(results);
+                        vm.SearchTerm = args[1];
+                        PrintItems(vm.SearchResults);
                         break;
                     case "add":
                         // Add a new item.
@@ -72,13 +73,15 @@ namespace AssimilationSoftware.TodoSort.CLI
                     case "delete":
                         // Find a matching item to delete.
                         if (args.Count() < 2) { PrintHelp(command); break; }
-                        selected = Disambiguate(vm.Search(args[1]));
+                        vm.SearchTerm = args[1];
+                        selected = Disambiguate(vm.SearchResults);
                         vm.Delete(selected);
                         break;
                     case "open-tag":
                         // Read a tag and pass it through to the "start" command. Intended for URLs.
                         if (args.Count() < 3) { PrintHelp(command); break; }
-                        selected = Disambiguate(vm.Search(args[1]));
+                        vm.SearchTerm = args[1];
+                        selected = Disambiguate(vm.SearchResults);
                         if (selected != null && selected.Tags.ContainsKey(args[2]))
                         {
                             string tagvalue = selected.Tags[args[2]];
@@ -140,13 +143,15 @@ namespace AssimilationSoftware.TodoSort.CLI
                     case "defer":
                         // Move the item and its sub-items to the "someday" file.
                         if (args.Count() < 2) { PrintHelp(command); break; }
-						selected = Disambiguate(vm.Search(args[1]));
+                        vm.SearchTerm = args[1];
+						selected = Disambiguate(vm.SearchResults);
 						vm.Defer(selected);
                         break;
                     case "done":
                         // If there is a next action, create a new item and add it to the correct context.
                         if (args.Count() < 2) { PrintHelp(command); break; }
-						selected = Disambiguate(vm.Search(args[1]));
+                        vm.SearchTerm = args[1];
+						selected = Disambiguate(vm.SearchResults);
 						if (selected != null)
                         {
 							vm.MarkDone(selected);
@@ -214,7 +219,8 @@ namespace AssimilationSoftware.TodoSort.CLI
                     case "tag":
                         // Search for a matching item.
                         if (args.Count() < 2) { PrintHelp(command); break; }
-                        selected = Disambiguate(vm.Search(args[1]));
+                        vm.SearchTerm = args[1];
+						selected = Disambiguate(vm.SearchResults);
                         Console.WriteLine();
                         if (selected != null)
                         {
@@ -224,6 +230,24 @@ namespace AssimilationSoftware.TodoSort.CLI
                             var value = Console.ReadLine();
                             vm.SetTag(selected, tagname, value);
                         }
+                        break;
+                    case "viz":
+                        // Write GraphViz source.
+                        if (args.Count() < 2) { PrintHelp(command); break; }
+                        Console.WriteLine("digraph {");
+                        foreach (var n in vm.GetContextItems(args[1]))
+                        {
+                            var line = n.Title.Replace("\"", "");
+                            Console.WriteLine(string.Format("    ID{0} [label=\"{1}\"];", n.ID.ToString().Replace("-", ""), line));
+                            if (n.PriorityParent != null)
+                            {
+                                Console.WriteLine(string.Format("    ID{0} -> ID{1};", n.PriorityParent.ID.ToString().Replace("-", ""), n.ID.ToString().Replace("-", "")));
+                            }
+                            else
+                            {
+                            }
+                        }
+                        Console.WriteLine("}");
                         break;
                     default:
                         break;
@@ -289,8 +313,8 @@ commands:
     defer       Move an item to the someday file.
     delete      Delete an item without doing it.
     done        Move an item to the done file.
-    open-tag    Opens a given tag for a given item.
-                eg 'open-tag searchterm url'.
+    open-tag    Opens (with Windows Explorer) a given tag for a given item.
+                    eg 'open-tag searchterm url'.
     process     Housekeeping:
                     + Assign inbox items to a context
                     + Move done items to the done file
@@ -301,6 +325,7 @@ commands:
     rank        Vote on the relative importance of items to assign priorities.
     unrank      Reset all ranking data.
     tag         Adds a tag to an item.
+    viz         Print a Graphviz DOT language representation of one context's priorities.
 ", Assembly.GetExecutingAssembly().GetName().Version));
         }
 

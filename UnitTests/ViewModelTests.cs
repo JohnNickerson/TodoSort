@@ -29,10 +29,62 @@ namespace AssimilationSoftware.TodoSort.UnitTests
             b.Tags["sugar"] = "caster";
             mockmapper.Save(b);
 
-            var result = vm.Search("spice");
+            vm.SearchTerm = "spice";
+            var result = vm.SearchResults;
 
             Assert.Contains<ActionItem>(a, result);
             Assert.DoesNotContain<ActionItem>(b, result);
+        }
+
+        /// <summary>
+        /// Make sure deferring items from the @someday context works.
+        /// </summary>
+        [Fact]
+        public void Defer_Someday_Items()
+        {
+            var todo = new MockMapper();
+            var someday = new MockMapper();
+            var done = new MockMapper();
+            ViewModel vm = new ViewModel(todo, done, someday);
+
+            // Add an item to the "someday" context.
+            var a = new ActionItem("someday", "An item to defer");
+            todo.Save(a);
+
+            vm.Defer(vm.GetContextItems("someday").ToArray());
+
+            var b = someday.Load(a.ID);
+            Assert.NotNull(b);
+            var c = todo.Load(a.ID);
+            Assert.Null(c);
+        }
+
+        [Fact]
+        public void Defer_Whole_Projects()
+        {
+            var todo = new MockMapper();
+            var someday = new MockMapper();
+            var done = new MockMapper();
+            ViewModel vm = new ViewModel(todo, done, someday);
+
+            // Add an item to the "someday" context.
+            var project = new ActionItem("someday", "A project item to defer");
+            var child = new ActionItem("computer", "Maybe someday");
+            child.Project = project;
+            todo.Save(project);
+            todo.Save(child);
+
+            vm.Defer(vm.GetContextItems("someday").ToArray());
+
+            var b = someday.Load(project.ID);
+            var c = someday.Load(child.ID);
+            Assert.NotNull(b);
+            Assert.NotNull(c);
+
+            var d = todo.Load(project.ID);
+            var e = todo.Load(child.ID);
+            Assert.Null(d);
+            Assert.Null(e);
         }
     }
 }

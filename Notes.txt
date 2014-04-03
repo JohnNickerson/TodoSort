@@ -10,11 +10,6 @@
 	Open any list file rather than just the preconfigured ones
 	Ask for a tickle date when deferring items
 		- Can be null.
-	Implement an "open-url" command for items that contain a URL tag
-		- Or just something to read a tag value to stdout so it can be piped to another function.
-		- Need unambiguous search via command line.
-		- todosort show-tag url --search "YouTube Watch Later" | start
-		- Note: Piping a URL straight to "start" doesn't work. It needs a command line argument.
 	Detailed help on each command
 		- Eg "todosort help defer" to bring up a page just on the "defer" command.
 		- This would allow detailed help when command parsing fails.
@@ -24,7 +19,7 @@
 	Make the CLI work on a single file only
 		- Take an argument for the file name to open.
 	Make "--head" a ViewModel option
-		- To work across all search functions equally.
+		- Currently works after the fact in the PrintItems method.
 @gui
 	Search via GUI
 	Mark as done via GUI
@@ -65,6 +60,14 @@
 	Import function
 		- To merge lists and add new items in bulk.
 		- Optionally assign all to a new context or keep in their existing contexts.
+	Only write IDs if they are useful
+		- If IDs are not referenced anywhere (ie no projects and no priorities) then they're just taking up space.
+	JoinSearch-style search queries
+		- Not sure if the JoinSearch function will work over objects this way, but the parser should be helpful.
+		- Might need new functions to search particular object properties like tags.
+		- Or maybe LINQ via the command line?
+	Export GraphViz source
+		- Code just needs to be transplanted.
 @bugs
 @done
 	Ability to cancel an action rather than confirming or selecting one search result.
@@ -75,3 +78,5 @@
 		- Search not only titles but notes and tags, too.
 	Allow tags to contain colons.
 		- At the moment, this inhibits the ability to store URLs and file paths.
+	Implement an "open-tag" command for items that contain a URL tag
+		- todosort show-tag url --search "YouTube Watch Later" | start

@@ -121,10 +121,10 @@ namespace AssimilationSoftware.TodoSort.Core
         /// <param name="selected"></param>
         public void Defer(params ActionItem[] selected)
         {
-            List<ActionItem> to_defer = new List<ActionItem>(selected);
+            Queue<ActionItem> to_defer = new Queue<ActionItem>(selected);
             while (to_defer.Count > 0)
             {
-                ActionItem i = to_defer[0];
+                ActionItem i = to_defer.Dequeue();
                 i.Context = "someday";
                 someday_items.Add(i);
                 todo_items.Remove(i);
@@ -132,7 +132,10 @@ namespace AssimilationSoftware.TodoSort.Core
                 todo_changes = true;
 
                 //TODO: If this item was the project for another, defer that one too.
-                //to_defer.AddRange(from a in todo_items where a.Project == i select a);
+                foreach (ActionItem c in (from a in todo_items where a.Project == i select a))
+                {
+                    to_defer.Enqueue(c);
+                }
             }
         }
         
@@ -142,10 +145,10 @@ namespace AssimilationSoftware.TodoSort.Core
         /// <param name="actionItem"></param>
         public void Undefer(string context, params ActionItem[] selection)
         {
-            List<ActionItem> to_undefer = new List<ActionItem>(selection);
+            Queue<ActionItem> to_undefer = new Queue<ActionItem>(selection);
             while (to_undefer.Count > 0)
             {
-                ActionItem i = to_undefer[0];
+                ActionItem i = to_undefer.Dequeue();
                 i.Context = context;
                 todo_items.Add(i);
                 someday_items.Remove(i);
@@ -153,7 +156,10 @@ namespace AssimilationSoftware.TodoSort.Core
                 todo_changes = true;
 
                 //TODO: If this item was the project for another, undefer that one, too.
-                //to_undefer.AddRange(from a in someday_items where a.Project == i select a);
+                foreach (ActionItem c in (from a in someday_items where a.Project == i select a))
+                {
+                    to_undefer.Enqueue(c);
+                }
             }
         }
 
@@ -171,7 +177,7 @@ namespace AssimilationSoftware.TodoSort.Core
         /// </summary>
         /// <param name="search">The search term to look for.</param>
         /// <returns>A list of matching items.</returns>
-        public List<ActionItem> Search(string search)
+        private List<ActionItem> Search(string search)
         {
             return (from i in todo_items
                     where i.Title.ToLower().Contains(search.ToLower())
