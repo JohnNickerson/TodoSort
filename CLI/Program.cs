@@ -250,6 +250,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                         Console.WriteLine("}");
                         break;
                     default:
+                        PrintHelp(null);
                         break;
                 }
             }

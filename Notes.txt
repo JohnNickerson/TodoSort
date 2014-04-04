@@ -20,6 +20,8 @@
 		- Take an argument for the file name to open.
 	Make "--head" a ViewModel option
 		- Currently works after the fact in the PrintItems method.
+	Change the disambiguation process to demand a single match
+		- Tough for short words that might appear everywhere. Allow IDs?
 @gui
 	Search via GUI
 	Mark as done via GUI

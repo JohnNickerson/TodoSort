@@ -86,5 +86,25 @@ namespace AssimilationSoftware.TodoSort.UnitTests
             Assert.Null(d);
             Assert.Null(e);
         }
+
+        [Fact]
+        public void Defer_With_Date()
+        {
+            var todo = new MockMapper();
+            var someday = new MockMapper();
+            var done = new MockMapper();
+            ViewModel vm = new ViewModel(todo, done, someday);
+
+            var deferitem = new ActionItem("inbox", "Waiting for a good Superman movie");
+            todo.Save(deferitem);
+
+            vm.Defer(deferitem, DateTime.Now.AddDays(30));
+
+            var a = someday.Load(deferitem.ID);
+            Assert.NotNull(a);
+            Assert.Equal(deferitem.Context, a.Context);
+            Assert.Equal(deferitem.Title, a.Title);
+            Assert.Equal(deferitem.TickleDate, a.TickleDate);
+        }
     }
 }

@@ -255,5 +255,11 @@ namespace AssimilationSoftware.TodoSort.Core
             child.PriorityParent = parent;
             todo_changes = true;
         }
+
+        public void Defer(ActionItem deferitem, DateTime tickleDate)
+        {
+            deferitem.TickleDate = tickleDate;
+            Defer(deferitem);
+        }
     }
 }
