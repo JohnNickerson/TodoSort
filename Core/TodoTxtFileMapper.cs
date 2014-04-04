@@ -92,6 +92,9 @@ namespace AssimilationSoftware.TodoSort.Core.Mappers
                             case "id":
                                 curitem.ID = Guid.Parse(ts[1]);
                                 break;
+                            case "tickle-date":
+                                curitem.TickleDate = DateTime.Parse(ts[1]);
+                                break;
                             default:
                                 curitem.Tags.Add(tag, ts[1].Trim());
                                 break;
@@ -167,6 +170,10 @@ namespace AssimilationSoftware.TodoSort.Core.Mappers
                     if (i.DoneDate.HasValue)
                     {
                         file.AppendLine(string.Format("\t\t#done-date:{0:yyyy-MM-dd}", i.DoneDate.Value));
+                    }
+                    if (i.TickleDate.HasValue)
+                    {
+                        file.AppendLine(string.Format("\t\t#tickle-date:{0:yyyy-MM-dd}", i.TickleDate.Value));
                     }
                     file.AppendLine(string.Format("\t\t#id:{0}", i.ID));
                     if (i.Project != null)

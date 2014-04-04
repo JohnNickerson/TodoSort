@@ -145,7 +145,18 @@ namespace AssimilationSoftware.TodoSort.CLI
                         if (args.Count() < 2) { PrintHelp(command); break; }
                         vm.SearchTerm = args[1];
 						selected = Disambiguate(vm.SearchResults);
-						vm.Defer(selected);
+                        if (selected != null)
+                        {
+                            var tickle = ConfigureDate(DateTime.Now.AddDays(7), "When should this item be returned to the inbox? (blank for manual)");
+                            if (tickle.HasValue)
+                            {
+                                vm.Defer(selected, tickle.Value);
+                            }
+                            else
+                            {
+                                vm.Defer(selected);
+                            }
+                        }
                         break;
                     case "done":
                         // If there is a next action, create a new item and add it to the correct context.
@@ -224,11 +235,18 @@ namespace AssimilationSoftware.TodoSort.CLI
                         Console.WriteLine();
                         if (selected != null)
                         {
-                            Console.WriteLine("What should this new tag be called?");
-                            var tagname = Console.ReadLine().ToLower();
-                            Console.WriteLine("What is the value of the tag?");
-                            var value = Console.ReadLine();
-                            vm.SetTag(selected, tagname, value);
+                            string tagname;
+                            do
+                            {
+                                Console.WriteLine("What should this new tag be called? (ENTER to quit)");
+                                tagname = Console.ReadLine().ToLower().Trim();
+                                if (tagname.Length > 0)
+                                {
+                                    Console.WriteLine("What is the value of the tag?");
+                                    var value = Console.ReadLine();
+                                    vm.SetTag(selected, tagname, value);
+                                }
+                            } while (tagname.Length > 0);
                         }
                         break;
                     case "viz":
@@ -269,6 +287,30 @@ namespace AssimilationSoftware.TodoSort.CLI
 
 			// Rewrite the files
             vm.Save();
+        }
+
+        private static DateTime? ConfigureDate(DateTime preset, string prompt)
+        {
+            Console.WriteLine(prompt);
+            Console.WriteLine("Type correct value or [Enter] to accept default (blank for null).");
+            Console.WriteLine(preset.ToString("yyyy-MM-dd"));
+            var response = Console.ReadLine();
+            if (response.Trim().Length > 0)
+            {
+                DateTime result;
+                if (DateTime.TryParse(response, out result))
+                {
+                    Console.WriteLine();
+                    return result;
+                }
+                else
+                {
+                    Console.WriteLine();
+                    return null;
+                }
+            }
+            Console.WriteLine();
+            return null;
         }
 
         private static void PrintItems(IEnumerable<ActionItem> list)

@@ -1,5 +1,8 @@
 @command-line
 	Allow multiple actions per invocation.
+		- Especially tagging.
+		- Interactive mode initiated with no commands or a special command?
+		- That would still invoking the same command over and over.
 	Allow marking a project as "done" while processing, instead of needing a new action.
 		- If action matches new context, just assign context.
 	Review mode?
@@ -8,8 +11,6 @@
 		- Process someday list and see if any were done or should be done now
 	Keep processing while more items still in inbox or projects.
 	Open any list file rather than just the preconfigured ones
-	Ask for a tickle date when deferring items
-		- Can be null.
 	Detailed help on each command
 		- Eg "todosort help defer" to bring up a page just on the "defer" command.
 		- This would allow detailed help when command parsing fails.
@@ -20,6 +21,7 @@
 		- Take an argument for the file name to open.
 	Make "--head" a ViewModel option
 		- Currently works after the fact in the PrintItems method.
+		- As a ViewModel option, it would allow easy operation on head elements for any command.
 	Change the disambiguation process to demand a single match
 		- Tough for short words that might appear everywhere. Allow IDs?
 @gui
@@ -57,8 +59,6 @@
 		- Doesn't seem like a great idea, actually.
 	Recurring reminders and items
 		- "repeats" tags? That's just a way to serialise it.
-	Deferred projects should take all child items with them
-		- And un-deferring, too.
 	Import function
 		- To merge lists and add new items in bulk.
 		- Optionally assign all to a new context or keep in their existing contexts.
@@ -68,8 +68,6 @@
 		- Not sure if the JoinSearch function will work over objects this way, but the parser should be helpful.
 		- Might need new functions to search particular object properties like tags.
 		- Or maybe LINQ via the command line?
-	Export GraphViz source
-		- Code just needs to be transplanted.
 @bugs
 @done
 	Ability to cancel an action rather than confirming or selecting one search result.
@@ -82,3 +80,9 @@
 		- At the moment, this inhibits the ability to store URLs and file paths.
 	Implement an "open-tag" command for items that contain a URL tag
 		- todosort show-tag url --search "YouTube Watch Later" | start
+	Export GraphViz source
+		- Code just needs to be transplanted.
+	Ask for a tickle date when deferring items
+		- Can be null.
+	Deferred projects should take all child items with them
+		- And un-deferring, too.

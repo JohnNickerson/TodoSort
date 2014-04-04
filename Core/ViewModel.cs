@@ -154,8 +154,9 @@ namespace AssimilationSoftware.TodoSort.Core
                 someday_items.Remove(i);
                 someday_changes = true;
                 todo_changes = true;
+                i.TickleDate = null;
 
-                //TODO: If this item was the project for another, undefer that one, too.
+                // If this item was the project for another, undefer that one, too.
                 foreach (ActionItem c in (from a in someday_items where a.Project == i select a))
                 {
                     to_undefer.Enqueue(c);
