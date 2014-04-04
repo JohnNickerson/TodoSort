@@ -26,6 +26,7 @@ namespace AssimilationSoftware.TodoSort.Core
         bool done_changes;
 
         string _searchTerm;
+        private bool showHeadOnly = false;
         #endregion
 
         public ViewModel(IActionItemMapper todo, IActionItemMapper done, IActionItemMapper someday)
@@ -71,7 +72,15 @@ namespace AssimilationSoftware.TodoSort.Core
         #region Methods
         public IEnumerable<ActionItem> GetContextItems(string context)
         {
-            return from m in todo_items where m.Context.EndsWith(context.ToLower()) select m;
+            var result = from m in todo_items where m.Context.EndsWith(context.ToLower()) select m;
+            if (showHeadOnly)
+            {
+                return (from i in result where i.PriorityParent == null select i).ToList();
+            }
+            else
+            {
+                return result.ToList();
+            }
         }
 
         public void Save()
@@ -180,17 +189,33 @@ namespace AssimilationSoftware.TodoSort.Core
         /// <returns>A list of matching items.</returns>
         private List<ActionItem> Search(string search)
         {
-            return (from i in todo_items
+            var result = (from i in todo_items
                     where i.Title.ToLower().Contains(search.ToLower())
                         || string.Join(Environment.NewLine, i.Notes).ToLower().Contains(search.ToLower())
                         || string.Join(Environment.NewLine, i.Tags.Keys).ToLower().Contains(search.ToLower())
                         || string.Join(Environment.NewLine, (from k in i.Tags select k.Value)).ToLower().Contains(search.ToLower())
-                    select i).ToList();
+                    select i);
+            if (showHeadOnly)
+            {
+                return (from i in result where i.PriorityParent == null select i).ToList();
+            }
+            else
+            {
+                return result.ToList();
+            }
         }
 
         public List<ActionItem> GetProjectChildren(ActionItem actionItem)
         {
-            return (from i in todo_items where i.Project == actionItem select i).ToList();
+            var result = (from i in todo_items where i.Project == actionItem select i).ToList();
+            if (showHeadOnly)
+            {
+                return (from i in result where i.PriorityParent == null select i).ToList();
+            }
+            else
+            {
+                return result.ToList();
+            }
         }
 
         public List<ActionItem> GetTickleDueItems()
@@ -229,6 +254,19 @@ namespace AssimilationSoftware.TodoSort.Core
                 return this.Search(SearchTerm);
             }
         }
+
+        public bool ShowHeadOnly
+        {
+            get
+            {
+                return showHeadOnly;
+            }
+            set
+            {
+                showHeadOnly = value;
+                RaisePropertyChanged("ShowHeadOnly", "SearchResults");
+            }
+        }
         #endregion
 
         public IEnumerable<string> GetContextNames(params string[] exclude)
@@ -261,6 +299,12 @@ namespace AssimilationSoftware.TodoSort.Core
         {
             deferitem.TickleDate = tickleDate;
             Defer(deferitem);
+        }
+
+        public void SetContext(ActionItem item, string newcontext)
+        {
+            item.Context = newcontext;
+            todo_changes = true;
         }
     }
 }

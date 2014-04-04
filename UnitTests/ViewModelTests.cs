@@ -96,7 +96,7 @@ namespace AssimilationSoftware.TodoSort.UnitTests
             ViewModel vm = new ViewModel(todo, done, someday);
 
             var deferitem = new ActionItem("inbox", "Waiting for a good Superman movie");
-            todo.Save(deferitem);
+            vm.AddItem(deferitem);
 
             vm.Defer(deferitem, DateTime.Now.AddDays(30));
 

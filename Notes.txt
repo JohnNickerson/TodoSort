@@ -1,8 +1,4 @@
 @command-line
-	Allow multiple actions per invocation.
-		- Especially tagging.
-		- Interactive mode initiated with no commands or a special command?
-		- That would still invoking the same command over and over.
 	Allow marking a project as "done" while processing, instead of needing a new action.
 		- If action matches new context, just assign context.
 	Review mode?
@@ -19,11 +15,10 @@
 		- I could use a library, but by then I might be going a bit too far down the CLI rabbit hole.
 	Make the CLI work on a single file only
 		- Take an argument for the file name to open.
-	Make "--head" a ViewModel option
-		- Currently works after the fact in the PrintItems method.
-		- As a ViewModel option, it would allow easy operation on head elements for any command.
 	Change the disambiguation process to demand a single match
 		- Tough for short words that might appear everywhere. Allow IDs?
+	Allow setting priority parents directly
+		- Test for loops before going ahead.
 @gui
 	Search via GUI
 	Mark as done via GUI
@@ -86,3 +81,7 @@
 		- Can be null.
 	Deferred projects should take all child items with them
 		- And un-deferring, too.
+	Allow multiple tagging actions per invocation.
+	Make "--head" a ViewModel option
+		- Currently works after the fact in the PrintItems method.
+		- As a ViewModel option, it would allow easy operation on head elements for any command.

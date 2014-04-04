@@ -14,7 +14,6 @@ namespace AssimilationSoftware.TodoSort.CLI
     class Program
     {
         private static bool verbose = false;
-        private static bool showHeadOnly = false;
 
         static void Main(string[] args)
         {
@@ -41,7 +40,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             }
             if (args.Contains("--head"))
             {
-                showHeadOnly = true;
+                vm.ShowHeadOnly = true;
             }
 
             #region Manipulate the file items
@@ -108,8 +107,8 @@ namespace AssimilationSoftware.TodoSort.CLI
                             ActionItem first = inbox[i];
                             Console.WriteLine(first.Title);
                             string newcontext = Console.ReadLine();
+                            vm.SetContext(first, newcontext);
                             Console.WriteLine();
-                            first.Context = newcontext;
                         }
 
                         // Need to find projects for which there is no next action. I hate that kind of query. It's a "where not exists (subquery)".
@@ -128,7 +127,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                                 if (nextaction == newcontext)
                                 {
                                     // Wrote something like "someday"/"someday". Assume it is a new context.
-                                    first.Context = newcontext;
+                                    vm.SetContext(first, newcontext);
                                 }
                                 else
                                 {
@@ -245,6 +244,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                                     Console.WriteLine("What is the value of the tag?");
                                     var value = Console.ReadLine();
                                     vm.SetTag(selected, tagname, value);
+                                    Console.WriteLine();
                                 }
                             } while (tagname.Length > 0);
                         }
@@ -315,10 +315,6 @@ namespace AssimilationSoftware.TodoSort.CLI
 
         private static void PrintItems(IEnumerable<ActionItem> list)
         {
-            if (showHeadOnly)
-            {
-                list = (from i in list where i.PriorityParent == null select i);
-            }
             string last_context = string.Empty;
             foreach (ActionItem i in from a in list orderby a.Context, a.Title select a)
             {
