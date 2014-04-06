@@ -193,7 +193,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                         foreach (string con in vm.GetContextNames("inbox"))
                         {
                             // select all items without rank parents
-                            var items = (from i in vm.GetContextItems(con) where i.PriorityParent == null select i).ToList();
+                            var items = (from i in vm.GetContextItems(con) where i.RankParent == null select i).ToList();
                             // TODO: randomise an index list
                             // show pairs of items
                             if (items.Count > 1)
@@ -257,9 +257,9 @@ namespace AssimilationSoftware.TodoSort.CLI
                         {
                             var line = n.Title.Replace("\"", "");
                             Console.WriteLine(string.Format("    ID{0} [label=\"{1}\"];", n.ID.ToString().Replace("-", ""), line));
-                            if (n.PriorityParent != null)
+                            if (n.RankParent != null)
                             {
-                                Console.WriteLine(string.Format("    ID{0} -> ID{1};", n.PriorityParent.ID.ToString().Replace("-", ""), n.ID.ToString().Replace("-", "")));
+                                Console.WriteLine(string.Format("    ID{0} -> ID{1};", n.RankParent.ID.ToString().Replace("-", ""), n.ID.ToString().Replace("-", "")));
                             }
                             else
                             {

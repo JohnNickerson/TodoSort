@@ -9,7 +9,8 @@ using AssimilationSoftware.PimData.Model;
 
 namespace AssimilationSoftware.TodoSort.Core.Mappers
 {
-    public class TodoTxtFileMapper : IActionItemMapper
+    [Obsolete]
+    public class TodoTxtFileMapper : IPimDataMapper<ActionItem>
     {
         private string _filename;
         private List<ActionItem> _items;
@@ -129,7 +130,7 @@ namespace AssimilationSoftware.TodoSort.Core.Mappers
 
                 if (priorityparents.ContainsKey(_items[x]))
                 {
-                    _items[x].PriorityParent = (from i in _items where i.ID == priorityparents[_items[x]] select i).FirstOrDefault();
+                    _items[x].RankParent = (from i in _items where i.ID == priorityparents[_items[x]] select i).FirstOrDefault();
                 }
             }
 
@@ -180,9 +181,9 @@ namespace AssimilationSoftware.TodoSort.Core.Mappers
                     {
                         file.AppendLine(string.Format("\t\t#project:{0}", i.Project.ID));
                     }
-                    if (i.PriorityParent != null)
+                    if (i.RankParent != null)
                     {
-                        file.AppendLine(string.Format("\t\t#priority-parent:{0}", i.PriorityParent.ID));
+                        file.AppendLine(string.Format("\t\t#priority-parent:{0}", i.RankParent.ID));
                     }
                 }
             }
@@ -210,9 +211,9 @@ namespace AssimilationSoftware.TodoSort.Core.Mappers
                         {
                             var elem = unsorted[i];
                             // if the item has a parent still to be recorded and we haven't seen that parent already (to avoid loops)...
-                            while (elem.PriorityParent != null && unsorted.Contains(elem.PriorityParent) && !parents.Contains(elem))
+                            while (elem.RankParent != null && unsorted.Contains(elem.RankParent) && !parents.Contains(elem))
                             {
-                                elem = elem.PriorityParent;
+                                elem = elem.RankParent;
                             }
                             if (!parents.Contains(elem))
                             {

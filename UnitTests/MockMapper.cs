@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace AssimilationSoftware.TodoSort.UnitTests
 {
-    internal class MockMapper : IActionItemMapper
+    internal class MockMapper : IPimDataMapper<ActionItem>
     {
         private List<ActionItem> _items = new List<ActionItem>();
 

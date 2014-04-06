@@ -16,9 +16,9 @@ namespace AssimilationSoftware.TodoSort.Core
         List<ActionItem> someday_items;
         List<ActionItem> done_items;
 
-        IActionItemMapper todo_mapper;
-        IActionItemMapper someday_mapper;
-        IActionItemMapper done_mapper;
+        IPimDataMapper<ActionItem> todo_mapper;
+        IPimDataMapper<ActionItem> someday_mapper;
+        IPimDataMapper<ActionItem> done_mapper;
 
         // Track whether changes have been made to the "someday" file, to avoid rewriting it if possible.
         bool todo_changes;
@@ -29,7 +29,7 @@ namespace AssimilationSoftware.TodoSort.Core
         private bool showHeadOnly = false;
         #endregion
 
-        public ViewModel(IActionItemMapper todo, IActionItemMapper done, IActionItemMapper someday)
+        public ViewModel(IPimDataMapper<ActionItem> todo, IPimDataMapper<ActionItem> done, IPimDataMapper<ActionItem> someday)
         {
             todo_mapper = todo;
             done_mapper = done;
@@ -75,7 +75,7 @@ namespace AssimilationSoftware.TodoSort.Core
             var result = from m in todo_items where m.Context.EndsWith(context.ToLower()) select m;
             if (showHeadOnly)
             {
-                return (from i in result where i.PriorityParent == null select i).ToList();
+                return (from i in result where i.RankParent == null select i).ToList();
             }
             else
             {
@@ -87,16 +87,17 @@ namespace AssimilationSoftware.TodoSort.Core
         {
             if (todo_changes)
             {
-                todo_mapper.SaveAll(todo_items, SortType.Priority);
+                todo_mapper.SaveAll((from i in todo_items orderby i.RankDepth select i).ToList());
+                todo_changes = false;
             }
             if (someday_changes)
             {
-                someday_mapper.SaveAll(someday_items, SortType.Alphanumeric);
+                someday_mapper.SaveAll((from i in someday_items orderby i.Title select i).ToList());
                 someday_changes = false;
             }
             if (done_changes)
             {
-                done_mapper.SaveAll(done_items, SortType.Time);
+                done_mapper.SaveAll((from i in done_items orderby i.DoneDate select i).ToList());
                 done_changes = false;
             }
         }
@@ -197,7 +198,7 @@ namespace AssimilationSoftware.TodoSort.Core
                     select i);
             if (showHeadOnly)
             {
-                return (from i in result where i.PriorityParent == null select i).ToList();
+                return (from i in result where i.RankParent == null select i).ToList();
             }
             else
             {
@@ -210,7 +211,7 @@ namespace AssimilationSoftware.TodoSort.Core
             var result = (from i in todo_items where i.Project == actionItem select i).ToList();
             if (showHeadOnly)
             {
-                return (from i in result where i.PriorityParent == null select i).ToList();
+                return (from i in result where i.RankParent == null select i).ToList();
             }
             else
             {
@@ -278,7 +279,7 @@ namespace AssimilationSoftware.TodoSort.Core
         {
             foreach (var i in todo_items)
             {
-                i.PriorityParent = null;
+                i.RankParent = null;
                 todo_changes = true;
             }
         }
@@ -291,7 +292,7 @@ namespace AssimilationSoftware.TodoSort.Core
 
         public void SetParent(ActionItem child, ActionItem parent)
         {
-            child.PriorityParent = parent;
+            child.RankParent = parent;
             todo_changes = true;
         }
 
