@@ -36,8 +36,14 @@ namespace AssimilationSoftware.TodoSort.Core
             someday_mapper = someday;
 
             todo_items = todo.LoadAll();
-            someday_items = someday.LoadAll();
-            done_items = done.LoadAll();
+            if (someday_mapper != null)
+            {
+                someday_items = someday.LoadAll();
+            }
+            if (done_mapper != null)
+            {
+                done_items = done.LoadAll();
+            }
 
             todo_changes = false;
             someday_changes = false;
@@ -90,12 +96,12 @@ namespace AssimilationSoftware.TodoSort.Core
                 todo_mapper.SaveAll((from i in todo_items orderby i.RankDepth select i).ToList());
                 todo_changes = false;
             }
-            if (someday_changes)
+            if (someday_changes && someday_mapper != null)
             {
                 someday_mapper.SaveAll((from i in someday_items orderby i.Title select i).ToList());
                 someday_changes = false;
             }
-            if (done_changes)
+            if (done_changes && done_mapper != null)
             {
                 done_mapper.SaveAll((from i in done_items orderby i.DoneDate select i).ToList());
                 done_changes = false;
@@ -117,9 +123,16 @@ namespace AssimilationSoftware.TodoSort.Core
             foreach (ActionItem doneitem in doneitems)
             {
                 doneitem.DoneDate = DateTime.Now;
-                doneitem.Context = string.Format("{0:yyyy-MM-dd}", doneitem.DoneDate);
-                done_items.Add(doneitem);
-                todo_items.Remove(doneitem);
+                if (done_mapper != null)
+                {
+                    doneitem.Context = string.Format("{0:yyyy-MM-dd}", doneitem.DoneDate);
+                    done_items.Add(doneitem);
+                    todo_items.Remove(doneitem);
+                }
+                else
+                {
+                    doneitem.Context = "done";
+                }
                 done_changes = true;
                 todo_changes = true;
             }
@@ -136,8 +149,11 @@ namespace AssimilationSoftware.TodoSort.Core
             {
                 ActionItem i = to_defer.Dequeue();
                 i.Context = "someday";
-                someday_items.Add(i);
-                todo_items.Remove(i);
+                if (someday_mapper != null)
+                {
+                    someday_items.Add(i);
+                    todo_items.Remove(i);
+                }
                 someday_changes = true;
                 todo_changes = true;
 
@@ -160,8 +176,11 @@ namespace AssimilationSoftware.TodoSort.Core
             {
                 ActionItem i = to_undefer.Dequeue();
                 i.Context = context;
-                todo_items.Add(i);
-                someday_items.Remove(i);
+                if (someday_mapper != null)
+                {
+                    todo_items.Add(i);
+                    someday_items.Remove(i);
+                }
                 someday_changes = true;
                 todo_changes = true;
                 i.TickleDate = null;
@@ -221,7 +240,7 @@ namespace AssimilationSoftware.TodoSort.Core
 
         public List<ActionItem> GetTickleDueItems()
         {
-            return (from i in someday_items where i.TickleDate <= DateTime.Now select i).ToList();
+            return (from i in SomedayItems where i.TickleDate <= DateTime.Now select i).ToList();
         }
         #endregion
 
@@ -231,7 +250,14 @@ namespace AssimilationSoftware.TodoSort.Core
         {
             get
             {
-                return someday_items;
+                if (someday_mapper != null)
+                {
+                    return someday_items;
+                }
+                else
+                {
+                    return GetContextItems("someday").ToList();
+                }
             }
         }
 
@@ -282,6 +308,12 @@ namespace AssimilationSoftware.TodoSort.Core
                 i.RankParent = null;
                 todo_changes = true;
             }
+        }
+
+        public void ResetPriorityParents(ActionItem selected)
+        {
+            selected.RankParent = null;
+            todo_changes = true;
         }
 
         public void SetTag(ActionItem selected, string tagname, string value)
