@@ -8,11 +8,16 @@
             <RowDefinition />
         </Grid.RowDefinitions>
         <StackPanel Orientation="Horizontal">
-            <TextBox Name="SearchBox" Text="{Binding Path=SearchTerm}" Width="100" />
+            <TextBox Name="SearchBox" Text="{Binding Path=SearchTerm, UpdateSourceTrigger=PropertyChanged}" Width="100" />
             <Button Content="Search" Width="50" />
+            <Button Content="Reconfigure" Width="75" Click="Reconfigure"/>
         </StackPanel>
-        <ListView Grid.Row="1" ItemsSource="{Binding Path=SearchResults}">
-            <ListViewItem Content="{Binding Title}"></ListViewItem>
+        <ListView Grid.Row="1" Name="SearchResultsList" ItemsSource="{Binding Path=SearchResults}">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <TextBox Text="{Binding Path=Title}" />
+                </DataTemplate>
+            </ListView.ItemTemplate>
         </ListView>
 	</Grid>
 </Window>

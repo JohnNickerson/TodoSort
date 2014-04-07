@@ -9,7 +9,7 @@ using System.Text;
 
 namespace AssimilationSoftware.TodoSort.Core
 {
-    public class ViewModel
+    public class ViewModel : INotifyPropertyChanged
     {
         #region Fields
         List<ActionItem> todo_items;
@@ -58,11 +58,11 @@ namespace AssimilationSoftware.TodoSort.Core
         /// <param name="e"></param>
         public void RaisePropertyChanged(params string[] propnames)
         {
-            foreach (string prop in propnames)
+            if (PropertyChanged != null)
             {
-                var e = new PropertyChangedEventArgs(prop);
-                if (PropertyChanged != null)
+                foreach (string prop in propnames)
                 {
+                    var e = new PropertyChangedEventArgs(prop);
                     PropertyChanged(this, e);
                 }
             }

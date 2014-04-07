@@ -1,4 +1,5 @@
-﻿using AssimilationSoftware.PimData.Model;
+﻿using AssimilationSoftware.PimData.Mappers;
+using AssimilationSoftware.PimData.Model;
 using AssimilationSoftware.TodoSort.Core.Mappers;
 using System;
 using System.Collections.Generic;

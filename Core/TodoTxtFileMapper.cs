@@ -9,7 +9,6 @@ using AssimilationSoftware.PimData.Model;
 
 namespace AssimilationSoftware.TodoSort.Core.Mappers
 {
-    [Obsolete]
     public class TodoTxtFileMapper : IPimDataMapper<ActionItem>
     {
         private string _filename;
@@ -18,27 +17,6 @@ namespace AssimilationSoftware.TodoSort.Core.Mappers
         public TodoTxtFileMapper(string filename)
         {
             _filename = filename;
-        }
-
-        /// <summary>
-        /// Reads a formatted file and returns it as a list of Items.
-        /// </summary>
-        /// <param name="filename">The full path to the file to load.</param>
-        /// <returns>A list of items as represented by the file.</returns>
-        public List<ActionItem> Deserialise(string filename)
-        {
-            return LoadAll();
-        }
-
-        /// <summary>
-        /// Writes a list of items out to a file.
-        /// </summary>
-        /// <param name="filename">The full path of the file to write.</param>
-        /// <param name="items">The items to write out.</param>
-        /// <param name="includeinbox">True to add an "@inbox" context at the end, false to leave it out unless already present.</param>
-        public void Serialise(string filename, List<ActionItem> items)
-        {
-            SaveAll(items);
         }
 
         public ActionItem Load(Guid id)
