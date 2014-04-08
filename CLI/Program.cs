@@ -1,4 +1,5 @@
-﻿using AssimilationSoftware.PimData.Model;
+﻿using AssimilationSoftware.PimData.Mappers;
+using AssimilationSoftware.PimData.Model;
 using AssimilationSoftware.TodoSort.CLI.Properties;
 using AssimilationSoftware.TodoSort.Core;
 using AssimilationSoftware.TodoSort.Core.Mappers;
@@ -30,9 +31,9 @@ namespace AssimilationSoftware.TodoSort.CLI
                 FolderSettings.SaveTo(settingspath, f);
 			}
 
-            TodoTxtFileMapper todomapper = new TodoTxtFileMapper(f.TodoPath);
-            TodoTxtFileMapper somedaymapper = (f.SomedayPath == null ? null : new TodoTxtFileMapper(f.SomedayPath));
-            TodoTxtFileMapper donemapper = (f.DonePath == null ? null : new TodoTxtFileMapper(f.DonePath));
+            ActionItemDiskMapper todomapper = new ActionItemDiskMapper(f.TodoPath);
+            ActionItemDiskMapper somedaymapper = (f.SomedayPath == null ? null : new ActionItemDiskMapper(f.SomedayPath));
+            ActionItemDiskMapper donemapper = (f.DonePath == null ? null : new ActionItemDiskMapper(f.DonePath));
 
             ViewModel vm = new ViewModel(todomapper, donemapper, somedaymapper);
 
@@ -92,14 +93,21 @@ namespace AssimilationSoftware.TodoSort.CLI
                             p.Start();
                         }
                         break;
-					case "show":
-						// Display one context.
+                    case "show":
+                        // Display one context.
                         if (args.Count() < 2) { PrintHelp(command); break; }
                         var list = vm.GetContextItems(args[1]);
                         PrintItems(list);
-						break;
+                        break;
+                    case "summary":
+                        var contexts = vm.GetContextNames();
+                        foreach (var c in contexts)
+                        {
+                            Console.WriteLine("@{0}\t{1} items", c, vm.GetContextItems(c).Count());
+                        }
+                        break;
                     case "process":
-						// Go over the @someday items and look for tickle dates.
+                        // Go over the @someday items and look for tickle dates.
                         vm.Undefer("inbox", vm.GetTickleDueItems().ToArray());
 
                         var inbox = vm.GetContextItems("inbox").ToList();
@@ -146,7 +154,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                         // Move the item and its sub-items to the "someday" file.
                         if (args.Count() < 2) { PrintHelp(command); break; }
                         vm.SearchTerm = args[1];
-						selected = Disambiguate(vm.SearchResults);
+                        selected = Disambiguate(vm.SearchResults);
                         if (selected != null)
                         {
                             var tickle = ConfigureDate(DateTime.Now.AddDays(7), "When should this item be returned to the inbox? (blank for manual)");
@@ -164,33 +172,33 @@ namespace AssimilationSoftware.TodoSort.CLI
                         // If there is a next action, create a new item and add it to the correct context.
                         if (args.Count() < 2) { PrintHelp(command); break; }
                         vm.SearchTerm = args[1];
-						selected = Disambiguate(vm.SearchResults);
-						if (selected != null)
+                        selected = Disambiguate(vm.SearchResults);
+                        if (selected != null)
                         {
-							vm.MarkDone(selected);
+                            vm.MarkDone(selected);
                         }
                         break;
-					case "someday":
-						// Display the whole Someday file, 10 items at a time, and either delete or do one per listing.
+                    case "someday":
+                        // Display the whole Someday file, 10 items at a time, and either delete or do one per listing.
                         for (int offset = 0; offset <= vm.SomedayItems.Count; offset += 10)
-						{
-							Console.Clear();
+                        {
+                            Console.Clear();
                             for (int index = 0; index < 10 && offset + index < vm.SomedayItems.Count; index++)
-							{
+                            {
                                 Console.WriteLine("{0}: {1}", index, vm.SomedayItems.ElementAt(offset + index).Title);
-							}
-							char choice = Console.ReadKey().KeyChar;
+                            }
+                            char choice = Console.ReadKey().KeyChar;
                             Console.WriteLine();
-							int dex;
-							if (Int32.TryParse(choice.ToString(), out dex))
-							{
-								selected = vm.SomedayItems.ElementAt(offset + dex);
-							}
-							Console.WriteLine("To which context should this item go?");
-							string newcontext = Console.ReadLine();
-							vm.Undefer(newcontext, selected);
-						}
-						break;
+                            int dex;
+                            if (Int32.TryParse(choice.ToString(), out dex))
+                            {
+                                selected = vm.SomedayItems.ElementAt(offset + dex);
+                            }
+                            Console.WriteLine("To which context should this item go?");
+                            string newcontext = Console.ReadLine();
+                            vm.Undefer(newcontext, selected);
+                        }
+                        break;
                     case "rank":
                         // for each context..
                         foreach (string con in vm.GetContextNames("inbox"))
@@ -246,7 +254,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                         // Search for a matching item.
                         if (args.Count() < 2) { PrintHelp(command); break; }
                         vm.SearchTerm = args[1];
-						selected = Disambiguate(vm.SearchResults);
+                        selected = Disambiguate(vm.SearchResults);
                         Console.WriteLine();
                         if (selected != null)
                         {
@@ -287,6 +295,10 @@ namespace AssimilationSoftware.TodoSort.CLI
                         PrintHelp(null);
                         break;
                 }
+            }
+            else
+            {
+                PrintHelp(null);
             }
             #endregion
 
@@ -371,15 +383,15 @@ commands:
     open-tag    Opens (with Windows Explorer) a given tag for a given item.
                     eg 'open-tag searchterm url'.
     process     Housekeeping:
-                    + Assign inbox items to a context
-                    + Move done items to the done file
+                    + Assign each inbox item to a context
                     + Ensure each project has a next action.
     search      Search for matching text items.
     show        Display all items in a context.
     someday     Review the someday file, assigning 10% to an active context.
+    summary     Show context names and number of items in each.
     rank        Vote on the relative importance of items to assign priorities.
     unrank      Reset all ranking data.
-    tag         Adds a tag to an item.
+    tag         Adds tags to an item.
     viz         Print a Graphviz DOT language representation of one context's
                 priorities.
 ", Assembly.GetExecutingAssembly().GetName().Version));

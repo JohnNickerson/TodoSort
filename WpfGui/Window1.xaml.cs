@@ -34,7 +34,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             {
                 Reconfigure(this, null);
             }
-            vm = new ViewModel(new TodoTxtFileMapper(Settings.Default.Todo), new TodoTxtFileMapper(Settings.Default.Done), new TodoTxtFileMapper(Settings.Default.Someday));
+            vm = new ViewModel(new ActionItemDiskMapper(Settings.Default.Todo), new ActionItemDiskMapper(Settings.Default.Done), new ActionItemDiskMapper(Settings.Default.Someday));
             this.DataContext = vm;
 		}
 

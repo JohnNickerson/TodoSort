@@ -70,6 +70,7 @@
 		- Might need new functions to search particular object properties like tags.
 		- Or maybe LINQ via the command line?
 	Use the mapper from PimData
+	GraphViz output via a mapper instead of direct code
 @bugs
 @done
 	Ability to cancel an action rather than confirming or selecting one search result.

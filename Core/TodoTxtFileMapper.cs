@@ -9,6 +9,7 @@ using AssimilationSoftware.PimData.Model;
 
 namespace AssimilationSoftware.TodoSort.Core.Mappers
 {
+    [Obsolete]
     public class TodoTxtFileMapper : IPimDataMapper<ActionItem>
     {
         private string _filename;

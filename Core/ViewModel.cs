@@ -186,7 +186,7 @@ namespace AssimilationSoftware.TodoSort.Core
                 i.TickleDate = null;
 
                 // If this item was the project for another, undefer that one, too.
-                foreach (ActionItem c in (from a in someday_items where a.Project == i select a))
+                foreach (ActionItem c in (from a in SomedayItems where a.Project == i select a))
                 {
                     to_undefer.Enqueue(c);
                 }
