@@ -22,6 +22,9 @@
 	Merge command
 		- Find two items and combine them.
 		- Select which tag values to take in the new combined item.
+	List contexts command
+	Show the tree for one item
+		- Viz search?
 @gui
 	Search via GUI
 	Mark as done via GUI
@@ -66,6 +69,7 @@
 		- Not sure if the JoinSearch function will work over objects this way, but the parser should be helpful.
 		- Might need new functions to search particular object properties like tags.
 		- Or maybe LINQ via the command line?
+	Use the mapper from PimData
 @bugs
 @done
 	Ability to cancel an action rather than confirming or selecting one search result.

@@ -20,7 +20,7 @@ namespace UnitTests
             i.Tags.Add("url", "http://user:pass@www.google.com/");
 
             // Serialise to disk.
-            TodoTxtFileMapper m = new TodoTxtFileMapper("testActions.txt");
+            var m = new ActionItemDiskMapper("testActions.txt");
             m.Save(i);
             // Read from disk.
             var a = m.Load(i.ID);
