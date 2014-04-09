@@ -23,9 +23,9 @@ namespace AssimilationSoftware.TodoSort.CLI
             FolderSettings f = FolderSettings.LoadFrom(settingspath);
             if (f == null || args.Contains("init"))
             {
-                f.TodoPath = ConfigurePath("todo.txt", "Configure path to 'todo' file:", false);
-                f.SomedayPath = ConfigurePath("someday.txt", "Configure path to 'someday' file:", true);
-                f.DonePath = ConfigurePath("done.txt", "Configure path to 'done' file:", true);
+                f.TodoPath = ConfigurePath("todo.txt", "Configure path to 'todo' file", false);
+                f.SomedayPath = ConfigurePath("someday.txt", "Configure path to 'someday' file", true);
+                f.DonePath = ConfigurePath("done.txt", "Configure path to 'done' file", true);
 
                 // Save settings.
                 FolderSettings.SaveTo(settingspath, f);

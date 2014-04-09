@@ -1,11 +1,14 @@
+@someday
+	Sync with external services
+		- Outlook, Google Tasks, Wunderlist, Google Keep?
+		- API mappers where possible.
+		- No API: Wunderlist, Google Keep.
+		- Google Tasks API: https://www.nuget.org/packages/Google.Apis.Tasks.v1/
+		#id:43b0868b-d3e5-477f-82cd-b7da7c01a092
 @backend
 	Generic CRUD operations on any list file
 		- Move to another list file or sub-list, too
 		#id:bcac196a-52cf-4e95-8491-3cc5eafbe98b
-	Sync with external services
-		- Outlook, Google Tasks, Wunderlist, Google Keep?
-		- Export services and formats?
-		#id:43b0868b-d3e5-477f-82cd-b7da7c01a092
 	Use a second ViewModel for reviewing the Someday list?
 		#id:876a0330-b332-4e55-94a5-efaa77f3f511
 	Recurring reminders and items
@@ -28,6 +31,11 @@
 		- Or maybe LINQ via the command line?
 		#id:59162543-9d87-41e1-a601-6fc7462f6fbd
 		#priority-parent:950006c7-8cb2-4386-9c48-5668b8fb84fc
+	Task due dates
+		- I tend not to use these myself, though.
+	Work offline
+		- Enqueue commands to process later without changing files.
+		- Useful for when the files are not up to date (eg Dropbox sync has fallen behind).
 @command-line
 	Keep processing while more items still in inbox or projects.
 		#id:f5a3d428-5de0-4aa0-8e88-edcc3800ba5e
@@ -71,6 +79,7 @@
 		- Or include an "undo" action.
 		#id:b68f0d46-3d6e-4b46-a585-3c92c36fca59
 	Mark as done via GUI
+		- Should just be a matter of binding the checkbox to the item's IsDone property.
 		#id:8472e1c3-6226-408b-9728-e74c1f6014c2
 	Review Someday items via GUI
 		#id:6995c2c3-e576-467e-91d4-5775e85e984c
