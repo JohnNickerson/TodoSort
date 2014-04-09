@@ -37,6 +37,9 @@
 		- Enqueue commands to process later without changing files.
 		- Useful for when the files are not up to date (eg Dropbox sync has fallen behind).
 @command-line
+	Edit an item's title
+	Add a note to an item
+	Display results by data binding instead of direct fetch
 	Keep processing while more items still in inbox or projects.
 		#id:f5a3d428-5de0-4aa0-8e88-edcc3800ba5e
 	Change the disambiguation process to demand a single match
