@@ -1,95 +1,102 @@
-@command-line
-	Allow marking a project as "done" while processing, instead of needing a new action.
-		- If action matches new context, just assign context.
-	Review mode?
-		- Process inbox and projects
-		- Ask if each item is done or should be deferred
-		- Process someday list and see if any were done or should be done now
-	Keep processing while more items still in inbox or projects.
-	Open any list file rather than just the preconfigured ones
-	Detailed help on each command
-		- Eg "todosort help defer" to bring up a page just on the "defer" command.
-		- This would allow detailed help when command parsing fails.
-	Write a command line argument parser
-		- To turn a line of text arguments into a command and a list of argument pairs.
-		- I could use a library, but by then I might be going a bit too far down the CLI rabbit hole.
-	Make the CLI work on a single file only
-		- Take an argument for the file name to open.
-	Change the disambiguation process to demand a single match
-		- Tough for short words that might appear everywhere. Allow IDs?
-	Allow setting priority parents directly
-		- Test for loops before going ahead.
-	Merge command
-		- Find two items and combine them.
-		- Select which tag values to take in the new combined item.
-	List contexts command
-	Show the tree for one item
-		- Viz search?
-@gui
-	Search via GUI
-	Mark as done via GUI
-	Process inbox via GUI
-	Review Someday items via GUI
-	Add notes via GUI
-	Delete items via GUI
-	Defer items via GUI
-	Add follow-up actions via GUI
-	Rank items for priority via GUI
-	Add/edit tags via GUI
-	Use a "go" button to separate the ticking of a box from the disk write, in case it is ticked accidentally.
-		- Or just don't clear the item immediately so that it can be unticked if required.
-		- Or include an "undo" action.
 @backend
-	Selections of next actions, depending on the results of previous ones.
-		- eg "Check something" then "|@shopping Buy this" and "|@home Set up that".
-	Tickler file
-		- Automatic return to inbox from the Someday file on a certain date.
-		- Specify as a tag (#tickle-date:2010-12-01)
-		- Someday items with a date specified this way will be moved to the inbox after that date.
 	Generic CRUD operations on any list file
 		- Move to another list file or sub-list, too
+		#id:bcac196a-52cf-4e95-8491-3cc5eafbe98b
 	Sync with external services
 		- Outlook, Google Tasks, Wunderlist, Google Keep?
-	Add a timestamp when items are processed through the inbox.
-	Detect "[x]" marks as completed items
-	MVVM architecture
-		- Splitting functionality and view will help the transition to GUI.
+		- Export services and formats?
+		#id:43b0868b-d3e5-477f-82cd-b7da7c01a092
 	Use a second ViewModel for reviewing the Someday list?
-	Unit tests
-	Extensible command framework?
-		- Doesn't seem like a great idea, actually.
+		#id:876a0330-b332-4e55-94a5-efaa77f3f511
 	Recurring reminders and items
 		- "repeats" tags? That's just a way to serialise it.
+		#id:8da843b9-8dc7-47c7-9db3-e7209b1068fe
+	Only write IDs if they are useful
+		- If IDs are not referenced anywhere (ie no projects and no priorities) then they're just taking up space.
+		#id:950006c7-8cb2-4386-9c48-5668b8fb84fc
+	GraphViz output via a mapper instead of direct code
+		#id:a9ff630e-e912-4054-ba77-973b3ede3af2
 	Import function
 		- To merge lists and add new items in bulk.
 		- Optionally assign all to a new context or keep in their existing contexts.
-	Only write IDs if they are useful
-		- If IDs are not referenced anywhere (ie no projects and no priorities) then they're just taking up space.
+		- If IDs can be preserved, what about merging?
+		#id:57da7c59-0b4f-4d9e-a028-9fbf448bc391
+		#priority-parent:8da843b9-8dc7-47c7-9db3-e7209b1068fe
 	JoinSearch-style search queries
 		- Not sure if the JoinSearch function will work over objects this way, but the parser should be helpful.
 		- Might need new functions to search particular object properties like tags.
 		- Or maybe LINQ via the command line?
-	Use the mapper from PimData
-	GraphViz output via a mapper instead of direct code
-@bugs
-@done
-	Ability to cancel an action rather than confirming or selecting one search result.
-	Ranking
-	Add tags to an item
-		- Should be easy: search, tag name, tag value. All that code is already written.
-	Search notes and tags
-		- Search not only titles but notes and tags, too.
-	Allow tags to contain colons.
-		- At the moment, this inhibits the ability to store URLs and file paths.
-	Implement an "open-tag" command for items that contain a URL tag
-		- todosort show-tag url --search "YouTube Watch Later" | start
-	Export GraphViz source
-		- Code just needs to be transplanted.
-	Ask for a tickle date when deferring items
-		- Can be null.
-	Deferred projects should take all child items with them
-		- And un-deferring, too.
-	Allow multiple tagging actions per invocation.
-	Make "--head" a ViewModel option
-		- Currently works after the fact in the PrintItems method.
-		- As a ViewModel option, it would allow easy operation on head elements for any command.
+		#id:59162543-9d87-41e1-a601-6fc7462f6fbd
+		#priority-parent:950006c7-8cb2-4386-9c48-5668b8fb84fc
+@command-line
+	Keep processing while more items still in inbox or projects.
+		#id:f5a3d428-5de0-4aa0-8e88-edcc3800ba5e
+	Change the disambiguation process to demand a single match
+		- Tough for short words that might appear everywhere. Allow IDs?
+		#id:fb247274-9a35-4f42-bb8c-4361cd29fd9e
+	Show the tree for one item
+		- Viz search?
+		#id:ed1bd4a3-b9ef-470f-870d-a94459fe4f5f
+	Review mode?
+		- Process inbox and projects
+		- Ask if each item is done or should be deferred
+		- Process someday list and see if any were done or should be done now
+		#id:b84a8574-a3eb-4208-ba13-8746a9bca871
+	Detailed help on each command
+		- Eg "todosort help defer" to bring up a page just on the "defer" command.
+		- This would allow detailed help when command parsing fails.
+		#id:5a18109c-1c4a-4bba-9fff-649c8e390bd1
+		#priority-parent:f5a3d428-5de0-4aa0-8e88-edcc3800ba5e
+	Write a command line argument parser
+		- To turn a line of text arguments into a command and a list of argument pairs.
+		- I could use a library, but by then I might be going a bit too far down the CLI rabbit hole.
+		#id:e6bafeec-ca6d-4a8a-9263-f8e2647a75b1
+		#priority-parent:fb247274-9a35-4f42-bb8c-4361cd29fd9e
+	Merge command
+		- Find two items and combine them.
+		- Select which tag values to take in the new combined item.
+		#id:dbfb41ca-afe9-472b-bdb9-58bf7f410d47
+		#priority-parent:ed1bd4a3-b9ef-470f-870d-a94459fe4f5f
+@gui
+	Process inbox via GUI
+		#id:4629aebd-92fa-4e25-afbe-f619d15f7a37
+	Delete items via GUI
+		#id:1bf0d9fe-d267-46af-be96-93dc7016ca24
+	Add follow-up actions via GUI
+		#id:bdf4dbf2-cc3c-4004-811b-1d8371c37d3f
+	Rank items for priority via GUI
+		#id:4ed8be70-a8dd-41b7-8826-37d7b1e9b4ab
+	Use a "go" button to separate the ticking of a box from the disk write, in case it is ticked accidentally.
+		- Or just don't clear the item immediately so that it can be unticked if required.
+		- Or include an "undo" action.
+		#id:b68f0d46-3d6e-4b46-a585-3c92c36fca59
+	Mark as done via GUI
+		#id:8472e1c3-6226-408b-9728-e74c1f6014c2
+	Review Someday items via GUI
+		#id:6995c2c3-e576-467e-91d4-5775e85e984c
+		#priority-parent:4629aebd-92fa-4e25-afbe-f619d15f7a37
+	Add notes via GUI
+		#id:d84fd47b-4bb0-43bf-a4d3-5237a649ebf9
+		#priority-parent:1bf0d9fe-d267-46af-be96-93dc7016ca24
+	Defer items via GUI
+		#id:4f1a19ec-4ff9-4245-811f-6f1d4bcc9f49
+		#priority-parent:bdf4dbf2-cc3c-4004-811b-1d8371c37d3f
+	Add/edit tags via GUI
+		#id:eac9e80b-2f1b-4fb6-bb79-75c8d850a07f
+		#priority-parent:4ed8be70-a8dd-41b7-8826-37d7b1e9b4ab
+@someday
+	Extensible command framework?
+		- Doesn't seem like a great idea, actually.
+		#id:3e979de9-32a2-466c-87f0-b23768955a95
+		#priority-parent:b72b582b-3b36-44d3-88ba-37f20156b18f
+	Detect "[x]" marks as completed items
+		#tickle-date:2014-04-16
+		#id:aa8b5a86-32d5-4445-a90e-ed517b77c292
+		#priority-parent:876a0330-b332-4e55-94a5-efaa77f3f511
+	Add a timestamp when items are processed through the inbox.
+		#id:d7eec29c-e5c6-4347-8950-a9500cc56eb3
+		#priority-parent:43b0868b-d3e5-477f-82cd-b7da7c01a092
+	Selections of next actions, depending on the results of previous ones.
+		- eg "Check something" then "|@shopping Buy this" and "|@home Set up that".
+		#id:79db8c53-b314-4c57-a692-e4791e749215
+		#priority-parent:bcac196a-52cf-4e95-8491-3cc5eafbe98b

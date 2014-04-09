@@ -1,10 +1,95 @@
+@2014-04-09
+	Ability to cancel an action rather than confirming or selecting one search result.
+		#done-date:2014-04-09
+		#id:db15be21-95c7-4c4e-9d5e-4bd9f34c240d
+	Ranking
+		#done-date:2014-04-09
+		#id:0b29944c-669e-43e6-8c9d-94b1bcba7019
+	Add tags to an item
+		- Should be easy: search, tag name, tag value. All that code is already written.
+		#done-date:2014-04-09
+		#id:f530fb3e-3ed2-421b-9ec2-16eec33873e9
+	Search notes and tags
+		- Search not only titles but notes and tags, too.
+		#done-date:2014-04-09
+		#id:c1e14bc2-6c1c-4180-8746-196bf6ff69bb
+	Allow tags to contain colons.
+		- At the moment, this inhibits the ability to store URLs and file paths.
+		#done-date:2014-04-09
+		#id:001abdde-f5a1-4af2-8a94-b31c102547cf
+	Implement an "open-tag" command for items that contain a URL tag
+		- todosort show-tag url --search "YouTube Watch Later" | start
+		#done-date:2014-04-09
+		#id:f81ccf3f-aad9-4b49-80fe-a05e2d98c8af
+	Export GraphViz source
+		- Code just needs to be transplanted.
+		#done-date:2014-04-09
+		#id:68b343a7-fabc-4055-bfea-d05f5b3f263f
+	Ask for a tickle date when deferring items
+		- Can be null.
+		#done-date:2014-04-09
+		#id:65629b86-b42e-4b56-8311-fc0601f98731
+	Deferred projects should take all child items with them
+		- And un-deferring, too.
+		#done-date:2014-04-09
+		#id:43000eb7-36ae-459f-9cd7-f3d66747d079
+	Allow multiple tagging actions per invocation.
+		#done-date:2014-04-09
+		#id:81c28ed8-9e37-4cc6-97bf-02414a4ac63a
+	Make "--head" a ViewModel option
+		- Currently works after the fact in the PrintItems method.
+		- As a ViewModel option, it would allow easy operation on head elements for any command.
+		#done-date:2014-04-09
+		#id:441afb90-3558-4ecd-b41b-b1156e2fcdca
+	List contexts command
+		#done-date:2014-04-09
+		#id:698c5f82-7bc5-49ef-8c1a-a64c1fdb0055
+	Make the CLI work on a single file only
+		- Take an argument for the file name to open.
+		#done-date:2014-04-09
+		#id:7a24de99-171f-4ee1-8993-a5d55250204c
+	Open any list file rather than just the preconfigured ones
+		#done-date:2014-04-09
+		#id:767a1f28-f4ec-4b27-bad3-d906e9be40b2
+	Allow setting priority parents directly
+		- Test for loops before going ahead.
+		#done-date:2014-04-09
+		#id:d5c1924e-9cac-4a75-97df-cc5ca7d0a5be
+	MVVM architecture
+		- Splitting functionality and view will help the transition to GUI.
+		#done-date:2014-04-09
+		#id:b04f9d73-8158-4e68-a648-60eb6b189200
+	Tickler file
+		- Automatic return to inbox from the Someday file on a certain date.
+		- Specify as a tag (#tickle-date:2010-12-01)
+		- Someday items with a date specified this way will be moved to the inbox after that date.
+		#done-date:2014-04-09
+		#id:25b636b4-2d72-4baa-bbdc-ee7bc4fdd4ce
+	Use the mapper from PimData
+		#done-date:2014-04-09
+		#id:5f01302b-ed3e-4e04-8e55-9624cb1c4724
+	Search via GUI
+		#done-date:2014-04-09
+		#id:766e585f-c3e9-44b6-a458-a775c399d16c
+	Allow marking a project as "done" while processing, instead of needing a new action.
+		- If action matches new context, just assign context.
+		#done-date:2014-04-09
+		#id:0a8a4af6-68fd-4371-bab7-2e56641bfa79
+	Unit tests
+		#done-date:2014-04-09
+		#id:b72b582b-3b36-44d3-88ba-37f20156b18f
 @done
 	The Done list should be broken up into date sub lists rather than being a different format.
+		#id:3da6bbcb-9608-4289-a82c-50b29d7ee7ac
 	Search items.
+		#id:8f23db15-555d-4755-a10d-0d4853bfa8b8
 	Abstract out the serialiser codec so it can be replaced by, say, a YAML one.
 		- Currently two static methods in the PIM library.
+		#id:0a5326f8-36ea-43a4-aa5f-fee2ff3b648c
 	Don't rewrite files if no changes are made.
 		- Someday file already done.
 		- Can't do for main list, because items need sorting.
 		- Don't rewrite on "show" action.
+		#id:6c99b0e8-b010-4497-bc8c-1dfa9e7e51eb
 	Create todo.txt if it doesn't exist yet.
+		#id:71e7fb07-5031-4781-9ee7-9ae50f6aa262

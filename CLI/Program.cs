@@ -93,6 +93,19 @@ namespace AssimilationSoftware.TodoSort.CLI
                             p.Start();
                         }
                         break;
+                    case "set-parent":
+                        if (args.Count() < 3) { PrintHelp(command); break; }
+                        Console.WriteLine("Confirm child item:");
+                        vm.SearchTerm = args[1];
+                        var child = Disambiguate(vm.SearchResults);
+                        Console.WriteLine("Confirm parent item:");
+                        vm.SearchTerm = args[2];
+                        var parent = Disambiguate(vm.SearchResults);
+                        if (child != null && parent != null)
+                        {
+                            vm.SetParent(child, parent);
+                        }
+                        break;
                     case "show":
                         // Display one context.
                         if (args.Count() < 2) { PrintHelp(command); break; }
@@ -103,7 +116,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                         var contexts = vm.GetContextNames();
                         foreach (var c in contexts)
                         {
-                            Console.WriteLine("@{0}\t{1} items", c, vm.GetContextItems(c).Count());
+                            Console.WriteLine("@{0}\t{1,3} items", c, vm.GetContextItems(c).Count());
                         }
                         break;
                     case "process":
@@ -157,7 +170,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                         selected = Disambiguate(vm.SearchResults);
                         if (selected != null)
                         {
-                            var tickle = ConfigureDate(DateTime.Now.AddDays(7), "When should this item be returned to the inbox? (blank for manual)");
+                            var tickle = ConfigureDate(DateTime.Now.AddDays(7), "When should this item be returned to the inbox?");
                             if (tickle.HasValue)
                             {
                                 vm.Defer(selected, tickle.Value);
@@ -246,8 +259,12 @@ namespace AssimilationSoftware.TodoSort.CLI
                         }
                         else
                         {
-                            // TODO: Confirm before destroying all parent data?
-                            vm.ResetPriorityParents();
+                            Console.Write("Do you really want to destroy all ranking data and start over [Y/N]?");
+                            var k = Console.ReadKey();
+                            if (k.KeyChar.ToString().ToLower() == "y")
+                            {
+                                vm.ResetPriorityParents();
+                            }
                         }
                         break;
                     case "tag":
@@ -320,25 +337,32 @@ namespace AssimilationSoftware.TodoSort.CLI
         private static DateTime? ConfigureDate(DateTime preset, string prompt)
         {
             Console.WriteLine(prompt);
-            Console.WriteLine("Type correct value or [Enter] to accept default (blank for null).");
+            Console.WriteLine("Type correct value or [Enter] to accept default ('null' for null).");
             Console.WriteLine(preset.ToString("yyyy-MM-dd"));
             var response = Console.ReadLine();
             if (response.Trim().Length > 0)
             {
-                DateTime result;
-                if (DateTime.TryParse(response, out result))
+                if (response.ToLower() == "null")
                 {
-                    Console.WriteLine();
-                    return result;
+                    return null;
                 }
                 else
                 {
-                    Console.WriteLine();
-                    return null;
+                    DateTime result;
+                    if (DateTime.TryParse(response, out result))
+                    {
+                        Console.WriteLine();
+                        return result;
+                    }
+                    else
+                    {
+                        Console.WriteLine();
+                        return preset;
+                    }
                 }
             }
             Console.WriteLine();
-            return null;
+            return preset;
         }
 
         private static void PrintItems(IEnumerable<ActionItem> list)
@@ -355,7 +379,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                 {
                     if (i.Notes.Count > 0)
                     {
-                        Console.WriteLine(string.Format("\t\t{0}", string.Join("\n\t\t- ", i.Notes)));
+                        Console.WriteLine(string.Format("\t\t- {0}", string.Join("\n\t\t- ", i.Notes)));
                     }
                     if (i.Tags.Count > 0)
                     {
@@ -390,7 +414,7 @@ commands:
     someday     Review the someday file, assigning 10% to an active context.
     summary     Show context names and number of items in each.
     rank        Vote on the relative importance of items to assign priorities.
-    unrank      Reset all ranking data.
+    unrank      Reset ranking data for one item or all items.
     tag         Adds tags to an item.
     viz         Print a Graphviz DOT language representation of one context's
                 priorities.
