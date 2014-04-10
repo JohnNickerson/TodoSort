@@ -214,7 +214,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                         break;
                     case "rank":
                         // for each context..
-                        foreach (string con in vm.GetContextNames("inbox"))
+                        foreach (string con in vm.GetContextNames("inbox", "done"))
                         {
                             // select all items without rank parents
                             var items = (from i in vm.GetContextItems(con) where i.RankParent == null select i).ToList();
