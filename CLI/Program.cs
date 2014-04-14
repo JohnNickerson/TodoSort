@@ -1,4 +1,5 @@
-﻿using AssimilationSoftware.PimData.Mappers;
+﻿using AssimilationSoftware.PimData.Interfaces;
+using AssimilationSoftware.PimData.Mappers;
 using AssimilationSoftware.PimData.Model;
 using AssimilationSoftware.TodoSort.CLI.Properties;
 using AssimilationSoftware.TodoSort.Core;
@@ -114,9 +115,18 @@ namespace AssimilationSoftware.TodoSort.CLI
                         break;
                     case "summary":
                         var contexts = vm.GetContextNames();
+                        int maxwidth = (from c in contexts select c.Length).Max();
                         foreach (var c in contexts)
                         {
-                            Console.WriteLine("@{0}\t{1,3} items", c, vm.GetContextItems(c).Count());
+                            int count = vm.GetContextItems(c).Count();
+                            if (count == 1)
+                            {
+                                Console.WriteLine("@{0}\t{1,3} item", c.PadRight(maxwidth), count);
+                            }
+                            else
+                            {
+                                Console.WriteLine("@{0}\t{1,3} items", c.PadRight(maxwidth), count);
+                            }
                         }
                         break;
                     case "process":
@@ -290,23 +300,23 @@ namespace AssimilationSoftware.TodoSort.CLI
                             } while (tagname.Length > 0);
                         }
                         break;
-                    case "viz":
+                    case "export":
                         // Write GraphViz source.
-                        if (args.Count() < 2) { PrintHelp(command); break; }
-                        Console.WriteLine("digraph {");
-                        foreach (var n in vm.GetContextItems(args[1]))
+                        if (args.Count() < 3) { PrintHelp(command); break; }
+                        IPimDataMapper<ActionItem> exporter = null;
+                        switch (args[2])
                         {
-                            var line = n.Title.Replace("\"", "");
-                            Console.WriteLine(string.Format("    ID{0} [label=\"{1}\"];", n.ID.ToString().Replace("-", ""), line));
-                            if (n.RankParent != null)
-                            {
-                                Console.WriteLine(string.Format("    ID{0} -> ID{1};", n.RankParent.ID.ToString().Replace("-", ""), n.ID.ToString().Replace("-", "")));
-                            }
-                            else
-                            {
-                            }
+                            case "html":
+                                exporter = new HtmlExporter { Filename = args[3] };
+                                break;
+                            case "graphviz":
+                                exporter = new GraphVizExporter { Filename = args[3] };
+                                break;
                         }
-                        Console.WriteLine("}");
+                        if (exporter != null)
+                        {
+                            exporter.SaveAll(vm.GetContextItems(args[1]).ToList());
+                        }
                         break;
                     default:
                         PrintHelp(null);
@@ -321,10 +331,16 @@ namespace AssimilationSoftware.TodoSort.CLI
 
 			#region Tidy up
 			// Move to the "done" file any items with a context of @done.
-            vm.MarkDone(vm.GetContextItems("done").ToArray());
+            if (donemapper != null)
+            {
+                vm.MarkDone(vm.GetContextItems("done").ToArray());
+            }
 
             // Move any "someday" items in the main list to the someday file.
-            vm.Defer(vm.GetContextItems("someday").ToArray());
+            if (somedaymapper != null)
+            {
+                vm.Defer(vm.GetContextItems("someday").ToArray());
+            }
 
             // Delete any items with a context of "delete".
             vm.Delete(vm.GetContextItems("delete").ToArray());

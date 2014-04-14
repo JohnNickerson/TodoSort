@@ -78,6 +78,22 @@
 	Unit tests
 		#done-date:2014-04-09
 		#id:b72b582b-3b36-44d3-88ba-37f20156b18f
+@2014-04-11
+	Exclude "done" items from ranking
+		#done-date:2014-04-11
+		#id:d6a0676a-feb9-40bd-913f-375a4104350c
+	Don't reprocess "done" entries onto themselves
+		- When the "done" mapper is null, we use an @done context. At the end, @done items are processed into the (assumed separate) done list.
+		- This causes rewrites on no-op runs.
+		#done-date:2014-04-11
+		#id:de18533b-d800-4dfa-9d2a-50d9ad1e6d48
+@2014-04-14
+	Adjust tab width for summary command for short context names
+		#done-date:2014-04-14
+		#id:f5de2132-bbaf-4511-aae8-76a2d43a0800
+	Singularise the word "items" in the summary for contexts with 1 item
+		#done-date:2014-04-14
+		#id:814f78a8-3307-40a3-b74e-4512f5f2c0ab
 @done
 	The Done list should be broken up into date sub lists rather than being a different format.
 		#id:3da6bbcb-9608-4289-a82c-50b29d7ee7ac
