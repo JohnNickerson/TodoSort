@@ -11,6 +11,9 @@
 		- Export search results through a mapper? eg "todosort search video --export:html > video.html"
 		- This mapper would be a formatter, producing text output instead of files.
 		#id:082094de-91d3-4a12-bfe8-ebbef262e46b
+	New IExporter interface for exporters
+		- IPimDataMapper<> is not really the right interface for them, since they only implement a quarter of it.
+		#id:8a3cf87e-8442-4b06-94a3-86d847d063cf
 	Generic CRUD operations on any list file
 		- Move to another list file or sub-list, too
 		#id:bcac196a-52cf-4e95-8491-3cc5eafbe98b
@@ -63,6 +66,9 @@
 		- It would make argument handling a lot cleaner.
 		#url:https://commandline.codeplex.com/
 		#id:e6bafeec-ca6d-4a8a-9263-f8e2647a75b1
+	De-duplicate command
+		- Search and destroy/merge duplicates
+		#id:841c5d7b-d1c5-4a3e-8618-cfff08ef4c20
 	Display results by data binding instead of direct fetch
 		#id:b7a72b3f-f40d-4dc0-abcc-66ca522d3cbf
 		#priority-parent:d5b2a34d-1693-44f8-9cd8-ff5e0857879a

@@ -213,6 +213,7 @@ namespace AssimilationSoftware.TodoSort.Core
                     where i.Title.ToLower().Contains(search.ToLower())
                         || string.Join(Environment.NewLine, i.Notes).ToLower().Contains(search.ToLower())
                         || string.Join(Environment.NewLine, i.Tags.Keys).ToLower().Contains(search.ToLower())
+                        || i.ID.ToString().StartsWith(search)
                         || string.Join(Environment.NewLine, (from k in i.Tags select k.Value)).ToLower().Contains(search.ToLower())
                     select i);
             if (showHeadOnly)

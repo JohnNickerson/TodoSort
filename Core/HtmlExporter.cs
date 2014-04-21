@@ -9,26 +9,11 @@ using System.Threading.Tasks;
 
 namespace AssimilationSoftware.TodoSort.Core
 {
-    public class HtmlExporter : IPimDataMapper<ActionItem>
+    public class HtmlExporter : IExporter
     {
         public string Filename { get; set; }
 
-        public ActionItem Load(Guid id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public List<ActionItem> LoadAll()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Save(ActionItem item)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void SaveAll(List<ActionItem> items)
+        public void Export(List<ActionItem> items)
         {
             StringBuilder result = new StringBuilder();
             result.AppendLine("<html><body>");

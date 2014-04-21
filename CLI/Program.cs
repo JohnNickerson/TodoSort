@@ -303,7 +303,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                     case "export":
                         // Write GraphViz source.
                         if (args.Count() < 3) { PrintHelp(command); break; }
-                        IPimDataMapper<ActionItem> exporter = null;
+                        IExporter exporter = null;
                         switch (args[2])
                         {
                             case "html":
@@ -315,7 +315,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                         }
                         if (exporter != null)
                         {
-                            exporter.SaveAll(vm.GetContextItems(args[1]).ToList());
+                            exporter.Export(vm.GetContextItems(args[1]).ToList());
                         }
                         break;
                     default:
