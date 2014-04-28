@@ -94,6 +94,33 @@
 	Singularise the word "items" in the summary for contexts with 1 item
 		#done-date:2014-04-14
 		#id:814f78a8-3307-40a3-b74e-4512f5f2c0ab
+@2014-04-28
+	Default to show the head of the list only
+		#done-date:2014-04-28
+		#id:57c61196-7a4a-47b5-bcdd-0640fc19daf8
+	Allow marking as done when using "open-tag"
+		#done-date:2014-04-28
+		#id:2119c645-d873-4fab-837c-eaf6e4ac4be0
+	GraphViz output via a mapper instead of direct code
+		- Should be relatively simple, but provides the option for exporting from any UI.
+		#done-date:2014-04-28
+		#id:a9ff630e-e912-4054-ba77-973b3ede3af2
+	New IExporter interface for exporters
+		- IPimDataMapper<> is not really the right interface for them, since they only implement a quarter of it.
+		#done-date:2014-04-28
+		#id:8a3cf87e-8442-4b06-94a3-86d847d063cf
+	Export command with various formatters
+		- Replaces the "viz" command and exporting HTML pages.
+		- Export search results through a mapper? eg "todosort search video --export:html > video.html"
+		- This mapper would be a formatter, producing text output instead of files.
+		#done-date:2014-04-28
+		#id:082094de-91d3-4a12-bfe8-ebbef262e46b
+	Export an HTML page
+		#done-date:2014-04-28
+		#id:91db6215-5b2c-4d7a-acfe-3716383eeaaa
+	Progress indicator while ranking
+		#done-date:2014-04-28
+		#id:ff3436ab-a3ee-4af2-a07a-3a668570861c
 @done
 	The Done list should be broken up into date sub lists rather than being a different format.
 		#id:3da6bbcb-9608-4289-a82c-50b29d7ee7ac

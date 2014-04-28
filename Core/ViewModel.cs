@@ -26,7 +26,7 @@ namespace AssimilationSoftware.TodoSort.Core
         bool done_changes;
 
         string _searchTerm;
-        private bool showHeadOnly = false;
+        private bool showHeadOnly = true;
         #endregion
 
         public ViewModel(IPimDataMapper<ActionItem> todo, IPimDataMapper<ActionItem> done, IPimDataMapper<ActionItem> someday)

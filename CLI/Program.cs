@@ -3,7 +3,6 @@ using AssimilationSoftware.PimData.Mappers;
 using AssimilationSoftware.PimData.Model;
 using AssimilationSoftware.TodoSort.CLI.Properties;
 using AssimilationSoftware.TodoSort.Core;
-using AssimilationSoftware.TodoSort.Core.Mappers;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -43,9 +42,9 @@ namespace AssimilationSoftware.TodoSort.CLI
             {
                 verbose = true;
             }
-            if (args.Contains("--head"))
+            if (args.Contains("--all"))
             {
-                vm.ShowHeadOnly = true;
+                vm.ShowHeadOnly = false;
             }
 
             #region Manipulate the file items
@@ -92,6 +91,12 @@ namespace AssimilationSoftware.TodoSort.CLI
                             System.Diagnostics.Process p = new System.Diagnostics.Process();
                             p.StartInfo.FileName = tagvalue;
                             p.Start();
+                            Console.WriteLine("Mark as done?");
+                            var yn = Console.ReadKey();
+                            if (yn.ToString().ToLower() == "y")
+                            {
+                                vm.MarkDone(selected);
+                            }
                         }
                         break;
                     case "set-parent":
@@ -237,6 +242,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                             for (int x = 0; x < items.Count - 1; x += 2)
                             {
                                 // get vote
+                                Console.WriteLine("{0}/{1} ({2}%) complete", x, items.Count, 100 * x / items.Count);
                                 Console.WriteLine(string.Format("\t1: {0}", items[x].Title));
                                 Console.WriteLine(string.Format("\t2: {0}", items[x + 1].Title));
                                 Console.Write("Which of these is more important? ");
@@ -253,6 +259,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                                     default:
                                         break;
                                 }
+                                Console.WriteLine();
                                 Console.WriteLine();
                             }
                         }
@@ -432,8 +439,8 @@ commands:
     rank        Vote on the relative importance of items to assign priorities.
     unrank      Reset ranking data for one item or all items.
     tag         Adds tags to an item.
-    viz         Print a Graphviz DOT language representation of one context's
-                priorities.
+    export      Print a Graphviz DOT language representation of one context's
+                priorities, or an HTML page.
 ", Assembly.GetExecutingAssembly().GetName().Version));
         }
 

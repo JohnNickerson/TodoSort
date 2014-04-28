@@ -15,7 +15,6 @@ using AssimilationSoftware.PimData.Mappers;
 using AssimilationSoftware.PimData.Model;
 using AssimilationSoftware.TodoSort.WpfGui.Properties;
 using AssimilationSoftware.TodoSort.Core;
-using AssimilationSoftware.TodoSort.Core.Mappers;
 
 namespace AssimilationSoftware.TodoSort.WpfGui
 {

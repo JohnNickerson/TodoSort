@@ -3,39 +3,27 @@
 		- "repeats" tags? That's just a way to serialise it.
 		- When a recurring item is marked as done, instead of moving, one copy goes to the "done" list and one to the "someday" list.
 		#id:8da843b9-8dc7-47c7-9db3-e7209b1068fe
-	GraphViz output via a mapper instead of direct code
-		- Should be relatively simple, but provides the option for exporting from any UI.
-		#id:a9ff630e-e912-4054-ba77-973b3ede3af2
-	Export command with various formatters
-		- Replaces the "viz" command and exporting HTML pages.
-		- Export search results through a mapper? eg "todosort search video --export:html > video.html"
-		- This mapper would be a formatter, producing text output instead of files.
-		#id:082094de-91d3-4a12-bfe8-ebbef262e46b
-	New IExporter interface for exporters
-		- IPimDataMapper<> is not really the right interface for them, since they only implement a quarter of it.
-		#id:8a3cf87e-8442-4b06-94a3-86d847d063cf
-	Generic CRUD operations on any list file
-		- Move to another list file or sub-list, too
-		#id:bcac196a-52cf-4e95-8491-3cc5eafbe98b
-		#priority-parent:8da843b9-8dc7-47c7-9db3-e7209b1068fe
-	Work offline
-		- Enqueue commands to process later without changing files.
-		- Useful for when the files are not up to date (eg Dropbox sync has fallen behind).
-		#id:5e70eaeb-8525-42eb-9824-407482dc0588
-		#priority-parent:a9ff630e-e912-4054-ba77-973b3ede3af2
 	Unrank should remove children, too
 		- The "unrank" command, when applied to an individual item, should remove its children as well as its own parent setting.
 		- Otherwise, it just plucks out a subtree and puts it at the root level.
 		#id:71c68ed1-a716-4236-934c-7e80cfbde823
-		#priority-parent:082094de-91d3-4a12-bfe8-ebbef262e46b
-	Only write IDs if they are useful
-		- If IDs are not referenced anywhere (ie no projects and no priorities) then they're just taking up space.
-		#id:950006c7-8cb2-4386-9c48-5668b8fb84fc
+	Work offline
+		- Enqueue commands to process later without changing files.
+		- Useful for when the files are not up to date (eg Dropbox sync has fallen behind).
+		#id:5e70eaeb-8525-42eb-9824-407482dc0588
 		#priority-parent:8da843b9-8dc7-47c7-9db3-e7209b1068fe
 	Task due dates
 		- I tend not to use these myself, though.
 		#id:102fa8ac-653a-4d3f-b172-a0d3bf3824d8
-		#priority-parent:a9ff630e-e912-4054-ba77-973b3ede3af2
+		#priority-parent:71c68ed1-a716-4236-934c-7e80cfbde823
+	Generic CRUD operations on any list file
+		- Move to another list file or sub-list, too
+		#id:bcac196a-52cf-4e95-8491-3cc5eafbe98b
+		#priority-parent:8da843b9-8dc7-47c7-9db3-e7209b1068fe
+	Only write IDs if they are useful
+		- If IDs are not referenced anywhere (ie no projects and no priorities) then they're just taking up space.
+		#id:950006c7-8cb2-4386-9c48-5668b8fb84fc
+		#priority-parent:8da843b9-8dc7-47c7-9db3-e7209b1068fe
 	Import function
 		- To merge lists and add new items in bulk.
 		- Optionally assign all to a new context or keep in their existing contexts.
@@ -51,16 +39,11 @@
 		- Or maybe LINQ via the command line?
 		#id:59162543-9d87-41e1-a601-6fc7462f6fbd
 		#priority-parent:950006c7-8cb2-4386-9c48-5668b8fb84fc
+@bugs
+	Throw an error if tag name is not specified for open-tag command
+		- The error won't appear after "todosort open-tag funny --head" because there are still enough arguments.
+		#id:b65d4732-01af-435f-93de-a6c2448fd00f
 @command-line
-	Add a note to an item
-		#id:d5b2a34d-1693-44f8-9cd8-ff5e0857879a
-	Show notes and tags while ranking items
-		- Will give more context to ranking decisions.
-		#id:237d50df-5ef8-4fb1-afcc-d6b036e903f0
-	Rename items
-		#id:e850be75-2c62-4e09-b83b-7e6b52d10d8c
-	Search deferred items
-		#id:93ee9286-2ee7-4252-bee8-1a3127d14d9e
 	Switch to a command-line argument parsing library
 		- To turn a line of text arguments into a command and a list of argument pairs.
 		- It would make argument handling a lot cleaner.
@@ -69,22 +52,39 @@
 	De-duplicate command
 		- Search and destroy/merge duplicates
 		#id:841c5d7b-d1c5-4a3e-8618-cfff08ef4c20
-	Display results by data binding instead of direct fetch
-		#id:b7a72b3f-f40d-4dc0-abcc-66ca522d3cbf
-		#priority-parent:d5b2a34d-1693-44f8-9cd8-ff5e0857879a
+	Make "Unrank All" an explicit command option
+		- Rather than assuming "all" when no argument is given.
+		#id:72de4e04-0d4b-4309-a834-6b976b441e13
+		#priority-parent:ff3436ab-a3ee-4af2-a07a-3a668570861c
+	Show notes and tags while ranking items
+		- Will give more context to ranking decisions.
+		#id:237d50df-5ef8-4fb1-afcc-d6b036e903f0
+		#priority-parent:e6bafeec-ca6d-4a8a-9263-f8e2647a75b1
+	Save and quit a partial ranking
+		#id:73144ee6-b23d-4a5e-9f39-cb2e5aa86d5b
+		#priority-parent:ff3436ab-a3ee-4af2-a07a-3a668570861c
+	Search deferred items
+		#id:93ee9286-2ee7-4252-bee8-1a3127d14d9e
+		#priority-parent:e6bafeec-ca6d-4a8a-9263-f8e2647a75b1
+	Add a note to an item
+		#id:d5b2a34d-1693-44f8-9cd8-ff5e0857879a
+		#priority-parent:72de4e04-0d4b-4309-a834-6b976b441e13
+	Rename items
+		#id:e850be75-2c62-4e09-b83b-7e6b52d10d8c
+		#priority-parent:237d50df-5ef8-4fb1-afcc-d6b036e903f0
 	Show the tree for one item
 		- Viz search?
 		#id:ed1bd4a3-b9ef-470f-870d-a94459fe4f5f
 		#priority-parent:237d50df-5ef8-4fb1-afcc-d6b036e903f0
+	Display results by data binding instead of direct fetch
+		#id:b7a72b3f-f40d-4dc0-abcc-66ca522d3cbf
+		#priority-parent:d5b2a34d-1693-44f8-9cd8-ff5e0857879a
 	Undefer a specific item
 		#id:6dc916bc-4924-4300-8adb-89d20013dce1
 		#priority-parent:e850be75-2c62-4e09-b83b-7e6b52d10d8c
 	Edit an item's title
 		#id:6d1956f4-6fee-4243-900c-977618c430a8
 		#priority-parent:d5b2a34d-1693-44f8-9cd8-ff5e0857879a
-	Keep processing while more items still in inbox or projects.
-		#id:f5a3d428-5de0-4aa0-8e88-edcc3800ba5e
-		#priority-parent:b7a72b3f-f40d-4dc0-abcc-66ca522d3cbf
 	Change the disambiguation process to demand a single match
 		- Tough for short words that might appear everywhere. Allow IDs?
 		#id:fb247274-9a35-4f42-bb8c-4361cd29fd9e
@@ -94,28 +94,35 @@
 		- Select which tag values to take in the new combined item.
 		#id:dbfb41ca-afe9-472b-bdb9-58bf7f410d47
 		#priority-parent:ed1bd4a3-b9ef-470f-870d-a94459fe4f5f
+	Keep processing while more items still in inbox or projects.
+		#id:f5a3d428-5de0-4aa0-8e88-edcc3800ba5e
+		#priority-parent:b7a72b3f-f40d-4dc0-abcc-66ca522d3cbf
 	Detailed help on each command
 		- Eg "todosort help defer" to bring up a page just on the "defer" command.
 		- This would allow detailed help when command parsing fails.
 		#id:5a18109c-1c4a-4bba-9fff-649c8e390bd1
 		#priority-parent:f5a3d428-5de0-4aa0-8e88-edcc3800ba5e
 @gui
-	Rank items for priority via GUI
-		#id:4ed8be70-a8dd-41b7-8826-37d7b1e9b4ab
 	Mark as done via GUI
 		- Should just be a matter of binding the checkbox to the item's IsDone property.
 		#id:8472e1c3-6226-408b-9728-e74c1f6014c2
+	A Chrome/Firefox plugin to add a page to the playlist
+		#id:d4e41a1d-782b-4f1d-959a-61e8cefcf892
+		#priority-parent:8472e1c3-6226-408b-9728-e74c1f6014c2
+	Use a "go" button to separate the ticking of a box from the disk write, in case it is ticked accidentally.
+		- Or just don't clear the item immediately so that it can be unticked if required.
+		- Or include an "undo" action.
+		#id:b68f0d46-3d6e-4b46-a585-3c92c36fca59
+		#priority-parent:8472e1c3-6226-408b-9728-e74c1f6014c2
+	Rank items for priority via GUI
+		#id:4ed8be70-a8dd-41b7-8826-37d7b1e9b4ab
+		#priority-parent:d4e41a1d-782b-4f1d-959a-61e8cefcf892
 	Delete items via GUI
 		#id:1bf0d9fe-d267-46af-be96-93dc7016ca24
 		#priority-parent:4ed8be70-a8dd-41b7-8826-37d7b1e9b4ab
 	Add follow-up actions via GUI
 		#id:bdf4dbf2-cc3c-4004-811b-1d8371c37d3f
 		#priority-parent:4ed8be70-a8dd-41b7-8826-37d7b1e9b4ab
-	Use a "go" button to separate the ticking of a box from the disk write, in case it is ticked accidentally.
-		- Or just don't clear the item immediately so that it can be unticked if required.
-		- Or include an "undo" action.
-		#id:b68f0d46-3d6e-4b46-a585-3c92c36fca59
-		#priority-parent:8472e1c3-6226-408b-9728-e74c1f6014c2
 	Add/edit tags via GUI
 		#id:eac9e80b-2f1b-4fb6-bb79-75c8d850a07f
 		#priority-parent:4ed8be70-a8dd-41b7-8826-37d7b1e9b4ab
@@ -132,18 +139,17 @@
 		#id:6995c2c3-e576-467e-91d4-5775e85e984c
 		#priority-parent:4629aebd-92fa-4e25-afbe-f619d15f7a37
 @someday
-	Export an HTML page
-		#id:91db6215-5b2c-4d7a-acfe-3716383eeaaa
+	Import from Pocket
+		#id:560190c3-9571-48e0-a951-3bbdba5c05d1
+	Extensible command framework?
+		- Doesn't seem like a great idea, actually.
+		#id:3e979de9-32a2-466c-87f0-b23768955a95
 	Review mode?
 		- Process inbox and projects
 		- Ask if each item is done or should be deferred
 		- Process someday list and see if any were done or should be done now
 		#id:b84a8574-a3eb-4208-ba13-8746a9bca871
-		#priority-parent:91db6215-5b2c-4d7a-acfe-3716383eeaaa
-	Extensible command framework?
-		- Doesn't seem like a great idea, actually.
-		#id:3e979de9-32a2-466c-87f0-b23768955a95
-		#priority-parent:91db6215-5b2c-4d7a-acfe-3716383eeaaa
+		#priority-parent:560190c3-9571-48e0-a951-3bbdba5c05d1
 	Sync with external services
 		- Outlook, Google Tasks, Wunderlist, Google Keep?
 		- API mappers where possible.
@@ -155,10 +161,10 @@
 		- eg "Check something" then "|@shopping Buy this" and "|@home Set up that".
 		#id:79db8c53-b314-4c57-a692-e4791e749215
 		#priority-parent:bcac196a-52cf-4e95-8491-3cc5eafbe98b
+	Add a timestamp when items are processed through the inbox.
+		#id:d7eec29c-e5c6-4347-8950-a9500cc56eb3
+		#priority-parent:43b0868b-d3e5-477f-82cd-b7da7c01a092
 	Detect "[x]" marks as completed items
 		#tickle-date:2014-04-16
 		#id:aa8b5a86-32d5-4445-a90e-ed517b77c292
 		#priority-parent:876a0330-b332-4e55-94a5-efaa77f3f511
-	Add a timestamp when items are processed through the inbox.
-		#id:d7eec29c-e5c6-4347-8950-a9500cc56eb3
-		#priority-parent:43b0868b-d3e5-477f-82cd-b7da7c01a092
