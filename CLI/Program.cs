@@ -55,15 +55,22 @@ namespace AssimilationSoftware.TodoSort.CLI
                 ActionItem selected = null;
                 switch (command)
                 {
+                    #region Help
                     case "help":
                         PrintHelp(null);
                         break;
+                    #endregion
+
+                    #region Search
                     case "search":
                         // Search for matching items.
                         if (args.Count() < 2) { PrintHelp(command); break; }
                         vm.SearchTerm = args[1];
                         PrintItems(vm.SearchResults);
                         break;
+                    #endregion
+
+                    #region Add
                     case "add":
                         // Add a new item.
                         Console.WriteLine("What is the new action?");
@@ -72,7 +79,12 @@ namespace AssimilationSoftware.TodoSort.CLI
                         string context = Console.ReadLine();
                         var item = new ActionItem(context, title);
                         vm.AddItem(item);
+                        // Allow tagging right away.
+                        TagItem(vm, item);
                         break;
+                    #endregion
+
+                    #region Delete
                     case "delete":
                         // Find a matching item to delete.
                         if (args.Count() < 2) { PrintHelp(command); break; }
@@ -80,25 +92,38 @@ namespace AssimilationSoftware.TodoSort.CLI
                         selected = Disambiguate(vm.SearchResults);
                         vm.Delete(selected);
                         break;
+                    #endregion
+
+                    #region Open Tag
                     case "open-tag":
-                        // Read a tag and pass it through to the "start" command. Intended for URLs.
+                        // Read a tag and pass it through to the "start" command. Intended for URLs and file names.
                         if (args.Count() < 3) { PrintHelp(command); break; }
                         vm.SearchTerm = args[1];
                         selected = Disambiguate(vm.SearchResults);
-                        if (selected != null && selected.Tags.ContainsKey(args[2]))
+                        if (selected != null)
                         {
-                            string tagvalue = selected.Tags[args[2]];
-                            System.Diagnostics.Process p = new System.Diagnostics.Process();
-                            p.StartInfo.FileName = tagvalue;
-                            p.Start();
-                            Console.WriteLine("Mark as done?");
-                            var yn = Console.ReadKey();
-                            if (yn.ToString().ToLower() == "y")
+                            if (selected.Tags.ContainsKey(args[2]))
                             {
-                                vm.MarkDone(selected);
+                                string tagvalue = selected.Tags[args[2]];
+                                System.Diagnostics.Process p = new System.Diagnostics.Process();
+                                p.StartInfo.FileName = tagvalue;
+                                p.Start();
+                                Console.WriteLine("Mark as done (y/n)?");
+                                var yn = Console.ReadKey();
+                                if (yn.KeyChar.ToString().ToLower() == "y")
+                                {
+                                    vm.MarkDone(selected);
+                                }
+                            }
+                            else
+                            {
+                                Console.WriteLine("Tag not found: {0}", args[2]);
                             }
                         }
                         break;
+                    #endregion
+
+                    #region Set Parent
                     case "set-parent":
                         if (args.Count() < 3) { PrintHelp(command); break; }
                         Console.WriteLine("Confirm child item:");
@@ -112,12 +137,18 @@ namespace AssimilationSoftware.TodoSort.CLI
                             vm.SetParent(child, parent);
                         }
                         break;
+                    #endregion
+
+                    #region Show
                     case "show":
                         // Display one context.
                         if (args.Count() < 2) { PrintHelp(command); break; }
                         var list = vm.GetContextItems(args[1]);
                         PrintItems(list);
                         break;
+                    #endregion
+
+                    #region Summary
                     case "summary":
                         var contexts = vm.GetContextNames();
                         int maxwidth = (from c in contexts select c.Length).Max();
@@ -132,8 +163,15 @@ namespace AssimilationSoftware.TodoSort.CLI
                             {
                                 Console.WriteLine("@{0}\t{1,3} items", c.PadRight(maxwidth), count);
                             }
+                            if (args.Contains("--verbose"))
+                            {
+                                // Show a summary of numbers at each depth.
+                            }
                         }
                         break;
+                    #endregion
+
+                    #region Process
                     case "process":
                         // Go over the @someday items and look for tickle dates.
                         vm.Undefer("inbox", vm.GetTickleDueItems().ToArray());
@@ -178,6 +216,8 @@ namespace AssimilationSoftware.TodoSort.CLI
                             }
                         }
                         break;
+                    #endregion
+
                     case "defer":
                         // Move the item and its sub-items to the "someday" file.
                         if (args.Count() < 2) { PrintHelp(command); break; }
@@ -206,6 +246,12 @@ namespace AssimilationSoftware.TodoSort.CLI
                             vm.MarkDone(selected);
                         }
                         break;
+                    case "prune":
+                        // Delete items below a specified depth.
+                        if (args.Count() < 2) { PrintHelp(command); break; }
+                        int depth = Int32.Parse(args[1]);
+                        vm.PruneBelowDepth(depth);
+                        break;
                     case "someday":
                         // Display the whole Someday file, 10 items at a time, and either delete or do one per listing.
                         for (int offset = 0; offset <= vm.SomedayItems.Count; offset += 10)
@@ -227,6 +273,8 @@ namespace AssimilationSoftware.TodoSort.CLI
                             vm.Undefer(newcontext, selected);
                         }
                         break;
+
+                    #region Rank
                     case "rank":
                         // for each context..
                         foreach (string con in vm.GetContextNames("inbox", "done"))
@@ -243,9 +291,11 @@ namespace AssimilationSoftware.TodoSort.CLI
                             {
                                 // get vote
                                 Console.WriteLine("{0}/{1} ({2}%) complete", x, items.Count, 100 * x / items.Count);
-                                Console.WriteLine(string.Format("\t1: {0}", items[x].Title));
-                                Console.WriteLine(string.Format("\t2: {0}", items[x + 1].Title));
-                                Console.Write("Which of these is more important? ");
+                                Console.WriteLine("    1:");
+                                PrintItem(items[x]);
+                                Console.WriteLine("    2:");
+                                PrintItem(items[x + 1]);
+                                Console.Write("Which of these is more important? (q=quit) ");
                                 var k = Console.ReadKey();
                                 // assign parents based on vote
                                 switch (k.KeyChar)
@@ -256,6 +306,15 @@ namespace AssimilationSoftware.TodoSort.CLI
                                     case '2':
                                         vm.SetParent(items[x], items[x + 1]);
                                         break;
+                                    case 'q':
+                                        Console.WriteLine("Quit without saving. All rankings from this session will be discarded. Are you sure? (y/n)");
+                                        k = Console.ReadKey();
+                                        if (k.KeyChar == 'y')
+                                        {
+                                            // Quit without saving.
+                                            return;
+                                        }
+                                        break;
                                     default:
                                         break;
                                 }
@@ -264,6 +323,8 @@ namespace AssimilationSoftware.TodoSort.CLI
                             }
                         }
                         break;
+                    #endregion
+
                     case "unrank":
                         if (args.Count() >= 2)
                         {
@@ -274,7 +335,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                                 vm.ResetPriorityParents(selected);
                             }
                         }
-                        else
+                        else if (!vm.ShowHeadOnly)
                         {
                             Console.Write("Do you really want to destroy all ranking data and start over [Y/N]?");
                             var k = Console.ReadKey();
@@ -289,22 +350,9 @@ namespace AssimilationSoftware.TodoSort.CLI
                         if (args.Count() < 2) { PrintHelp(command); break; }
                         vm.SearchTerm = args[1];
                         selected = Disambiguate(vm.SearchResults);
-                        Console.WriteLine();
                         if (selected != null)
                         {
-                            string tagname;
-                            do
-                            {
-                                Console.WriteLine("What should this new tag be called? (ENTER to quit)");
-                                tagname = Console.ReadLine().ToLower().Trim();
-                                if (tagname.Length > 0)
-                                {
-                                    Console.WriteLine("What is the value of the tag?");
-                                    var value = Console.ReadLine();
-                                    vm.SetTag(selected, tagname, value);
-                                    Console.WriteLine();
-                                }
-                            } while (tagname.Length > 0);
+                            TagItem(vm, selected);
                         }
                         break;
                     case "export":
@@ -357,6 +405,23 @@ namespace AssimilationSoftware.TodoSort.CLI
             vm.Save();
         }
 
+        private static void TagItem(ViewModel vm, ActionItem selected)
+        {
+            string tagname;
+            do
+            {
+                Console.WriteLine("What should this new tag be called? (ENTER to quit)");
+                tagname = Console.ReadLine().ToLower().Trim();
+                if (tagname.Length > 0)
+                {
+                    Console.WriteLine("What is the value of the tag?");
+                    var value = Console.ReadLine();
+                    vm.SetTag(selected, tagname, value);
+                    Console.WriteLine();
+                }
+            } while (tagname.Length > 0);
+        }
+
         private static DateTime? ConfigureDate(DateTime preset, string prompt)
         {
             Console.WriteLine(prompt);
@@ -388,7 +453,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             return preset;
         }
 
-        private static void PrintItems(IEnumerable<ActionItem> list)
+        private static void PrintItems(params ActionItem[] list)
         {
             string last_context = string.Empty;
             foreach (ActionItem i in from a in list orderby a.Context, a.Title select a)
@@ -397,19 +462,24 @@ namespace AssimilationSoftware.TodoSort.CLI
                 {
                     Console.WriteLine(string.Format("@{0}", i.Context));
                 }
-                Console.WriteLine(string.Format("\t{0}", i.Title));
-                if (verbose)
-                {
-                    if (i.Notes.Count > 0)
-                    {
-                        Console.WriteLine(string.Format("\t\t- {0}", string.Join("\n\t\t- ", i.Notes)));
-                    }
-                    if (i.Tags.Count > 0)
-                    {
-                        Console.WriteLine(string.Format("\t\t{0}", string.Join("\n\t\t", from t in i.Tags select string.Format("#{0}:{1}", t.Key, t.Value))));
-                    }
-                }
+                PrintItem(i);
                 last_context = i.Context;
+            }
+        }
+
+        private static void PrintItem(ActionItem i)
+        {
+            Console.WriteLine(string.Format("\t{0}", i.Title));
+            if (verbose)
+            {
+                if (i.Notes.Count > 0)
+                {
+                    Console.WriteLine(string.Format("\t\t- {0}", string.Join("\n\t\t- ", i.Notes)));
+                }
+                if (i.Tags.Count > 0)
+                {
+                    Console.WriteLine(string.Format("\t\t{0}", string.Join("\n\t\t", from t in i.Tags select string.Format("#{0}:{1}", t.Key, t.Value))));
+                }
             }
         }
 
@@ -432,6 +502,7 @@ commands:
     process     Housekeeping:
                     + Assign each inbox item to a context
                     + Ensure each project has a next action.
+    prune       Defer all items at or below a given depth.
     search      Search for matching text items.
     show        Display all items in a context.
     someday     Review the someday file, assigning 10% to an active context.
@@ -444,7 +515,7 @@ commands:
 ", Assembly.GetExecutingAssembly().GetName().Version));
         }
 
-		private static ActionItem Disambiguate(List<ActionItem> todolist)
+		private static ActionItem Disambiguate(ActionItem[] todolist)
 		{
 			ActionItem selected = null;
 
@@ -464,6 +535,8 @@ commands:
                     Console.WriteLine("{0}: {1}", i, todolist.ElementAt(i).Title);
 				}
 				char choice = Console.ReadKey().KeyChar;
+                // Write a blank line to prevent whatever comes next from printing right after this on the same line.
+                Console.WriteLine();
 				int dex;
                 if (Int32.TryParse(choice.ToString(), out dex))
                 {

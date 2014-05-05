@@ -39,11 +39,7 @@
 		- Or maybe LINQ via the command line?
 		#id:59162543-9d87-41e1-a601-6fc7462f6fbd
 		#priority-parent:950006c7-8cb2-4386-9c48-5668b8fb84fc
-@bugs
-	Throw an error if tag name is not specified for open-tag command
-		- The error won't appear after "todosort open-tag funny --head" because there are still enough arguments.
-		#id:b65d4732-01af-435f-93de-a6c2448fd00f
-@command-line
+@cli
 	Switch to a command-line argument parsing library
 		- To turn a line of text arguments into a command and a list of argument pairs.
 		- It would make argument handling a lot cleaner.
@@ -55,36 +51,23 @@
 	Make "Unrank All" an explicit command option
 		- Rather than assuming "all" when no argument is given.
 		#id:72de4e04-0d4b-4309-a834-6b976b441e13
-		#priority-parent:ff3436ab-a3ee-4af2-a07a-3a668570861c
-	Show notes and tags while ranking items
-		- Will give more context to ranking decisions.
-		#id:237d50df-5ef8-4fb1-afcc-d6b036e903f0
-		#priority-parent:e6bafeec-ca6d-4a8a-9263-f8e2647a75b1
 	Save and quit a partial ranking
 		#id:73144ee6-b23d-4a5e-9f39-cb2e5aa86d5b
-		#priority-parent:ff3436ab-a3ee-4af2-a07a-3a668570861c
+	Rename items
+		#id:e850be75-2c62-4e09-b83b-7e6b52d10d8c
+	Show the tree for one item
+		- Viz search?
+		- An SVG export from GraphViz is a pretty good compromise for now, since it allows text search.
+		#id:ed1bd4a3-b9ef-470f-870d-a94459fe4f5f
 	Search deferred items
 		#id:93ee9286-2ee7-4252-bee8-1a3127d14d9e
 		#priority-parent:e6bafeec-ca6d-4a8a-9263-f8e2647a75b1
 	Add a note to an item
 		#id:d5b2a34d-1693-44f8-9cd8-ff5e0857879a
 		#priority-parent:72de4e04-0d4b-4309-a834-6b976b441e13
-	Rename items
-		#id:e850be75-2c62-4e09-b83b-7e6b52d10d8c
-		#priority-parent:237d50df-5ef8-4fb1-afcc-d6b036e903f0
-	Show the tree for one item
-		- Viz search?
-		#id:ed1bd4a3-b9ef-470f-870d-a94459fe4f5f
-		#priority-parent:237d50df-5ef8-4fb1-afcc-d6b036e903f0
-	Display results by data binding instead of direct fetch
-		#id:b7a72b3f-f40d-4dc0-abcc-66ca522d3cbf
-		#priority-parent:d5b2a34d-1693-44f8-9cd8-ff5e0857879a
 	Undefer a specific item
 		#id:6dc916bc-4924-4300-8adb-89d20013dce1
 		#priority-parent:e850be75-2c62-4e09-b83b-7e6b52d10d8c
-	Edit an item's title
-		#id:6d1956f4-6fee-4243-900c-977618c430a8
-		#priority-parent:d5b2a34d-1693-44f8-9cd8-ff5e0857879a
 	Change the disambiguation process to demand a single match
 		- Tough for short words that might appear everywhere. Allow IDs?
 		#id:fb247274-9a35-4f42-bb8c-4361cd29fd9e
@@ -94,6 +77,12 @@
 		- Select which tag values to take in the new combined item.
 		#id:dbfb41ca-afe9-472b-bdb9-58bf7f410d47
 		#priority-parent:ed1bd4a3-b9ef-470f-870d-a94459fe4f5f
+	Display results by data binding instead of direct fetch
+		#id:b7a72b3f-f40d-4dc0-abcc-66ca522d3cbf
+		#priority-parent:d5b2a34d-1693-44f8-9cd8-ff5e0857879a
+	Edit an item's title
+		#id:6d1956f4-6fee-4243-900c-977618c430a8
+		#priority-parent:d5b2a34d-1693-44f8-9cd8-ff5e0857879a
 	Keep processing while more items still in inbox or projects.
 		#id:f5a3d428-5de0-4aa0-8e88-edcc3800ba5e
 		#priority-parent:b7a72b3f-f40d-4dc0-abcc-66ca522d3cbf
@@ -144,6 +133,8 @@
 	Extensible command framework?
 		- Doesn't seem like a great idea, actually.
 		#id:3e979de9-32a2-466c-87f0-b23768955a95
+	Rank second-tier items if there are no top-level comparisons to make
+		#id:11427126-1e6f-4242-85e0-08c29979031b
 	Review mode?
 		- Process inbox and projects
 		- Ask if each item is done or should be deferred

@@ -20,14 +20,20 @@ namespace AssimilationSoftware.TodoSort.Core
             foreach (var n in items)
             {
                 var line = n.Title;
+                result.Append("<input type=\"checkbox\">");
                 if (n.Tags.ContainsKey("url"))
                 {
-                    result.AppendLine(string.Format("<input type=\"checkbox\"><a href=\"{0}\">{1}</a></input><br />", n.Tags["url"], line));
+                    result.Append(string.Format("<a href=\"{0}\" target=\"todosort\">{1}</a>", n.Tags["url"], line));
                 }
                 else
                 {
-                    result.AppendLine(string.Format("<input type=\"checkbox\">{0}</input><br />", line));
+                    result.Append(line);
                 }
+                if (n.Tags.ContainsKey("type"))
+                {
+                    result.Append(string.Format(" ({0})", n.Tags["type"]));
+                }
+                result.AppendLine("</input><br />");
             }
             result.AppendLine("</body></html>");
 

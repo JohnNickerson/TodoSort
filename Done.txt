@@ -121,6 +121,16 @@
 	Progress indicator while ranking
 		#done-date:2014-04-28
 		#id:ff3436ab-a3ee-4af2-a07a-3a668570861c
+@2014-05-05
+	Throw an error if tag name is not specified for open-tag command
+		- The error won't appear after "todosort open-tag funny --head" because there are still enough arguments.
+		#done-date:2014-05-05
+		#id:b65d4732-01af-435f-93de-a6c2448fd00f
+	Show notes and tags while ranking items
+		- Will give more context to ranking decisions.
+		#done-date:2014-05-05
+		#id:237d50df-5ef8-4fb1-afcc-d6b036e903f0
+		#priority-parent:e6bafeec-ca6d-4a8a-9263-f8e2647a75b1
 @done
 	The Done list should be broken up into date sub lists rather than being a different format.
 		#id:3da6bbcb-9608-4289-a82c-50b29d7ee7ac

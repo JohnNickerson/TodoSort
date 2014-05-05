@@ -23,5 +23,10 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         {
             InitializeComponent();
         }
+
+        private void Delete_Click(object sender, RoutedEventArgs e)
+        {
+            // TODO: Delete the bound item.
+        }
     }
 }

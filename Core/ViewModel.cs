@@ -75,17 +75,69 @@ namespace AssimilationSoftware.TodoSort.Core
         }
         #endregion
 
+        #region Properties
+
+        public List<ActionItem> SomedayItems
+        {
+            get
+            {
+                if (someday_mapper != null)
+                {
+                    return someday_items;
+                }
+                else
+                {
+                    return GetContextItems("someday").ToList();
+                }
+            }
+        }
+
+        public string SearchTerm
+        {
+            get
+            {
+                return _searchTerm;
+            }
+            set
+            {
+                _searchTerm = value;
+                RaisePropertyChanged("SearchTerm", "SearchResults");
+            }
+        }
+
+        public ActionItem[] SearchResults
+        {
+            get
+            {
+                return this.Search(SearchTerm);
+            }
+        }
+
+        public bool ShowHeadOnly
+        {
+            get
+            {
+                return showHeadOnly;
+            }
+            set
+            {
+                showHeadOnly = value;
+                RaisePropertyChanged("ShowHeadOnly", "SearchResults");
+            }
+        }
+        #endregion
+
         #region Methods
-        public IEnumerable<ActionItem> GetContextItems(string context)
+        public ActionItem[] GetContextItems(string context)
         {
             var result = from m in todo_items where m.Context.EndsWith(context.ToLower()) select m;
             if (showHeadOnly)
             {
-                return (from i in result where i.RankParent == null select i).ToList();
+                return (from i in result where i.RankParent == null select i).ToArray();
             }
             else
             {
-                return result.ToList();
+                return result.ToArray();
             }
         }
 
@@ -207,7 +259,7 @@ namespace AssimilationSoftware.TodoSort.Core
         /// </summary>
         /// <param name="search">The search term to look for.</param>
         /// <returns>A list of matching items.</returns>
-        private List<ActionItem> Search(string search)
+        private ActionItem[] Search(string search)
         {
             var result = (from i in todo_items
                     where i.Title.ToLower().Contains(search.ToLower())
@@ -218,11 +270,11 @@ namespace AssimilationSoftware.TodoSort.Core
                     select i);
             if (showHeadOnly)
             {
-                return (from i in result where i.RankParent == null select i).ToList();
+                return (from i in result where i.RankParent == null select i).ToArray();
             }
             else
             {
-                return result.ToList();
+                return result.ToArray();
             }
         }
 
@@ -243,59 +295,6 @@ namespace AssimilationSoftware.TodoSort.Core
         {
             return (from i in SomedayItems where i.TickleDate <= DateTime.Now select i).ToList();
         }
-        #endregion
-
-        #region Properties
-
-        public List<ActionItem> SomedayItems
-        {
-            get
-            {
-                if (someday_mapper != null)
-                {
-                    return someday_items;
-                }
-                else
-                {
-                    return GetContextItems("someday").ToList();
-                }
-            }
-        }
-
-        public string SearchTerm
-        {
-            get
-            {
-                return _searchTerm;
-            }
-            set
-            {
-                _searchTerm = value;
-                RaisePropertyChanged("SearchTerm", "SearchResults");
-            }
-        }
-
-        public List<ActionItem> SearchResults
-        {
-            get
-            {
-                return this.Search(SearchTerm);
-            }
-        }
-
-        public bool ShowHeadOnly
-        {
-            get
-            {
-                return showHeadOnly;
-            }
-            set
-            {
-                showHeadOnly = value;
-                RaisePropertyChanged("ShowHeadOnly", "SearchResults");
-            }
-        }
-        #endregion
 
         public IEnumerable<string> GetContextNames(params string[] exclude)
         {
@@ -314,6 +313,13 @@ namespace AssimilationSoftware.TodoSort.Core
         public void ResetPriorityParents(ActionItem selected)
         {
             selected.RankParent = null;
+            foreach (var i in todo_items)
+            {
+                if (i.RankParent == selected)
+                {
+                    i.RankParent = null;
+                }
+            }
             todo_changes = true;
         }
 
@@ -340,5 +346,12 @@ namespace AssimilationSoftware.TodoSort.Core
             item.Context = newcontext;
             todo_changes = true;
         }
+
+        public void PruneBelowDepth(int depth)
+        {
+            var results = from i in todo_items where i.RankDepth >= depth select i;
+            Defer(results.ToArray());
+        }
+        #endregion
     }
 }

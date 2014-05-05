@@ -20,7 +20,7 @@ namespace AssimilationSoftware.TodoSort.Core
             foreach (var n in items)
             {
                 var line = n.Title.Replace("\"", "");
-                result.AppendLine(string.Format("    ID{0} [label=\"{1}\"];", n.ID.ToString().Replace("-", ""), line));
+                result.AppendLine(string.Format("    ID{0} [label=\"{1}\"];", n.ID.ToString().Replace("-", ""), line.Replace("\"", "")));
                 if (n.RankParent != null)
                 {
                     result.AppendLine(string.Format("    ID{0} -> ID{1};", n.RankParent.ID.ToString().Replace("-", ""), n.ID.ToString().Replace("-", "")));
