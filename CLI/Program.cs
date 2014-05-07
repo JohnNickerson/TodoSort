@@ -47,7 +47,6 @@ namespace AssimilationSoftware.TodoSort.CLI
                 vm.ShowHeadOnly = false;
             }
 
-            #region Manipulate the file items
             if (args.Length > 0)
             {
                 string command = args[0];
@@ -58,15 +57,6 @@ namespace AssimilationSoftware.TodoSort.CLI
                     #region Help
                     case "help":
                         PrintHelp(null);
-                        break;
-                    #endregion
-
-                    #region Search
-                    case "search":
-                        // Search for matching items.
-                        if (args.Count() < 2) { PrintHelp(command); break; }
-                        vm.SearchTerm = args[1];
-                        PrintItems(vm.SearchResults);
                         break;
                     #endregion
 
@@ -84,6 +74,27 @@ namespace AssimilationSoftware.TodoSort.CLI
                         break;
                     #endregion
 
+                    #region Defer
+                    case "defer":
+                        // Move the item and its sub-items to the "someday" file.
+                        if (args.Count() < 2) { PrintHelp(command); break; }
+                        vm.SearchTerm = args[1];
+                        selected = Disambiguate(vm.SearchResults);
+                        if (selected != null)
+                        {
+                            var tickle = ConfigureDate(DateTime.Now.AddDays(7), "When should this item be returned to the inbox?");
+                            if (tickle.HasValue)
+                            {
+                                vm.Defer(selected, tickle.Value);
+                            }
+                            else
+                            {
+                                vm.Defer(selected);
+                            }
+                        }
+                        break;
+                    #endregion
+
                     #region Delete
                     case "delete":
                         // Find a matching item to delete.
@@ -91,6 +102,57 @@ namespace AssimilationSoftware.TodoSort.CLI
                         vm.SearchTerm = args[1];
                         selected = Disambiguate(vm.SearchResults);
                         vm.Delete(selected);
+                        break;
+                    #endregion
+
+                    #region Done
+                    case "done":
+                        // If there is a next action, create a new item and add it to the correct context.
+                        if (args.Count() < 2) { PrintHelp(command); break; }
+                        vm.SearchTerm = args[1];
+                        selected = Disambiguate(vm.SearchResults);
+                        if (selected != null)
+                        {
+                            vm.MarkDone(selected);
+                        }
+                        break;
+                    #endregion
+
+                    #region Export
+                    case "export":
+                        // Write GraphViz source.
+                        if (args.Count() < 3) { PrintHelp(command); break; }
+                        IExporter exporter = null;
+                        switch (args[2])
+                        {
+                            case "html":
+                                exporter = new HtmlExporter { Filename = args[3] };
+                                break;
+                            case "graphviz":
+                                exporter = new GraphVizExporter { Filename = args[3] };
+                                break;
+                        }
+                        if (exporter != null)
+                        {
+                            exporter.Export(vm.GetContextItems(args[1]).ToList());
+                        }
+                        break;
+                    #endregion
+
+                    #region Note
+                    case "note":
+                        // Add a note to a task.
+                        if (args.Count() < 2) { PrintHelp(command); break; }
+                        vm.SearchTerm = args[2];
+                        selected = Disambiguate(vm.SearchResults);
+                        if (selected != null)
+                        {
+                            // Force verbose mode to display all notes and tags.
+                            verbose = true;
+                            PrintItem(selected);
+                            var note = Console.ReadLine();
+                            vm.AddNote(selected, note);
+                        }
                         break;
                     #endregion
 
@@ -118,58 +180,6 @@ namespace AssimilationSoftware.TodoSort.CLI
                             else
                             {
                                 Console.WriteLine("Tag not found: {0}", args[2]);
-                            }
-                        }
-                        break;
-                    #endregion
-
-                    #region Set Parent
-                    case "set-parent":
-                        if (args.Count() < 3) { PrintHelp(command); break; }
-                        Console.WriteLine("Confirm child item:");
-                        vm.SearchTerm = args[1];
-                        var child = Disambiguate(vm.SearchResults);
-                        Console.WriteLine("Confirm parent item:");
-                        vm.SearchTerm = args[2];
-                        var parent = Disambiguate(vm.SearchResults);
-                        if (child != null && parent != null)
-                        {
-                            vm.SetParent(child, parent);
-                        }
-                        break;
-                    #endregion
-
-                    #region Show
-                    case "show":
-                        // Display one context.
-                        if (args.Count() < 2) { PrintHelp(command); break; }
-                        var list = vm.GetContextItems(args[1]);
-                        PrintItems(list);
-                        break;
-                    #endregion
-
-                    #region Summary
-                    case "summary":
-                        var summarydata = (from c in vm.GetContextNames() select new { Context = c, Count = vm.GetContextItems(c).Count() });
-
-                        int maxwidth = (from r in summarydata select r.Context.Length).Max();
-                        int maxnum = (from c in summarydata select c.Count).Max();
-                        foreach (var c in summarydata)
-                        {
-                            // @context         n item(s)
-                            string format = string.Format("@{{0}}\t{{1,{0}}} item{1}", Math.Ceiling(Math.Log10(maxnum)), (c.Count == 1 ? "" : "s"));
-                            Console.WriteLine(format, c.Context.PadRight(maxwidth), c.Count);
-
-                            if (args.Contains("--verbose"))
-                            {
-                                // Show a summary of numbers at each depth.
-                                var detailed = (from r in vm.GetContextItems(c.Context) group r by r.RankDepth into g select new { Depth = g.Key, Count = g.Count() });
-                                foreach (var d in detailed)
-                                {
-                                    format = string.Format("\t{{0}}\t{{1,{0}}} item{1}", Math.Ceiling(Math.Log10(maxnum)), (d.Count == 1 ? "" : "s"));
-                                    Console.WriteLine(format, d.Depth, d.Count);
-                                }
-                                Console.WriteLine();
                             }
                         }
                         break;
@@ -222,61 +232,14 @@ namespace AssimilationSoftware.TodoSort.CLI
                         break;
                     #endregion
 
-                    case "defer":
-                        // Move the item and its sub-items to the "someday" file.
-                        if (args.Count() < 2) { PrintHelp(command); break; }
-                        vm.SearchTerm = args[1];
-                        selected = Disambiguate(vm.SearchResults);
-                        if (selected != null)
-                        {
-                            var tickle = ConfigureDate(DateTime.Now.AddDays(7), "When should this item be returned to the inbox?");
-                            if (tickle.HasValue)
-                            {
-                                vm.Defer(selected, tickle.Value);
-                            }
-                            else
-                            {
-                                vm.Defer(selected);
-                            }
-                        }
-                        break;
-                    case "done":
-                        // If there is a next action, create a new item and add it to the correct context.
-                        if (args.Count() < 2) { PrintHelp(command); break; }
-                        vm.SearchTerm = args[1];
-                        selected = Disambiguate(vm.SearchResults);
-                        if (selected != null)
-                        {
-                            vm.MarkDone(selected);
-                        }
-                        break;
+                    #region Prune
                     case "prune":
                         // Delete items below a specified depth.
                         if (args.Count() < 2) { PrintHelp(command); break; }
                         int depth = Int32.Parse(args[1]);
                         vm.PruneBelowDepth(depth);
                         break;
-                    case "someday":
-                        // Display the whole Someday file, 10 items at a time, and either delete or do one per listing.
-                        for (int offset = 0; offset <= vm.SomedayItems.Count; offset += 10)
-                        {
-                            Console.Clear();
-                            for (int index = 0; index < 10 && offset + index < vm.SomedayItems.Count; index++)
-                            {
-                                Console.WriteLine("{0}: {1}", index, vm.SomedayItems.ElementAt(offset + index).Title);
-                            }
-                            char choice = Console.ReadKey().KeyChar;
-                            Console.WriteLine();
-                            int dex;
-                            if (Int32.TryParse(choice.ToString(), out dex))
-                            {
-                                selected = vm.SomedayItems.ElementAt(offset + dex);
-                            }
-                            Console.WriteLine("To which context should this item go?");
-                            string newcontext = Console.ReadLine();
-                            vm.Undefer(newcontext, selected);
-                        }
-                        break;
+                    #endregion
 
                     #region Rank
                     case "rank":
@@ -329,6 +292,119 @@ namespace AssimilationSoftware.TodoSort.CLI
                         break;
                     #endregion
 
+                    #region Rename
+                    case "rename":
+                        // Rename an item.
+                        if (args.Count() < 2) { PrintHelp(command); break; }
+                        vm.SearchTerm = args[2];
+                        selected = Disambiguate(vm.SearchResults);
+                        if (selected != null)
+                        {
+                            var retitle = Console.ReadLine();
+                            vm.Rename(selected, retitle);
+                        }
+                        break;
+                    #endregion
+
+                    #region Search
+                    case "search":
+                        // Search for matching items.
+                        if (args.Count() < 2) { PrintHelp(command); break; }
+                        vm.SearchTerm = args[1];
+                        PrintItems(vm.SearchResults);
+                        break;
+                    #endregion
+
+                    #region Set Parent
+                    case "set-parent":
+                        if (args.Count() < 3) { PrintHelp(command); break; }
+                        Console.WriteLine("Confirm child item:");
+                        vm.SearchTerm = args[1];
+                        var child = Disambiguate(vm.SearchResults);
+                        Console.WriteLine("Confirm parent item:");
+                        vm.SearchTerm = args[2];
+                        var parent = Disambiguate(vm.SearchResults);
+                        if (child != null && parent != null)
+                        {
+                            vm.SetParent(child, parent);
+                        }
+                        break;
+                    #endregion
+
+                    #region Show
+                    case "show":
+                        // Display one context.
+                        if (args.Count() < 2) { PrintHelp(command); break; }
+                        var list = vm.GetContextItems(args[1]);
+                        PrintItems(list);
+                        break;
+                    #endregion
+
+                    #region Someday
+                    case "someday":
+                        // Display the whole Someday file, 10 items at a time, and either delete or do one per listing.
+                        for (int offset = 0; offset <= vm.SomedayItems.Count; offset += 10)
+                        {
+                            Console.Clear();
+                            for (int index = 0; index < 10 && offset + index < vm.SomedayItems.Count; index++)
+                            {
+                                Console.WriteLine("{0}: {1}", index, vm.SomedayItems.ElementAt(offset + index).Title);
+                            }
+                            char choice = Console.ReadKey().KeyChar;
+                            Console.WriteLine();
+                            int dex;
+                            if (Int32.TryParse(choice.ToString(), out dex))
+                            {
+                                selected = vm.SomedayItems.ElementAt(offset + dex);
+                            }
+                            Console.WriteLine("To which context should this item go?");
+                            string newcontext = Console.ReadLine();
+                            vm.Undefer(newcontext, selected);
+                        }
+                        break;
+                    #endregion
+
+                    #region Summary
+                    case "summary":
+                        var summarydata = (from c in vm.GetContextNames() select new { Context = c, Count = vm.GetContextItems(c).Count() });
+
+                        int maxwidth = (from r in summarydata select r.Context.Length).Max();
+                        int maxnum = (from c in summarydata select c.Count).Max();
+                        foreach (var c in summarydata)
+                        {
+                            // @context         n item(s)
+                            string format = string.Format("@{{0}}\t{{1,{0}}} item{1}", Math.Ceiling(Math.Log10(maxnum)), (c.Count == 1 ? "" : "s"));
+                            Console.WriteLine(format, c.Context.PadRight(maxwidth), c.Count);
+
+                            if (args.Contains("--verbose"))
+                            {
+                                // Show a summary of numbers at each depth.
+                                var detailed = (from r in vm.GetContextItems(c.Context) group r by r.RankDepth into g select new { Depth = g.Key, Count = g.Count() });
+                                foreach (var d in detailed)
+                                {
+                                    format = string.Format("\t{{0}}\t{{1,{0}}} item{1}", Math.Ceiling(Math.Log10(maxnum)), (d.Count == 1 ? "" : "s"));
+                                    Console.WriteLine(format, d.Depth, d.Count);
+                                }
+                                Console.WriteLine();
+                            }
+                        }
+                        break;
+                    #endregion
+
+                    #region Tag
+                    case "tag":
+                        // Search for a matching item.
+                        if (args.Count() < 2) { PrintHelp(command); break; }
+                        vm.SearchTerm = args[1];
+                        selected = Disambiguate(vm.SearchResults);
+                        if (selected != null)
+                        {
+                            TagItem(vm, selected);
+                        }
+                        break;
+                    #endregion
+
+                    #region Unrank
                     case "unrank":
                         if (args.Count() >= 2)
                         {
@@ -349,34 +425,8 @@ namespace AssimilationSoftware.TodoSort.CLI
                             }
                         }
                         break;
-                    case "tag":
-                        // Search for a matching item.
-                        if (args.Count() < 2) { PrintHelp(command); break; }
-                        vm.SearchTerm = args[1];
-                        selected = Disambiguate(vm.SearchResults);
-                        if (selected != null)
-                        {
-                            TagItem(vm, selected);
-                        }
-                        break;
-                    case "export":
-                        // Write GraphViz source.
-                        if (args.Count() < 3) { PrintHelp(command); break; }
-                        IExporter exporter = null;
-                        switch (args[2])
-                        {
-                            case "html":
-                                exporter = new HtmlExporter { Filename = args[3] };
-                                break;
-                            case "graphviz":
-                                exporter = new GraphVizExporter { Filename = args[3] };
-                                break;
-                        }
-                        if (exporter != null)
-                        {
-                            exporter.Export(vm.GetContextItems(args[1]).ToList());
-                        }
-                        break;
+                    #endregion
+
                     default:
                         PrintHelp(null);
                         break;
@@ -386,7 +436,6 @@ namespace AssimilationSoftware.TodoSort.CLI
             {
                 PrintHelp(null);
             }
-            #endregion
 
 			#region Tidy up
 			// Move to the "done" file any items with a context of @done.
@@ -501,12 +550,14 @@ commands:
     defer       Move an item to the someday file.
     delete      Delete an item without doing it.
     done        Move an item to the done file.
+    note        Add a note to an item.
     open-tag    Opens (with Windows Explorer) a given tag for a given item.
                     eg 'open-tag searchterm url'.
     process     Housekeeping:
                     + Assign each inbox item to a context
                     + Ensure each project has a next action.
     prune       Defer all items at or below a given depth.
+    rename      Change the name of an item.
     search      Search for matching text items.
     show        Display all items in a context.
     someday     Review the someday file, assigning 10% to an active context.

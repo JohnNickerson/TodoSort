@@ -130,7 +130,22 @@
 		- Will give more context to ranking decisions.
 		#done-date:2014-05-05
 		#id:237d50df-5ef8-4fb1-afcc-d6b036e903f0
-		#priority-parent:e6bafeec-ca6d-4a8a-9263-f8e2647a75b1
+@2014-05-07
+	Format numbers for the summary command by largest length
+		- At the moment, it assumes the largest number is at most 3 digits.
+		- Take a log10 of the maximum list size, then use that for each number (eg count.ToString(maxlog)).
+		#done-date:2014-05-07
+		#id:2cd476d7-5483-405c-b81c-abbecc8e14e8
+	Make "Unrank All" an explicit command option
+		- Rather than assuming "all" when no argument is given.
+		#done-date:2014-05-07
+		#id:72de4e04-0d4b-4309-a834-6b976b441e13
+	Add a note to an item
+		#done-date:2014-05-07
+		#id:d5b2a34d-1693-44f8-9cd8-ff5e0857879a
+	Rename items
+		#done-date:2014-05-07
+		#id:e850be75-2c62-4e09-b83b-7e6b52d10d8c
 @done
 	The Done list should be broken up into date sub lists rather than being a different format.
 		#id:3da6bbcb-9608-4289-a82c-50b29d7ee7ac

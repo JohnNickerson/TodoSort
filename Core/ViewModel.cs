@@ -352,6 +352,18 @@ namespace AssimilationSoftware.TodoSort.Core
             var results = from i in todo_items where i.RankDepth >= depth select i;
             Defer(results.ToArray());
         }
+
+        public void AddNote(ActionItem item, string note)
+        {
+            item.Notes.Add(note);
+            todo_changes = true;
+        }
+
+        public void Rename(ActionItem item, string retitle)
+        {
+            item.Title = retitle;
+            todo_changes = true;
+        }
         #endregion
     }
 }
