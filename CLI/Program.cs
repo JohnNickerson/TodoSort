@@ -150,22 +150,26 @@ namespace AssimilationSoftware.TodoSort.CLI
 
                     #region Summary
                     case "summary":
-                        var contexts = vm.GetContextNames();
-                        int maxwidth = (from c in contexts select c.Length).Max();
-                        foreach (var c in contexts)
+                        var summarydata = (from c in vm.GetContextNames() select new { Context = c, Count = vm.GetContextItems(c).Count() });
+
+                        int maxwidth = (from r in summarydata select r.Context.Length).Max();
+                        int maxnum = (from c in summarydata select c.Count).Max();
+                        foreach (var c in summarydata)
                         {
-                            int count = vm.GetContextItems(c).Count();
-                            if (count == 1)
-                            {
-                                Console.WriteLine("@{0}\t{1,3} item", c.PadRight(maxwidth), count);
-                            }
-                            else
-                            {
-                                Console.WriteLine("@{0}\t{1,3} items", c.PadRight(maxwidth), count);
-                            }
+                            // @context         n item(s)
+                            string format = string.Format("@{{0}}\t{{1,{0}}} item{1}", Math.Ceiling(Math.Log10(maxnum)), (c.Count == 1 ? "" : "s"));
+                            Console.WriteLine(format, c.Context.PadRight(maxwidth), c.Count);
+
                             if (args.Contains("--verbose"))
                             {
                                 // Show a summary of numbers at each depth.
+                                var detailed = (from r in vm.GetContextItems(c.Context) group r by r.RankDepth into g select new { Depth = g.Key, Count = g.Count() });
+                                foreach (var d in detailed)
+                                {
+                                    format = string.Format("\t{{0}}\t{{1,{0}}} item{1}", Math.Ceiling(Math.Log10(maxnum)), (d.Count == 1 ? "" : "s"));
+                                    Console.WriteLine(format, d.Depth, d.Count);
+                                }
+                                Console.WriteLine();
                             }
                         }
                         break;

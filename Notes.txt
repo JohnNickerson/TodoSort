@@ -59,6 +59,10 @@
 		- Viz search?
 		- An SVG export from GraphViz is a pretty good compromise for now, since it allows text search.
 		#id:ed1bd4a3-b9ef-470f-870d-a94459fe4f5f
+	Format numbers for the summary command by largest length
+		- At the moment, it assumes the largest number is at most 3 digits.
+		- Take a log10 of the maximum list size, then use that for each number (eg count.ToString(maxlog)).
+		#id:2cd476d7-5483-405c-b81c-abbecc8e14e8
 	Search deferred items
 		#id:93ee9286-2ee7-4252-bee8-1a3127d14d9e
 		#priority-parent:e6bafeec-ca6d-4a8a-9263-f8e2647a75b1
