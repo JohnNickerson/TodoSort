@@ -3,19 +3,14 @@
 		- "repeats" tags? That's just a way to serialise it.
 		- When a recurring item is marked as done, instead of moving, one copy goes to the "done" list and one to the "someday" list.
 		#id:8da843b9-8dc7-47c7-9db3-e7209b1068fe
-	Unrank should remove children, too
-		- The "unrank" command, when applied to an individual item, should remove its children as well as its own parent setting.
-		- Otherwise, it just plucks out a subtree and puts it at the root level.
-		#id:71c68ed1-a716-4236-934c-7e80cfbde823
+	Task due dates
+		- I tend not to use these myself, though.
+		#id:102fa8ac-653a-4d3f-b172-a0d3bf3824d8
 	Work offline
 		- Enqueue commands to process later without changing files.
 		- Useful for when the files are not up to date (eg Dropbox sync has fallen behind).
 		#id:5e70eaeb-8525-42eb-9824-407482dc0588
 		#priority-parent:8da843b9-8dc7-47c7-9db3-e7209b1068fe
-	Task due dates
-		- I tend not to use these myself, though.
-		#id:102fa8ac-653a-4d3f-b172-a0d3bf3824d8
-		#priority-parent:71c68ed1-a716-4236-934c-7e80cfbde823
 	Generic CRUD operations on any list file
 		- Move to another list file or sub-list, too
 		#id:bcac196a-52cf-4e95-8491-3cc5eafbe98b
@@ -40,17 +35,9 @@
 		#id:59162543-9d87-41e1-a601-6fc7462f6fbd
 		#priority-parent:950006c7-8cb2-4386-9c48-5668b8fb84fc
 @cli
-	Switch to a command-line argument parsing library
-		- To turn a line of text arguments into a command and a list of argument pairs.
-		- It would make argument handling a lot cleaner.
-		#url:https://commandline.codeplex.com/
-		#id:e6bafeec-ca6d-4a8a-9263-f8e2647a75b1
 	De-duplicate command
 		- Search and merge duplicates
 		#id:841c5d7b-d1c5-4a3e-8618-cfff08ef4c20
-	Save and quit a partial ranking
-		- Already done quit without saving. Quit with save and cancel should be easy.
-		#id:73144ee6-b23d-4a5e-9f39-cb2e5aa86d5b
 	Show the tree for one item
 		- Viz search?
 		- An SVG export from GraphViz is a pretty good compromise for now, since it allows text search.
@@ -58,17 +45,23 @@
 	Search by depth
 		- "mindepth" and "maxdepth" or just "depth" option.
 		- Easiest to do with a command-line argument parser, of course.
+		- Can replace the "--all" flag.
 		#id:66fcd6ad-ec38-43b7-ad31-c6673bf3e838
 	Display results by data binding instead of direct fetch
 		#id:b7a72b3f-f40d-4dc0-abcc-66ca522d3cbf
-	Edit an item's title
-		#id:6d1956f4-6fee-4243-900c-977618c430a8
-	Search deferred items
-		#id:93ee9286-2ee7-4252-bee8-1a3127d14d9e
-		#priority-parent:e6bafeec-ca6d-4a8a-9263-f8e2647a75b1
 	Undefer a specific item
 		#id:6dc916bc-4924-4300-8adb-89d20013dce1
-		#priority-parent:e850be75-2c62-4e09-b83b-7e6b52d10d8c
+	Randomise index for ranking
+		#id:7488887c-bea1-4728-8d61-4f7ef21f76be
+	Search deferred items
+		#id:93ee9286-2ee7-4252-bee8-1a3127d14d9e
+	Delete a tag
+		- Maybe when tagging, an empty tag value should indicate removal of a tag.
+		#id:eb76c634-1e20-4bc3-b272-2db8f58285a6
+	Granular search
+		- eg "--has-tag url --title cracked --note what".
+		- Instead of using one search term to match everything.
+		#id:137244a0-98dd-4088-8310-2875997b4c17
 	Change the disambiguation process to demand a single match
 		- Tough for short words that might appear everywhere. Allow IDs?
 		#id:fb247274-9a35-4f42-bb8c-4361cd29fd9e
@@ -81,11 +74,6 @@
 	Keep processing while more items still in inbox or projects.
 		#id:f5a3d428-5de0-4aa0-8e88-edcc3800ba5e
 		#priority-parent:b7a72b3f-f40d-4dc0-abcc-66ca522d3cbf
-	Detailed help on each command
-		- Eg "todosort help defer" to bring up a page just on the "defer" command.
-		- This would allow detailed help when command parsing fails.
-		#id:5a18109c-1c4a-4bba-9fff-649c8e390bd1
-		#priority-parent:f5a3d428-5de0-4aa0-8e88-edcc3800ba5e
 @gui
 	Mark as done via GUI
 		- Should just be a matter of binding the checkbox to the item's IsDone property.

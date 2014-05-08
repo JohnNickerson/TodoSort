@@ -1,6 +1,7 @@
 ﻿using AssimilationSoftware.PimData.Interfaces;
 using AssimilationSoftware.PimData.Mappers;
 using AssimilationSoftware.PimData.Model;
+using AssimilationSoftware.TodoSort.CLI.Options;
 using AssimilationSoftware.TodoSort.CLI.Properties;
 using AssimilationSoftware.TodoSort.Core;
 using System;
@@ -21,7 +22,22 @@ namespace AssimilationSoftware.TodoSort.CLI
 			// Check settings
             string settingspath = Path.Combine(Directory.GetCurrentDirectory(), ".todosort");
             FolderSettings f = FolderSettings.LoadFrom(settingspath);
-            if (f == null || args.Contains("init"))
+
+            string argverb = string.Empty;
+            object argsubs = null;
+            var options = new Options.Options();
+            if (!CommandLine.Parser.Default.ParseArguments(args, options,
+                (verb, subOptions) =>
+                {
+                    argverb = verb;
+                    argsubs = subOptions;
+                }))
+            {
+                Environment.Exit(CommandLine.Parser.DefaultExitCodeFail);
+            }
+
+
+            if (f == null || argverb == "init")
             {
                 f.TodoPath = ConfigurePath("todo.txt", "Configure path to 'todo' file", false);
                 f.SomedayPath = ConfigurePath("someday.txt", "Configure path to 'someday' file", true);
@@ -38,28 +54,13 @@ namespace AssimilationSoftware.TodoSort.CLI
             ViewModel vm = new ViewModel(todomapper, donemapper, somedaymapper);
 
             // Set universal options.
-            if (args.Contains("--verbose"))
-            {
-                verbose = true;
-            }
-            if (args.Contains("--all"))
-            {
-                vm.ShowHeadOnly = false;
-            }
+            verbose = ((UniversalOptions)argsubs).Verbose;
+            vm.ShowHeadOnly = ((UniversalOptions)argsubs).ShowAllItems;
 
-            if (args.Length > 0)
-            {
-                string command = args[0];
                 // Search for a matching item in all contexts.
                 ActionItem selected = null;
-                switch (command)
+                switch (argverb)
                 {
-                    #region Help
-                    case "help":
-                        PrintHelp(null);
-                        break;
-                    #endregion
-
                     #region Add
                     case "add":
                         // Add a new item.
@@ -77,15 +78,14 @@ namespace AssimilationSoftware.TodoSort.CLI
                     #region Defer
                     case "defer":
                         // Move the item and its sub-items to the "someday" file.
-                        if (args.Count() < 2) { PrintHelp(command); break; }
-                        vm.SearchTerm = args[1];
+                        DeferSubOptions deferopts = ((DeferSubOptions)argsubs);
+                        vm.SearchTerm = deferopts.SearchTerm;
                         selected = Disambiguate(vm.SearchResults);
                         if (selected != null)
                         {
-                            var tickle = ConfigureDate(DateTime.Now.AddDays(7), "When should this item be returned to the inbox?");
-                            if (tickle.HasValue)
+                            if (deferopts.TickleDate.HasValue)
                             {
-                                vm.Defer(selected, tickle.Value);
+                                vm.Defer(selected, deferopts.TickleDate.Value);
                             }
                             else
                             {
@@ -98,8 +98,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                     #region Delete
                     case "delete":
                         // Find a matching item to delete.
-                        if (args.Count() < 2) { PrintHelp(command); break; }
-                        vm.SearchTerm = args[1];
+                        vm.SearchTerm = ((DeleteSubOptions)argsubs).SearchTerm;
                         selected = Disambiguate(vm.SearchResults);
                         vm.Delete(selected);
                         break;
@@ -108,8 +107,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                     #region Done
                     case "done":
                         // If there is a next action, create a new item and add it to the correct context.
-                        if (args.Count() < 2) { PrintHelp(command); break; }
-                        vm.SearchTerm = args[1];
+                        vm.SearchTerm = ((DoneSubOptions)argsubs).SearchTerm;
                         selected = Disambiguate(vm.SearchResults);
                         if (selected != null)
                         {
@@ -121,20 +119,20 @@ namespace AssimilationSoftware.TodoSort.CLI
                     #region Export
                     case "export":
                         // Write GraphViz source.
-                        if (args.Count() < 3) { PrintHelp(command); break; }
                         IExporter exporter = null;
-                        switch (args[2])
+                        ExportSubOptions exportOptions = (ExportSubOptions)argsubs;
+                        switch (exportOptions.Format)
                         {
                             case "html":
-                                exporter = new HtmlExporter { Filename = args[3] };
+                                exporter = new HtmlExporter { Filename = exportOptions.Filename };
                                 break;
                             case "graphviz":
-                                exporter = new GraphVizExporter { Filename = args[3] };
+                                exporter = new GraphVizExporter { Filename = exportOptions.Filename };
                                 break;
                         }
                         if (exporter != null)
                         {
-                            exporter.Export(vm.GetContextItems(args[1]).ToList());
+                            exporter.Export(vm.GetContextItems(exportOptions.Context).ToList());
                         }
                         break;
                     #endregion
@@ -142,8 +140,8 @@ namespace AssimilationSoftware.TodoSort.CLI
                     #region Note
                     case "note":
                         // Add a note to a task.
-                        if (args.Count() < 2) { PrintHelp(command); break; }
-                        vm.SearchTerm = args[2];
+                        NoteSubOptions noteOptions = (NoteSubOptions)argsubs;
+                        vm.SearchTerm = noteOptions.SearchTerm;
                         selected = Disambiguate(vm.SearchResults);
                         if (selected != null)
                         {
@@ -158,15 +156,15 @@ namespace AssimilationSoftware.TodoSort.CLI
 
                     #region Open Tag
                     case "open-tag":
-                        // Read a tag and pass it through to the "start" command. Intended for URLs and file names.
-                        if (args.Count() < 3) { PrintHelp(command); break; }
-                        vm.SearchTerm = args[1];
+                        // Read a tag and pass it through to the "start" argverb. Intended for URLs and file names.
+                        OpenTagSubOptions opentagOptions = (OpenTagSubOptions)argsubs;
+                        vm.SearchTerm = opentagOptions.SearchTerm;
                         selected = Disambiguate(vm.SearchResults);
                         if (selected != null)
                         {
-                            if (selected.Tags.ContainsKey(args[2]))
+                            if (selected.Tags.ContainsKey(opentagOptions.Tag))
                             {
-                                string tagvalue = selected.Tags[args[2]];
+                                string tagvalue = selected.Tags[opentagOptions.Tag];
                                 System.Diagnostics.Process p = new System.Diagnostics.Process();
                                 p.StartInfo.FileName = tagvalue;
                                 p.Start();
@@ -179,7 +177,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                             }
                             else
                             {
-                                Console.WriteLine("Tag not found: {0}", args[2]);
+                                Console.WriteLine("Tag not found: {0}", opentagOptions.Tag);
                             }
                         }
                         break;
@@ -235,17 +233,18 @@ namespace AssimilationSoftware.TodoSort.CLI
                     #region Prune
                     case "prune":
                         // Delete items below a specified depth.
-                        if (args.Count() < 2) { PrintHelp(command); break; }
-                        int depth = Int32.Parse(args[1]);
-                        vm.PruneBelowDepth(depth);
+                        PruneSubOptions pruneOptions = (PruneSubOptions)argsubs;
+                        vm.PruneBelowDepth(pruneOptions.Depth);
                         break;
                     #endregion
 
                     #region Rank
                     case "rank":
                         // for each context..
+                        bool quitandsave = false;
                         foreach (string con in vm.GetContextNames("inbox", "done"))
                         {
+                            if (quitandsave) break;
                             // select all items without rank parents
                             var items = (from i in vm.GetContextItems(con) where i.RankParent == null select i).ToList();
                             // TODO: randomise an index list
@@ -256,6 +255,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                             }
                             for (int x = 0; x < items.Count - 1; x += 2)
                             {
+                                if (quitandsave) break;
                                 // get vote
                                 Console.WriteLine("{0}/{1} ({2}%) complete", x, items.Count, 100 * x / items.Count);
                                 Console.WriteLine("    1:");
@@ -274,15 +274,23 @@ namespace AssimilationSoftware.TodoSort.CLI
                                         vm.SetParent(items[x], items[x + 1]);
                                         break;
                                     case 'q':
-                                        Console.WriteLine("Quit without saving. All rankings from this session will be discarded. Are you sure? (y/n)");
+                                        Console.WriteLine();
+                                        Console.WriteLine("Quitting. Save ranking so far?");
+                                        Console.WriteLine("\tY: Quit and save.");
+                                        Console.WriteLine("\tN: Quit without saving (all work this session will be lost, no undo).");
+                                        Console.WriteLine("\tC: Cancel (default). Return to ranking.");
                                         k = Console.ReadKey();
-                                        if (k.KeyChar == 'y')
+                                        switch (k.KeyChar)
                                         {
-                                            // Quit without saving.
-                                            return;
+                                            case 'y':
+                                                // Quit and save.
+                                                quitandsave = true;
+                                                break;
+                                            case 'n':
+                                                // Quit without saving.
+                                                return;
+                                            // Default. No action. Just return to ranking.
                                         }
-                                        break;
-                                    default:
                                         break;
                                 }
                                 Console.WriteLine();
@@ -295,13 +303,12 @@ namespace AssimilationSoftware.TodoSort.CLI
                     #region Rename
                     case "rename":
                         // Rename an item.
-                        if (args.Count() < 2) { PrintHelp(command); break; }
-                        vm.SearchTerm = args[2];
+                        RenameSubOptions renameOptions = (RenameSubOptions)argsubs;
+                        vm.SearchTerm = renameOptions.SearchTerm;
                         selected = Disambiguate(vm.SearchResults);
                         if (selected != null)
                         {
-                            var retitle = Console.ReadLine();
-                            vm.Rename(selected, retitle);
+                            vm.Rename(selected, renameOptions.NewTitle);
                         }
                         break;
                     #endregion
@@ -309,20 +316,19 @@ namespace AssimilationSoftware.TodoSort.CLI
                     #region Search
                     case "search":
                         // Search for matching items.
-                        if (args.Count() < 2) { PrintHelp(command); break; }
-                        vm.SearchTerm = args[1];
+                        vm.SearchTerm = ((SearchSubOptions)argsubs).SearchTerm;
                         PrintItems(vm.SearchResults);
                         break;
                     #endregion
 
                     #region Set Parent
                     case "set-parent":
-                        if (args.Count() < 3) { PrintHelp(command); break; }
+                        SetParentSubOptions setparentOptions = (SetParentSubOptions)argsubs;
                         Console.WriteLine("Confirm child item:");
-                        vm.SearchTerm = args[1];
+                        vm.SearchTerm = setparentOptions.ChildSearchTerm;
                         var child = Disambiguate(vm.SearchResults);
                         Console.WriteLine("Confirm parent item:");
-                        vm.SearchTerm = args[2];
+                        vm.SearchTerm = setparentOptions.ParentSearchTerm;
                         var parent = Disambiguate(vm.SearchResults);
                         if (child != null && parent != null)
                         {
@@ -334,8 +340,8 @@ namespace AssimilationSoftware.TodoSort.CLI
                     #region Show
                     case "show":
                         // Display one context.
-                        if (args.Count() < 2) { PrintHelp(command); break; }
-                        var list = vm.GetContextItems(args[1]);
+                        ShowSubOptions showOptions = (ShowSubOptions)argsubs;
+                        var list = vm.GetContextItems(showOptions.Context);
                         PrintItems(list);
                         break;
                     #endregion
@@ -394,8 +400,8 @@ namespace AssimilationSoftware.TodoSort.CLI
                     #region Tag
                     case "tag":
                         // Search for a matching item.
-                        if (args.Count() < 2) { PrintHelp(command); break; }
-                        vm.SearchTerm = args[1];
+                        TagSubOptions tagOptions = (TagSubOptions)argsubs;
+                        vm.SearchTerm = tagOptions.SearchTerm;
                         selected = Disambiguate(vm.SearchResults);
                         if (selected != null)
                         {
@@ -406,16 +412,8 @@ namespace AssimilationSoftware.TodoSort.CLI
 
                     #region Unrank
                     case "unrank":
-                        if (args.Count() >= 2)
-                        {
-                            vm.SearchTerm = args[1];
-                            selected = Disambiguate(vm.SearchResults);
-                            if (selected != null)
-                            {
-                                vm.ResetPriorityParents(selected);
-                            }
-                        }
-                        else if (!vm.ShowHeadOnly)
+                        UnrankSubOptions unrankOptions = (UnrankSubOptions)argsubs;
+                        if (unrankOptions.AllItems)
                         {
                             Console.Write("Do you really want to destroy all ranking data and start over [Y/N]?");
                             var k = Console.ReadKey();
@@ -424,18 +422,18 @@ namespace AssimilationSoftware.TodoSort.CLI
                                 vm.ResetPriorityParents();
                             }
                         }
+                        else
+                        {
+                            vm.SearchTerm = unrankOptions.SearchTerm;
+                            selected = Disambiguate(vm.SearchResults);
+                            if (selected != null)
+                            {
+                                vm.ResetPriorityParents(selected);
+                            }
+                        }
                         break;
                     #endregion
-
-                    default:
-                        PrintHelp(null);
-                        break;
                 }
-            }
-            else
-            {
-                PrintHelp(null);
-            }
 
 			#region Tidy up
 			// Move to the "done" file any items with a context of @done.
@@ -469,7 +467,14 @@ namespace AssimilationSoftware.TodoSort.CLI
                 {
                     Console.WriteLine("What is the value of the tag?");
                     var value = Console.ReadLine();
-                    vm.SetTag(selected, tagname, value);
+                    if (value.Trim().Length > 0)
+                    {
+                        vm.SetTag(selected, tagname, value);
+                    }
+                    else if (selected.Tags.ContainsKey(tagname))
+                    {
+                        vm.RemoveTag(selected, tagname);
+                    }
                     Console.WriteLine();
                 }
             } while (tagname.Length > 0);
@@ -536,6 +541,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             }
         }
 
+        [Obsolete]
         private static void PrintHelp(string command)
         {
             // Print usage text on the console.

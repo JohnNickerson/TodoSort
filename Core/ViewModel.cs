@@ -364,6 +364,12 @@ namespace AssimilationSoftware.TodoSort.Core
             item.Title = retitle;
             todo_changes = true;
         }
+
+        public void RemoveTag(ActionItem item, string tagname)
+        {
+            item.Tags.Remove(tagname);
+            todo_changes = true;
+        }
         #endregion
     }
 }

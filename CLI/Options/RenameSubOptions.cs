@@ -1,0 +1,14 @@
+﻿using CommandLine;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace AssimilationSoftware.TodoSort.CLI.Options
+{
+    public class RenameSubOptions : SearchSubOptions
+    {
+        [Option('n', "name", HelpText = "New title.", Required = true)]
+        public string NewTitle { get; set; }
+    }
+}

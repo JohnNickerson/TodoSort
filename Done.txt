@@ -146,6 +146,28 @@
 	Rename items
 		#done-date:2014-05-07
 		#id:e850be75-2c62-4e09-b83b-7e6b52d10d8c
+	Save and quit a partial ranking
+		- Already done quit without saving. Quit with save and cancel should be easy.
+		#done-date:2014-05-07
+		#id:73144ee6-b23d-4a5e-9f39-cb2e5aa86d5b
+	Unrank should remove children, too
+		- The "unrank" command, when applied to an individual item, should remove its children as well as its own parent setting.
+		- Otherwise, it just plucks out a subtree and puts it at the root level.
+		#done-date:2014-05-07
+		#id:71c68ed1-a716-4236-934c-7e80cfbde823
+@2014-05-08
+	Switch to a command-line argument parsing library
+		- To turn a line of text arguments into a command and a list of argument pairs.
+		- It would make argument handling a lot cleaner.
+		#url:https://commandline.codeplex.com/
+		#done-date:2014-05-08
+		#id:e6bafeec-ca6d-4a8a-9263-f8e2647a75b1
+	Detailed help on each command
+		- Eg "todosort help defer" to bring up a page just on the "defer" command.
+		- This would allow detailed help when command parsing fails.
+		#done-date:2014-05-08
+		#id:5a18109c-1c4a-4bba-9fff-649c8e390bd1
+		#priority-parent:f5a3d428-5de0-4aa0-8e88-edcc3800ba5e
 @done
 	The Done list should be broken up into date sub lists rather than being a different format.
 		#id:3da6bbcb-9608-4289-a82c-50b29d7ee7ac
