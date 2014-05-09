@@ -14,6 +14,9 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
         [VerbOption("add", HelpText = "Adds a new action to a list")]
         public AddSubOptions AddVerb { get; set; }
 
+        [VerbOption("advanced-search", HelpText = "Advanced search.")]
+        public AdvancedSearchSubOptions AdvancedSearchVerb { get; set; }
+
         [VerbOption("defer", HelpText = "Move an item to the someday file.")]
         public DeferSubOptions DeferVerb { get; set; }
 

@@ -130,6 +130,7 @@ namespace AssimilationSoftware.TodoSort.Core
         #region Methods
         public ActionItem[] GetContextItems(string context)
         {
+            // TODO: return Search(context, null, null, null, null, null); // ?
             var result = from m in todo_items where m.Context.EndsWith(context.ToLower()) select m;
             if (showHeadOnly)
             {
@@ -257,16 +258,17 @@ namespace AssimilationSoftware.TodoSort.Core
         /// <summary>
         /// Finds items in the main list that match a given search term.
         /// </summary>
-        /// <param name="search">The search term to look for.</param>
+        /// <param name="search_term">The string to look for.</param>
         /// <returns>A list of matching items.</returns>
-        private ActionItem[] Search(string search)
+        private ActionItem[] Search(string search_term)
         {
+            // TODO: return Search(search_term, search_term, search_term, search_term, search_term, search_term);
             var result = (from i in todo_items
-                    where i.Title.ToLower().Contains(search.ToLower())
-                        || string.Join(Environment.NewLine, i.Notes).ToLower().Contains(search.ToLower())
-                        || string.Join(Environment.NewLine, i.Tags.Keys).ToLower().Contains(search.ToLower())
-                        || i.ID.ToString().StartsWith(search)
-                        || string.Join(Environment.NewLine, (from k in i.Tags select k.Value)).ToLower().Contains(search.ToLower())
+                    where i.Title.ToLower().Contains(search_term.ToLower())
+                        || string.Join(Environment.NewLine, i.Notes).ToLower().Contains(search_term.ToLower())
+                        || string.Join(Environment.NewLine, i.Tags.Keys).ToLower().Contains(search_term.ToLower())
+                        || i.ID.ToString().StartsWith(search_term)
+                        || string.Join(Environment.NewLine, (from k in i.Tags select k.Value)).ToLower().Contains(search_term.ToLower())
                     select i);
             if (showHeadOnly)
             {
@@ -276,6 +278,31 @@ namespace AssimilationSoftware.TodoSort.Core
             {
                 return result.ToArray();
             }
+        }
+
+        /// <summary>
+        /// Advanced search_term. Any argument can be null to represent all values.
+        /// </summary>
+        /// <param name="context">The context to search_term for.</param>
+        /// <param name="partial_title">Part of the title.</param>
+        /// <param name="partial_note">Part of a note.</param>
+        /// <param name="partial_id">The beginning of the ID.</param>
+        /// <param name="has_tag">A tag name.</param>
+        /// <param name="tag_value">A tag value (not necessarily that of the named tag).</param>
+        /// <returns>An array of all matching items.</returns>
+        /// <remarks>TODO: If both has_tag and tag_value are specified, require that item.Tags[has_tag] contains tag_value.</remarks>
+        public ActionItem[] Search(string context, string partial_title, string partial_note, string partial_id, string has_tag, string tag_value, int mindepth, int maxdepth)
+        {
+            var result = (from i in todo_items
+                          where ((partial_title == null || i.Title.ToLower().Contains(partial_title.ToLower()))
+                          && (context == null || i.Context.ToLower() == context.ToLower())
+                          && (partial_note == null || string.Join(Environment.NewLine, i.Notes).ToLower().Contains(partial_note.ToLower()))
+                          && (has_tag == null || i.Tags.ContainsKey(has_tag))
+                          && (partial_id == null || i.ID.ToString().ToLower().StartsWith(partial_id.ToLower()))
+                          && (tag_value == null || string.Join(Environment.NewLine, from k in i.Tags select k.Value).ToLower().Contains(tag_value.ToLower())))
+                          && (i.RankDepth >= mindepth && i.RankDepth <= maxdepth)
+                          select i);
+            return result.ToArray();
         }
 
         public List<ActionItem> GetProjectChildren(ActionItem actionItem)

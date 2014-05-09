@@ -79,6 +79,7 @@
   <ItemGroup>
     <Compile Include="FolderSettings.cs" />
     <Compile Include="Options\AddSubOptions.cs" />
+    <Compile Include="Options\AdvancedSearchSubOptions.cs" />
     <Compile Include="Options\DeferSubOptions.cs" />
     <Compile Include="Options\DeleteSubOptions.cs" />
     <Compile Include="Options\DoneSubOptions.cs" />

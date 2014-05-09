@@ -62,6 +62,9 @@
 		- eg "--has-tag url --title cracked --note what".
 		- Instead of using one search term to match everything.
 		#id:137244a0-98dd-4088-8310-2875997b4c17
+	Make "export" a universal option for output instead of its own command
+		#type:feature
+		#id:05e78d12-11a3-4a31-9906-d0ca2ca3b0c1
 	Change the disambiguation process to demand a single match
 		- Tough for short words that might appear everywhere. Allow IDs?
 		#id:fb247274-9a35-4f42-bb8c-4361cd29fd9e

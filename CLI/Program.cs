@@ -57,10 +57,10 @@ namespace AssimilationSoftware.TodoSort.CLI
             verbose = ((UniversalOptions)argsubs).Verbose;
             vm.ShowHeadOnly = !((UniversalOptions)argsubs).ShowAllItems;
 
-                // Search for a matching item in all contexts.
-                ActionItem selected = null;
-                switch (argverb)
-                {
+            // Search for a matching item in all contexts.
+            ActionItem selected = null;
+            switch (argverb)
+            {
                     #region Add
                     case "add":
                         // Add a new item.
@@ -72,6 +72,13 @@ namespace AssimilationSoftware.TodoSort.CLI
                         vm.AddItem(item);
                         // Allow tagging right away.
                         TagItem(vm, item);
+                        break;
+                    #endregion
+
+                    #region Advanced Search
+                    case "advanced-search":
+                        var searchterms = (AdvancedSearchSubOptions)argsubs;
+                        PrintItems(vm.Search(searchterms.Context, searchterms.Title, searchterms.Note, searchterms.ID, searchterms.TagName, searchterms.TagValue, searchterms.MinDepth, searchterms.MaxDepth));
                         break;
                     #endregion
 
