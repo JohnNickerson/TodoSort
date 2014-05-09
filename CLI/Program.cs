@@ -55,7 +55,7 @@ namespace AssimilationSoftware.TodoSort.CLI
 
             // Set universal options.
             verbose = ((UniversalOptions)argsubs).Verbose;
-            vm.ShowHeadOnly = ((UniversalOptions)argsubs).ShowAllItems;
+            vm.ShowHeadOnly = !((UniversalOptions)argsubs).ShowAllItems;
 
                 // Search for a matching item in all contexts.
                 ActionItem selected = null;

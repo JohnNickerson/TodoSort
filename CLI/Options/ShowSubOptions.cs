@@ -6,7 +6,7 @@ using System.Text;
 
 namespace AssimilationSoftware.TodoSort.CLI.Options
 {
-    public class ShowSubOptions
+    public class ShowSubOptions : UniversalOptions
     {
         [Option('c', "context", HelpText = "The context to show.", Required = true)]
         public string Context { get; set; }
