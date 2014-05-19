@@ -33,9 +33,14 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             {
                 Reconfigure(this, null);
             }
+            RefreshViewModel();
+		}
+
+        private void RefreshViewModel()
+        {
             vm = new ViewModel(new ActionItemDiskMapper(Settings.Default.Todo), new ActionItemDiskMapper(Settings.Default.Done), new ActionItemDiskMapper(Settings.Default.Someday));
             this.DataContext = vm;
-		}
+        }
 
         public void Reconfigure(object sender, RoutedEventArgs args)
         {
@@ -69,6 +74,17 @@ namespace AssimilationSoftware.TodoSort.WpfGui
 
             Settings.Default.Reconfigure = false;
             Settings.Default.Save();
+            RefreshViewModel();
+        }
+
+        private void ItemDisplay_DeleteItem(object sender, DeleteItemEventArgs e)
+        {
+            vm.Delete(e.Item);
+        }
+
+        private void SaveCommandExecuted(object sender, ExecutedRoutedEventArgs e)
+        {
+            vm.Save();
         }
 	}
 }

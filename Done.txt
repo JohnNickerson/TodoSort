@@ -167,7 +167,33 @@
 		- This would allow detailed help when command parsing fails.
 		#done-date:2014-05-08
 		#id:5a18109c-1c4a-4bba-9fff-649c8e390bd1
-		#priority-parent:f5a3d428-5de0-4aa0-8e88-edcc3800ba5e
+@2014-05-12
+	Search by depth
+		- "mindepth" and "maxdepth" or just "depth" option.
+		- Easiest to do with a command-line argument parser, of course.
+		- Can replace the "--all" flag.
+		#done-date:2014-05-12
+		#id:66fcd6ad-ec38-43b7-ad31-c6673bf3e838
+	Granular search
+		- eg "--has-tag url --title cracked --note what".
+		- Instead of using one search term to match everything.
+		#done-date:2014-05-12
+		#id:137244a0-98dd-4088-8310-2875997b4c17
+	Delete a tag
+		- Maybe when tagging, an empty tag value should indicate removal of a tag.
+		#done-date:2014-05-12
+		#id:eb76c634-1e20-4bc3-b272-2db8f58285a6
+	Fix tag value search in advanced-search command
+		- Doesn't seem to be working properly.
+		- Short option name conflict (-v = "verbose" and "value").
+		#type:bug
+		#done-date:2014-05-12
+		#id:3e784cca-62c7-4108-a0b1-278582e924ac
+@2014-05-19
+	Delete items via GUI
+		#done-date:2014-05-19
+		#id:1bf0d9fe-d267-46af-be96-93dc7016ca24
+		#priority-parent:4ed8be70-a8dd-41b7-8826-37d7b1e9b4ab
 @done
 	The Done list should be broken up into date sub lists rather than being a different format.
 		#id:3da6bbcb-9608-4289-a82c-50b29d7ee7ac

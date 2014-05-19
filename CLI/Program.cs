@@ -54,26 +54,27 @@ namespace AssimilationSoftware.TodoSort.CLI
             ViewModel vm = new ViewModel(todomapper, donemapper, somedaymapper);
 
             // Set universal options.
-            verbose = ((UniversalOptions)argsubs).Verbose;
-            vm.ShowHeadOnly = !((UniversalOptions)argsubs).ShowAllItems;
+            if (argsubs is UniversalOptions)
+            {
+                verbose = ((UniversalOptions)argsubs).Verbose;
+                vm.ShowHeadOnly = !((UniversalOptions)argsubs).ShowAllItems;
+            }
 
             // Search for a matching item in all contexts.
             ActionItem selected = null;
             switch (argverb)
             {
-                    #region Add
-                    case "add":
-                        // Add a new item.
-                        Console.WriteLine("What is the new action?");
-                        string title = Console.ReadLine();
-                        Console.WriteLine("What context does it belong to?");
-                        string context = Console.ReadLine();
-                        var item = new ActionItem(context, title);
-                        vm.AddItem(item);
-                        // Allow tagging right away.
-                        TagItem(vm, item);
-                        break;
-                    #endregion
+                #region Add
+                case "add":
+                    // Add a new item.
+                    var a = (AddSubOptions)argsubs;
+                    var item = new ActionItem(a.Context, a.ActionTitle);
+                    Console.WriteLine("Adding action '{0}' to context @{1}", a.ActionTitle, a.Context);
+                    vm.AddItem(item);
+                    // Allow tagging right away.
+                    TagItem(vm, item);
+                    break;
+                #endregion
 
                     #region Advanced Search
                     case "advanced-search":
@@ -201,7 +202,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                             // Assign the @inbox items to contexts.
                             Console.WriteLine("To which context should this item go?");
                             ActionItem first = inbox[i];
-                            Console.WriteLine(first.Title);
+                            PrintItem(first);
                             string newcontext = Console.ReadLine();
                             vm.SetContext(first, newcontext);
                             Console.WriteLine();
@@ -216,7 +217,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                                 // Add next actions for projects.
                                 Console.WriteLine("What is the next action required on this project?");
                                 ActionItem first = projects[i];
-                                Console.WriteLine(first.Title);
+                                PrintItem(first);
                                 string nextaction = Console.ReadLine();
                                 Console.WriteLine("...and to what context does it belong?");
                                 string newcontext = Console.ReadLine();
@@ -265,9 +266,9 @@ namespace AssimilationSoftware.TodoSort.CLI
                                 if (quitandsave) break;
                                 // get vote
                                 Console.WriteLine("{0}/{1} ({2}%) complete", x, items.Count, 100 * x / items.Count);
-                                Console.WriteLine("    1:");
+                                Console.Write("    1:");
                                 PrintItem(items[x]);
-                                Console.WriteLine("    2:");
+                                Console.Write("    2:");
                                 PrintItem(items[x + 1]);
                                 Console.Write("Which of these is more important? (q=quit) ");
                                 var k = Console.ReadKey();
@@ -316,6 +317,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                         if (selected != null)
                         {
                             vm.Rename(selected, renameOptions.NewTitle);
+                            Console.WriteLine("Item renamed.");
                         }
                         break;
                     #endregion
@@ -361,7 +363,8 @@ namespace AssimilationSoftware.TodoSort.CLI
                             Console.Clear();
                             for (int index = 0; index < 10 && offset + index < vm.SomedayItems.Count; index++)
                             {
-                                Console.WriteLine("{0}: {1}", index, vm.SomedayItems.ElementAt(offset + index).Title);
+                                Console.Write("{0}: ", index);
+                                PrintItem(vm.SomedayItems.ElementAt(offset + index));
                             }
                             char choice = Console.ReadKey().KeyChar;
                             Console.WriteLine();
@@ -379,6 +382,7 @@ namespace AssimilationSoftware.TodoSort.CLI
 
                     #region Summary
                     case "summary":
+                        var summaryArgs = (SummarySubOptions)argsubs;
                         var summarydata = (from c in vm.GetContextNames() select new { Context = c, Count = vm.GetContextItems(c).Count() });
 
                         int maxwidth = (from r in summarydata select r.Context.Length).Max();
@@ -389,7 +393,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                             string format = string.Format("@{{0}}\t{{1,{0}}} item{1}", Math.Ceiling(Math.Log10(maxnum)), (c.Count == 1 ? "" : "s"));
                             Console.WriteLine(format, c.Context.PadRight(maxwidth), c.Count);
 
-                            if (args.Contains("--verbose"))
+                            if (summaryArgs.Verbose)
                             {
                                 // Show a summary of numbers at each depth.
                                 var detailed = (from r in vm.GetContextItems(c.Context) group r by r.RankDepth into g select new { Depth = g.Key, Count = g.Count() });
@@ -532,6 +536,13 @@ namespace AssimilationSoftware.TodoSort.CLI
             }
         }
 
+        /// <summary>
+        /// Prints an individual item to the console.
+        /// </summary>
+        /// <param name="i">The item to print.</param>
+        /// <remarks>
+        /// TODO: Refactor into a Console View class?
+        /// </remarks>
         private static void PrintItem(ActionItem i)
         {
             Console.WriteLine(string.Format("\t{0}", i.Title));
@@ -545,6 +556,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                 {
                     Console.WriteLine(string.Format("\t\t{0}", string.Join("\n\t\t", from t in i.Tags select string.Format("#{0}:{1}", t.Key, t.Value))));
                 }
+                // TODO: ID, priority-parent and other special tags.
             }
         }
 
@@ -600,7 +612,8 @@ commands:
 			{
                 for (int i = 0; i < todolist.Count(); i++)
 				{
-                    Console.WriteLine("{0}: {1}", i, todolist.ElementAt(i).Title);
+                    Console.Write("{0}: ", i);
+                    PrintItem(todolist.ElementAt(i));
 				}
 				char choice = Console.ReadKey().KeyChar;
                 // Write a blank line to prevent whatever comes next from printing right after this on the same line.

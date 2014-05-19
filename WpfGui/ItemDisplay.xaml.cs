@@ -11,6 +11,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using AssimilationSoftware.PimData;
+using AssimilationSoftware.PimData.Model;
 
 namespace AssimilationSoftware.TodoSort.WpfGui
 {
@@ -19,6 +20,9 @@ namespace AssimilationSoftware.TodoSort.WpfGui
     /// </summary>
     public partial class ItemDisplay : UserControl
     {
+        public delegate void DeleteItemEventHandler(object sender, DeleteItemEventArgs e);
+        public event DeleteItemEventHandler DeleteItem;
+
         public ItemDisplay()
         {
             InitializeComponent();
@@ -26,7 +30,10 @@ namespace AssimilationSoftware.TodoSort.WpfGui
 
         private void Delete_Click(object sender, RoutedEventArgs e)
         {
-            // TODO: Delete the bound item.
+            if (DeleteItem != null)
+            {
+                DeleteItem(this, new DeleteItemEventArgs { Item = (ActionItem)DataContext });
+            }
         }
     }
 }

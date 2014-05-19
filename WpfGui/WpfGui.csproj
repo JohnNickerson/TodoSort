@@ -82,6 +82,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="DeleteItemEventArgs.cs" />
     <Compile Include="ItemDisplay.xaml.cs">
       <DependentUpon>ItemDisplay.xaml</DependentUpon>
     </Compile>
@@ -121,6 +122,9 @@
       <Project>{73fc6562-d6b8-422d-bdf6-b7dcf9dc9850}</Project>
       <Name>Core</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="edit-delete-5.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

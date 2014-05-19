@@ -253,6 +253,7 @@ namespace AssimilationSoftware.TodoSort.Core
                 todo_items.Remove(i);
                 todo_changes = true;
             }
+            RaisePropertyChanged("SearchResults");
         }
 
         /// <summary>
@@ -260,16 +261,21 @@ namespace AssimilationSoftware.TodoSort.Core
         /// </summary>
         /// <param name="search_term">The string to look for.</param>
         /// <returns>A list of matching items.</returns>
+        /// <remarks>
+        /// Full-text search needs to be a different operation to advanced search. 
+        /// Full-text looks for text anywhere and returns all possible results. 
+        /// Advanced search looks for single records with *all* specified properties and returns only those best matches.
+        /// </remarks>
         private ActionItem[] Search(string search_term)
         {
-            // TODO: return Search(search_term, search_term, search_term, search_term, search_term, search_term);
+            // Full-text 
             var result = (from i in todo_items
-                    where i.Title.ToLower().Contains(search_term.ToLower())
-                        || string.Join(Environment.NewLine, i.Notes).ToLower().Contains(search_term.ToLower())
-                        || string.Join(Environment.NewLine, i.Tags.Keys).ToLower().Contains(search_term.ToLower())
-                        || i.ID.ToString().StartsWith(search_term)
-                        || string.Join(Environment.NewLine, (from k in i.Tags select k.Value)).ToLower().Contains(search_term.ToLower())
-                    select i);
+                          where i.Title.ToLower().Contains(search_term.ToLower())
+                            || string.Join(Environment.NewLine, i.Notes).ToLower().Contains(search_term.ToLower())
+                            || string.Join(Environment.NewLine, i.Tags.Keys).ToLower().Contains(search_term.ToLower())
+                            || i.ID.ToString().StartsWith(search_term)
+                            || string.Join(Environment.NewLine, (from k in i.Tags select k.Value)).ToLower().Contains(search_term.ToLower())
+                          select i);
             if (showHeadOnly)
             {
                 return (from i in result where i.RankParent == null select i).ToArray();
@@ -298,8 +304,8 @@ namespace AssimilationSoftware.TodoSort.Core
                           && (context == null || i.Context.ToLower() == context.ToLower())
                           && (partial_note == null || string.Join(Environment.NewLine, i.Notes).ToLower().Contains(partial_note.ToLower()))
                           && (has_tag == null || i.Tags.ContainsKey(has_tag))
-                          && (partial_id == null || i.ID.ToString().ToLower().StartsWith(partial_id.ToLower()))
                           && (tag_value == null || string.Join(Environment.NewLine, from k in i.Tags select k.Value).ToLower().Contains(tag_value.ToLower())))
+                          && (partial_id == null || i.ID.ToString().ToLower().StartsWith(partial_id.ToLower()))
                           && (i.RankDepth >= mindepth && i.RankDepth <= maxdepth)
                           select i);
             return result.ToArray();

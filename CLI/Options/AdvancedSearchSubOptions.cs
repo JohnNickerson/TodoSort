@@ -22,11 +22,11 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
         public string TagName { get; set; }
 
         // Tag value
-        [Option('v', "value", HelpText = "Partial tag value.")]
+        [Option("value", HelpText = "Partial tag value.")]
         public string TagValue { get; set; }
 
         // Partial note
-        [Option('n', "note", HelpText = "Partial contents of a note.")]
+        [Option("note", HelpText = "Partial contents of a note.")]
         public string Note { get; set; }
 
         // Partial ID
@@ -38,7 +38,7 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
         public int MinDepth { get; set; }
 
         // Maximum depth } Can be set together by one Depth option (ie "set { MinDepth = value; MaxDepth = value; }")
-        [Option("maxdepth", HelpText = "The maximum priority depth for results.", DefaultValue = int.MaxValue)]
+        [Option("maxdepth", HelpText = "The maximum priority depth for results.", DefaultValue = 0)]
         public int MaxDepth { get; set; }
 
         [Option('d', "depth", HelpText = "Absolute depth to search at.")]
