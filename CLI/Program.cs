@@ -76,12 +76,12 @@ namespace AssimilationSoftware.TodoSort.CLI
                     break;
                 #endregion
 
-                    #region Advanced Search
-                    case "advanced-search":
-                        var searchterms = (AdvancedSearchSubOptions)argsubs;
-                        PrintItems(vm.Search(searchterms.Context, searchterms.Title, searchterms.Note, searchterms.ID, searchterms.TagName, searchterms.TagValue, searchterms.MinDepth, searchterms.MaxDepth));
-                        break;
-                    #endregion
+                #region Advanced Search
+                case "advanced-search":
+                    var searchterms = (AdvancedSearchSubOptions)argsubs;
+                    PrintItems(vm.Search(searchterms.Context, searchterms.Title, searchterms.Note, searchterms.ID, searchterms.TagName, searchterms.TagValue, searchterms.MinDepth, searchterms.MaxDepth));
+                    break;
+                #endregion
 
                     #region Defer
                     case "defer":
@@ -156,8 +156,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                             // Force verbose mode to display all notes and tags.
                             verbose = true;
                             PrintItem(selected);
-                            var note = Console.ReadLine();
-                            vm.AddNote(selected, note);
+                            vm.AddNote(selected, noteOptions.NewNote);
                         }
                         break;
                     #endregion

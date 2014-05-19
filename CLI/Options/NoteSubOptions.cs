@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CommandLine;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,5 +8,7 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
 {
     public class NoteSubOptions : SearchSubOptions
     {
+        [Option('n', "note", HelpText = "The note to add.")]
+        public string NewNote { get; set; }
     }
 }
