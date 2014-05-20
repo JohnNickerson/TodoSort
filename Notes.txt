@@ -6,6 +6,7 @@
 	Task due dates
 		- I tend not to use these myself, though.
 		#id:102fa8ac-653a-4d3f-b172-a0d3bf3824d8
+		#priority-parent:8da843b9-8dc7-47c7-9db3-e7209b1068fe
 	Work offline
 		- Enqueue commands to process later without changing files.
 		- Useful for when the files are not up to date (eg Dropbox sync has fallen behind).
@@ -38,25 +39,29 @@
 	De-duplicate command
 		- Search and merge duplicates
 		#id:841c5d7b-d1c5-4a3e-8618-cfff08ef4c20
+	Undefer a specific item
+		#id:6dc916bc-4924-4300-8adb-89d20013dce1
+	Randomise index for ranking
+		#id:7488887c-bea1-4728-8d61-4f7ef21f76be
+	Change console output to an export module used by default
+		#type:feature
+		#id:37ed25d1-cd26-4ad0-b86b-896cca3f783c
 	Show the tree for one item
 		- Up and down.
 		- Viz export on search.
 		- An SVG export from GraphViz is a pretty good compromise for now, since it allows text search.
 		#id:ed1bd4a3-b9ef-470f-870d-a94459fe4f5f
+		#priority-parent:841c5d7b-d1c5-4a3e-8618-cfff08ef4c20
 	Display results by data binding instead of direct fetch
 		#id:b7a72b3f-f40d-4dc0-abcc-66ca522d3cbf
-	Undefer a specific item
-		#id:6dc916bc-4924-4300-8adb-89d20013dce1
-	Randomise index for ranking
-		#id:7488887c-bea1-4728-8d61-4f7ef21f76be
+		#priority-parent:6dc916bc-4924-4300-8adb-89d20013dce1
 	Search deferred items
 		#id:93ee9286-2ee7-4252-bee8-1a3127d14d9e
+		#priority-parent:7488887c-bea1-4728-8d61-4f7ef21f76be
 	Make "export" a universal option for output instead of its own command
 		#type:feature
 		#id:05e78d12-11a3-4a31-9906-d0ca2ca3b0c1
-	Change console output to an export module used by default
-		#type:feature
-		#id:37ed25d1-cd26-4ad0-b86b-896cca3f783c
+		#priority-parent:37ed25d1-cd26-4ad0-b86b-896cca3f783c
 	Change the disambiguation process to demand a single match
 		- Tough for short words that might appear everywhere. Allow IDs?
 		#id:fb247274-9a35-4f42-bb8c-4361cd29fd9e
@@ -70,44 +75,46 @@
 		#id:f5a3d428-5de0-4aa0-8e88-edcc3800ba5e
 		#priority-parent:b7a72b3f-f40d-4dc0-abcc-66ca522d3cbf
 @gui
-	Process inbox via GUI
-		#id:4629aebd-92fa-4e25-afbe-f619d15f7a37
 	Add notes via GUI
 		#id:d84fd47b-4bb0-43bf-a4d3-5237a649ebf9
 	Open url via GUI
 		- With this, mark as done and ranking, I'll have my main playlist functions in the GUI.
 		#type:feature
 		#id:6ce50539-3ffe-4f30-b85e-d947f7699788
-	A Chrome/Firefox plugin to add a page to the playlist
-		#id:d4e41a1d-782b-4f1d-959a-61e8cefcf892
 	Show child items for deleted or done items right away
 		- The ViewModel was written with a start-to-finish CLI workflow (read, command, write).
 		- The GUI doesn't show changes right away.
 		#type:bug
 		#id:fa28b331-1bd6-49d5-8730-7b805734b931
+	Add/edit tags via GUI
+		#id:eac9e80b-2f1b-4fb6-bb79-75c8d850a07f
+	Process inbox via GUI
+		#id:4629aebd-92fa-4e25-afbe-f619d15f7a37
+		#priority-parent:d84fd47b-4bb0-43bf-a4d3-5237a649ebf9
+	A Chrome/Firefox plugin to add a page to the playlist
+		#id:d4e41a1d-782b-4f1d-959a-61e8cefcf892
+		#priority-parent:6ce50539-3ffe-4f30-b85e-d947f7699788
+	Rank items for priority via GUI
+		#id:4ed8be70-a8dd-41b7-8826-37d7b1e9b4ab
+		#priority-parent:fa28b331-1bd6-49d5-8730-7b805734b931
+	Add follow-up actions via GUI
+		#id:bdf4dbf2-cc3c-4004-811b-1d8371c37d3f
+		#priority-parent:eac9e80b-2f1b-4fb6-bb79-75c8d850a07f
 	Review Someday items via GUI
 		#id:6995c2c3-e576-467e-91d4-5775e85e984c
 		#priority-parent:4629aebd-92fa-4e25-afbe-f619d15f7a37
-	Rank items for priority via GUI
-		#id:4ed8be70-a8dd-41b7-8826-37d7b1e9b4ab
-		#priority-parent:d4e41a1d-782b-4f1d-959a-61e8cefcf892
-	Add follow-up actions via GUI
-		#id:bdf4dbf2-cc3c-4004-811b-1d8371c37d3f
-		#priority-parent:4ed8be70-a8dd-41b7-8826-37d7b1e9b4ab
-	Add/edit tags via GUI
-		#id:eac9e80b-2f1b-4fb6-bb79-75c8d850a07f
-		#priority-parent:4ed8be70-a8dd-41b7-8826-37d7b1e9b4ab
 	Defer items via GUI
 		#id:4f1a19ec-4ff9-4245-811f-6f1d4bcc9f49
 		#priority-parent:bdf4dbf2-cc3c-4004-811b-1d8371c37d3f
 @someday
 	Import from Pocket
 		#id:560190c3-9571-48e0-a951-3bbdba5c05d1
+	Rank second-tier items if there are no top-level comparisons to make
+		#id:11427126-1e6f-4242-85e0-08c29979031b
 	Extensible command framework?
 		- Doesn't seem like a great idea, actually.
 		#id:3e979de9-32a2-466c-87f0-b23768955a95
-	Rank second-tier items if there are no top-level comparisons to make
-		#id:11427126-1e6f-4242-85e0-08c29979031b
+		#priority-parent:560190c3-9571-48e0-a951-3bbdba5c05d1
 	Review mode?
 		- Process inbox and projects
 		- Ask if each item is done or should be deferred
