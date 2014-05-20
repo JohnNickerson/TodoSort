@@ -131,7 +131,7 @@ namespace AssimilationSoftware.TodoSort.Core
         public ActionItem[] GetContextItems(string context)
         {
             // TODO: return Search(context, null, null, null, null, null); // ?
-            var result = from m in todo_items where m.Context.EndsWith(context.ToLower()) select m;
+            var result = from m in todo_items where m.Context.ToLower().Equals(context.ToLower()) select m;
             if (showHeadOnly)
             {
                 return (from i in result where i.RankParent == null select i).ToArray();
@@ -189,6 +189,7 @@ namespace AssimilationSoftware.TodoSort.Core
                 done_changes = true;
                 todo_changes = true;
             }
+            RaisePropertyChanged("SearchResults");
         }
 
         /// <summary>

@@ -10,5 +10,8 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
     {
         [Option('t', "tag", HelpText = "The tag to open.", Required = true)]
         public string Tag { get; set; }
+
+        [Option('m', "mark", HelpText = "Mark as done, too.", DefaultValue = false)]
+        public bool MarkAsDone { get; set; }
     }
 }

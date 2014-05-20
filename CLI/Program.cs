@@ -154,9 +154,9 @@ namespace AssimilationSoftware.TodoSort.CLI
                         if (selected != null)
                         {
                             // Force verbose mode to display all notes and tags.
+                            vm.AddNote(selected, noteOptions.NewNote);
                             verbose = true;
                             PrintItem(selected);
-                            vm.AddNote(selected, noteOptions.NewNote);
                         }
                         break;
                     #endregion
@@ -175,9 +175,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                                 System.Diagnostics.Process p = new System.Diagnostics.Process();
                                 p.StartInfo.FileName = tagvalue;
                                 p.Start();
-                                Console.WriteLine("Mark as done (y/n)?");
-                                var yn = Console.ReadKey();
-                                if (yn.KeyChar.ToString().ToLower() == "y")
+                                if (opentagOptions.MarkAsDone)
                                 {
                                     vm.MarkDone(selected);
                                 }

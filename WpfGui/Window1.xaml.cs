@@ -77,9 +77,14 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             RefreshViewModel();
         }
 
-        private void ItemDisplay_DeleteItem(object sender, DeleteItemEventArgs e)
+        private void ItemDisplay_DeleteItem(object sender, ActionItemEventArgs e)
         {
             vm.Delete(e.Item);
+        }
+
+        private void ItemDisplay_MarkDone(object sender, ActionItemEventArgs e)
+        {
+            vm.MarkDone(e.Item);
         }
 
         private void SaveCommandExecuted(object sender, ExecutedRoutedEventArgs e)

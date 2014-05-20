@@ -20,8 +20,10 @@ namespace AssimilationSoftware.TodoSort.WpfGui
     /// </summary>
     public partial class ItemDisplay : UserControl
     {
-        public delegate void DeleteItemEventHandler(object sender, DeleteItemEventArgs e);
+        public delegate void DeleteItemEventHandler(object sender, ActionItemEventArgs e);
+        public delegate void MarkDoneEventHandler(object sender, ActionItemEventArgs e);
         public event DeleteItemEventHandler DeleteItem;
+        public event MarkDoneEventHandler MarkDone;
 
         public ItemDisplay()
         {
@@ -32,7 +34,15 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         {
             if (DeleteItem != null)
             {
-                DeleteItem(this, new DeleteItemEventArgs { Item = (ActionItem)DataContext });
+                DeleteItem(this, new ActionItemEventArgs { Item = (ActionItem)DataContext });
+            }
+        }
+
+        private void Done_Checked(object sender, RoutedEventArgs e)
+        {
+            if (Done.IsChecked.Value && MarkDone != null)
+            {
+                MarkDone(this, new ActionItemEventArgs { Item = (ActionItem)DataContext });
             }
         }
     }

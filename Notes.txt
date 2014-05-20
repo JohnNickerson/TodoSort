@@ -70,9 +70,6 @@
 		#id:f5a3d428-5de0-4aa0-8e88-edcc3800ba5e
 		#priority-parent:b7a72b3f-f40d-4dc0-abcc-66ca522d3cbf
 @gui
-	Mark as done via GUI
-		- Should just be a matter of binding the checkbox to the item's IsDone property.
-		#id:8472e1c3-6226-408b-9728-e74c1f6014c2
 	Process inbox via GUI
 		#id:4629aebd-92fa-4e25-afbe-f619d15f7a37
 	Add notes via GUI
@@ -83,12 +80,11 @@
 		#id:6ce50539-3ffe-4f30-b85e-d947f7699788
 	A Chrome/Firefox plugin to add a page to the playlist
 		#id:d4e41a1d-782b-4f1d-959a-61e8cefcf892
-		#priority-parent:8472e1c3-6226-408b-9728-e74c1f6014c2
-	Use a "go" button to separate the ticking of a box from the disk write, in case it is ticked accidentally.
-		- Or just don't clear the item immediately so that it can be unticked if required.
-		- Or include an "undo" action.
-		#id:b68f0d46-3d6e-4b46-a585-3c92c36fca59
-		#priority-parent:8472e1c3-6226-408b-9728-e74c1f6014c2
+	Show child items for deleted or done items right away
+		- The ViewModel was written with a start-to-finish CLI workflow (read, command, write).
+		- The GUI doesn't show changes right away.
+		#type:bug
+		#id:fa28b331-1bd6-49d5-8730-7b805734b931
 	Review Someday items via GUI
 		#id:6995c2c3-e576-467e-91d4-5775e85e984c
 		#priority-parent:4629aebd-92fa-4e25-afbe-f619d15f7a37

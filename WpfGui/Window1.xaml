@@ -25,7 +25,7 @@
         <ListView Grid.Row="2" Name="SearchResultsList" ItemsSource="{Binding Path=SearchResults}">
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <w:ItemDisplay DataContext="{Binding}" DeleteItem="ItemDisplay_DeleteItem" />
+                    <w:ItemDisplay DataContext="{Binding}" DeleteItem="ItemDisplay_DeleteItem" MarkDone="ItemDisplay_MarkDone" />
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>

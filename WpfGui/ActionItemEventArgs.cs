@@ -5,7 +5,7 @@ using System.Text;
 
 namespace AssimilationSoftware.TodoSort.WpfGui
 {
-    public class DeleteItemEventArgs
+    public class ActionItemEventArgs
     {
         public PimData.Model.ActionItem Item;
     }

@@ -18,7 +18,7 @@
         
         <TextBox Name="Context" Grid.Column="0" Grid.Row="0" Text="{Binding Path=Context}" Grid.ColumnSpan="2" />
 
-        <CheckBox Name="Done" Grid.Column="0" Grid.Row="1" Margin="3" HorizontalAlignment="Center" VerticalAlignment="Center" ToolTip="Done?" IsChecked="{Binding Path=Done}" />
+        <CheckBox Name="Done" Grid.Column="0" Grid.Row="1" Margin="3" HorizontalAlignment="Center" VerticalAlignment="Center" ToolTip="Done?" IsChecked="{Binding Path=IsDone}" Checked="Done_Checked" />
         <TextBox Name="Title" Grid.Column="1" Grid.Row="1" Text="{Binding Path=Title}" />
         <Button Name="Delete" Grid.Column="2" Grid.Row="1" Margin="3" ToolTip="Delete" Click="Delete_Click">
             <Image Source="edit-delete-5.png" />

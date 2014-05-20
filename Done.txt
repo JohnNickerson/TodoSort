@@ -193,7 +193,17 @@
 	Delete items via GUI
 		#done-date:2014-05-19
 		#id:1bf0d9fe-d267-46af-be96-93dc7016ca24
-		#priority-parent:4ed8be70-a8dd-41b7-8826-37d7b1e9b4ab
+@2014-05-20
+	Mark as done via GUI
+		- Should just be a matter of binding the checkbox to the item's IsDone property.
+		#done-date:2014-05-20
+		#id:8472e1c3-6226-408b-9728-e74c1f6014c2
+	Use a separate "Save" action
+		- To keep accidental button clicks from making permanent changes.
+		- Or just don't clear the item immediately so that it can be unticked if required.
+		- Or include an "undo" action.
+		#done-date:2014-05-20
+		#id:b68f0d46-3d6e-4b46-a585-3c92c36fca59
 @done
 	The Done list should be broken up into date sub lists rather than being a different format.
 		#id:3da6bbcb-9608-4289-a82c-50b29d7ee7ac
