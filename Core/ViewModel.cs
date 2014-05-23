@@ -389,7 +389,7 @@ namespace AssimilationSoftware.TodoSort.Core
 
         public void AddNote(ActionItem item, string note)
         {
-            item.Notes.Add(note);
+            item.Notes.Add(string.Format("{0} ({1:yyyy-MM-dd})", note, DateTime.Now));
             todo_changes = true;
         }
 

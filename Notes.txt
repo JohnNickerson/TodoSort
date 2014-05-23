@@ -1,8 +1,17 @@
 @backend
 	Recurring reminders and items
-		- "repeats" tags? That's just a way to serialise it.
+		- Serialise with "repeats" tags? Need to prototype it.
 		- When a recurring item is marked as done, instead of moving, one copy goes to the "done" list and one to the "someday" list.
 		#id:8da843b9-8dc7-47c7-9db3-e7209b1068fe
+	Always rank project items together
+		- Children of the same project need to be ordered against each other, not necessarily everything else.
+		#type:feature
+		#id:f10b1166-8dff-432b-869f-4cc29dccef22
+	JoinSearch-style search queries
+		- The JoinSearch function will need to be modified to work over objects this way, but the parser should be helpful.
+		- Might need new functions to search particular object properties like tags.
+		- Or maybe LINQ via the command line?
+		#id:59162543-9d87-41e1-a601-6fc7462f6fbd
 	Task due dates
 		- I tend not to use these myself, though.
 		#id:102fa8ac-653a-4d3f-b172-a0d3bf3824d8
@@ -10,15 +19,12 @@
 	Work offline
 		- Enqueue commands to process later without changing files.
 		- Useful for when the files are not up to date (eg Dropbox sync has fallen behind).
+		- Serialise options classes?
 		#id:5e70eaeb-8525-42eb-9824-407482dc0588
 		#priority-parent:8da843b9-8dc7-47c7-9db3-e7209b1068fe
 	Generic CRUD operations on any list file
 		- Move to another list file or sub-list, too
 		#id:bcac196a-52cf-4e95-8491-3cc5eafbe98b
-		#priority-parent:8da843b9-8dc7-47c7-9db3-e7209b1068fe
-	Only write IDs if they are useful
-		- If IDs are not referenced anywhere (ie no projects and no priorities) then they're just taking up space.
-		#id:950006c7-8cb2-4386-9c48-5668b8fb84fc
 		#priority-parent:8da843b9-8dc7-47c7-9db3-e7209b1068fe
 	Import function
 		- To merge lists and add new items in bulk.
@@ -27,14 +33,9 @@
 		#id:57da7c59-0b4f-4d9e-a028-9fbf448bc391
 		#priority-parent:8da843b9-8dc7-47c7-9db3-e7209b1068fe
 	Use a second ViewModel for reviewing the Someday list?
+		- Just because it's a special-purpose function working on a different file.
 		#id:876a0330-b332-4e55-94a5-efaa77f3f511
 		#priority-parent:bcac196a-52cf-4e95-8491-3cc5eafbe98b
-	JoinSearch-style search queries
-		- The JoinSearch function will need to be modified to work over objects this way, but the parser should be helpful.
-		- Might need new functions to search particular object properties like tags.
-		- Or maybe LINQ via the command line?
-		#id:59162543-9d87-41e1-a601-6fc7462f6fbd
-		#priority-parent:950006c7-8cb2-4386-9c48-5668b8fb84fc
 @cli
 	De-duplicate command
 		- Search and merge duplicates
@@ -46,6 +47,10 @@
 	Change console output to an export module used by default
 		#type:feature
 		#id:37ed25d1-cd26-4ad0-b86b-896cca3f783c
+	List contexts when asking for one
+		- I've used different contexts in different files for different purposes. It would just help to see them displayed.
+		#type:feature
+		#id:fca19166-f471-49e5-864e-0386c098e41d
 	Show the tree for one item
 		- Up and down.
 		- Viz export on search.

@@ -83,25 +83,25 @@ namespace AssimilationSoftware.TodoSort.CLI
                     break;
                 #endregion
 
-                    #region Defer
-                    case "defer":
-                        // Move the item and its sub-items to the "someday" file.
-                        DeferSubOptions deferopts = ((DeferSubOptions)argsubs);
-                        vm.SearchTerm = deferopts.SearchTerm;
-                        selected = Disambiguate(vm.SearchResults);
-                        if (selected != null)
+                #region Defer
+                case "defer":
+                    // Move the item and its sub-items to the "someday" file.
+                    DeferSubOptions deferopts = ((DeferSubOptions)argsubs);
+                    vm.SearchTerm = deferopts.SearchTerm;
+                    selected = Disambiguate(vm.SearchResults);
+                    if (selected != null)
+                    {
+                        if (deferopts.TickleDate.HasValue)
                         {
-                            if (deferopts.TickleDate.HasValue)
-                            {
-                                vm.Defer(selected, deferopts.TickleDate.Value);
-                            }
-                            else
-                            {
-                                vm.Defer(selected);
-                            }
+                            vm.Defer(selected, deferopts.TickleDate.Value);
                         }
-                        break;
-                    #endregion
+                        else
+                        {
+                            vm.Defer(selected);
+                        }
+                    }
+                    break;
+                #endregion
 
                     #region Delete
                     case "delete":
@@ -421,7 +421,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                     #region Unrank
                     case "unrank":
                         UnrankSubOptions unrankOptions = (UnrankSubOptions)argsubs;
-                        if (unrankOptions.AllItems)
+                        if (unrankOptions.ResetAll)
                         {
                             Console.Write("Do you really want to destroy all ranking data and start over [Y/N]?");
                             var k = Console.ReadKey();
@@ -432,6 +432,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                         }
                         else
                         {
+                            vm.ShowHeadOnly = unrankOptions.SearchAll;
                             vm.SearchTerm = unrankOptions.SearchTerm;
                             selected = Disambiguate(vm.SearchResults);
                             if (selected != null)

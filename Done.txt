@@ -204,6 +204,18 @@
 		- Or include an "undo" action.
 		#done-date:2014-05-20
 		#id:b68f0d46-3d6e-4b46-a585-3c92c36fca59
+@2014-05-23
+	Add a timestamp with notes
+		- For example, like this. (2014-05-23)
+		#type:feature
+		#done-date:2014-05-23
+		#id:056fd3fe-da4d-4679-b2d5-ed43b5bd6d1c
+	Fix unrank command for deep-buried items
+		- The "--all" option is used both for searching deep and unranking everything.
+		- Split into two separate commands: "unrank" and "unrank-all"?
+		#type:bug
+		#done-date:2014-05-23
+		#id:e31cab06-1bcc-4c35-811d-3662b5d8a217
 @done
 	The Done list should be broken up into date sub lists rather than being a different format.
 		#id:3da6bbcb-9608-4289-a82c-50b29d7ee7ac
