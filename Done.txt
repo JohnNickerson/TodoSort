@@ -216,6 +216,12 @@
 		#type:bug
 		#done-date:2014-05-23
 		#id:e31cab06-1bcc-4c35-811d-3662b5d8a217
+	Show child items for deleted or done items right away
+		- The ViewModel was written with a start-to-finish CLI workflow (read, command, write).
+		- The GUI doesn't show changes right away.
+		#type:bug
+		#done-date:2014-05-23
+		#id:fa28b331-1bd6-49d5-8730-7b805734b931
 @done
 	The Done list should be broken up into date sub lists rather than being a different format.
 		#id:3da6bbcb-9608-4289-a82c-50b29d7ee7ac

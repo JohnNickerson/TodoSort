@@ -279,7 +279,7 @@ namespace AssimilationSoftware.TodoSort.Core
                           select i);
             if (showHeadOnly)
             {
-                return (from i in result where i.RankParent == null select i).ToArray();
+                return (from i in result where !todo_items.Contains(i.RankParent) select i).ToArray();
             }
             else
             {

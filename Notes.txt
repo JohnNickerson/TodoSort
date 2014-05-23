@@ -86,22 +86,19 @@
 		- With this, mark as done and ranking, I'll have my main playlist functions in the GUI.
 		#type:feature
 		#id:6ce50539-3ffe-4f30-b85e-d947f7699788
-	Show child items for deleted or done items right away
-		- The ViewModel was written with a start-to-finish CLI workflow (read, command, write).
-		- The GUI doesn't show changes right away.
-		#type:bug
-		#id:fa28b331-1bd6-49d5-8730-7b805734b931
 	Add/edit tags via GUI
 		#id:eac9e80b-2f1b-4fb6-bb79-75c8d850a07f
+	Rank items for priority via GUI
+		#id:4ed8be70-a8dd-41b7-8826-37d7b1e9b4ab
+	Warn when closing without saving
+		#type:feature
+		#id:6bb0c52c-6f9a-4676-81a3-608db07e917a
 	Process inbox via GUI
 		#id:4629aebd-92fa-4e25-afbe-f619d15f7a37
 		#priority-parent:d84fd47b-4bb0-43bf-a4d3-5237a649ebf9
 	A Chrome/Firefox plugin to add a page to the playlist
 		#id:d4e41a1d-782b-4f1d-959a-61e8cefcf892
 		#priority-parent:6ce50539-3ffe-4f30-b85e-d947f7699788
-	Rank items for priority via GUI
-		#id:4ed8be70-a8dd-41b7-8826-37d7b1e9b4ab
-		#priority-parent:fa28b331-1bd6-49d5-8730-7b805734b931
 	Add follow-up actions via GUI
 		#id:bdf4dbf2-cc3c-4004-811b-1d8371c37d3f
 		#priority-parent:eac9e80b-2f1b-4fb6-bb79-75c8d850a07f
