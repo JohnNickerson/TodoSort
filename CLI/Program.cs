@@ -103,14 +103,14 @@ namespace AssimilationSoftware.TodoSort.CLI
                     break;
                 #endregion
 
-                    #region Delete
-                    case "delete":
-                        // Find a matching item to delete.
-                        vm.SearchTerm = ((DeleteSubOptions)argsubs).SearchTerm;
-                        selected = Disambiguate(vm.SearchResults);
-                        vm.Delete(selected);
-                        break;
-                    #endregion
+                #region Delete
+                case "delete":
+                    // Find a matching item to delete.
+                    vm.SearchTerm = ((DeleteSubOptions)argsubs).SearchTerm;
+                    selected = Disambiguate(vm.SearchResults);
+                    vm.Delete(selected);
+                    break;
+                #endregion
 
                     #region Done
                     case "done":
@@ -151,12 +151,15 @@ namespace AssimilationSoftware.TodoSort.CLI
                         Console.WriteLine("Confirm first item:");
                         vm.SearchTerm = mergeOptions.FirstSearchTerm;
                         var mergefirst = Disambiguate(vm.SearchResults);
-                        Console.WriteLine("Confirm second item:");
-                        vm.SearchTerm = mergeOptions.SecondSearchTerm;
-                        var second = Disambiguate(vm.SearchResults);
-                        if (mergefirst != null && second != null)
+                        if (mergefirst != null)
                         {
-                            vm.Merge(mergefirst, second);
+                            Console.WriteLine("Confirm second item:");
+                            vm.SearchTerm = mergeOptions.SecondSearchTerm;
+                            var second = Disambiguate(vm.SearchResults.Where(x => x.ID != mergefirst.ID).ToArray());
+                            if (mergefirst != null && second != null)
+                            {
+                                vm.Merge(mergefirst, second);
+                            }
                         }
                         break;
                     #endregion
