@@ -71,11 +71,6 @@
 		- Tough for short words that might appear everywhere. Allow IDs?
 		#id:fb247274-9a35-4f42-bb8c-4361cd29fd9e
 		#priority-parent:ed1bd4a3-b9ef-470f-870d-a94459fe4f5f
-	Merge command
-		- Find two items and combine them.
-		- Select which tag values to take in the new combined item.
-		#id:dbfb41ca-afe9-472b-bdb9-58bf7f410d47
-		#priority-parent:ed1bd4a3-b9ef-470f-870d-a94459fe4f5f
 	Keep processing while more items still in inbox or projects.
 		#id:f5a3d428-5de0-4aa0-8e88-edcc3800ba5e
 		#priority-parent:b7a72b3f-f40d-4dc0-abcc-66ca522d3cbf

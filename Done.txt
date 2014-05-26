@@ -222,6 +222,13 @@
 		#type:bug
 		#done-date:2014-05-23
 		#id:fa28b331-1bd6-49d5-8730-7b805734b931
+@2014-05-26
+	Merge command
+		- Find two items and combine them.
+		- Select which tag values to take in the new combined item.
+		#done-date:2014-05-26
+		#id:dbfb41ca-afe9-472b-bdb9-58bf7f410d47
+		#priority-parent:ed1bd4a3-b9ef-470f-870d-a94459fe4f5f
 @done
 	The Done list should be broken up into date sub lists rather than being a different format.
 		#id:3da6bbcb-9608-4289-a82c-50b29d7ee7ac

@@ -145,6 +145,22 @@ namespace AssimilationSoftware.TodoSort.CLI
                         break;
                     #endregion
 
+                    #region Merge
+                    case "merge":
+                        var mergeOptions = (MergeSubOptions)argsubs;
+                        Console.WriteLine("Confirm first item:");
+                        vm.SearchTerm = mergeOptions.FirstSearchTerm;
+                        var mergefirst = Disambiguate(vm.SearchResults);
+                        Console.WriteLine("Confirm second item:");
+                        vm.SearchTerm = mergeOptions.SecondSearchTerm;
+                        var second = Disambiguate(vm.SearchResults);
+                        if (mergefirst != null && second != null)
+                        {
+                            vm.Merge(mergefirst, second);
+                        }
+                        break;
+                    #endregion
+
                     #region Note
                     case "note":
                         // Add a note to a task.

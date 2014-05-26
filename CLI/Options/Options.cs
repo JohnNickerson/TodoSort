@@ -32,6 +32,9 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
         [VerbOption("init", HelpText = "Initialise for the current folder.")]
         public InitSubOptions InitVerb { get; set; }
 
+        [VerbOption("merge", HelpText = "Merge two items together.")]
+        public MergeSubOptions MergeVerb { get; set; }
+
         [VerbOption("note", HelpText = "Add a note to an item.")]
         public NoteSubOptions NoteVerb { get; set; }
 
