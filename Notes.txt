@@ -37,6 +37,9 @@
 		#id:876a0330-b332-4e55-94a5-efaa77f3f511
 		#priority-parent:bcac196a-52cf-4e95-8491-3cc5eafbe98b
 @cli
+	Add direct ID search to universal options
+		- Will allow easier offline actions.
+		#id:bf85cc86-e64b-46dd-b051-db459c6f27e2
 	De-duplicate command
 		- Search and merge duplicates
 		#id:841c5d7b-d1c5-4a3e-8618-cfff08ef4c20
@@ -51,16 +54,29 @@
 		- I've used different contexts in different files for different purposes. It would just help to see them displayed.
 		#type:feature
 		#id:fca19166-f471-49e5-864e-0386c098e41d
+	Wrap item titles to tab locations
+		- That is, for very long titles, notes or tags, instead of just printing the whole thing, snip it off at the right length for the console and write the rest on the next line, indented the same as the previous line.
+		- That note can be used as a test.
+		#type:feature
+		#id:58e8ea28-d1c6-4f62-9011-8c03aee92e27
+	Convert to project command
+		- Allows moving a single item into the special "projects" context.
+		- Either removes priority relationships or replaces them with the first action on the project.
+		#type:feature
+		#id:31cdefb5-347e-4a66-ae9c-ab6753f9c2f3
 	Show the tree for one item
 		- Up and down.
 		- Viz export on search.
 		- An SVG export from GraphViz is a pretty good compromise for now, since it allows text search.
+		#type:feature
 		#id:ed1bd4a3-b9ef-470f-870d-a94459fe4f5f
 		#priority-parent:841c5d7b-d1c5-4a3e-8618-cfff08ef4c20
 	Display results by data binding instead of direct fetch
+		#type:feature
 		#id:b7a72b3f-f40d-4dc0-abcc-66ca522d3cbf
 		#priority-parent:6dc916bc-4924-4300-8adb-89d20013dce1
 	Search deferred items
+		#type:feature
 		#id:93ee9286-2ee7-4252-bee8-1a3127d14d9e
 		#priority-parent:7488887c-bea1-4728-8d61-4f7ef21f76be
 	Make "export" a universal option for output instead of its own command
@@ -69,9 +85,11 @@
 		#priority-parent:37ed25d1-cd26-4ad0-b86b-896cca3f783c
 	Change the disambiguation process to demand a single match
 		- Tough for short words that might appear everywhere. Allow IDs?
+		#type:feature
 		#id:fb247274-9a35-4f42-bb8c-4361cd29fd9e
 		#priority-parent:ed1bd4a3-b9ef-470f-870d-a94459fe4f5f
 	Keep processing while more items still in inbox or projects.
+		#type:feature
 		#id:f5a3d428-5de0-4aa0-8e88-edcc3800ba5e
 		#priority-parent:b7a72b3f-f40d-4dc0-abcc-66ca522d3cbf
 @gui

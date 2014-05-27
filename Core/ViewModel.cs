@@ -315,14 +315,7 @@ namespace AssimilationSoftware.TodoSort.Core
         public List<ActionItem> GetProjectChildren(ActionItem actionItem)
         {
             var result = (from i in todo_items where i.Project == actionItem select i).ToList();
-            if (showHeadOnly)
-            {
-                return (from i in result where i.RankParent == null select i).ToList();
-            }
-            else
-            {
-                return result.ToList();
-            }
+            return result.ToList();
         }
 
         public List<ActionItem> GetTickleDueItems()

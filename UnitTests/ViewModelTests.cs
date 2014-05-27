@@ -106,5 +106,24 @@ namespace AssimilationSoftware.TodoSort.UnitTests
             Assert.Equal(deferitem.Title, a.Title);
             Assert.Equal(deferitem.TickleDate, a.TickleDate);
         }
+
+        [Fact]
+        public void Low_Priority_Next_Project_Action()
+        {
+            var todo = new MockMapper();
+            ViewModel vm = new ViewModel(todo, null, null);
+
+            var testproject = new ActionItem("projects", "The test project");
+            var testitemhigh = new ActionItem("todo", "High priority item");
+            var testitemlow = new ActionItem("todo", "Low priority item") { RankParent = testitemhigh, Project = testproject };
+
+            vm.AddItem(testproject);
+            vm.AddItem(testitemhigh);
+            vm.AddItem(testitemlow);
+
+            // When looking for project children, always return all, regardless of ShowHeadOnly setting?
+            vm.ShowHeadOnly = true;
+            Assert.Contains(testitemlow, vm.GetProjectChildren(testproject));
+        }
     }
 }
