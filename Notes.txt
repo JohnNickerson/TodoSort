@@ -51,19 +51,46 @@
 		#type:feature
 		#id:37ed25d1-cd26-4ad0-b86b-896cca3f783c
 	List contexts when asking for one
-		- I've used different contexts in different files for different purposes. It would just help to see them displayed.
+		- I've used different sets of contexts in different files for different purposes. It would just help to see them displayed.
 		#type:feature
 		#id:fca19166-f471-49e5-864e-0386c098e41d
-	Wrap item titles to tab locations
-		- That is, for very long titles, notes or tags, instead of just printing the whole thing, snip it off at the right length for the console and write the rest on the next line, indented the same as the previous line.
-		- That note can be used as a test.
-		#type:feature
-		#id:58e8ea28-d1c6-4f62-9011-8c03aee92e27
-	Convert to project command
+	"Convert to project" command
 		- Allows moving a single item into the special "projects" context.
 		- Either removes priority relationships or replaces them with the first action on the project.
+		- I want to call this one something silly like "projectificate". Neologisms are fun.
 		#type:feature
 		#id:31cdefb5-347e-4a66-ae9c-ab6753f9c2f3
+	Process all projects on "process" command
+		- Currently only processes projects at the head of the projects tree.
+		- Best to make sure all projects have a next item.
+		- On the other hand, it could be good to delay that for an unimportant project.
+		#type:feature
+		#id:76757caa-17d7-4a14-a337-afda259a9ab6
+	Copy tag to clipboard
+		- Or export directly to clipboard instead of file.
+		#type:feature
+		#id:0cfcf140-77f1-455e-a762-f432499512de
+	Make note argument mandatory for note command
+		- When it is not included, the program just uses a blank. (2014-05-29)
+		#type:feature
+		#id:71482c70-e851-4286-80e9-9c5d8b35ffdd
+	Add notes with add command.
+		#type:feature
+		#id:a54ed8ad-1e62-40ba-a7da-8e9ff564f35b
+	Add tags on command line with add command
+		#type:feature
+		#id:734bc716-c2d6-44d6-8a7a-04fb0374238c
+	Consistent naming of options
+		- Audit all short names and make sure they match (2014-05-29)
+		#type:feature
+		#id:328e59a1-89b5-49cd-9dc5-11eb2d94ddcb
+	Single-search version of set-parent and merge commands
+		- Typing the same search command for both seems silly. (2014-05-29)
+		#type:feature
+		#id:633687e7-91ac-4190-b9d2-bfd0894218c1
+	Sort command or option on process
+		#type:feature
+		#id:01206b3e-b3cb-4a34-975d-9e8035bd30bd
 	Show the tree for one item
 		- Up and down.
 		- Viz export on search.
@@ -75,7 +102,7 @@
 		#type:feature
 		#id:b7a72b3f-f40d-4dc0-abcc-66ca522d3cbf
 		#priority-parent:6dc916bc-4924-4300-8adb-89d20013dce1
-	Search deferred items
+	Search deferred and done items
 		#type:feature
 		#id:93ee9286-2ee7-4252-bee8-1a3127d14d9e
 		#priority-parent:7488887c-bea1-4728-8d61-4f7ef21f76be

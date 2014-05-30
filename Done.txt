@@ -228,7 +228,13 @@
 		- Select which tag values to take in the new combined item.
 		#done-date:2014-05-26
 		#id:dbfb41ca-afe9-472b-bdb9-58bf7f410d47
-		#priority-parent:ed1bd4a3-b9ef-470f-870d-a94459fe4f5f
+@2014-05-30
+	Wrap item titles to tab locations
+		- That is, for very long titles, notes or tags, instead of just printing the whole thing, snip it off at the right length for the console and write the rest on the next line, indented the same as the previous line.
+		- That note can be used as a test.
+		#type:feature
+		#done-date:2014-05-30
+		#id:58e8ea28-d1c6-4f62-9011-8c03aee92e27
 @done
 	The Done list should be broken up into date sub lists rather than being a different format.
 		#id:3da6bbcb-9608-4289-a82c-50b29d7ee7ac

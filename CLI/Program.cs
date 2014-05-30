@@ -175,7 +175,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                             // Force verbose mode to display all notes and tags.
                             vm.AddNote(selected, noteOptions.NewNote);
                             verbose = true;
-                            PrintItem(selected);
+                            PrintItem(selected, null);
                         }
                         break;
                     #endregion
@@ -218,7 +218,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                             // Assign the @inbox items to contexts.
                             Console.WriteLine("To which context should this item go?");
                             ActionItem first = inbox[i];
-                            PrintItem(first);
+                            PrintItem(first, null);
                             string newcontext = Console.ReadLine();
                             vm.SetContext(first, newcontext);
                             Console.WriteLine();
@@ -233,7 +233,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                                 // Add next actions for projects.
                                 Console.WriteLine("What is the next action required on this project?");
                                 ActionItem first = projects[i];
-                                PrintItem(first);
+                                PrintItem(first, null);
                                 string nextaction = Console.ReadLine();
                                 Console.WriteLine("...and to what context does it belong?");
                                 string newcontext = Console.ReadLine();
@@ -282,10 +282,8 @@ namespace AssimilationSoftware.TodoSort.CLI
                                 if (quitandsave) break;
                                 // get vote
                                 Console.WriteLine("{0}/{1} ({2}%) complete", x, items.Count, 100 * x / items.Count);
-                                Console.Write("    1:");
-                                PrintItem(items[x]);
-                                Console.Write("    2:");
-                                PrintItem(items[x + 1]);
+                                PrintItem(items[x], 1);
+                                PrintItem(items[x + 1], 2);
                                 Console.Write("Which of these is more important? (q=quit) ");
                                 var k = Console.ReadKey();
                                 // assign parents based on vote
@@ -379,8 +377,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                             Console.Clear();
                             for (int index = 0; index < 10 && offset + index < vm.SomedayItems.Count; index++)
                             {
-                                Console.Write("{0}: ", index);
-                                PrintItem(vm.SomedayItems.ElementAt(offset + index));
+                                PrintItem(vm.SomedayItems.ElementAt(offset + index), index);
                             }
                             char choice = Console.ReadKey().KeyChar;
                             Console.WriteLine();
@@ -548,7 +545,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                 {
                     Console.WriteLine(string.Format("@{0}", i.Context));
                 }
-                PrintItem(i);
+                PrintItem(i, null);
                 last_context = i.Context;
             }
         }
@@ -560,20 +557,54 @@ namespace AssimilationSoftware.TodoSort.CLI
         /// <remarks>
         /// TODO: Refactor into a Console View class?
         /// </remarks>
-        private static void PrintItem(ActionItem i)
+        private static void PrintItem(ActionItem i, int? index)
         {
-            Console.WriteLine(string.Format("\t{0}", i.Title));
+            if (index.HasValue)
+            {
+                StringBuilder title = new StringBuilder();
+                title.Append(' ');
+                title.Append(index);
+                title.Append(':');
+                title.Append(' ', Math.Max(8 - title.Length, 0));
+                WrapOutput(title.ToString(), i.Title, 79);
+            }
+            else
+            {
+                WrapOutput("        ", i.Title, 79);
+            }
             if (verbose)
             {
                 if (i.Notes.Count > 0)
                 {
-                    Console.WriteLine(string.Format("\t\t- {0}", string.Join("\n\t\t- ", i.Notes)));
+                    for (int x = 0; x < i.Notes.Count; x++)
+                    {
+                        WrapOutput("                - ", i.Notes[x], 79);
+                    }
                 }
                 if (i.Tags.Count > 0)
                 {
-                    Console.WriteLine(string.Format("\t\t{0}", string.Join("\n\t\t", from t in i.Tags select string.Format("#{0}:{1}", t.Key, t.Value))));
+                    foreach (var k in i.Tags)
+                    {
+                        WrapOutput(string.Format("                #{0}:", k.Key), k.Value, 79);
+                    }
                 }
                 // TODO: ID, priority-parent and other special tags.
+            }
+        }
+
+        private static void WrapOutput(string indent, string content, int width)
+        {
+            var printwidth = width - indent.Length;
+            Console.Write(indent);
+            Console.WriteLine(content.Substring(0, Math.Min(printwidth, content.Length)));
+            content = content.Remove(0, Math.Min(printwidth, content.Length));
+            while (content.Length > 0)
+            {
+                var line = new StringBuilder();
+                line.Append(' ', indent.Length);
+                line.Append(content.Substring(0, Math.Min(printwidth, content.Length)));
+                Console.WriteLine(line);
+                content = content.Remove(0, Math.Min(printwidth, content.Length));
             }
         }
 
@@ -629,8 +660,7 @@ commands:
 			{
                 for (int i = 0; i < todolist.Count(); i++)
 				{
-                    Console.Write("{0}: ", i);
-                    PrintItem(todolist.ElementAt(i));
+                    PrintItem(todolist.ElementAt(i), i);
 				}
 				char choice = Console.ReadKey().KeyChar;
                 // Write a blank line to prevent whatever comes next from printing right after this on the same line.
