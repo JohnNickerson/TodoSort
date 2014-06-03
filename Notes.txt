@@ -1,8 +1,4 @@
 @backend
-	Recurring reminders and items
-		- Serialise with "repeats" tags? Need to prototype it.
-		- When a recurring item is marked as done, instead of moving, one copy goes to the "done" list and one to the "someday" list.
-		#id:8da843b9-8dc7-47c7-9db3-e7209b1068fe
 	Always rank project items together
 		- Children of the same project need to be ordered against each other, not necessarily everything else.
 		#type:feature
@@ -12,6 +8,12 @@
 		- Might need new functions to search particular object properties like tags.
 		- Or maybe LINQ via the command line?
 		#id:59162543-9d87-41e1-a601-6fc7462f6fbd
+		#priority-parent:f10b1166-8dff-432b-869f-4cc29dccef22
+	Recurring reminders and items
+		- Serialise with "repeats" tags? Need to prototype it.
+		- When a recurring item is marked as done, instead of moving, one copy goes to the "done" list and one to the "someday" list.
+		#id:8da843b9-8dc7-47c7-9db3-e7209b1068fe
+		#priority-parent:f10b1166-8dff-432b-869f-4cc29dccef22
 	Task due dates
 		- I tend not to use these myself, though.
 		#id:102fa8ac-653a-4d3f-b172-a0d3bf3824d8
@@ -40,57 +42,110 @@
 	Add direct ID search to universal options
 		- Will allow easier offline actions.
 		#id:bf85cc86-e64b-46dd-b051-db459c6f27e2
-	De-duplicate command
-		- Search and merge duplicates
-		#id:841c5d7b-d1c5-4a3e-8618-cfff08ef4c20
-	Undefer a specific item
-		#id:6dc916bc-4924-4300-8adb-89d20013dce1
-	Randomise index for ranking
-		#id:7488887c-bea1-4728-8d61-4f7ef21f76be
-	Change console output to an export module used by default
-		#type:feature
-		#id:37ed25d1-cd26-4ad0-b86b-896cca3f783c
 	List contexts when asking for one
 		- I've used different sets of contexts in different files for different purposes. It would just help to see them displayed.
 		#type:feature
 		#id:fca19166-f471-49e5-864e-0386c098e41d
-	"Convert to project" command
-		- Allows moving a single item into the special "projects" context.
-		- Either removes priority relationships or replaces them with the first action on the project.
-		- I want to call this one something silly like "projectificate". Neologisms are fun.
+	Make note argument mandatory for note command
+		- When it is not included, the program just uses a blank. (2014-05-29)
+		#type:feature
+		#id:71482c70-e851-4286-80e9-9c5d8b35ffdd
+	Consistent naming of options
+		- Audit all short names and make sure they match (2014-05-29)
+		#type:feature
+		#id:328e59a1-89b5-49cd-9dc5-11eb2d94ddcb
+	Make search term optional for unrank
+		- To unrank everything, you still need to supply a search term, which is ignored. (2014-06-02)
+		#type:bug
+		#id:a7aec218-ea47-433c-8337-e6dc4a8325ad
+	Wrap at spaces or punctuation
+		- It would look tidier if lines wrapped at natural spaces. (2014-06-02)
+		#type:feature
+		#id:ec98fd77-5d59-415d-a842-2f5a40b2eb2f
+	Set-Project command
+		- To assign an existing item to an existing project. (2014-06-03)
+		#type:feature
+		#id:4062f410-9163-4a99-8d6c-6509deeeaab9
+	Shorten tab indent to 4 spaces
+		- 8 just goes too far on the console. (2014-06-03)
+		#type:feature
+		#id:1d301c30-018c-404f-8a9b-39e69ddfddff
+	Default context for Show command
+		#type:feature
+		#id:17b16a6e-1330-4ab4-bc6d-4c1b24281cc6
+	Randomise index for ranking
+		#id:7488887c-bea1-4728-8d61-4f7ef21f76be
+		#priority-parent:bf85cc86-e64b-46dd-b051-db459c6f27e2
+	'Move' command
+		- Allows moving a single item to a new context.
+		- Removes priority relationships?
 		#type:feature
 		#id:31cdefb5-347e-4a66-ae9c-ab6753f9c2f3
+		#priority-parent:fca19166-f471-49e5-864e-0386c098e41d
+	Add notes with add command.
+		#type:feature
+		#id:a54ed8ad-1e62-40ba-a7da-8e9ff564f35b
+		#priority-parent:71482c70-e851-4286-80e9-9c5d8b35ffdd
+	If a type tag is present, print it before the title
+		- eg "type:book" displays as "book: [Title]"
+		#type:feature
+		#id:76864b01-278d-4ed3-a517-9047495637ca
+		#priority-parent:328e59a1-89b5-49cd-9dc5-11eb2d94ddcb
+	Display changed or affected item after any single change
+		#type:feature
+		#id:d039b03a-4a21-46c8-9fd6-03e4a5ac14dc
+		#priority-parent:a7aec218-ea47-433c-8337-e6dc4a8325ad
+	Show priority depth in verbose output
+		- I want to know how deep certain items are. (2014-06-02)
+		- Maybe merge this with the individual item tree display idea. (2014-06-02)
+		#type:feature
+		#id:540d5e5a-e748-48d4-8131-ba284623b73a
+		#priority-parent:ec98fd77-5d59-415d-a842-2f5a40b2eb2f
+	Summary by order (number of children)
+		- To find and remove bottlenecks. (2014-06-02)
+		#type:feature
+		#id:aaf1e002-a674-4006-a7f0-b82fbad77470
+		#priority-parent:4062f410-9163-4a99-8d6c-6509deeeaab9
+	De-duplicate command
+		- Search and merge duplicates
+		#id:841c5d7b-d1c5-4a3e-8618-cfff08ef4c20
+		#priority-parent:bf85cc86-e64b-46dd-b051-db459c6f27e2
+	Change console output to an export module used by default
+		#type:feature
+		#id:37ed25d1-cd26-4ad0-b86b-896cca3f783c
+		#priority-parent:fca19166-f471-49e5-864e-0386c098e41d
+	Copy tag to clipboard
+		- Or export directly to clipboard instead of file.
+		#type:feature
+		#id:0cfcf140-77f1-455e-a762-f432499512de
+		#priority-parent:71482c70-e851-4286-80e9-9c5d8b35ffdd
+	Single-search version of set-parent and merge commands
+		- Typing the same search command for both seems silly. (2014-05-29)
+		#type:feature
+		#id:633687e7-91ac-4190-b9d2-bfd0894218c1
+		#priority-parent:328e59a1-89b5-49cd-9dc5-11eb2d94ddcb
+	Undefer a specific item
+		#id:6dc916bc-4924-4300-8adb-89d20013dce1
+		#priority-parent:7488887c-bea1-4728-8d61-4f7ef21f76be
 	Process all projects on "process" command
 		- Currently only processes projects at the head of the projects tree.
 		- Best to make sure all projects have a next item.
 		- On the other hand, it could be good to delay that for an unimportant project.
 		#type:feature
 		#id:76757caa-17d7-4a14-a337-afda259a9ab6
-	Copy tag to clipboard
-		- Or export directly to clipboard instead of file.
-		#type:feature
-		#id:0cfcf140-77f1-455e-a762-f432499512de
-	Make note argument mandatory for note command
-		- When it is not included, the program just uses a blank. (2014-05-29)
-		#type:feature
-		#id:71482c70-e851-4286-80e9-9c5d8b35ffdd
-	Add notes with add command.
-		#type:feature
-		#id:a54ed8ad-1e62-40ba-a7da-8e9ff564f35b
+		#priority-parent:31cdefb5-347e-4a66-ae9c-ab6753f9c2f3
 	Add tags on command line with add command
 		#type:feature
 		#id:734bc716-c2d6-44d6-8a7a-04fb0374238c
-	Consistent naming of options
-		- Audit all short names and make sure they match (2014-05-29)
-		#type:feature
-		#id:328e59a1-89b5-49cd-9dc5-11eb2d94ddcb
-	Single-search version of set-parent and merge commands
-		- Typing the same search command for both seems silly. (2014-05-29)
-		#type:feature
-		#id:633687e7-91ac-4190-b9d2-bfd0894218c1
+		#priority-parent:a54ed8ad-1e62-40ba-a7da-8e9ff564f35b
 	Sort command or option on process
 		#type:feature
 		#id:01206b3e-b3cb-4a34-975d-9e8035bd30bd
+		#priority-parent:76864b01-278d-4ed3-a517-9047495637ca
+	Search deferred and done items
+		#type:feature
+		#id:93ee9286-2ee7-4252-bee8-1a3127d14d9e
+		#priority-parent:7488887c-bea1-4728-8d61-4f7ef21f76be
 	Show the tree for one item
 		- Up and down.
 		- Viz export on search.
@@ -98,18 +153,14 @@
 		#type:feature
 		#id:ed1bd4a3-b9ef-470f-870d-a94459fe4f5f
 		#priority-parent:841c5d7b-d1c5-4a3e-8618-cfff08ef4c20
-	Display results by data binding instead of direct fetch
-		#type:feature
-		#id:b7a72b3f-f40d-4dc0-abcc-66ca522d3cbf
-		#priority-parent:6dc916bc-4924-4300-8adb-89d20013dce1
-	Search deferred and done items
-		#type:feature
-		#id:93ee9286-2ee7-4252-bee8-1a3127d14d9e
-		#priority-parent:7488887c-bea1-4728-8d61-4f7ef21f76be
 	Make "export" a universal option for output instead of its own command
 		#type:feature
 		#id:05e78d12-11a3-4a31-9906-d0ca2ca3b0c1
 		#priority-parent:37ed25d1-cd26-4ad0-b86b-896cca3f783c
+	Display results by data binding instead of direct fetch
+		#type:feature
+		#id:b7a72b3f-f40d-4dc0-abcc-66ca522d3cbf
+		#priority-parent:6dc916bc-4924-4300-8adb-89d20013dce1
 	Change the disambiguation process to demand a single match
 		- Tough for short words that might appear everywhere. Allow IDs?
 		#type:feature
@@ -120,25 +171,32 @@
 		#id:f5a3d428-5de0-4aa0-8e88-edcc3800ba5e
 		#priority-parent:b7a72b3f-f40d-4dc0-abcc-66ca522d3cbf
 @gui
-	Add notes via GUI
-		#id:d84fd47b-4bb0-43bf-a4d3-5237a649ebf9
 	Open url via GUI
 		- With this, mark as done and ranking, I'll have my main playlist functions in the GUI.
 		#type:feature
 		#id:6ce50539-3ffe-4f30-b85e-d947f7699788
-	Add/edit tags via GUI
-		#id:eac9e80b-2f1b-4fb6-bb79-75c8d850a07f
-	Rank items for priority via GUI
-		#id:4ed8be70-a8dd-41b7-8826-37d7b1e9b4ab
 	Warn when closing without saving
 		#type:feature
 		#id:6bb0c52c-6f9a-4676-81a3-608db07e917a
-	Process inbox via GUI
-		#id:4629aebd-92fa-4e25-afbe-f619d15f7a37
-		#priority-parent:d84fd47b-4bb0-43bf-a4d3-5237a649ebf9
+	Edit titles
+		- Much easier in a GUI than command line. (2014-06-04)
+		#type:feature
+		#id:cae7238f-17db-46ce-b726-e24c4ea29f60
+	Rank items for priority via GUI
+		#id:4ed8be70-a8dd-41b7-8826-37d7b1e9b4ab
+		#priority-parent:6ce50539-3ffe-4f30-b85e-d947f7699788
+	Add notes via GUI
+		#id:d84fd47b-4bb0-43bf-a4d3-5237a649ebf9
+		#priority-parent:6ce50539-3ffe-4f30-b85e-d947f7699788
 	A Chrome/Firefox plugin to add a page to the playlist
 		#id:d4e41a1d-782b-4f1d-959a-61e8cefcf892
 		#priority-parent:6ce50539-3ffe-4f30-b85e-d947f7699788
+	Add/edit tags via GUI
+		#id:eac9e80b-2f1b-4fb6-bb79-75c8d850a07f
+		#priority-parent:4ed8be70-a8dd-41b7-8826-37d7b1e9b4ab
+	Process inbox via GUI
+		#id:4629aebd-92fa-4e25-afbe-f619d15f7a37
+		#priority-parent:d84fd47b-4bb0-43bf-a4d3-5237a649ebf9
 	Add follow-up actions via GUI
 		#id:bdf4dbf2-cc3c-4004-811b-1d8371c37d3f
 		#priority-parent:eac9e80b-2f1b-4fb6-bb79-75c8d850a07f
@@ -153,6 +211,7 @@
 		#id:560190c3-9571-48e0-a951-3bbdba5c05d1
 	Rank second-tier items if there are no top-level comparisons to make
 		#id:11427126-1e6f-4242-85e0-08c29979031b
+		#priority-parent:560190c3-9571-48e0-a951-3bbdba5c05d1
 	Extensible command framework?
 		- Doesn't seem like a great idea, actually.
 		#id:3e979de9-32a2-466c-87f0-b23768955a95
