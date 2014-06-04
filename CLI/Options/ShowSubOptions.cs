@@ -8,7 +8,7 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
 {
     public class ShowSubOptions : UniversalOptions
     {
-        [Option('c', "context", HelpText = "The context to show.", Required = true)]
+        [Option('c', "context", HelpText = "The context to show.", DefaultValue = "todo")]
         public string Context { get; set; }
     }
 }

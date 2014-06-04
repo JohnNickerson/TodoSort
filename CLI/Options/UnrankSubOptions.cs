@@ -8,7 +8,7 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
 {
     public class UnrankSubOptions
     {
-        [Option('s', "search", HelpText = "A partial name, tag value, note contents or ID to search for.", Required = true)]
+        [Option('s', "search", HelpText = "A partial name, tag value, note contents or ID to search for.")]
         public string SearchTerm { get; set; }
 
         [Option('a', "all", DefaultValue = false, HelpText = "Search all items rather than just the head of the tree.")]

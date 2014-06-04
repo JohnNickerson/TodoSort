@@ -41,23 +41,16 @@
 @cli
 	Add direct ID search to universal options
 		- Will allow easier offline actions.
+		- Not yet used. I'd rather have a partial ID than a full GUID for search. (2014-06-04)
 		#id:bf85cc86-e64b-46dd-b051-db459c6f27e2
 	List contexts when asking for one
 		- I've used different sets of contexts in different files for different purposes. It would just help to see them displayed.
 		#type:feature
 		#id:fca19166-f471-49e5-864e-0386c098e41d
-	Make note argument mandatory for note command
-		- When it is not included, the program just uses a blank. (2014-05-29)
-		#type:feature
-		#id:71482c70-e851-4286-80e9-9c5d8b35ffdd
 	Consistent naming of options
 		- Audit all short names and make sure they match (2014-05-29)
 		#type:feature
 		#id:328e59a1-89b5-49cd-9dc5-11eb2d94ddcb
-	Make search term optional for unrank
-		- To unrank everything, you still need to supply a search term, which is ignored. (2014-06-02)
-		#type:bug
-		#id:a7aec218-ea47-433c-8337-e6dc4a8325ad
 	Wrap at spaces or punctuation
 		- It would look tidier if lines wrapped at natural spaces. (2014-06-02)
 		#type:feature
@@ -66,13 +59,13 @@
 		- To assign an existing item to an existing project. (2014-06-03)
 		#type:feature
 		#id:4062f410-9163-4a99-8d6c-6509deeeaab9
-	Shorten tab indent to 4 spaces
-		- 8 just goes too far on the console. (2014-06-03)
+	Copy tag to clipboard
+		- Or export directly to clipboard instead of file.
 		#type:feature
-		#id:1d301c30-018c-404f-8a9b-39e69ddfddff
-	Default context for Show command
+		#id:0cfcf140-77f1-455e-a762-f432499512de
+	Add tags on command line with add command
 		#type:feature
-		#id:17b16a6e-1330-4ab4-bc6d-4c1b24281cc6
+		#id:734bc716-c2d6-44d6-8a7a-04fb0374238c
 	Randomise index for ranking
 		#id:7488887c-bea1-4728-8d61-4f7ef21f76be
 		#priority-parent:bf85cc86-e64b-46dd-b051-db459c6f27e2
@@ -82,19 +75,11 @@
 		#type:feature
 		#id:31cdefb5-347e-4a66-ae9c-ab6753f9c2f3
 		#priority-parent:fca19166-f471-49e5-864e-0386c098e41d
-	Add notes with add command.
-		#type:feature
-		#id:a54ed8ad-1e62-40ba-a7da-8e9ff564f35b
-		#priority-parent:71482c70-e851-4286-80e9-9c5d8b35ffdd
 	If a type tag is present, print it before the title
 		- eg "type:book" displays as "book: [Title]"
 		#type:feature
 		#id:76864b01-278d-4ed3-a517-9047495637ca
 		#priority-parent:328e59a1-89b5-49cd-9dc5-11eb2d94ddcb
-	Display changed or affected item after any single change
-		#type:feature
-		#id:d039b03a-4a21-46c8-9fd6-03e4a5ac14dc
-		#priority-parent:a7aec218-ea47-433c-8337-e6dc4a8325ad
 	Show priority depth in verbose output
 		- I want to know how deep certain items are. (2014-06-02)
 		- Maybe merge this with the individual item tree display idea. (2014-06-02)
@@ -114,11 +99,6 @@
 		#type:feature
 		#id:37ed25d1-cd26-4ad0-b86b-896cca3f783c
 		#priority-parent:fca19166-f471-49e5-864e-0386c098e41d
-	Copy tag to clipboard
-		- Or export directly to clipboard instead of file.
-		#type:feature
-		#id:0cfcf140-77f1-455e-a762-f432499512de
-		#priority-parent:71482c70-e851-4286-80e9-9c5d8b35ffdd
 	Single-search version of set-parent and merge commands
 		- Typing the same search command for both seems silly. (2014-05-29)
 		#type:feature
@@ -134,10 +114,6 @@
 		#type:feature
 		#id:76757caa-17d7-4a14-a337-afda259a9ab6
 		#priority-parent:31cdefb5-347e-4a66-ae9c-ab6753f9c2f3
-	Add tags on command line with add command
-		#type:feature
-		#id:734bc716-c2d6-44d6-8a7a-04fb0374238c
-		#priority-parent:a54ed8ad-1e62-40ba-a7da-8e9ff564f35b
 	Sort command or option on process
 		#type:feature
 		#id:01206b3e-b3cb-4a34-975d-9e8035bd30bd

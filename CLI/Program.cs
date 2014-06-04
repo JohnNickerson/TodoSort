@@ -68,11 +68,15 @@ namespace AssimilationSoftware.TodoSort.CLI
                 case "add":
                     // Add a new item.
                     var a = (AddSubOptions)argsubs;
-                    var item = new ActionItem(a.Context, a.ActionTitle);
+                    selected = new ActionItem(a.Context, a.ActionTitle);
+                    if (!string.IsNullOrWhiteSpace(a.Note))
+                    {
+                        selected.Notes.Add(a.Note);
+                    }
                     Console.WriteLine("Adding action '{0}' to context @{1}", a.ActionTitle, a.Context);
-                    vm.AddItem(item);
+                    vm.AddItem(selected);
                     // Allow tagging right away.
-                    TagItem(vm, item);
+                    TagItem(vm, selected);
                     break;
                 #endregion
 
@@ -112,17 +116,17 @@ namespace AssimilationSoftware.TodoSort.CLI
                     break;
                 #endregion
 
-                    #region Done
-                    case "done":
-                        // If there is a next action, create a new item and add it to the correct context.
-                        vm.SearchTerm = ((DoneSubOptions)argsubs).SearchTerm;
-                        selected = Disambiguate(vm.SearchResults);
-                        if (selected != null)
-                        {
-                            vm.MarkDone(selected);
-                        }
-                        break;
-                    #endregion
+                #region Done
+                case "done":
+                    // If there is a next action, create a new item and add it to the correct context.
+                    vm.SearchTerm = ((DoneSubOptions)argsubs).SearchTerm;
+                    selected = Disambiguate(vm.SearchResults);
+                    if (selected != null)
+                    {
+                        vm.MarkDone(selected);
+                    }
+                    break;
+                #endregion
 
                     #region Export
                     case "export":
@@ -150,15 +154,15 @@ namespace AssimilationSoftware.TodoSort.CLI
                         var mergeOptions = (MergeSubOptions)argsubs;
                         Console.WriteLine("Confirm first item:");
                         vm.SearchTerm = mergeOptions.FirstSearchTerm;
-                        var mergefirst = Disambiguate(vm.SearchResults);
-                        if (mergefirst != null)
+                        selected = Disambiguate(vm.SearchResults);
+                        if (selected != null)
                         {
                             Console.WriteLine("Confirm second item:");
                             vm.SearchTerm = mergeOptions.SecondSearchTerm;
-                            var second = Disambiguate(vm.SearchResults.Where(x => x.ID != mergefirst.ID).ToArray());
-                            if (mergefirst != null && second != null)
+                            var second = Disambiguate(vm.SearchResults.Where(x => x.ID != selected.ID).ToArray());
+                            if (selected != null && second != null)
                             {
-                                vm.Merge(mergefirst, second);
+                                vm.Merge(selected, second);
                             }
                         }
                         break;
@@ -175,7 +179,6 @@ namespace AssimilationSoftware.TodoSort.CLI
                             // Force verbose mode to display all notes and tags.
                             vm.AddNote(selected, noteOptions.NewNote);
                             verbose = true;
-                            PrintItem(selected, null);
                         }
                         break;
                     #endregion
@@ -372,6 +375,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                     #region Someday
                     case "someday":
                         // Display the whole Someday file, 10 items at a time, and either delete or do one per listing.
+                        ActionItem undefer = null;
                         for (int offset = 0; offset <= vm.SomedayItems.Count; offset += 10)
                         {
                             Console.Clear();
@@ -384,11 +388,15 @@ namespace AssimilationSoftware.TodoSort.CLI
                             int dex;
                             if (Int32.TryParse(choice.ToString(), out dex))
                             {
-                                selected = vm.SomedayItems.ElementAt(offset + dex);
+                                undefer = vm.SomedayItems.ElementAt(offset + dex);
                             }
                             Console.WriteLine("To which context should this item go?");
                             string newcontext = Console.ReadLine();
-                            vm.Undefer(newcontext, selected);
+                            if (undefer != null)
+                            {
+                                vm.Undefer(newcontext, undefer);
+                                undefer = null;
+                            }
                         }
                         break;
                     #endregion
@@ -477,6 +485,11 @@ namespace AssimilationSoftware.TodoSort.CLI
             vm.Delete(vm.GetContextItems("delete").ToArray());
 			#endregion
 
+            if (selected != null)
+            {
+                PrintItem(selected, null);
+            }
+
 			// Rewrite the files
             vm.Save();
         }
@@ -562,15 +575,14 @@ namespace AssimilationSoftware.TodoSort.CLI
             if (index.HasValue)
             {
                 StringBuilder title = new StringBuilder();
-                title.Append(' ');
                 title.Append(index);
                 title.Append(':');
-                title.Append(' ', Math.Max(8 - title.Length, 0));
+                title.Append(' ', Math.Max(4 - title.Length, 0));
                 WrapOutput(title.ToString(), i.Title, 79);
             }
             else
             {
-                WrapOutput("        ", i.Title, 79);
+                WrapOutput("    ", i.Title, 79);
             }
             if (verbose)
             {
@@ -578,14 +590,14 @@ namespace AssimilationSoftware.TodoSort.CLI
                 {
                     for (int x = 0; x < i.Notes.Count; x++)
                     {
-                        WrapOutput("                - ", i.Notes[x], 79);
+                        WrapOutput("        - ", i.Notes[x], 79);
                     }
                 }
                 if (i.Tags.Count > 0)
                 {
                     foreach (var k in i.Tags)
                     {
-                        WrapOutput(string.Format("                #{0}:", k.Key), k.Value, 79);
+                        WrapOutput(string.Format("        #{0}:", k.Key), k.Value, 79);
                     }
                 }
                 // TODO: ID, priority-parent and other special tags.

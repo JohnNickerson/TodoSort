@@ -235,6 +235,34 @@
 		#type:feature
 		#done-date:2014-05-30
 		#id:58e8ea28-d1c6-4f62-9011-8c03aee92e27
+@2014-06-04
+	Shorten tab indent to 4 spaces
+		- 8 just goes too far on the console. (2014-06-03)
+		#type:feature
+		#done-date:2014-06-04
+		#id:1d301c30-018c-404f-8a9b-39e69ddfddff
+	Make note argument mandatory for note command
+		- When it is not included, the program just uses a blank. (2014-05-29)
+		#type:feature
+		#done-date:2014-06-04
+		#id:71482c70-e851-4286-80e9-9c5d8b35ffdd
+	Make search term optional for unrank
+		- To unrank everything, you still need to supply a search term, which is ignored. (2014-06-02)
+		#type:bug
+		#done-date:2014-06-04
+		#id:a7aec218-ea47-433c-8337-e6dc4a8325ad
+	Default context for Show command
+		#type:feature
+		#done-date:2014-06-04
+		#id:17b16a6e-1330-4ab4-bc6d-4c1b24281cc6
+	Add notes with add command.
+		#type:feature
+		#done-date:2014-06-04
+		#id:a54ed8ad-1e62-40ba-a7da-8e9ff564f35b
+	Display changed or affected item after any single change
+		#type:feature
+		#done-date:2014-06-04
+		#id:d039b03a-4a21-46c8-9fd6-03e4a5ac14dc
 @done
 	The Done list should be broken up into date sub lists rather than being a different format.
 		#id:3da6bbcb-9608-4289-a82c-50b29d7ee7ac
