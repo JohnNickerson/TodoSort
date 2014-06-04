@@ -128,348 +128,348 @@ namespace AssimilationSoftware.TodoSort.CLI
                     break;
                 #endregion
 
-                    #region Export
-                    case "export":
-                        // Write GraphViz source.
-                        IExporter exporter = null;
-                        ExportSubOptions exportOptions = (ExportSubOptions)argsubs;
-                        switch (exportOptions.Format)
-                        {
-                            case "html":
-                                exporter = new HtmlExporter { Filename = exportOptions.Filename };
-                                break;
-                            case "graphviz":
-                                exporter = new GraphVizExporter { Filename = exportOptions.Filename };
-                                break;
-                        }
-                        if (exporter != null)
-                        {
-                            exporter.Export(vm.GetContextItems(exportOptions.Context).ToList());
-                        }
-                        break;
-                    #endregion
+                #region Export
+                case "export":
+                    // Write GraphViz source.
+                    IExporter exporter = null;
+                    ExportSubOptions exportOptions = (ExportSubOptions)argsubs;
+                    switch (exportOptions.Format)
+                    {
+                        case "html":
+                            exporter = new HtmlExporter { Filename = exportOptions.Filename };
+                            break;
+                        case "graphviz":
+                            exporter = new GraphVizExporter { Filename = exportOptions.Filename };
+                            break;
+                    }
+                    if (exporter != null)
+                    {
+                        exporter.Export(vm.GetContextItems(exportOptions.Context).ToList());
+                    }
+                    break;
+                #endregion
 
-                    #region Merge
-                    case "merge":
-                        var mergeOptions = (MergeSubOptions)argsubs;
-                        Console.WriteLine("Confirm first item:");
-                        vm.SearchTerm = mergeOptions.FirstSearchTerm;
-                        selected = Disambiguate(vm.SearchResults);
-                        if (selected != null)
+                #region Merge
+                case "merge":
+                    var mergeOptions = (MergeSubOptions)argsubs;
+                    Console.WriteLine("Confirm first item:");
+                    vm.SearchTerm = mergeOptions.FirstSearchTerm;
+                    selected = Disambiguate(vm.SearchResults);
+                    if (selected != null)
+                    {
+                        Console.WriteLine("Confirm second item:");
+                        vm.SearchTerm = mergeOptions.SecondSearchTerm;
+                        var second = Disambiguate(vm.SearchResults.Where(x => x.ID != selected.ID).ToArray());
+                        if (selected != null && second != null)
                         {
-                            Console.WriteLine("Confirm second item:");
-                            vm.SearchTerm = mergeOptions.SecondSearchTerm;
-                            var second = Disambiguate(vm.SearchResults.Where(x => x.ID != selected.ID).ToArray());
-                            if (selected != null && second != null)
+                            vm.Merge(selected, second);
+                        }
+                    }
+                    break;
+                #endregion
+
+                #region Note
+                case "note":
+                    // Add a note to a task.
+                    NoteSubOptions noteOptions = (NoteSubOptions)argsubs;
+                    vm.SearchTerm = noteOptions.SearchTerm;
+                    selected = Disambiguate(vm.SearchResults);
+                    if (selected != null)
+                    {
+                        // Force verbose mode to display all notes and tags.
+                        vm.AddNote(selected, noteOptions.NewNote);
+                        verbose = true;
+                    }
+                    break;
+                #endregion
+
+                #region Open Tag
+                case "open-tag":
+                    // Read a tag and pass it through to the "start" argverb. Intended for URLs and file names.
+                    OpenTagSubOptions opentagOptions = (OpenTagSubOptions)argsubs;
+                    vm.SearchTerm = opentagOptions.SearchTerm;
+                    selected = Disambiguate(vm.SearchResults);
+                    if (selected != null)
+                    {
+                        if (selected.Tags.ContainsKey(opentagOptions.Tag))
+                        {
+                            string tagvalue = selected.Tags[opentagOptions.Tag];
+                            System.Diagnostics.Process p = new System.Diagnostics.Process();
+                            p.StartInfo.FileName = tagvalue;
+                            p.Start();
+                            if (opentagOptions.MarkAsDone)
                             {
-                                vm.Merge(selected, second);
-                            }
-                        }
-                        break;
-                    #endregion
-
-                    #region Note
-                    case "note":
-                        // Add a note to a task.
-                        NoteSubOptions noteOptions = (NoteSubOptions)argsubs;
-                        vm.SearchTerm = noteOptions.SearchTerm;
-                        selected = Disambiguate(vm.SearchResults);
-                        if (selected != null)
-                        {
-                            // Force verbose mode to display all notes and tags.
-                            vm.AddNote(selected, noteOptions.NewNote);
-                            verbose = true;
-                        }
-                        break;
-                    #endregion
-
-                    #region Open Tag
-                    case "open-tag":
-                        // Read a tag and pass it through to the "start" argverb. Intended for URLs and file names.
-                        OpenTagSubOptions opentagOptions = (OpenTagSubOptions)argsubs;
-                        vm.SearchTerm = opentagOptions.SearchTerm;
-                        selected = Disambiguate(vm.SearchResults);
-                        if (selected != null)
-                        {
-                            if (selected.Tags.ContainsKey(opentagOptions.Tag))
-                            {
-                                string tagvalue = selected.Tags[opentagOptions.Tag];
-                                System.Diagnostics.Process p = new System.Diagnostics.Process();
-                                p.StartInfo.FileName = tagvalue;
-                                p.Start();
-                                if (opentagOptions.MarkAsDone)
-                                {
-                                    vm.MarkDone(selected);
-                                }
-                            }
-                            else
-                            {
-                                Console.WriteLine("Tag not found: {0}", opentagOptions.Tag);
-                            }
-                        }
-                        break;
-                    #endregion
-
-                    #region Process
-                    case "process":
-                        // Go over the @someday items and look for tickle dates.
-                        vm.Undefer("inbox", vm.GetTickleDueItems().ToArray());
-
-                        var inbox = vm.GetContextItems("inbox").ToList();
-                        for (int i = 0; i < inbox.Count; i++)
-                        {
-                            // Assign the @inbox items to contexts.
-                            Console.WriteLine("To which context should this item go?");
-                            ActionItem first = inbox[i];
-                            PrintItem(first, null);
-                            string newcontext = Console.ReadLine();
-                            vm.SetContext(first, newcontext);
-                            Console.WriteLine();
-                        }
-
-                        // Need to find projects for which there is no next action. I hate that kind of query. It's a "where not exists (subquery)".
-                        var projects = vm.GetContextItems("projects").ToList();
-                        for (int i = 0; i < projects.Count; i++)
-                        {
-                            if (vm.GetProjectChildren(projects[i]).Count() == 0)
-                            {
-                                // Add next actions for projects.
-                                Console.WriteLine("What is the next action required on this project?");
-                                ActionItem first = projects[i];
-                                PrintItem(first, null);
-                                string nextaction = Console.ReadLine();
-                                Console.WriteLine("...and to what context does it belong?");
-                                string newcontext = Console.ReadLine();
-                                if (nextaction == newcontext)
-                                {
-                                    // Wrote something like "someday"/"someday". Assume it is a new context.
-                                    vm.SetContext(first, newcontext);
-                                }
-                                else
-                                {
-                                    var next = new ActionItem(newcontext, nextaction);
-                                    next.Project = first;
-                                    vm.AddItem(next);
-                                }
-                                Console.WriteLine();
-                            }
-                        }
-                        break;
-                    #endregion
-
-                    #region Prune
-                    case "prune":
-                        // Delete items below a specified depth.
-                        PruneSubOptions pruneOptions = (PruneSubOptions)argsubs;
-                        vm.PruneBelowDepth(pruneOptions.Depth);
-                        break;
-                    #endregion
-
-                    #region Rank
-                    case "rank":
-                        // for each context..
-                        bool quitandsave = false;
-                        foreach (string con in vm.GetContextNames("inbox", "done"))
-                        {
-                            if (quitandsave) break;
-                            // select all items without rank parents
-                            var items = (from i in vm.GetContextItems(con) where i.RankParent == null select i).ToList();
-                            // TODO: randomise an index list
-                            // show pairs of items
-                            if (items.Count > 1)
-                            {
-                                Console.WriteLine(string.Format("{1}{1}@{0}", con, Environment.NewLine));
-                            }
-                            for (int x = 0; x < items.Count - 1; x += 2)
-                            {
-                                if (quitandsave) break;
-                                // get vote
-                                Console.WriteLine("{0}/{1} ({2}%) complete", x, items.Count, 100 * x / items.Count);
-                                PrintItem(items[x], 1);
-                                PrintItem(items[x + 1], 2);
-                                Console.Write("Which of these is more important? (q=quit) ");
-                                var k = Console.ReadKey();
-                                // assign parents based on vote
-                                switch (k.KeyChar)
-                                {
-                                    case '1':
-                                        vm.SetParent(items[x + 1], items[x]);
-                                        break;
-                                    case '2':
-                                        vm.SetParent(items[x], items[x + 1]);
-                                        break;
-                                    case 'q':
-                                        Console.WriteLine();
-                                        Console.WriteLine("Quitting. Save ranking so far?");
-                                        Console.WriteLine("\tY: Quit and save.");
-                                        Console.WriteLine("\tN: Quit without saving (all work this session will be lost, no undo).");
-                                        Console.WriteLine("\tC: Cancel (default). Return to ranking.");
-                                        k = Console.ReadKey();
-                                        switch (k.KeyChar)
-                                        {
-                                            case 'y':
-                                                // Quit and save.
-                                                quitandsave = true;
-                                                break;
-                                            case 'n':
-                                                // Quit without saving.
-                                                return;
-                                            // Default. No action. Just return to ranking.
-                                        }
-                                        break;
-                                }
-                                Console.WriteLine();
-                                Console.WriteLine();
-                            }
-                        }
-                        break;
-                    #endregion
-
-                    #region Rename
-                    case "rename":
-                        // Rename an item.
-                        RenameSubOptions renameOptions = (RenameSubOptions)argsubs;
-                        vm.SearchTerm = renameOptions.SearchTerm;
-                        selected = Disambiguate(vm.SearchResults);
-                        if (selected != null)
-                        {
-                            vm.Rename(selected, renameOptions.NewTitle);
-                            Console.WriteLine("Item renamed.");
-                        }
-                        break;
-                    #endregion
-
-                    #region Search
-                    case "search":
-                        // Search for matching items.
-                        vm.SearchTerm = ((SearchSubOptions)argsubs).SearchTerm;
-                        PrintItems(vm.SearchResults);
-                        break;
-                    #endregion
-
-                    #region Set Parent
-                    case "set-parent":
-                        SetParentSubOptions setparentOptions = (SetParentSubOptions)argsubs;
-                        Console.WriteLine("Confirm child item:");
-                        vm.SearchTerm = setparentOptions.ChildSearchTerm;
-                        var child = Disambiguate(vm.SearchResults);
-                        Console.WriteLine("Confirm parent item:");
-                        vm.SearchTerm = setparentOptions.ParentSearchTerm;
-                        var parent = Disambiguate(vm.SearchResults);
-                        if (child != null && parent != null)
-                        {
-                            vm.SetParent(child, parent);
-                        }
-                        break;
-                    #endregion
-
-                    #region Show
-                    case "show":
-                        // Display one context.
-                        ShowSubOptions showOptions = (ShowSubOptions)argsubs;
-                        var list = vm.GetContextItems(showOptions.Context);
-                        PrintItems(list);
-                        break;
-                    #endregion
-
-                    #region Someday
-                    case "someday":
-                        // Display the whole Someday file, 10 items at a time, and either delete or do one per listing.
-                        ActionItem undefer = null;
-                        for (int offset = 0; offset <= vm.SomedayItems.Count; offset += 10)
-                        {
-                            Console.Clear();
-                            for (int index = 0; index < 10 && offset + index < vm.SomedayItems.Count; index++)
-                            {
-                                PrintItem(vm.SomedayItems.ElementAt(offset + index), index);
-                            }
-                            char choice = Console.ReadKey().KeyChar;
-                            Console.WriteLine();
-                            int dex;
-                            if (Int32.TryParse(choice.ToString(), out dex))
-                            {
-                                undefer = vm.SomedayItems.ElementAt(offset + dex);
-                            }
-                            Console.WriteLine("To which context should this item go?");
-                            string newcontext = Console.ReadLine();
-                            if (undefer != null)
-                            {
-                                vm.Undefer(newcontext, undefer);
-                                undefer = null;
-                            }
-                        }
-                        break;
-                    #endregion
-
-                    #region Summary
-                    case "summary":
-                        var summaryArgs = (SummarySubOptions)argsubs;
-                        var summarydata = (from c in vm.GetContextNames() select new { Context = c, Count = vm.GetContextItems(c).Count() });
-
-                        int maxwidth = (from r in summarydata select r.Context.Length).Max();
-                        int maxnum = (from c in summarydata select c.Count).Max();
-                        foreach (var c in summarydata)
-                        {
-                            // @context         n item(s)
-                            string format = string.Format("@{{0}}\t{{1,{0}}} item{1}", Math.Ceiling(Math.Log10(maxnum)), (c.Count == 1 ? "" : "s"));
-                            Console.WriteLine(format, c.Context.PadRight(maxwidth), c.Count);
-
-                            if (summaryArgs.Verbose)
-                            {
-                                // Show a summary of numbers at each depth.
-                                var detailed = (from r in vm.GetContextItems(c.Context) group r by r.RankDepth into g select new { Depth = g.Key, Count = g.Count() });
-                                foreach (var d in detailed)
-                                {
-                                    format = string.Format("\t{{0}}\t{{1,{0}}} item{1}", Math.Ceiling(Math.Log10(maxnum)), (d.Count == 1 ? "" : "s"));
-                                    Console.WriteLine(format, d.Depth, d.Count);
-                                }
-                                Console.WriteLine();
-                            }
-                        }
-                        break;
-                    #endregion
-
-                    #region Tag
-                    case "tag":
-                        // Search for a matching item.
-                        TagSubOptions tagOptions = (TagSubOptions)argsubs;
-                        vm.SearchTerm = tagOptions.SearchTerm;
-                        selected = Disambiguate(vm.SearchResults);
-                        if (selected != null)
-                        {
-                            TagItem(vm, selected);
-                        }
-                        break;
-                    #endregion
-
-                    #region Unrank
-                    case "unrank":
-                        UnrankSubOptions unrankOptions = (UnrankSubOptions)argsubs;
-                        if (unrankOptions.ResetAll)
-                        {
-                            Console.Write("Do you really want to destroy all ranking data and start over [Y/N]?");
-                            var k = Console.ReadKey();
-                            if (k.KeyChar.ToString().ToLower() == "y")
-                            {
-                                vm.ResetPriorityParents();
+                                vm.MarkDone(selected);
                             }
                         }
                         else
                         {
-                            vm.ShowHeadOnly = unrankOptions.SearchAll;
-                            vm.SearchTerm = unrankOptions.SearchTerm;
-                            selected = Disambiguate(vm.SearchResults);
-                            if (selected != null)
-                            {
-                                vm.ResetPriorityParents(selected);
-                            }
+                            Console.WriteLine("Tag not found: {0}", opentagOptions.Tag);
                         }
-                        break;
-                    #endregion
-                }
+                    }
+                    break;
+                #endregion
 
-			#region Tidy up
-			// Move to the "done" file any items with a context of @done.
+                #region Process
+                case "process":
+                    // Go over the @someday items and look for tickle dates.
+                    vm.Undefer("inbox", vm.GetTickleDueItems().ToArray());
+
+                    var inbox = vm.GetContextItems("inbox").ToList();
+                    for (int i = 0; i < inbox.Count; i++)
+                    {
+                        // Assign the @inbox items to contexts.
+                        Console.WriteLine("To which context should this item go?");
+                        ActionItem first = inbox[i];
+                        PrintItem(first, null);
+                        string newcontext = Console.ReadLine();
+                        vm.SetContext(first, newcontext);
+                        Console.WriteLine();
+                    }
+
+                    // Need to find projects for which there is no next action. I hate that kind of query. It's a "where not exists (subquery)".
+                    var projects = vm.GetContextItems("projects").ToList();
+                    for (int i = 0; i < projects.Count; i++)
+                    {
+                        if (vm.GetProjectChildren(projects[i]).Count() == 0)
+                        {
+                            // Add next actions for projects.
+                            Console.WriteLine("What is the next action required on this project?");
+                            ActionItem first = projects[i];
+                            PrintItem(first, null);
+                            string nextaction = Console.ReadLine();
+                            Console.WriteLine("...and to what context does it belong?");
+                            string newcontext = Console.ReadLine();
+                            if (nextaction == newcontext)
+                            {
+                                // Wrote something like "someday"/"someday". Assume it is a new context.
+                                vm.SetContext(first, newcontext);
+                            }
+                            else
+                            {
+                                var next = new ActionItem(newcontext, nextaction);
+                                next.Project = first;
+                                vm.AddItem(next);
+                            }
+                            Console.WriteLine();
+                        }
+                    }
+                    break;
+                #endregion
+
+                #region Prune
+                case "prune":
+                    // Delete items below a specified depth.
+                    PruneSubOptions pruneOptions = (PruneSubOptions)argsubs;
+                    vm.PruneBelowDepth(pruneOptions.Depth);
+                    break;
+                #endregion
+
+                #region Rank
+                case "rank":
+                    // for each context..
+                    bool quitandsave = false;
+                    foreach (string con in vm.GetContextNames("inbox", "done"))
+                    {
+                        if (quitandsave) break;
+                        // select all items without rank parents
+                        var items = (from i in vm.GetContextItems(con) where i.RankParent == null select i).ToList();
+                        // TODO: randomise an index list
+                        // show pairs of items
+                        if (items.Count > 1)
+                        {
+                            Console.WriteLine(string.Format("{1}{1}@{0}", con, Environment.NewLine));
+                        }
+                        for (int x = 0; x < items.Count - 1; x += 2)
+                        {
+                            if (quitandsave) break;
+                            // get vote
+                            Console.WriteLine("{0}/{1} ({2}%) complete", x, items.Count, 100 * x / items.Count);
+                            PrintItem(items[x], 1);
+                            PrintItem(items[x + 1], 2);
+                            Console.Write("Which of these is more important? (q=quit) ");
+                            var k = Console.ReadKey();
+                            // assign parents based on vote
+                            switch (k.KeyChar)
+                            {
+                                case '1':
+                                    vm.SetParent(items[x + 1], items[x]);
+                                    break;
+                                case '2':
+                                    vm.SetParent(items[x], items[x + 1]);
+                                    break;
+                                case 'q':
+                                    Console.WriteLine();
+                                    Console.WriteLine("Quitting. Save ranking so far?");
+                                    Console.WriteLine("\tY: Quit and save.");
+                                    Console.WriteLine("\tN: Quit without saving (all work this session will be lost, no undo).");
+                                    Console.WriteLine("\tC: Cancel (default). Return to ranking.");
+                                    k = Console.ReadKey();
+                                    switch (k.KeyChar)
+                                    {
+                                        case 'y':
+                                            // Quit and save.
+                                            quitandsave = true;
+                                            break;
+                                        case 'n':
+                                            // Quit without saving.
+                                            return;
+                                        // Default. No action. Just return to ranking.
+                                    }
+                                    break;
+                            }
+                            Console.WriteLine();
+                            Console.WriteLine();
+                        }
+                    }
+                    break;
+                #endregion
+
+                #region Rename
+                case "rename":
+                    // Rename an item.
+                    RenameSubOptions renameOptions = (RenameSubOptions)argsubs;
+                    vm.SearchTerm = renameOptions.SearchTerm;
+                    selected = Disambiguate(vm.SearchResults);
+                    if (selected != null)
+                    {
+                        vm.Rename(selected, renameOptions.NewTitle);
+                        Console.WriteLine("Item renamed.");
+                    }
+                    break;
+                #endregion
+
+                #region Search
+                case "search":
+                    // Search for matching items.
+                    vm.SearchTerm = ((SearchSubOptions)argsubs).SearchTerm;
+                    PrintItems(vm.SearchResults);
+                    break;
+                #endregion
+
+                #region Set Parent
+                case "set-parent":
+                    SetParentSubOptions setparentOptions = (SetParentSubOptions)argsubs;
+                    Console.WriteLine("Confirm child item:");
+                    vm.SearchTerm = setparentOptions.ChildSearchTerm;
+                    var child = Disambiguate(vm.SearchResults);
+                    Console.WriteLine("Confirm parent item:");
+                    vm.SearchTerm = setparentOptions.ParentSearchTerm;
+                    var parent = Disambiguate(vm.SearchResults);
+                    if (child != null && parent != null)
+                    {
+                        vm.SetParent(child, parent);
+                    }
+                    break;
+                #endregion
+
+                #region Show
+                case "show":
+                    // Display one context.
+                    ShowSubOptions showOptions = (ShowSubOptions)argsubs;
+                    var list = vm.GetContextItems(showOptions.Context);
+                    PrintItems(list);
+                    break;
+                #endregion
+
+                #region Someday
+                case "someday":
+                    // Display the whole Someday file, 10 items at a time, and either delete or do one per listing.
+                    ActionItem undefer = null;
+                    for (int offset = 0; offset <= vm.SomedayItems.Count; offset += 10)
+                    {
+                        Console.Clear();
+                        for (int index = 0; index < 10 && offset + index < vm.SomedayItems.Count; index++)
+                        {
+                            PrintItem(vm.SomedayItems.ElementAt(offset + index), index);
+                        }
+                        char choice = Console.ReadKey().KeyChar;
+                        Console.WriteLine();
+                        int dex;
+                        if (Int32.TryParse(choice.ToString(), out dex))
+                        {
+                            undefer = vm.SomedayItems.ElementAt(offset + dex);
+                        }
+                        Console.WriteLine("To which context should this item go?");
+                        string newcontext = Console.ReadLine();
+                        if (undefer != null)
+                        {
+                            vm.Undefer(newcontext, undefer);
+                            undefer = null;
+                        }
+                    }
+                    break;
+                #endregion
+
+                #region Summary
+                case "summary":
+                    var summaryArgs = (SummarySubOptions)argsubs;
+                    var summarydata = (from c in vm.GetContextNames() select new { Context = c, Count = vm.GetContextItems(c).Count() });
+
+                    int maxwidth = (from r in summarydata select r.Context.Length).Max();
+                    int maxnum = (from c in summarydata select c.Count).Max();
+                    foreach (var c in summarydata)
+                    {
+                        // @context         n item(s)
+                        string format = string.Format("@{{0}}\t{{1,{0}}} item{1}", Math.Ceiling(Math.Log10(maxnum)), (c.Count == 1 ? "" : "s"));
+                        Console.WriteLine(format, c.Context.PadRight(maxwidth), c.Count);
+
+                        if (summaryArgs.Verbose)
+                        {
+                            // Show a summary of numbers at each depth.
+                            var detailed = (from r in vm.GetContextItems(c.Context) group r by r.RankDepth into g select new { Depth = g.Key, Count = g.Count() });
+                            foreach (var d in detailed)
+                            {
+                                format = string.Format("\t{{0}}\t{{1,{0}}} item{1}", Math.Ceiling(Math.Log10(maxnum)), (d.Count == 1 ? "" : "s"));
+                                Console.WriteLine(format, d.Depth, d.Count);
+                            }
+                            Console.WriteLine();
+                        }
+                    }
+                    break;
+                #endregion
+
+                #region Tag
+                case "tag":
+                    // Search for a matching item.
+                    TagSubOptions tagOptions = (TagSubOptions)argsubs;
+                    vm.SearchTerm = tagOptions.SearchTerm;
+                    selected = Disambiguate(vm.SearchResults);
+                    if (selected != null)
+                    {
+                        TagItem(vm, selected);
+                    }
+                    break;
+                #endregion
+
+                #region Unrank
+                case "unrank":
+                    UnrankSubOptions unrankOptions = (UnrankSubOptions)argsubs;
+                    if (unrankOptions.ResetAll)
+                    {
+                        Console.Write("Do you really want to destroy all ranking data and start over [Y/N]?");
+                        var k = Console.ReadKey();
+                        if (k.KeyChar.ToString().ToLower() == "y")
+                        {
+                            vm.ResetPriorityParents();
+                        }
+                    }
+                    else
+                    {
+                        vm.ShowHeadOnly = unrankOptions.SearchAll;
+                        vm.SearchTerm = unrankOptions.SearchTerm;
+                        selected = Disambiguate(vm.SearchResults);
+                        if (selected != null)
+                        {
+                            vm.ResetPriorityParents(selected);
+                        }
+                    }
+                    break;
+                #endregion
+            }
+
+            #region Tidy up
+            // Move to the "done" file any items with a context of @done.
             if (donemapper != null)
             {
                 vm.MarkDone(vm.GetContextItems("done").ToArray());
@@ -483,7 +483,7 @@ namespace AssimilationSoftware.TodoSort.CLI
 
             // Delete any items with a context of "delete".
             vm.Delete(vm.GetContextItems("delete").ToArray());
-			#endregion
+            #endregion
 
             if (selected != null)
             {

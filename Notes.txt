@@ -49,6 +49,8 @@
 		#id:fca19166-f471-49e5-864e-0386c098e41d
 	Consistent naming of options
 		- Audit all short names and make sure they match (2014-05-29)
+		- Name, Note, Search, ID, Verbose, ShowAll, UnrankAll, TagName, TagValue, Context, Depth, TickleDate, Format, Filename, Parent, Child, First, Second, MarkAsDone
+		- This argues for the addition of a separate "unrank-all" command.
 		#type:feature
 		#id:328e59a1-89b5-49cd-9dc5-11eb2d94ddcb
 	Wrap at spaces or punctuation
@@ -66,6 +68,16 @@
 	Add tags on command line with add command
 		#type:feature
 		#id:734bc716-c2d6-44d6-8a7a-04fb0374238c
+	Show context name even for zero results
+		- Otherwise it's just empty output.
+		#type:feature
+		#command:show
+		#id:8da453c8-362d-4545-bac4-c73c7843f3bf
+	Separate Unrank-All command
+		#type:feature
+		- It makes the use of the "--all" option more consistent.
+		- It also means that "todosort unrank --all" isn't a no-op when it looks like it should do the same as "todosort unrank --everything".
+		#id:1e6d79f7-5720-4a1b-9bcd-7308a8e0deec
 	Randomise index for ranking
 		#id:7488887c-bea1-4728-8d61-4f7ef21f76be
 		#priority-parent:bf85cc86-e64b-46dd-b051-db459c6f27e2
