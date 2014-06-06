@@ -100,6 +100,7 @@
     <Compile Include="Options\SummarySubOptions.cs" />
     <Compile Include="Options\TagSubOptions.cs" />
     <Compile Include="Options\UniversalOptions.cs" />
+    <Compile Include="Options\UnrankAllSubOptions.cs" />
     <Compile Include="Options\UnrankSubOptions.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

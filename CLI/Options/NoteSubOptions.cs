@@ -8,7 +8,7 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
 {
     public class NoteSubOptions : SearchSubOptions
     {
-        [Option('n', "note", HelpText = "The note to add.", Required = true)]
+        [Option('o', "note", HelpText = "The note to add.", Required = true)]
         public string NewNote { get; set; }
     }
 }

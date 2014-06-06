@@ -9,10 +9,10 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
 {
     public class MergeSubOptions : UniversalOptions
     {
-        [Option('f', "first", HelpText = "A search term to find the first item.", Required = true)]
+        [Option('g', "target", HelpText = "A search term for the item to merge into.", Required = true)]
         public string FirstSearchTerm { get; set; }
 
-        [Option('s', "second", HelpText = "A search term to find the second item.", Required = true)]
+        [Option('s', "search", HelpText = "A search term for the item to be merged.", Required = true)]
         public string SecondSearchTerm { get; set; }
     }
 }

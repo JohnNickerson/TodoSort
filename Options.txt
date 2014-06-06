@@ -1,0 +1,16 @@
+-a, --all			ShowAll
+-c, --context		Context
+-d, --depth			Depth
+-e, --format		Format
+-f, --file			Filename
+-g, --target		Target (new parent, item to merge to)
+-i, --id			ID
+-m, --done			MarkAsDone
+-n, --name			Name
+-o, --note			Note
+-p, --project		Project
+-r, --tickledate	TickleDate
+-s, --search		Search
+-t, --tag			TagName
+-u, --value			TagValue
+-v, --verbose		Verbose

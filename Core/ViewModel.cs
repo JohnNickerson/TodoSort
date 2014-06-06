@@ -433,6 +433,15 @@ namespace AssimilationSoftware.TodoSort.Core
             Delete(second);
             todo_changes = true;
         }
+
+        public void ResetPriorityParents(string context)
+        {
+            ShowHeadOnly = false;
+            foreach (var i in GetContextItems(context))
+            {
+                ResetPriorityParents(i);
+            }
+        }
         #endregion
     }
 }

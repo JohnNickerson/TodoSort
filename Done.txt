@@ -263,6 +263,20 @@
 		#type:feature
 		#done-date:2014-06-04
 		#id:d039b03a-4a21-46c8-9fd6-03e4a5ac14dc
+@2014-06-06
+	Consistent naming of options
+		- Audit all short names and make sure they match (2014-05-29)
+		- Name, Note, Search, ID, Verbose, ShowAll, UnrankAll, TagName, TagValue, Context, Depth, TickleDate, Format, Filename, Parent, Child, First, Second, MarkAsDone
+		- This argues for the addition of a separate "unrank-all" command.
+		#type:feature
+		#done-date:2014-06-06
+		#id:328e59a1-89b5-49cd-9dc5-11eb2d94ddcb
+	Separate Unrank-All command
+		- It makes the use of the "--all" option more consistent.
+		- It also means that "todosort unrank --all" isn't a no-op when it looks like it should do the same as "todosort unrank --everything".
+		#type:feature
+		#done-date:2014-06-06
+		#id:1e6d79f7-5720-4a1b-9bcd-7308a8e0deec
 @done
 	The Done list should be broken up into date sub lists rather than being a different format.
 		#id:3da6bbcb-9608-4289-a82c-50b29d7ee7ac

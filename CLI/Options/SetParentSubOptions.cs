@@ -8,10 +8,10 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
 {
     public class SetParentSubOptions : UniversalOptions
     {
-        [Option('c', "child", HelpText = "A search term to find the child item.", Required = true)]
+        [Option('s', "search", HelpText = "A search term to find the child item.", Required = true)]
         public string ChildSearchTerm { get; set; }
 
-        [Option('p', "parent", HelpText = "A search term to find the parent item.", Required = true)]
+        [Option('g', "target", HelpText = "A search term to find the parent item.", Required = true)]
         public string ParentSearchTerm { get; set; }
     }
 }

@@ -73,6 +73,9 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
 
         [VerbOption("unrank", HelpText = "Remove priority ranking data for one or all items.")]
         public UnrankSubOptions UnrankVerb { get; set; }
+
+        [VerbOption("unrank-all", HelpText = "Removes all ranking data from a particular context or all items.")]
+        public UnrankAllSubOptions UnrankAllVerb { get; set; }
         #endregion
 
 

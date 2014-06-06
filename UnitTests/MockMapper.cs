@@ -12,11 +12,6 @@ namespace AssimilationSoftware.TodoSort.UnitTests
     {
         private List<ActionItem> _items = new List<ActionItem>();
 
-        public void SaveAll(List<PimData.Model.ActionItem> items, PimData.Model.SortType sort)
-        {
-            _items = items;
-        }
-
         public PimData.Model.ActionItem Load(Guid id)
         {
             var search = (from i in _items where i.ID == id select i);
@@ -46,6 +41,14 @@ namespace AssimilationSoftware.TodoSort.UnitTests
         public void SaveAll(List<PimData.Model.ActionItem> items)
         {
             _items = items;
+        }
+
+        public void Delete(ActionItem item)
+        {
+            if (_items.Contains(item))
+            {
+                _items.Remove(item);
+            }
         }
     }
 }

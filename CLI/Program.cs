@@ -445,7 +445,20 @@ namespace AssimilationSoftware.TodoSort.CLI
                 #region Unrank
                 case "unrank":
                     UnrankSubOptions unrankOptions = (UnrankSubOptions)argsubs;
-                    if (unrankOptions.ResetAll)
+                    vm.ShowHeadOnly = unrankOptions.SearchAll;
+                    vm.SearchTerm = unrankOptions.SearchTerm;
+                    selected = Disambiguate(vm.SearchResults);
+                    if (selected != null)
+                    {
+                        vm.ResetPriorityParents(selected);
+                    }
+                    break;
+                #endregion
+
+                #region Unrank All
+                case "unrank-all":
+                    UnrankAllSubOptions unrankAllOptions = (UnrankAllSubOptions)argsubs;
+                    if (string.IsNullOrWhiteSpace(unrankAllOptions.Context))
                     {
                         Console.Write("Do you really want to destroy all ranking data and start over [Y/N]?");
                         var k = Console.ReadKey();
@@ -456,13 +469,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                     }
                     else
                     {
-                        vm.ShowHeadOnly = unrankOptions.SearchAll;
-                        vm.SearchTerm = unrankOptions.SearchTerm;
-                        selected = Disambiguate(vm.SearchResults);
-                        if (selected != null)
-                        {
-                            vm.ResetPriorityParents(selected);
-                        }
+                        vm.ResetPriorityParents(unrankAllOptions.Context);
                     }
                     break;
                 #endregion
