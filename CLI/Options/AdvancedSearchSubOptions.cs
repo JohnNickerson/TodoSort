@@ -22,11 +22,11 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
         public string TagName { get; set; }
 
         // Tag value
-        [Option("value", HelpText = "Partial tag value.")]
+        [Option('u', "value", HelpText = "Partial tag value.")]
         public string TagValue { get; set; }
 
         // Partial note
-        [Option("note", HelpText = "Partial contents of a note.")]
+        [Option('o', "note", HelpText = "Partial contents of a note.")]
         public string Note { get; set; }
 
         // Partial ID
