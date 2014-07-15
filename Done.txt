@@ -277,6 +277,28 @@
 		#type:feature
 		#done-date:2014-06-06
 		#id:1e6d79f7-5720-4a1b-9bcd-7308a8e0deec
+@2014-07-15
+	If a type tag is present, print it before the title
+		- eg "type:book" displays as "book: [Title]"
+		#type:feature
+		#done-date:2014-07-15
+		#id:76864b01-278d-4ed3-a517-9047495637ca
+	Show added items in verbose mode
+		- Especially if a note is added at the same time.
+		- Or any tags. (2014-06-23)
+		#type:feature
+		#done-date:2014-07-15
+		#id:c89efa7e-5c59-4b7c-8008-eda8e71e0a32
+	Skip items with tickle dates in someday review command
+		- They're scheduled to come back to the inbox anyway. (2014-06-06)
+		#type:feature
+		#done-date:2014-07-15
+		#id:39e92d74-1bab-4a54-88fb-066f2ba9c64a
+	Save a context for deferred items
+		- Instead of needing to ask for it again when undeferring.
+		#type:feature
+		#done-date:2014-07-15
+		#id:78a4b469-db38-484b-83e3-639b7182b7f7
 @done
 	The Done list should be broken up into date sub lists rather than being a different format.
 		#id:3da6bbcb-9608-4289-a82c-50b29d7ee7ac

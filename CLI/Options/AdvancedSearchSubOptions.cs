@@ -13,7 +13,7 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
         [Option('c', "context", HelpText = "The context to search in.")]
         public string Context { get; set; }
 
-        // Partial title
+        // Partial prefix
         [Option('n', "name", HelpText = "Partial name to search for.")]
         public string Title { get; set; }
 

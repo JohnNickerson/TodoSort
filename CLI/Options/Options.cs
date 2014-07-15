@@ -71,7 +71,7 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
         [VerbOption("tag", HelpText = "Adds tags to an item.")]
         public TagSubOptions TagVerb { get; set; }
 
-        [VerbOption("unrank", HelpText = "Remove priority ranking data for one or all items.")]
+        [VerbOption("unrank", HelpText = "Remove priority ranking data for one particular item.")]
         public UnrankSubOptions UnrankVerb { get; set; }
 
         [VerbOption("unrank-all", HelpText = "Removes all ranking data from a particular context or all items.")]

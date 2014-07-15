@@ -3,6 +3,14 @@
 		- Children of the same project need to be ordered against each other, not necessarily everything else.
 		#type:feature
 		#id:f10b1166-8dff-432b-869f-4cc29dccef22
+	Fix unrank searches for deep items
+		- The search can't seem to find items deep in the tree for individual unranking.
+		#type:bug
+		#id:a02a981c-f287-4971-921e-1f1bdf41f6d5
+	Automatic 'important' ranked items
+		- Unable to be voted down, automatically win votes, skipped when two important ones are against each other.
+		#type:feature
+		#id:0e40530b-c740-414b-bfed-e88394b8f9fa
 	JoinSearch-style search queries
 		- The JoinSearch function will need to be modified to work over objects this way, but the parser should be helpful.
 		- Might need new functions to search particular object properties like tags.
@@ -12,6 +20,7 @@
 	Recurring reminders and items
 		- Serialise with "repeats" tags? Need to prototype it.
 		- When a recurring item is marked as done, instead of moving, one copy goes to the "done" list and one to the "someday" list.
+		- Might benefit from an "IRepeatable" interface in PimData.
 		#id:8da843b9-8dc7-47c7-9db3-e7209b1068fe
 		#priority-parent:f10b1166-8dff-432b-869f-4cc29dccef22
 	Task due dates
@@ -39,89 +48,107 @@
 		#id:876a0330-b332-4e55-94a5-efaa77f3f511
 		#priority-parent:bcac196a-52cf-4e95-8491-3cc5eafbe98b
 @cli
-	Add direct ID search to universal options
-		- Will allow easier offline actions.
-		- Not yet used. I'd rather have a partial ID than a full GUID for search. (2014-06-04)
-		#id:bf85cc86-e64b-46dd-b051-db459c6f27e2
 	List contexts when asking for one
 		- I've used different sets of contexts in different files for different purposes. It would just help to see them displayed.
 		#type:feature
 		#id:fca19166-f471-49e5-864e-0386c098e41d
-	Wrap at spaces or punctuation
-		- It would look tidier if lines wrapped at natural spaces. (2014-06-02)
+	Rank one context
+		- Could come in handy.
 		#type:feature
-		#id:ec98fd77-5d59-415d-a842-2f5a40b2eb2f
-	Set-Project command
-		- To assign an existing item to an existing project. (2014-06-03)
+		#id:c747b6f0-9780-482e-bfbd-1c45a6fd0fc4
+	Non-interactive initialisation
+		- Specify file names on the command line instead of interactively.
 		#type:feature
-		#id:4062f410-9163-4a99-8d6c-6509deeeaab9
-	Copy tag to clipboard
-		- Or export directly to clipboard instead of file.
+		#id:71ac767b-391c-422e-b4be-b9e050a5b7e3
+	Single-search version of set-parent and merge commands
+		- Typing the same search command for both seems silly. (2014-05-29)
 		#type:feature
-		#id:0cfcf140-77f1-455e-a762-f432499512de
-	Add tags on command line with add command
+		#id:633687e7-91ac-4190-b9d2-bfd0894218c1
+	Sort command or option on process
 		#type:feature
-		#id:734bc716-c2d6-44d6-8a7a-04fb0374238c
+		#id:01206b3e-b3cb-4a34-975d-9e8035bd30bd
+	'Prune-Leaves' command
+		- To remove any items without children and lighten the tree.
+		#type:feature
+		#id:36bc69e0-6a88-42da-8e28-1440bfc876ce
+	Unrank a context
+		- Helpful to unrank a group of items rather than everything in the file.
+		#type:feature
+		#id:a0f534d8-caae-4e7b-8612-4172293f1c42
 	Show context name even for zero results
 		- Otherwise it's just empty output.
 		#type:feature
 		#command:show
 		#id:8da453c8-362d-4545-bac4-c73c7843f3bf
-	Version command
-		- Just to display the version information.
+		#priority-parent:fca19166-f471-49e5-864e-0386c098e41d
+	Abort someday context assignment if no item is chosen
+		- It gets tedious to use two keystrokes where one would do.
 		#type:feature
-		#id:05babc99-5f74-4397-bdc2-a9b85ec78716
-	Unrank a context
-		- Helpful to unrank a group of items rather than everything in the file.
+		#id:c2e2a39e-c67c-46a1-a505-06d581944482
+		#priority-parent:c747b6f0-9780-482e-bfbd-1c45a6fd0fc4
+	'Make-List' command to make a priority chain out of several items
+		- Could come in handy for book and movie sequences, perhaps.
 		#type:feature
-		#id:a0f534d8-caae-4e7b-8612-4172293f1c42
-	Skip items with tickle dates in someday review command
-		- They're scheduled to come back to the inbox anyway. (2014-06-06)
+		#id:c7f20b28-948a-4530-be53-7234e8fbdb65
+		#priority-parent:78a4b469-db38-484b-83e3-639b7182b7f7
+	Set-Project command
+		- To assign an existing item to an existing project. (2014-06-03)
 		#type:feature
-		#id:39e92d74-1bab-4a54-88fb-066f2ba9c64a
-	If a type tag is present, print it before the title
-		- eg "type:book" displays as "book: [Title]"
-		#type:feature
-		#id:76864b01-278d-4ed3-a517-9047495637ca
-	Single-search version of set-parent and merge commands
-		- Typing the same search command for both seems silly. (2014-05-29)
-		#type:feature
-		#id:633687e7-91ac-4190-b9d2-bfd0894218c1
-	Randomise index for ranking
-		#id:7488887c-bea1-4728-8d61-4f7ef21f76be
-		#priority-parent:bf85cc86-e64b-46dd-b051-db459c6f27e2
+		#id:4062f410-9163-4a99-8d6c-6509deeeaab9
+		#priority-parent:fca19166-f471-49e5-864e-0386c098e41d
+	Add direct ID search to universal options
+		- Will allow easier offline actions.
+		- Not yet used. I'd rather have a partial ID than a full GUID for search. (2014-06-04)
+		#id:bf85cc86-e64b-46dd-b051-db459c6f27e2
+		#priority-parent:fca19166-f471-49e5-864e-0386c098e41d
 	'Move' command
 		- Allows moving a single item to a new context.
 		- Removes priority relationships?
 		#type:feature
 		#id:31cdefb5-347e-4a66-ae9c-ab6753f9c2f3
 		#priority-parent:fca19166-f471-49e5-864e-0386c098e41d
-	Show priority depth in verbose output
-		- I want to know how deep certain items are. (2014-06-02)
-		- Maybe merge this with the individual item tree display idea. (2014-06-02)
+	Change console output to an export module used by default
 		#type:feature
-		#id:540d5e5a-e748-48d4-8131-ba284623b73a
-		#priority-parent:ec98fd77-5d59-415d-a842-2f5a40b2eb2f
+		#id:37ed25d1-cd26-4ad0-b86b-896cca3f783c
+		#priority-parent:fca19166-f471-49e5-864e-0386c098e41d
+	URL title repair
+		- Search for items with URLs for titles, open them, ask for the real title. (2014-06-17)
+		#type:feature
+		#id:ba7469a4-4427-4701-afca-2813cbc8ff53
+		#priority-parent:71ac767b-391c-422e-b4be-b9e050a5b7e3
+	Put a blank line between displayed items
+		- The down side is that fewer items will fit on the screen. (2014-06-12)
+		- Increases readability, especially with wrapped lines.
+		#type:feature
+		#id:f55128fc-8590-41f0-ad96-31a76b173f3f
+		#priority-parent:71ac767b-391c-422e-b4be-b9e050a5b7e3
+	Add tags on command line with add command
+		#type:feature
+		#id:734bc716-c2d6-44d6-8a7a-04fb0374238c
+		#priority-parent:8da453c8-362d-4545-bac4-c73c7843f3bf
+	Version command
+		- Just to display the version information.
+		#type:feature
+		#id:05babc99-5f74-4397-bdc2-a9b85ec78716
+		#priority-parent:8da453c8-362d-4545-bac4-c73c7843f3bf
+	Wrap at spaces or punctuation
+		- It would look tidier if lines wrapped at natural spaces. (2014-06-02)
+		#type:feature
+		#id:ec98fd77-5d59-415d-a842-2f5a40b2eb2f
+		#priority-parent:4062f410-9163-4a99-8d6c-6509deeeaab9
 	Summary by order (number of children)
 		- To find and remove bottlenecks. (2014-06-02)
 		#type:feature
 		#id:aaf1e002-a674-4006-a7f0-b82fbad77470
 		#priority-parent:4062f410-9163-4a99-8d6c-6509deeeaab9
+	Randomise index for ranking
+		#id:7488887c-bea1-4728-8d61-4f7ef21f76be
+		#priority-parent:bf85cc86-e64b-46dd-b051-db459c6f27e2
 	De-duplicate command
 		- Search and merge duplicates
+		- Kind of difficult with this data, but worth it. (2014-06-17)
 		#id:841c5d7b-d1c5-4a3e-8618-cfff08ef4c20
 		#priority-parent:bf85cc86-e64b-46dd-b051-db459c6f27e2
-	Change console output to an export module used by default
-		#type:feature
-		#id:37ed25d1-cd26-4ad0-b86b-896cca3f783c
-		#priority-parent:fca19166-f471-49e5-864e-0386c098e41d
-	Sort command or option on process
-		#type:feature
-		#id:01206b3e-b3cb-4a34-975d-9e8035bd30bd
-		#priority-parent:76864b01-278d-4ed3-a517-9047495637ca
-	Undefer a specific item
-		#id:6dc916bc-4924-4300-8adb-89d20013dce1
-		#priority-parent:7488887c-bea1-4728-8d61-4f7ef21f76be
 	Process all projects on "process" command
 		- Currently only processes projects at the head of the projects tree.
 		- Best to make sure all projects have a next item.
@@ -129,6 +156,29 @@
 		#type:feature
 		#id:76757caa-17d7-4a14-a337-afda259a9ab6
 		#priority-parent:31cdefb5-347e-4a66-ae9c-ab6753f9c2f3
+	Make "export" a universal option for output instead of its own command
+		#type:feature
+		#id:05e78d12-11a3-4a31-9906-d0ca2ca3b0c1
+		#priority-parent:37ed25d1-cd26-4ad0-b86b-896cca3f783c
+	Search for logjam items
+		- Items with lots of priority children.
+		#type:feature
+		#id:762c48e9-8b47-4e61-8566-6c1b34c7df9f
+		#priority-parent:ba7469a4-4427-4701-afca-2813cbc8ff53
+	Copy tag to clipboard
+		- Or export directly to clipboard instead of file.
+		#type:feature
+		#id:0cfcf140-77f1-455e-a762-f432499512de
+		#priority-parent:734bc716-c2d6-44d6-8a7a-04fb0374238c
+	Show priority depth in verbose output
+		- I want to know how deep certain items are. (2014-06-02)
+		- Maybe merge this with the individual item tree display idea. (2014-06-02)
+		#type:feature
+		#id:540d5e5a-e748-48d4-8131-ba284623b73a
+		#priority-parent:ec98fd77-5d59-415d-a842-2f5a40b2eb2f
+	Undefer a specific item
+		#id:6dc916bc-4924-4300-8adb-89d20013dce1
+		#priority-parent:7488887c-bea1-4728-8d61-4f7ef21f76be
 	Search deferred and done items
 		#type:feature
 		#id:93ee9286-2ee7-4252-bee8-1a3127d14d9e
@@ -140,10 +190,6 @@
 		#type:feature
 		#id:ed1bd4a3-b9ef-470f-870d-a94459fe4f5f
 		#priority-parent:841c5d7b-d1c5-4a3e-8618-cfff08ef4c20
-	Make "export" a universal option for output instead of its own command
-		#type:feature
-		#id:05e78d12-11a3-4a31-9906-d0ca2ca3b0c1
-		#priority-parent:37ed25d1-cd26-4ad0-b86b-896cca3f783c
 	Display results by data binding instead of direct fetch
 		#type:feature
 		#id:b7a72b3f-f40d-4dc0-abcc-66ca522d3cbf
@@ -162,13 +208,15 @@
 		- With this, mark as done and ranking, I'll have my main playlist functions in the GUI.
 		#type:feature
 		#id:6ce50539-3ffe-4f30-b85e-d947f7699788
-	Warn when closing without saving
-		#type:feature
-		#id:6bb0c52c-6f9a-4676-81a3-608db07e917a
 	Edit titles
 		- Much easier in a GUI than command line. (2014-06-04)
 		#type:feature
 		#id:cae7238f-17db-46ce-b726-e24c4ea29f60
+		#priority-parent:6ce50539-3ffe-4f30-b85e-d947f7699788
+	Warn when closing without saving
+		#type:feature
+		#id:6bb0c52c-6f9a-4676-81a3-608db07e917a
+		#priority-parent:6ce50539-3ffe-4f30-b85e-d947f7699788
 	Rank items for priority via GUI
 		#id:4ed8be70-a8dd-41b7-8826-37d7b1e9b4ab
 		#priority-parent:6ce50539-3ffe-4f30-b85e-d947f7699788

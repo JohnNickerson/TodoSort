@@ -202,6 +202,7 @@ namespace AssimilationSoftware.TodoSort.Core
             while (to_defer.Count > 0)
             {
                 ActionItem i = to_defer.Dequeue();
+                i.Tags["previous-context"] = i.Context;
                 i.Context = "someday";
                 if (someday_mapper != null)
                 {
@@ -229,7 +230,14 @@ namespace AssimilationSoftware.TodoSort.Core
             while (to_undefer.Count > 0)
             {
                 ActionItem i = to_undefer.Dequeue();
-                i.Context = context;
+                if (context == "inbox" && i.Tags.ContainsKey("previous-context"))
+                {
+                    i.Context = i.Tags["previous-context"];
+                }
+                else
+                {
+                    i.Context = context;
+                }
                 if (someday_mapper != null)
                 {
                     todo_items.Add(i);

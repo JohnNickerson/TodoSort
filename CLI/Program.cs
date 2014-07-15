@@ -77,6 +77,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                     vm.AddItem(selected);
                     // Allow tagging right away.
                     TagItem(vm, selected);
+                    verbose = true;
                     break;
                 #endregion
 
@@ -381,7 +382,12 @@ namespace AssimilationSoftware.TodoSort.CLI
                         Console.Clear();
                         for (int index = 0; index < 10 && offset + index < vm.SomedayItems.Count; index++)
                         {
-                            PrintItem(vm.SomedayItems.ElementAt(offset + index), index);
+                            // Don't print the item if it has a tickle date. I feel like this is pretty hackish, but it should work.
+                            // TODO: This, but better.
+                            if (!vm.SomedayItems.ElementAt(offset + index).TickleDate.HasValue)
+                            {
+                                PrintItem(vm.SomedayItems.ElementAt(offset + index), index);
+                            }
                         }
                         char choice = Console.ReadKey().KeyChar;
                         Console.WriteLine();
@@ -390,11 +396,18 @@ namespace AssimilationSoftware.TodoSort.CLI
                         {
                             undefer = vm.SomedayItems.ElementAt(offset + dex);
                         }
-                        Console.WriteLine("To which context should this item go?");
-                        string newcontext = Console.ReadLine();
                         if (undefer != null)
                         {
-                            vm.Undefer(newcontext, undefer);
+                            if (undefer.Tags.ContainsKey("previous-context"))
+                            {
+                                vm.Undefer(undefer.Tags["previous-context"], undefer);
+                            }
+                            else
+                            {
+                                Console.WriteLine("To which context should this item go?");
+                                string newcontext = Console.ReadLine();
+                                vm.Undefer(newcontext, undefer);
+                            }
                             undefer = null;
                         }
                     }
@@ -579,17 +592,23 @@ namespace AssimilationSoftware.TodoSort.CLI
         /// </remarks>
         private static void PrintItem(ActionItem i, int? index)
         {
+            int wrapwidth = 79;
+            string title = i.Title;
+            if (i.Tags.ContainsKey("type"))
+            {
+                title = string.Format("{0}: {1}", i.Tags["type"], title);
+            }
             if (index.HasValue)
             {
-                StringBuilder title = new StringBuilder();
-                title.Append(index);
-                title.Append(':');
-                title.Append(' ', Math.Max(4 - title.Length, 0));
-                WrapOutput(title.ToString(), i.Title, 79);
+                StringBuilder prefix = new StringBuilder();
+                prefix.Append(index);
+                prefix.Append(':');
+                prefix.Append(' ', Math.Max(4 - prefix.Length, 0));
+                WrapOutput(prefix.ToString(), title, wrapwidth);
             }
             else
             {
-                WrapOutput("    ", i.Title, 79);
+                WrapOutput("    ", title, wrapwidth);
             }
             if (verbose)
             {
@@ -597,14 +616,14 @@ namespace AssimilationSoftware.TodoSort.CLI
                 {
                     for (int x = 0; x < i.Notes.Count; x++)
                     {
-                        WrapOutput("        - ", i.Notes[x], 79);
+                        WrapOutput("        - ", i.Notes[x], wrapwidth);
                     }
                 }
                 if (i.Tags.Count > 0)
                 {
                     foreach (var k in i.Tags)
                     {
-                        WrapOutput(string.Format("        #{0}:", k.Key), k.Value, 79);
+                        WrapOutput(string.Format("        #{0}:", k.Key), k.Value, wrapwidth);
                     }
                 }
                 // TODO: ID, priority-parent and other special tags.
