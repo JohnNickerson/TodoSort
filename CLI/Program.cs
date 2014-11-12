@@ -132,6 +132,8 @@ namespace AssimilationSoftware.TodoSort.CLI
                 #region Export
                 case "export":
                     // Write GraphViz source.
+                    // TODO: Work with Mustache# to externalise the formatting.
+                    // TODO: Write to the console if the filename is empty.
                     IExporter exporter = null;
                     ExportSubOptions exportOptions = (ExportSubOptions)argsubs;
                     switch (exportOptions.Format)
@@ -164,6 +166,20 @@ namespace AssimilationSoftware.TodoSort.CLI
                         if (selected != null && second != null)
                         {
                             vm.Merge(selected, second);
+                        }
+                    }
+                    break;
+                #endregion
+
+                #region Move
+                case "move":
+                    {
+                        var moveOptions = (MoveSubOptions)argsubs;
+                        vm.SearchTerm = moveOptions.SearchTerm;
+                        selected = Disambiguate(vm.SearchResults);
+                        if (selected != null)
+                        {
+                            vm.SetContext(selected, moveOptions.NewContext);
                         }
                     }
                     break;
@@ -596,7 +612,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             string title = i.Title;
             if (i.Tags.ContainsKey("type"))
             {
-                title = string.Format("{0}: {1}", i.Tags["type"], title);
+                title = string.Format("{1} [{0}]", i.Tags["type"].ToUpper(), title);
             }
             if (index.HasValue)
             {
@@ -608,7 +624,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             }
             else
             {
-                WrapOutput("    ", title, wrapwidth);
+                WrapOutput("-   ", title, wrapwidth);
             }
             if (verbose)
             {

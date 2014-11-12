@@ -35,6 +35,9 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
         [VerbOption("merge", HelpText = "Merge two items together.")]
         public MergeSubOptions MergeVerb { get; set; }
 
+        [VerbOption("move", HelpText = "Move an item into another context.")]
+        public MoveSubOptions MoveVerb { get; set; }
+
         [VerbOption("note", HelpText = "Add a note to an item.")]
         public NoteSubOptions NoteVerb { get; set; }
 

@@ -1,0 +1,9 @@
+digraph {
+{{#each items}}
+{{#newline}}
+    ID{{id}} [label="{{title}}"];
+{{#if RankParent}}
+    ID{{id}} -> ID{{RankParent.ID}};
+{{/if}}
+{{/each}}
+}

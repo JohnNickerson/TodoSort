@@ -299,6 +299,12 @@
 		#type:feature
 		#done-date:2014-07-15
 		#id:78a4b469-db38-484b-83e3-639b7182b7f7
+@2014-07-21
+	Fix unrank searches for deep items
+		- The search can't seem to find items deep in the tree for individual unranking.
+		#type:bug
+		#done-date:2014-07-21
+		#id:a02a981c-f287-4971-921e-1f1bdf41f6d5
 @done
 	The Done list should be broken up into date sub lists rather than being a different format.
 		#id:3da6bbcb-9608-4289-a82c-50b29d7ee7ac

@@ -1,16 +1,14 @@
 @backend
-	Always rank project items together
-		- Children of the same project need to be ordered against each other, not necessarily everything else.
-		#type:feature
-		#id:f10b1166-8dff-432b-869f-4cc29dccef22
-	Fix unrank searches for deep items
-		- The search can't seem to find items deep in the tree for individual unranking.
-		#type:bug
-		#id:a02a981c-f287-4971-921e-1f1bdf41f6d5
+	Mustache-sharp template engine for exports
+		#url:https://github.com/jehugaleahsa/mustache-sharp
 	Automatic 'important' ranked items
 		- Unable to be voted down, automatically win votes, skipped when two important ones are against each other.
 		#type:feature
 		#id:0e40530b-c740-414b-bfed-e88394b8f9fa
+	Always rank project items together
+		- Children of the same project need to be ordered against each other, not necessarily everything else.
+		#type:feature
+		#id:f10b1166-8dff-432b-869f-4cc29dccef22
 	JoinSearch-style search queries
 		- The JoinSearch function will need to be modified to work over objects this way, but the parser should be helpful.
 		- Might need new functions to search particular object properties like tags.
@@ -52,45 +50,47 @@
 		- I've used different sets of contexts in different files for different purposes. It would just help to see them displayed.
 		#type:feature
 		#id:fca19166-f471-49e5-864e-0386c098e41d
-	Rank one context
-		- Could come in handy.
-		#type:feature
-		#id:c747b6f0-9780-482e-bfbd-1c45a6fd0fc4
 	Non-interactive initialisation
 		- Specify file names on the command line instead of interactively.
 		#type:feature
 		#id:71ac767b-391c-422e-b4be-b9e050a5b7e3
-	Single-search version of set-parent and merge commands
-		- Typing the same search command for both seems silly. (2014-05-29)
-		#type:feature
-		#id:633687e7-91ac-4190-b9d2-bfd0894218c1
 	Sort command or option on process
 		#type:feature
 		#id:01206b3e-b3cb-4a34-975d-9e8035bd30bd
-	'Prune-Leaves' command
-		- To remove any items without children and lighten the tree.
-		#type:feature
-		#id:36bc69e0-6a88-42da-8e28-1440bfc876ce
 	Unrank a context
 		- Helpful to unrank a group of items rather than everything in the file.
 		#type:feature
 		#id:a0f534d8-caae-4e7b-8612-4172293f1c42
+	Add 'delete' and 'rename' options to open-tag command
+		- Deleting or renaming an item is a common action.
+		#type:feature
+		#id:58f175e8-973f-4c60-b053-36fabe22027c
+	Rank one context
+		- Could come in handy.
+		#type:feature
+		#id:c747b6f0-9780-482e-bfbd-1c45a6fd0fc4
+		#priority-parent:fca19166-f471-49e5-864e-0386c098e41d
+	Single-search version of set-parent and merge commands
+		- Typing the same search command for both seems silly. (2014-05-29)
+		#type:feature
+		#id:633687e7-91ac-4190-b9d2-bfd0894218c1
+		#priority-parent:71ac767b-391c-422e-b4be-b9e050a5b7e3
+	'Prune-Leaves' command
+		- To remove any items without children and lighten the tree.
+		#type:feature
+		#id:36bc69e0-6a88-42da-8e28-1440bfc876ce
+		#priority-parent:01206b3e-b3cb-4a34-975d-9e8035bd30bd
+	'Make-List' command to make a priority chain out of several items
+		- Could come in handy for book and movie sequences, perhaps.
+		#type:feature
+		#id:c7f20b28-948a-4530-be53-7234e8fbdb65
+		#priority-parent:a0f534d8-caae-4e7b-8612-4172293f1c42
 	Show context name even for zero results
 		- Otherwise it's just empty output.
 		#type:feature
 		#command:show
 		#id:8da453c8-362d-4545-bac4-c73c7843f3bf
 		#priority-parent:fca19166-f471-49e5-864e-0386c098e41d
-	Abort someday context assignment if no item is chosen
-		- It gets tedious to use two keystrokes where one would do.
-		#type:feature
-		#id:c2e2a39e-c67c-46a1-a505-06d581944482
-		#priority-parent:c747b6f0-9780-482e-bfbd-1c45a6fd0fc4
-	'Make-List' command to make a priority chain out of several items
-		- Could come in handy for book and movie sequences, perhaps.
-		#type:feature
-		#id:c7f20b28-948a-4530-be53-7234e8fbdb65
-		#priority-parent:78a4b469-db38-484b-83e3-639b7182b7f7
 	Set-Project command
 		- To assign an existing item to an existing project. (2014-06-03)
 		#type:feature
@@ -122,6 +122,11 @@
 		#type:feature
 		#id:f55128fc-8590-41f0-ad96-31a76b173f3f
 		#priority-parent:71ac767b-391c-422e-b4be-b9e050a5b7e3
+	Abort someday context assignment if no item is chosen
+		- It gets tedious to use two keystrokes where one would do.
+		#type:feature
+		#id:c2e2a39e-c67c-46a1-a505-06d581944482
+		#priority-parent:c747b6f0-9780-482e-bfbd-1c45a6fd0fc4
 	Add tags on command line with add command
 		#type:feature
 		#id:734bc716-c2d6-44d6-8a7a-04fb0374238c
@@ -180,6 +185,9 @@
 		#id:6dc916bc-4924-4300-8adb-89d20013dce1
 		#priority-parent:7488887c-bea1-4728-8d61-4f7ef21f76be
 	Search deferred and done items
+		- Allow searching in the separate someday and done files by specifying their contexts to advanced search.
+		- Merged key conflict: type:feature
+		- Merged with 'Advanced search in someday and done contexts' on 2014-08-27
 		#type:feature
 		#id:93ee9286-2ee7-4252-bee8-1a3127d14d9e
 		#priority-parent:7488887c-bea1-4728-8d61-4f7ef21f76be
@@ -244,6 +252,10 @@
 @someday
 	Import from Pocket
 		#id:560190c3-9571-48e0-a951-3bbdba5c05d1
+	Import from RSS
+		- Can be used for just about anything, then.
+		#type:feature
+		#id:3d069478-d751-492c-8ca0-6fdd551f31eb
 	Rank second-tier items if there are no top-level comparisons to make
 		#id:11427126-1e6f-4242-85e0-08c29979031b
 		#priority-parent:560190c3-9571-48e0-a951-3bbdba5c05d1
@@ -264,13 +276,13 @@
 		- Google Tasks API: https://www.nuget.org/packages/Google.Apis.Tasks.v1/
 		#id:43b0868b-d3e5-477f-82cd-b7da7c01a092
 		#priority-parent:b84a8574-a3eb-4208-ba13-8746a9bca871
+	Add a timestamp when items are processed through the inbox.
+		#id:d7eec29c-e5c6-4347-8950-a9500cc56eb3
+		#priority-parent:43b0868b-d3e5-477f-82cd-b7da7c01a092
 	Selections of next actions, depending on the results of previous ones.
 		- eg "Check something" then "|@shopping Buy this" and "|@home Set up that".
 		#id:79db8c53-b314-4c57-a692-e4791e749215
 		#priority-parent:bcac196a-52cf-4e95-8491-3cc5eafbe98b
-	Add a timestamp when items are processed through the inbox.
-		#id:d7eec29c-e5c6-4347-8950-a9500cc56eb3
-		#priority-parent:43b0868b-d3e5-477f-82cd-b7da7c01a092
 	Detect "[x]" marks as completed items
 		#tickle-date:2014-04-16
 		#id:aa8b5a86-32d5-4445-a90e-ed517b77c292
