@@ -1,6 +1,7 @@
 @backend
 	Mustache-sharp template engine for exports
 		#url:https://github.com/jehugaleahsa/mustache-sharp
+		#id:c16bf60e-abb0-4847-867b-cba0df9e7e3e
 	Automatic 'important' ranked items
 		- Unable to be voted down, automatically win votes, skipped when two important ones are against each other.
 		#type:feature
@@ -65,6 +66,10 @@
 		- Deleting or renaming an item is a common action.
 		#type:feature
 		#id:58f175e8-973f-4c60-b053-36fabe22027c
+	Process Someday items to assign tickle dates
+		- Should make upcoming events easier to manage.
+		#type:feature
+		#id:bf3458cd-61c9-4ba1-8662-d16c6dff190a
 	Rank one context
 		- Could come in handy.
 		#type:feature
@@ -90,11 +95,6 @@
 		#type:feature
 		#command:show
 		#id:8da453c8-362d-4545-bac4-c73c7843f3bf
-		#priority-parent:fca19166-f471-49e5-864e-0386c098e41d
-	Set-Project command
-		- To assign an existing item to an existing project. (2014-06-03)
-		#type:feature
-		#id:4062f410-9163-4a99-8d6c-6509deeeaab9
 		#priority-parent:fca19166-f471-49e5-864e-0386c098e41d
 	Add direct ID search to universal options
 		- Will allow easier offline actions.
@@ -167,6 +167,7 @@
 		#priority-parent:37ed25d1-cd26-4ad0-b86b-896cca3f783c
 	Search for logjam items
 		- Items with lots of priority children.
+		- Perhaps a count-children command. (2014-12-16)
 		#type:feature
 		#id:762c48e9-8b47-4e61-8566-6c1b34c7df9f
 		#priority-parent:ba7469a4-4427-4701-afca-2813cbc8ff53

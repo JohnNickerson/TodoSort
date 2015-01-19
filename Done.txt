@@ -305,6 +305,13 @@
 		#type:bug
 		#done-date:2014-07-21
 		#id:a02a981c-f287-4971-921e-1f1bdf41f6d5
+@2015-01-19
+	Set-Project command
+		- To assign an existing item to an existing project. (2014-06-03)
+		#type:feature
+		#done-date:2015-01-19
+		#id:4062f410-9163-4a99-8d6c-6509deeeaab9
+		#priority-parent:fca19166-f471-49e5-864e-0386c098e41d
 @done
 	The Done list should be broken up into date sub lists rather than being a different format.
 		#id:3da6bbcb-9608-4289-a82c-50b29d7ee7ac

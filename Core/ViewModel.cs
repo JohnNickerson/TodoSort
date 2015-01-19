@@ -370,6 +370,12 @@ namespace AssimilationSoftware.TodoSort.Core
             todo_changes = true;
         }
 
+        public void SetProject(ActionItem child, ActionItem project)
+        {
+            child.Project = project;
+            todo_changes = true;
+        }
+
         public void Defer(ActionItem deferitem, DateTime tickleDate)
         {
             deferitem.TickleDate = tickleDate;

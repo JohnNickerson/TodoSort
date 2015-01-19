@@ -155,12 +155,12 @@ namespace AssimilationSoftware.TodoSort.CLI
                 #region Merge
                 case "merge":
                     var mergeOptions = (MergeSubOptions)argsubs;
-                    Console.WriteLine("Confirm first item:");
+                    Console.WriteLine("Confirm child item:");
                     vm.SearchTerm = mergeOptions.FirstSearchTerm;
                     selected = Disambiguate(vm.SearchResults);
                     if (selected != null)
                     {
-                        Console.WriteLine("Confirm second item:");
+                        Console.WriteLine("Confirm item to merge into:");
                         vm.SearchTerm = mergeOptions.SecondSearchTerm;
                         var second = Disambiguate(vm.SearchResults.Where(x => x.ID != selected.ID).ToArray());
                         if (selected != null && second != null)
@@ -366,16 +366,36 @@ namespace AssimilationSoftware.TodoSort.CLI
 
                 #region Set Parent
                 case "set-parent":
-                    SetParentSubOptions setparentOptions = (SetParentSubOptions)argsubs;
-                    Console.WriteLine("Confirm child item:");
-                    vm.SearchTerm = setparentOptions.ChildSearchTerm;
-                    var child = Disambiguate(vm.SearchResults);
-                    Console.WriteLine("Confirm parent item:");
-                    vm.SearchTerm = setparentOptions.ParentSearchTerm;
-                    var parent = Disambiguate(vm.SearchResults);
-                    if (child != null && parent != null)
                     {
-                        vm.SetParent(child, parent);
+                        SetParentSubOptions setparentOptions = (SetParentSubOptions)argsubs;
+                        Console.WriteLine("Confirm child item:");
+                        vm.SearchTerm = setparentOptions.ChildSearchTerm;
+                        var child = Disambiguate(vm.SearchResults);
+                        Console.WriteLine("Confirm parent item:");
+                        vm.SearchTerm = setparentOptions.ParentSearchTerm;
+                        var parent = Disambiguate(vm.SearchResults);
+                        if (child != null && parent != null)
+                        {
+                            vm.SetParent(child, parent);
+                        }
+                    }
+                    break;
+                #endregion
+
+                #region Set Project
+                case "set-project":
+                    {
+                        SetProjectSubOptions commandOptions = (SetProjectSubOptions)argsubs;
+                        Console.WriteLine("Confirm child item:");
+                        vm.SearchTerm = commandOptions.ChildSearchTerm;
+                        var child = Disambiguate(vm.SearchResults);
+                        Console.WriteLine("Confirm project:");
+                        vm.SearchTerm = commandOptions.ProjectSearchTerm;
+                        var project = Disambiguate(vm.SearchResults);
+                        if (child != null && project != null)
+                        {
+                            vm.SetProject(child, project);
+                        }
                     }
                     break;
                 #endregion

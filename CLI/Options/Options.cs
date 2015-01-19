@@ -62,6 +62,9 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
         [VerbOption("set-parent", HelpText = "Assigns one item to be the priority parent of another.")]
         public SetParentSubOptions SetParentVerb { get; set; }
 
+        [VerbOption("set-project", HelpText = "Sets one item to be the project parent of another.")]
+        public SetProjectSubOptions SetProjectVerb { get; set; }
+
         [VerbOption("show", HelpText = "Display all items in a context.")]
         public ShowSubOptions ShowVerb { get; set; }
 
