@@ -4,6 +4,7 @@ using AssimilationSoftware.PimData.Model;
 using AssimilationSoftware.TodoSort.CLI.Options;
 using AssimilationSoftware.TodoSort.CLI.Properties;
 using AssimilationSoftware.TodoSort.Core;
+using AssimilationSoftware.TodoSort.Core.Import;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -148,6 +149,25 @@ namespace AssimilationSoftware.TodoSort.CLI
                     if (exporter != null)
                     {
                         exporter.Export(vm.GetContextItems(exportOptions.Context).ToList());
+                    }
+                    break;
+                #endregion
+
+                #region Import
+                case "import":
+                    {
+                        IImporter importer = null;
+                        ImportSubOptions importOptions = (ImportSubOptions)argsubs;
+                        switch (importOptions.Format)
+                        {
+                            case "todosort":
+                                importer = new TodoSortImporter { Filename = importOptions.Filename };
+                                break;
+                        }
+                        if (importer != null)
+                        {
+                            vm.AddAllItems(importOptions.Context, importer.GetAllItems());
+                        }
                     }
                     break;
                 #endregion
@@ -455,8 +475,8 @@ namespace AssimilationSoftware.TodoSort.CLI
                     var summaryArgs = (SummarySubOptions)argsubs;
                     var summarydata = (from c in vm.GetContextNames() select new { Context = c, Count = vm.GetContextItems(c).Count() });
 
-                    int maxwidth = (from r in summarydata select r.Context.Length).Max();
-                    int maxnum = (from c in summarydata select c.Count).Max();
+                    int maxwidth = (summarydata.Count() > 0 ? (from r in summarydata select r.Context.Length).Max() : 0);
+                    int maxnum = (summarydata.Count() > 0 ? (from c in summarydata select c.Count).Max() : 0);
                     foreach (var c in summarydata)
                     {
                         // @context         n item(s)

@@ -29,6 +29,9 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
         [VerbOption("export", HelpText = "Save a formatted copy of a list to file.")]
         public ExportSubOptions ExportVerb { get; set; }
 
+        [VerbOption("import", HelpText = "Imports items from an external source.")]
+        public ImportSubOptions ImportVerb { get; set; }
+
         [VerbOption("init", HelpText = "Initialise for the current folder.")]
         public InitSubOptions InitVerb { get; set; }
 

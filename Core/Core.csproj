@@ -45,6 +45,8 @@
     <Compile Include="GraphVizExporter.cs" />
     <Compile Include="HtmlExporter.cs" />
     <Compile Include="IExporter.cs" />
+    <Compile Include="Import\IImporter.cs" />
+    <Compile Include="Import\TodoSortImporter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModel.cs" />
   </ItemGroup>

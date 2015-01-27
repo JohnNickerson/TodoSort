@@ -84,6 +84,7 @@
     <Compile Include="Options\DeleteSubOptions.cs" />
     <Compile Include="Options\DoneSubOptions.cs" />
     <Compile Include="Options\ExportSubOptions.cs" />
+    <Compile Include="Options\ImportSubOptions.cs" />
     <Compile Include="Options\InitSubOptions.cs" />
     <Compile Include="Options\MergeSubOptions.cs" />
     <Compile Include="Options\MoveSubOptions.cs" />

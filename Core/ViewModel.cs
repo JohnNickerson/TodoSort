@@ -27,6 +27,7 @@ namespace AssimilationSoftware.TodoSort.Core
 
         string _searchTerm;
         private bool showHeadOnly = true;
+        string _statusMessage;
         #endregion
 
         public ViewModel(IPimDataMapper<ActionItem> todo, IPimDataMapper<ActionItem> done, IPimDataMapper<ActionItem> someday)
@@ -125,6 +126,22 @@ namespace AssimilationSoftware.TodoSort.Core
                 RaisePropertyChanged("ShowHeadOnly", "SearchResults");
             }
         }
+
+        /// <summary>
+        /// Gets or sets a general status message.
+        /// </summary>
+        public string StatusMessage
+        {
+            get
+            {
+                return _statusMessage;
+            }
+            set
+            {
+                _statusMessage = value;
+                RaisePropertyChanged("StatusMessage");
+            }
+        }
         #endregion
 
         #region Methods
@@ -165,6 +182,21 @@ namespace AssimilationSoftware.TodoSort.Core
         {
             todo_items.Add(next);
             todo_changes = true;
+        }
+
+        public void AddAllItems(string context, params ActionItem[] items)
+        {
+            int importedCount = 0;
+            foreach (ActionItem i in items)
+            {
+                if (context != null)
+                {
+                    i.Context = context;
+                }
+                AddItem(i);
+                importedCount++;
+            }
+            StatusMessage = string.Format("Imported {0} items.", importedCount);
         }
 
         /// <summary>

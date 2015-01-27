@@ -311,7 +311,12 @@
 		#type:feature
 		#done-date:2015-01-19
 		#id:4062f410-9163-4a99-8d6c-6509deeeaab9
-		#priority-parent:fca19166-f471-49e5-864e-0386c098e41d
+@2015-01-27
+	Import from text file
+		#type:feature
+		#release:0.6
+		#done-date:2015-01-27
+		#id:75684a2b-c360-4fbb-8f9b-1cc151f63caa
 @done
 	The Done list should be broken up into date sub lists rather than being a different format.
 		#id:3da6bbcb-9608-4289-a82c-50b29d7ee7ac
