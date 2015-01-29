@@ -89,6 +89,24 @@ namespace AssimilationSoftware.TodoSort.CLI
                     break;
                 #endregion
 
+                #region Count Children
+                case "count-children":
+                    {
+                        CountChildrenSubOptions countOptions = (CountChildrenSubOptions)argsubs;
+                        vm.SearchTerm = countOptions.SearchTerm;
+                        selected = Disambiguate(vm.SearchResults);
+                        if (selected != null)
+                        {
+                            PrintItem(selected, null);
+                            // Actually count the children.
+                            var m = vm.GetChildItems(selected).Count();
+                            Console.WriteLine(string.Format("\t{0} children", m));
+                        }
+                        selected = null;
+                    }
+                    break;
+                #endregion
+
                 #region Defer
                 case "defer":
                     // Move the item and its sub-items to the "someday" file.

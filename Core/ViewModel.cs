@@ -159,6 +159,12 @@ namespace AssimilationSoftware.TodoSort.Core
             }
         }
 
+        public ActionItem[] GetChildItems(ActionItem selected)
+        {
+            var result = from m in todo_items where m.RankParent == selected select m;
+            return result.ToArray();
+        }
+
         public void Save()
         {
             if (todo_changes)

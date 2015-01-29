@@ -17,6 +17,9 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
         [VerbOption("advanced-search", HelpText = "Advanced search.")]
         public AdvancedSearchSubOptions AdvancedSearchVerb { get; set; }
 
+        [VerbOption("count-children", HelpText = "Counts the children of a given item.")]
+        public CountChildrenSubOptions CountChildrenVerb { get; set; }
+
         [VerbOption("defer", HelpText = "Move an item to the someday file.")]
         public DeferSubOptions DeferVerb { get; set; }
 

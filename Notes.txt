@@ -84,13 +84,6 @@
 		#type:feature
 		#release:0.6
 		#id:ba7469a4-4427-4701-afca-2813cbc8ff53
-	Count-Children command
-		- Items with lots of priority children.
-		- Perhaps a count-children command. (2014-12-16)
-		- Search for logjam items. (2015-01-27)
-		#type:feature
-		#release:0.6
-		#id:762c48e9-8b47-4e61-8566-6c1b34c7df9f
 	Rename-Context command
 		- Needed for imports.
 		#type:feature
@@ -105,6 +98,10 @@
 		- This would be very handy for my work priority-setting where I play off bugs vs features. (2015-01-28)
 		#type:feature
 		#id:1e0f158c-f8e4-44d7-82b5-2bef833490df
+	Change the disambiguation process to demand a single match
+		- Tough for short words that might appear everywhere. Allow IDs?
+		#type:feature
+		#id:fb247274-9a35-4f42-bb8c-4361cd29fd9e
 	Rank one context
 		- Could come in handy.
 		#type:feature
@@ -158,11 +155,6 @@
 		#type:feature
 		#id:540d5e5a-e748-48d4-8131-ba284623b73a
 		#priority-parent:ec98fd77-5d59-415d-a842-2f5a40b2eb2f
-	Change the disambiguation process to demand a single match
-		- Tough for short words that might appear everywhere. Allow IDs?
-		#type:feature
-		#id:fb247274-9a35-4f42-bb8c-4361cd29fd9e
-		#priority-parent:ed1bd4a3-b9ef-470f-870d-a94459fe4f5f
 	Abort someday context assignment if no item is chosen
 		- It gets tedious to use two keystrokes where one would do.
 		#type:feature

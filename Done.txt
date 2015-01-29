@@ -327,6 +327,15 @@
 		#release:0.6
 		#done-date:2015-01-29
 		#id:ed1bd4a3-b9ef-470f-870d-a94459fe4f5f
+@2015-01-30
+	Count-Children command
+		- Items with lots of priority children.
+		- Perhaps a count-children command. (2014-12-16)
+		- Search for logjam items. (2015-01-27)
+		#type:feature
+		#release:0.6
+		#done-date:2015-01-30
+		#id:762c48e9-8b47-4e61-8566-6c1b34c7df9f
 @done
 	The Done list should be broken up into date sub lists rather than being a different format.
 		#id:3da6bbcb-9608-4289-a82c-50b29d7ee7ac
