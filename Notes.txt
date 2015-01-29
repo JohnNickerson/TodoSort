@@ -84,25 +84,27 @@
 		#type:feature
 		#release:0.6
 		#id:ba7469a4-4427-4701-afca-2813cbc8ff53
-	Search for logjam items
+	Count-Children command
 		- Items with lots of priority children.
 		- Perhaps a count-children command. (2014-12-16)
+		- Search for logjam items. (2015-01-27)
 		#type:feature
 		#release:0.6
 		#id:762c48e9-8b47-4e61-8566-6c1b34c7df9f
-	Show the tree for one item
-		- Up and down.
-		- Viz export on search.
-		- An SVG export from GraphViz is a pretty good compromise for now, since it allows text search.
-		- On command line, just show ancestors in a list.
-		#type:feature
-		#release:0.6
-		#id:ed1bd4a3-b9ef-470f-870d-a94459fe4f5f
 	Rename-Context command
 		- Needed for imports.
 		#type:feature
 		#release:0.6
 		#id:340499a3-437c-45ed-91f3-fccb72b21059
+	Display depth for individual item search results
+		- Might be nice to know, but fairly easy to determine from Show-Ancestors.
+		#type:feature
+		#id:4158a739-966a-45e5-88e0-e9169a84b298
+	Add a URL directly
+		- Extract the page title for the item and store the URL as a tag.
+		- This would be very handy for my work priority-setting where I play off bugs vs features. (2015-01-28)
+		#type:feature
+		#id:1e0f158c-f8e4-44d7-82b5-2bef833490df
 	Rank one context
 		- Could come in handy.
 		#type:feature

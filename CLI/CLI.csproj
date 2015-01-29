@@ -98,6 +98,7 @@
     <Compile Include="Options\SearchSubOptions.cs" />
     <Compile Include="Options\SetParentSubOptions.cs" />
     <Compile Include="Options\SetProjectSubOptions.cs" />
+    <Compile Include="Options\ShowParentsSubOptions.cs" />
     <Compile Include="Options\ShowSubOptions.cs" />
     <Compile Include="Options\SomedaySubOptions.cs" />
     <Compile Include="Options\SummarySubOptions.cs" />

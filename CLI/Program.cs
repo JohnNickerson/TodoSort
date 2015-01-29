@@ -429,6 +429,41 @@ namespace AssimilationSoftware.TodoSort.CLI
                     break;
                 #endregion
 
+                #region Show Parents
+                case "show-parents":
+                    {
+                        ShowParentsSubOptions showParentOptions = (ShowParentsSubOptions)argsubs;
+                        vm.SearchTerm = showParentOptions.SearchTerm;
+                        selected = Disambiguate(vm.SearchResults);
+                        if (selected != null)
+                        {
+                            // Build the chain of parent items up the tree.
+                            List<ActionItem> ancestors = new List<ActionItem>();
+                            ancestors.Add(selected);
+                            while (selected.RankParent != null)
+                            {
+                                selected = selected.RankParent;
+                                ancestors.Add(selected);
+                            }
+                            // Show the tree.
+                            Console.WriteLine();
+                            while (ancestors.Count > 0)
+                            {
+                                PrintItem(ancestors[ancestors.Count - 1], null);
+                                ancestors.RemoveAt(ancestors.Count - 1);
+                                if (ancestors.Count > 0)
+                                {
+                                    Console.WriteLine("\t/|\\");
+                                    Console.WriteLine("\t |");
+                                }
+                            }
+                            Console.WriteLine();
+                            selected = null;
+                        }
+                    }
+                    break;
+                #endregion
+
                 #region Someday
                 case "someday":
                     // Display the whole Someday file, 10 items at a time, and either delete or do one per listing.

@@ -71,6 +71,9 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
         [VerbOption("show", HelpText = "Display all items in a context.")]
         public ShowSubOptions ShowVerb { get; set; }
 
+        [VerbOption("show-parents", HelpText = "Shows an item and its parent chain up to the root of the tree.")]
+        public ShowParentsSubOptions ShowParentsVerb { get; set; }
+
         [VerbOption("someday", HelpText = "Review the someday file, assigning 10% to an active context.")]
         public SomedaySubOptions SomedayVerb { get; set; }
 

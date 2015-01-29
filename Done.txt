@@ -317,6 +317,16 @@
 		#release:0.6
 		#done-date:2015-01-27
 		#id:75684a2b-c360-4fbb-8f9b-1cc151f63caa
+@2015-01-29
+	Show the tree for one item
+		- Up and down.
+		- Viz export on search.
+		- An SVG export from GraphViz is a pretty good compromise for now, since it allows text search.
+		- On command line, just show ancestors in a list.
+		#type:feature
+		#release:0.6
+		#done-date:2015-01-29
+		#id:ed1bd4a3-b9ef-470f-870d-a94459fe4f5f
 @done
 	The Done list should be broken up into date sub lists rather than being a different format.
 		#id:3da6bbcb-9608-4289-a82c-50b29d7ee7ac
