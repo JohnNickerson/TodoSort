@@ -62,12 +62,9 @@
 		- Helpful to unrank a group of items rather than everything in the file.
 		#type:feature
 		#id:a0f534d8-caae-4e7b-8612-4172293f1c42
-	Add 'delete' and 'rename' options to open-tag command
-		- Deleting or renaming an item is a common action.
-		#type:feature
-		#id:58f175e8-973f-4c60-b053-36fabe22027c
 	Process Someday items to assign tickle dates
 		- Should make upcoming events easier to manage.
+		- Set a page size and allow edits besides context change. (2015-02-03)
 		#type:feature
 		#release:0.6
 		#id:bf3458cd-61c9-4ba1-8662-d16c6dff190a
@@ -79,11 +76,6 @@
 		- To find and remove bottlenecks. (2014-06-02)
 		#type:feature
 		#id:aaf1e002-a674-4006-a7f0-b82fbad77470
-	URL title repair
-		- Search for items with URLs for titles, open them, ask for the real title. (2014-06-17)
-		#type:feature
-		#release:0.6
-		#id:ba7469a4-4427-4701-afca-2813cbc8ff53
 	Display depth for individual item search results
 		- Might be nice to know, but fairly easy to determine from Show-Ancestors.
 		#type:feature

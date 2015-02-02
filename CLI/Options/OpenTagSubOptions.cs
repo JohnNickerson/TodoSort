@@ -13,5 +13,8 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
 
         [Option('m', "done", HelpText = "Mark as done, too.", DefaultValue = false)]
         public bool MarkAsDone { get; set; }
+
+        [Option("rename", HelpText = "Rename after opening.", DefaultValue = false)]
+        public bool Rename { get; set; }
     }
 }

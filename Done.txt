@@ -349,6 +349,16 @@
 		#release:0.6
 		#done-date:2015-02-02
 		#id:340499a3-437c-45ed-91f3-fccb72b21059
+@2015-02-03
+	URL title repair
+		- Search for items with URLs for titles, open them, ask for the real title. (2014-06-17)
+		- Deleting or renaming an item is a common action.
+		- Merged key conflict: type:feature
+		- Merged with 'Add 'delete' and 'rename' options to open-tag command' on 2015-02-02
+		#type:feature
+		#release:0.6
+		#done-date:2015-02-03
+		#id:ba7469a4-4427-4701-afca-2813cbc8ff53
 @done
 	The Done list should be broken up into date sub lists rather than being a different format.
 		#id:3da6bbcb-9608-4289-a82c-50b29d7ee7ac

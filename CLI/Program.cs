@@ -269,6 +269,15 @@ namespace AssimilationSoftware.TodoSort.CLI
                             System.Diagnostics.Process p = new System.Diagnostics.Process();
                             p.StartInfo.FileName = tagvalue;
                             p.Start();
+                            if (opentagOptions.Rename)
+                            {
+                                Console.WriteLine("What new title should this item have?");
+                                var newtitle = Console.ReadLine();
+                                if (!string.IsNullOrWhiteSpace(newtitle))
+                                {
+                                    vm.Rename(selected, newtitle);
+                                }
+                            }
                             if (opentagOptions.MarkAsDone)
                             {
                                 vm.MarkDone(selected);
