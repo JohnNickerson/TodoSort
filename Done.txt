@@ -336,6 +336,19 @@
 		#release:0.6
 		#done-date:2015-01-30
 		#id:762c48e9-8b47-4e61-8566-6c1b34c7df9f
+@2015-02-02
+	'Move' command
+		- Allows moving a single item to a new context.
+		- Removes priority relationships?
+		#type:feature
+		#done-date:2015-02-02
+		#id:31cdefb5-347e-4a66-ae9c-ab6753f9c2f3
+	Rename-Context command
+		- Needed for imports.
+		#type:feature
+		#release:0.6
+		#done-date:2015-02-02
+		#id:340499a3-437c-45ed-91f3-fccb72b21059
 @done
 	The Done list should be broken up into date sub lists rather than being a different format.
 		#id:3da6bbcb-9608-4289-a82c-50b29d7ee7ac

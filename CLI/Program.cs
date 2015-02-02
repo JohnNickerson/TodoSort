@@ -223,6 +223,23 @@ namespace AssimilationSoftware.TodoSort.CLI
                     break;
                 #endregion
 
+                #region Move All
+                case "move-all":
+                    {
+                        var moveAllOptions = (MoveAllSubOptions)argsubs;
+                        var items = vm.GetContextItems(moveAllOptions.Search).ToList();
+                        int counter = 0;
+                        while (items.Count > 0)
+                        {
+                            vm.SetContext(items[0], moveAllOptions.NewContext);
+                            items.RemoveAt(0);
+                            counter++;
+                        }
+                        Console.WriteLine(string.Format("{0} items moved from @{1} to @{2}", counter, moveAllOptions.Search, moveAllOptions.NewContext));
+                    }
+                    break;
+                #endregion
+
                 #region Note
                 case "note":
                     // Add a note to a task.

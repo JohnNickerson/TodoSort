@@ -88,6 +88,7 @@
     <Compile Include="Options\ImportSubOptions.cs" />
     <Compile Include="Options\InitSubOptions.cs" />
     <Compile Include="Options\MergeSubOptions.cs" />
+    <Compile Include="Options\MoveAllSubOptions.cs" />
     <Compile Include="Options\MoveSubOptions.cs" />
     <Compile Include="Options\NoteSubOptions.cs" />
     <Compile Include="Options\OpenTagSubOptions.cs" />

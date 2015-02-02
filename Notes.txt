@@ -84,11 +84,6 @@
 		#type:feature
 		#release:0.6
 		#id:ba7469a4-4427-4701-afca-2813cbc8ff53
-	Rename-Context command
-		- Needed for imports.
-		#type:feature
-		#release:0.6
-		#id:340499a3-437c-45ed-91f3-fccb72b21059
 	Display depth for individual item search results
 		- Might be nice to know, but fairly easy to determine from Show-Ancestors.
 		#type:feature
@@ -102,6 +97,12 @@
 		- Tough for short words that might appear everywhere. Allow IDs?
 		#type:feature
 		#id:fb247274-9a35-4f42-bb8c-4361cd29fd9e
+	Process all projects on "process" command
+		- Currently only processes projects at the head of the projects tree.
+		- Best to make sure all projects have a next item.
+		- On the other hand, it could be good to delay that for an unimportant project.
+		#type:feature
+		#id:76757caa-17d7-4a14-a337-afda259a9ab6
 	Rank one context
 		- Could come in handy.
 		#type:feature
@@ -132,12 +133,6 @@
 		- Will allow easier offline actions.
 		- Not yet used. I'd rather have a partial ID than a full GUID for search. (2014-06-04)
 		#id:bf85cc86-e64b-46dd-b051-db459c6f27e2
-		#priority-parent:fca19166-f471-49e5-864e-0386c098e41d
-	'Move' command
-		- Allows moving a single item to a new context.
-		- Removes priority relationships?
-		#type:feature
-		#id:31cdefb5-347e-4a66-ae9c-ab6753f9c2f3
 		#priority-parent:fca19166-f471-49e5-864e-0386c098e41d
 	Change console output to an export module used by default
 		#type:feature
@@ -177,13 +172,6 @@
 		- Kind of difficult with this data, but worth it. (2014-06-17)
 		#id:841c5d7b-d1c5-4a3e-8618-cfff08ef4c20
 		#priority-parent:bf85cc86-e64b-46dd-b051-db459c6f27e2
-	Process all projects on "process" command
-		- Currently only processes projects at the head of the projects tree.
-		- Best to make sure all projects have a next item.
-		- On the other hand, it could be good to delay that for an unimportant project.
-		#type:feature
-		#id:76757caa-17d7-4a14-a337-afda259a9ab6
-		#priority-parent:31cdefb5-347e-4a66-ae9c-ab6753f9c2f3
 	Make "export" a universal option for output instead of its own command
 		#type:feature
 		#id:05e78d12-11a3-4a31-9906-d0ca2ca3b0c1

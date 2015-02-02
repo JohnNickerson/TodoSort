@@ -44,6 +44,9 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
         [VerbOption("move", HelpText = "Move an item into another context.")]
         public MoveSubOptions MoveVerb { get; set; }
 
+        [VerbOption("move-all", HelpText = "Moves all items from one context to another.")]
+        public MoveAllSubOptions MoveAllVerb { get; set; }
+
         [VerbOption("note", HelpText = "Add a note to an item.")]
         public NoteSubOptions NoteVerb { get; set; }
 
