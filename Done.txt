@@ -359,6 +359,18 @@
 		#release:0.6
 		#done-date:2015-02-03
 		#id:ba7469a4-4427-4701-afca-2813cbc8ff53
+	Unrank a context
+		- Helpful to unrank a group of items rather than everything in the file.
+		#type:feature
+		#done-date:2015-02-03
+		#id:a0f534d8-caae-4e7b-8612-4172293f1c42
+	Process Someday items to assign tickle dates
+		- Should make upcoming events easier to manage.
+		- Set a page size and allow edits besides context change. (2015-02-03)
+		#type:feature
+		#release:0.6
+		#done-date:2015-02-03
+		#id:bf3458cd-61c9-4ba1-8662-d16c6dff190a
 @done
 	The Done list should be broken up into date sub lists rather than being a different format.
 		#id:3da6bbcb-9608-4289-a82c-50b29d7ee7ac

@@ -266,9 +266,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                         if (selected.Tags.ContainsKey(opentagOptions.Tag))
                         {
                             string tagvalue = selected.Tags[opentagOptions.Tag];
-                            System.Diagnostics.Process p = new System.Diagnostics.Process();
-                            p.StartInfo.FileName = tagvalue;
-                            p.Start();
+                            OpenItemTag(tagvalue);
                             if (opentagOptions.Rename)
                             {
                                 Console.WriteLine("What new title should this item have?");
@@ -510,40 +508,37 @@ namespace AssimilationSoftware.TodoSort.CLI
 
                 #region Someday
                 case "someday":
-                    // Display the whole Someday file, 10 items at a time, and either delete or do one per listing.
-                    ActionItem undefer = null;
-                    for (int offset = 0; offset <= vm.SomedayItems.Count; offset += 10)
                     {
-                        Console.Clear();
-                        for (int index = 0; index < 10 && offset + index < vm.SomedayItems.Count; index++)
+                        SomedaySubOptions somesub = (SomedaySubOptions)argsubs;
+                        verbose = somesub.Verbose;
+                        // Display the whole Someday file, [somesub.PageSize] items at a time, and either delete or do one per listing.
+                        ActionItem undefer = null;
+                        if (somesub.PageSize <= 0) somesub.PageSize = 1;
+                        if (somesub.PageSize > 10) somesub.PageSize = 10;
+                        for (int offset = 0; offset <= vm.SomedayItems.Count; offset += somesub.PageSize)
                         {
-                            // Don't print the item if it has a tickle date. I feel like this is pretty hackish, but it should work.
-                            // TODO: This, but better.
-                            if (!vm.SomedayItems.ElementAt(offset + index).TickleDate.HasValue)
+                            Console.Clear();
+                            for (int index = 0; index < somesub.PageSize && offset + index < vm.SomedayItems.Count; index++)
                             {
-                                PrintItem(vm.SomedayItems.ElementAt(offset + index), index);
+                                // Don't print the item if it has a tickle date. I feel like this is pretty hackish, but it should work.
+                                // TODO: This, but better.
+                                if (somesub.IncludeTickle || !vm.SomedayItems.ElementAt(offset + index).TickleDate.HasValue)
+                                {
+                                    PrintItem(vm.SomedayItems.ElementAt(offset + index), index);
+                                }
                             }
-                        }
-                        char choice = Console.ReadKey().KeyChar;
-                        Console.WriteLine();
-                        int dex;
-                        if (Int32.TryParse(choice.ToString(), out dex))
-                        {
-                            undefer = vm.SomedayItems.ElementAt(offset + dex);
-                        }
-                        if (undefer != null)
-                        {
-                            if (undefer.Tags.ContainsKey("previous-context"))
+                            char choice = Console.ReadKey().KeyChar;
+                            Console.WriteLine();
+                            int dex;
+                            if (Int32.TryParse(choice.ToString(), out dex))
                             {
-                                vm.Undefer(undefer.Tags["previous-context"], undefer);
+                                undefer = vm.SomedayItems.ElementAt(offset + dex);
                             }
-                            else
+                            if (undefer != null)
                             {
-                                Console.WriteLine("To which context should this item go?");
-                                string newcontext = Console.ReadLine();
-                                vm.Undefer(newcontext, undefer);
+                                EditSomedayItem(vm, undefer);
+                                undefer = null;
                             }
-                            undefer = null;
                         }
                     }
                     break;
@@ -647,6 +642,69 @@ namespace AssimilationSoftware.TodoSort.CLI
 
 			// Rewrite the files
             vm.Save();
+        }
+
+        private static void OpenItemTag(string tagvalue)
+        {
+            System.Diagnostics.Process p = new System.Diagnostics.Process();
+            p.StartInfo.FileName = tagvalue;
+            p.Start();
+        }
+
+        private static void EditSomedayItem(ViewModel vm, ActionItem item)
+        {
+            while(true)
+            {
+                PrintItem(item, null);
+                // Write menu.
+                Console.WriteLine("1. Undefer (and go to next item)");
+                Console.WriteLine("2. Rename");
+                Console.WriteLine("3. Open Tag");
+                Console.WriteLine("4. Assign tickler date");
+                Console.WriteLine("5. Assign tags");
+                Console.WriteLine("6. Finished (next item)");
+                var k = Console.ReadKey();
+                Console.WriteLine();
+                switch (k.KeyChar)
+                {
+                    case '1':
+                        if (item.Tags.ContainsKey("previous-context"))
+                        {
+                            vm.Undefer(item.Tags["previous-context"], item);
+                        }
+                        else
+                        {
+                            Console.WriteLine("To which context should this item go?");
+                            string newcontext = Console.ReadLine();
+                            vm.Undefer(newcontext, item);
+                        }
+                        return;
+                    case '2':
+                        Console.WriteLine("What new name should this item have?");
+                        var name = Console.ReadLine();
+                        vm.Rename(item, name);
+                        break;
+                    case '3':
+                        Console.WriteLine("What tag to open?");
+                        var tag = Console.ReadLine();
+                        OpenItemTag(item.Tags[tag]);
+                        break;
+                    case '5':
+                        TagItem(vm, item);
+                        break;
+                    case '4':
+                        Console.WriteLine("When should this item reappear in the inbox?");
+                        var dateinput = Console.ReadLine();
+                        DateTime parseddate;
+                        if (DateTime.TryParse(dateinput, out parseddate))
+                        {
+                            vm.Defer(item, parseddate);
+                        }
+                        break;
+                    case '6':
+                        return;
+                }
+            }
         }
 
         private static void TagItem(ViewModel vm, ActionItem selected)
