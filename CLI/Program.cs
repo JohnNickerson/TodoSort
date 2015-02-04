@@ -515,24 +515,20 @@ namespace AssimilationSoftware.TodoSort.CLI
                         ActionItem undefer = null;
                         if (somesub.PageSize <= 0) somesub.PageSize = 1;
                         if (somesub.PageSize > 10) somesub.PageSize = 10;
-                        for (int offset = 0; offset <= vm.SomedayItems.Count; offset += somesub.PageSize)
+                        var someitems = (from s in vm.SomedayItems where !s.TickleDate.HasValue || somesub.IncludeTickle select s);
+                        for (int offset = 0; offset <= someitems.Count(); offset += somesub.PageSize)
                         {
                             Console.Clear();
-                            for (int index = 0; index < somesub.PageSize && offset + index < vm.SomedayItems.Count; index++)
+                            for (int index = 0; index < somesub.PageSize && offset + index < someitems.Count(); index++)
                             {
-                                // Don't print the item if it has a tickle date. I feel like this is pretty hackish, but it should work.
-                                // TODO: This, but better.
-                                if (somesub.IncludeTickle || !vm.SomedayItems.ElementAt(offset + index).TickleDate.HasValue)
-                                {
-                                    PrintItem(vm.SomedayItems.ElementAt(offset + index), index);
-                                }
+                                PrintItem(someitems.ElementAt(offset + index), index);
                             }
                             char choice = Console.ReadKey().KeyChar;
                             Console.WriteLine();
                             int dex;
                             if (Int32.TryParse(choice.ToString(), out dex))
                             {
-                                undefer = vm.SomedayItems.ElementAt(offset + dex);
+                                undefer = someitems.ElementAt(offset + dex);
                             }
                             if (undefer != null)
                             {
@@ -668,7 +664,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                 switch (k.KeyChar)
                 {
                     case '1':
-                        if (item.Tags.ContainsKey("previous-context"))
+                        if (item.Tags.ContainsKey("previous-context") && item.Context != item.Tags["previous-context"])
                         {
                             vm.Undefer(item.Tags["previous-context"], item);
                         }

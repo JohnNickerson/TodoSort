@@ -271,6 +271,7 @@ namespace AssimilationSoftware.TodoSort.Core
                 if (context == "inbox" && i.Tags.ContainsKey("previous-context"))
                 {
                     i.Context = i.Tags["previous-context"];
+                    i.Tags.Remove("previous-context");
                 }
                 else
                 {
