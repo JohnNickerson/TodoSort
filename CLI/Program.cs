@@ -227,6 +227,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                 case "move-all":
                     {
                         var moveAllOptions = (MoveAllSubOptions)argsubs;
+                        vm.ShowHeadOnly = false; // Make sure we move all items in the context, not just the head.
                         var items = vm.GetContextItems(moveAllOptions.Search).ToList();
                         int counter = 0;
                         while (items.Count > 0)
