@@ -36,12 +36,6 @@
 		- Move to another list file or sub-list, too
 		#id:bcac196a-52cf-4e95-8491-3cc5eafbe98b
 		#priority-parent:8da843b9-8dc7-47c7-9db3-e7209b1068fe
-	Import function
-		- To merge lists and add new items in bulk.
-		- Optionally assign all to a new context or keep in their existing contexts.
-		- If IDs can be preserved, what about merging?
-		#id:57da7c59-0b4f-4d9e-a028-9fbf448bc391
-		#priority-parent:8da843b9-8dc7-47c7-9db3-e7209b1068fe
 	Use a second ViewModel for reviewing the Someday list?
 		- Just because it's a special-purpose function working on a different file.
 		#id:876a0330-b332-4e55-94a5-efaa77f3f511
@@ -89,6 +83,10 @@
 		- Could come in handy for book and movie sequences, perhaps.
 		#type:feature
 		#id:c7f20b28-948a-4530-be53-7234e8fbdb65
+	Undo command
+		- To move an item from the Done file back to the Todo list.
+		#type:feature
+		#id:017bc96a-cdac-4e7e-9e5c-5e5e249f3f33
 	Rank one context
 		- Could come in handy.
 		#type:feature

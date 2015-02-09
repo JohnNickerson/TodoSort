@@ -371,6 +371,14 @@
 		#release:0.6
 		#done-date:2015-02-03
 		#id:bf3458cd-61c9-4ba1-8662-d16c6dff190a
+@2015-02-06
+	Import function
+		- To merge lists and add new items in bulk.
+		- Optionally assign all to a new context or keep in their existing contexts.
+		- If IDs can be preserved, what about merging?
+		#done-date:2015-02-06
+		#id:57da7c59-0b4f-4d9e-a028-9fbf448bc391
+		#priority-parent:8da843b9-8dc7-47c7-9db3-e7209b1068fe
 @done
 	The Done list should be broken up into date sub lists rather than being a different format.
 		#id:3da6bbcb-9608-4289-a82c-50b29d7ee7ac

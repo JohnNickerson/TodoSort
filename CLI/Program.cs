@@ -85,6 +85,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                 #region Advanced Search
                 case "advanced-search":
                     var searchterms = (AdvancedSearchSubOptions)argsubs;
+                    searchterms.MaxDepth = Math.Max(searchterms.ShowAllItems ? Int32.MaxValue : 0, searchterms.MaxDepth);
                     PrintItems(vm.Search(searchterms.Context, searchterms.Title, searchterms.Note, searchterms.ID, searchterms.TagName, searchterms.TagValue, searchterms.MinDepth, searchterms.MaxDepth));
                     break;
                 #endregion
