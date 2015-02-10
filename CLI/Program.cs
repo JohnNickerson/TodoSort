@@ -94,14 +94,13 @@ namespace AssimilationSoftware.TodoSort.CLI
                 case "count-children":
                     {
                         CountChildrenSubOptions countOptions = (CountChildrenSubOptions)argsubs;
-                        vm.SearchTerm = countOptions.SearchTerm;
-                        selected = Disambiguate(vm.SearchResults);
-                        if (selected != null)
+                        foreach (var item in vm.GetContextItems(countOptions.Context))
                         {
-                            PrintItem(selected, null);
+                            PrintItem(item, null);
                             // Actually count the children.
-                            var m = vm.GetChildItems(selected).Count();
+                            var m = vm.GetChildItems(item).Count();
                             Console.WriteLine(string.Format("\t{0} children", m));
+                            vm.SetTag(item, "children", m.ToString());
                         }
                         selected = null;
                     }
