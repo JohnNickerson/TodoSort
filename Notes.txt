@@ -87,6 +87,10 @@
 		- To move an item from the Done file back to the Todo list.
 		#type:feature
 		#id:017bc96a-cdac-4e7e-9e5c-5e5e249f3f33
+	Export to text format
+		- There should be a round-trip export/import process.
+		#type:feature
+		#id:87b4457b-752a-46d2-bbab-8a5c6f197309
 	Rank one context
 		- Could come in handy.
 		#type:feature
