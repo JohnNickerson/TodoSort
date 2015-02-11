@@ -1,4 +1,7 @@
 @backend
+	Specification pattern for all search functions
+		- Allows more complex searches and allows the ViewModel to be far more agnostic about search criteria.
+		#release:0.7
 	Mustache-sharp template engine for exports
 		#url:https://github.com/jehugaleahsa/mustache-sharp
 		#id:c16bf60e-abb0-4847-867b-cba0df9e7e3e
@@ -49,6 +52,7 @@
 		- Specify file names on the command line instead of interactively.
 		#type:feature
 		#id:71ac767b-391c-422e-b4be-b9e050a5b7e3
+		#release:0.7
 	Sort command or option on process
 		#type:feature
 		#id:01206b3e-b3cb-4a34-975d-9e8035bd30bd
@@ -87,10 +91,12 @@
 		- To move an item from the Done file back to the Todo list.
 		#type:feature
 		#id:017bc96a-cdac-4e7e-9e5c-5e5e249f3f33
+		#release:0.7
 	Export to text format
 		- There should be a round-trip export/import process.
 		#type:feature
 		#id:87b4457b-752a-46d2-bbab-8a5c6f197309
+		#release:0.7
 	Rank one context
 		- Could come in handy.
 		#type:feature
@@ -101,6 +107,7 @@
 		#type:feature
 		#id:633687e7-91ac-4190-b9d2-bfd0894218c1
 		#priority-parent:71ac767b-391c-422e-b4be-b9e050a5b7e3
+		#release:0.7
 	'Prune-Leaves' command
 		- To remove any items without children and lighten the tree.
 		#type:feature
@@ -117,6 +124,7 @@
 		- Not yet used. I'd rather have a partial ID than a full GUID for search. (2014-06-04)
 		#id:bf85cc86-e64b-46dd-b051-db459c6f27e2
 		#priority-parent:fca19166-f471-49e5-864e-0386c098e41d
+		#release:0.7
 	Change console output to an export module used by default
 		#type:feature
 		#id:37ed25d1-cd26-4ad0-b86b-896cca3f783c
@@ -147,9 +155,11 @@
 		#type:feature
 		#id:05babc99-5f74-4397-bdc2-a9b85ec78716
 		#priority-parent:8da453c8-362d-4545-bac4-c73c7843f3bf
+		#release:0.7
 	Randomise index for ranking
 		#id:7488887c-bea1-4728-8d61-4f7ef21f76be
 		#priority-parent:bf85cc86-e64b-46dd-b051-db459c6f27e2
+		#release:0.7
 	De-duplicate command
 		- Search and merge duplicates
 		- Kind of difficult with this data, but worth it. (2014-06-17)
@@ -167,6 +177,7 @@
 	Undefer a specific item
 		#id:6dc916bc-4924-4300-8adb-89d20013dce1
 		#priority-parent:7488887c-bea1-4728-8d61-4f7ef21f76be
+		#release:0.7
 	Search deferred and done items
 		- Allow searching in the separate someday and done files by specifying their contexts to advanced search.
 		- Merged key conflict: type:feature
@@ -174,10 +185,12 @@
 		#type:feature
 		#id:93ee9286-2ee7-4252-bee8-1a3127d14d9e
 		#priority-parent:7488887c-bea1-4728-8d61-4f7ef21f76be
+		#release:0.7
 	Display results by data binding instead of direct fetch
 		#type:feature
 		#id:b7a72b3f-f40d-4dc0-abcc-66ca522d3cbf
 		#priority-parent:6dc916bc-4924-4300-8adb-89d20013dce1
+		#release:0.7
 	Keep processing while more items still in inbox or projects.
 		#type:feature
 		#id:f5a3d428-5de0-4aa0-8e88-edcc3800ba5e

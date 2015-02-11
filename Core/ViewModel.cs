@@ -451,39 +451,39 @@ namespace AssimilationSoftware.TodoSort.Core
             todo_changes = true;
         }
 
-        public void Merge(ActionItem first, ActionItem second)
+        public void Merge(ActionItem child, ActionItem target)
         {
             // Combine the two items.
             // Add notes and tags from second to first.
-            first.Notes.AddRange(second.Notes);
-            foreach (var tag in second.Tags)
+            target.Notes.AddRange(child.Notes);
+            foreach (var tag in child.Tags)
             {
-                if (!first.Tags.ContainsKey(tag.Key))
+                if (!target.Tags.ContainsKey(tag.Key))
                 {
-                    first.Tags[tag.Key] = tag.Value;
+                    target.Tags[tag.Key] = tag.Value;
                 }
                 else
                 {
                     // Keep the tag as a note.
-                    first.Notes.Add(string.Format("Merged key conflict: {0}:{1}", tag.Key, tag.Value));
+                    target.Notes.Add(string.Format("Merged key conflict: {0}:{1}", tag.Key, tag.Value));
                 }
             }
             // Set any child objects from second to first.
-            var children = from i in todo_items where i.RankParent == second select i;
+            var children = from i in todo_items where i.RankParent == child select i;
             foreach (var c in children)
             {
-                c.RankParent = first;
+                c.RankParent = target;
             }
-            if (second.Project != null && first.Project == null)
+            if (child.Project != null && target.Project == null)
             {
-                first.Project = second.Project;
+                target.Project = child.Project;
             }
-            if (second.TickleDate != null && first.TickleDate == null)
+            if (child.TickleDate != null && target.TickleDate == null)
             {
-                first.TickleDate = second.TickleDate;
+                target.TickleDate = child.TickleDate;
             }
-            first.Notes.Add(string.Format("Merged with '{0}' on {1:yyyy-MM-dd}", second.Title, DateTime.Now));
-            Delete(second);
+            target.Notes.Add(string.Format("Merged with '{0}' on {1:yyyy-MM-dd}", child.Title, DateTime.Now));
+            Delete(child);
             todo_changes = true;
         }
 
