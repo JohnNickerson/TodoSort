@@ -195,15 +195,16 @@ namespace AssimilationSoftware.TodoSort.CLI
                     var mergeOptions = (MergeSubOptions)argsubs;
                     Console.WriteLine("Confirm child item:");
                     vm.SearchTerm = mergeOptions.FirstSearchTerm;
-                    selected = Disambiguate(vm.SearchResults);
-                    if (selected != null)
+                    var mergevictim = Disambiguate(vm.SearchResults);
+                    if (mergevictim != null)
                     {
                         Console.WriteLine("Confirm item to merge into:");
                         vm.SearchTerm = mergeOptions.SecondSearchTerm;
-                        var second = Disambiguate(vm.SearchResults.Where(x => x.ID != selected.ID).ToArray());
-                        if (selected != null && second != null)
+                        var combined = Disambiguate(vm.SearchResults.Where(x => x.ID != mergevictim.ID).ToArray());
+                        if (mergevictim != null && combined != null)
                         {
-                            vm.Merge(selected, second);
+                            vm.Merge(mergevictim, combined);
+                            selected = combined;
                         }
                     }
                     break;
