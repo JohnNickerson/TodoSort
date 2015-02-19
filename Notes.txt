@@ -14,6 +14,10 @@
 		- Children of the same project need to be ordered against each other, not necessarily everything else.
 		#type:feature
 		#id:f10b1166-8dff-432b-869f-4cc29dccef22
+	Trash context
+		- To allow undeleting items if required.
+		#type:feature
+		#id:11761e28-949d-470d-aeb8-b7cd1d4bc58a
 	JoinSearch-style search queries
 		- The JoinSearch function will need to be modified to work over objects this way, but the parser should be helpful.
 		- Might need new functions to search particular object properties like tags.
@@ -106,6 +110,26 @@
 		- There's no way to inspect project relationships from the command line.
 		#type:feature
 		#id:e42814b6-5e57-413d-96f2-880064c58369
+	Add a total count to the summary view
+		- Just to add up everything that's there.
+		#type:feature
+		#id:b98263af-35a7-43f8-afc5-77880339f068
+	When processing projects, allow setting an existing item as next
+		- Instead of demanding a brand new action.
+		#type:feature
+		#id:b9e5e549-15cd-4732-a5ef-fef435e27e6b
+	Make sure the process command looks through all items for a project's next action
+		- I have a vague suspicion that it might only look at the head of the tree.
+		#type:feature
+		#id:c55e9746-839f-407c-a217-90b1b20351ba
+	Specify a done date
+		- Helpful for anything recorded as done a day or two after the fact.
+		#type:feature
+		#id:9efab255-6bbd-4481-be1e-e60c210acf46
+	Multi-line notes on new items
+		- It would be nice to be able to enter a lot of notes for a new item, if relevant.
+		#type:feature
+		#id:3bdcfae0-d59e-4097-8a53-9ed8a4bafc6e
 	Rank one context
 		- Could come in handy.
 		#type:feature

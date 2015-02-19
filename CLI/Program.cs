@@ -586,7 +586,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                 #region Unrank
                 case "unrank":
                     UnrankSubOptions unrankOptions = (UnrankSubOptions)argsubs;
-                    vm.ShowHeadOnly = unrankOptions.SearchAll;
+                    vm.ShowHeadOnly = !unrankOptions.SearchAll;
                     vm.SearchTerm = unrankOptions.SearchTerm;
                     selected = Disambiguate(vm.SearchResults);
                     if (selected != null)

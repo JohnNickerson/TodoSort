@@ -378,7 +378,12 @@
 		- If IDs can be preserved, what about merging?
 		#done-date:2015-02-06
 		#id:57da7c59-0b4f-4d9e-a028-9fbf448bc391
-		#priority-parent:8da843b9-8dc7-47c7-9db3-e7209b1068fe
+@2015-02-19
+	Unrank options inverts the SearchAll behaviour.
+		- A search over all items for a name doesn't necessarily find it.
+		#type:bug
+		#done-date:2015-02-19
+		#id:f4523c09-f6c0-4ff5-a1e1-712f80786202
 @done
 	The Done list should be broken up into date sub lists rather than being a different format.
 		#id:3da6bbcb-9608-4289-a82c-50b29d7ee7ac
