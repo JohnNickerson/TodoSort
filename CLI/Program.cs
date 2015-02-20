@@ -38,15 +38,33 @@ namespace AssimilationSoftware.TodoSort.CLI
             }
 
 
+            bool changesettings = false;
             if (f == null || argverb == "init")
             {
                 f.TodoPath = ConfigurePath("todo.txt", "Configure path to 'todo' file", false);
                 f.SomedayPath = ConfigurePath("someday.txt", "Configure path to 'someday' file", true);
                 f.DonePath = ConfigurePath("done.txt", "Configure path to 'done' file", true);
 
+                changesettings = true;
+			}
+
+            // Fix possible configuration problems.
+            if (f.SomedayPath == f.TodoPath)
+            {
+                f.SomedayPath = null;
+                changesettings = true;
+            }
+            if (f.DonePath == f.TodoPath)
+            {
+                f.DonePath = null;
+                changesettings = true;
+            }
+
+            if (changesettings)
+            {
                 // Save settings.
                 FolderSettings.SaveTo(settingspath, f);
-			}
+            }
 
             ActionItemDiskMapper todomapper = new ActionItemDiskMapper(f.TodoPath);
             ActionItemDiskMapper somedaymapper = (f.SomedayPath == null ? null : new ActionItemDiskMapper(f.SomedayPath));

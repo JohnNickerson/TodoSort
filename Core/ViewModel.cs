@@ -240,8 +240,11 @@ namespace AssimilationSoftware.TodoSort.Core
             while (to_defer.Count > 0)
             {
                 ActionItem i = to_defer.Dequeue();
-                i.Tags["previous-context"] = i.Context;
-                i.Context = "someday";
+                if (i.Context != "someday")
+                {
+                    i.Tags["previous-context"] = i.Context;
+                    i.Context = "someday";
+                }
                 if (someday_mapper != null)
                 {
                     someday_items.Add(i);

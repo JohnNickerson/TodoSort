@@ -3,13 +3,6 @@
 		- Allows more complex searches and allows the ViewModel to be far more agnostic about search criteria.
 		#release:0.7
 		#id:69b705d5-82fa-4c58-9db9-1184cf1da239
-	Mustache-sharp template engine for exports
-		#url:https://github.com/jehugaleahsa/mustache-sharp
-		#id:c16bf60e-abb0-4847-867b-cba0df9e7e3e
-	Automatic 'important' ranked items
-		- Unable to be voted down, automatically win votes, skipped when two important ones are against each other.
-		#type:feature
-		#id:0e40530b-c740-414b-bfed-e88394b8f9fa
 	Always rank project items together
 		- Children of the same project need to be ordered against each other, not necessarily everything else.
 		#type:feature
@@ -18,6 +11,15 @@
 		- To allow undeleting items if required.
 		#type:feature
 		#id:11761e28-949d-470d-aeb8-b7cd1d4bc58a
+	Mustache-sharp template engine for exports
+		#url:https://github.com/jehugaleahsa/mustache-sharp
+		#id:c16bf60e-abb0-4847-867b-cba0df9e7e3e
+		#priority-parent:69b705d5-82fa-4c58-9db9-1184cf1da239
+	Automatic 'important' ranked items
+		- Unable to be voted down, automatically win votes, skipped when two important ones are against each other.
+		#type:feature
+		#id:0e40530b-c740-414b-bfed-e88394b8f9fa
+		#priority-parent:f10b1166-8dff-432b-869f-4cc29dccef22
 	JoinSearch-style search queries
 		- The JoinSearch function will need to be modified to work over objects this way, but the parser should be helpful.
 		- Might need new functions to search particular object properties like tags.
@@ -38,6 +40,7 @@
 		- Enqueue commands to process later without changing files.
 		- Useful for when the files are not up to date (eg Dropbox sync has fallen behind).
 		- Serialise options classes?
+		- Store commands as files in a folder. Apply in-memory but not to disk. Separate 'apply' command for when all up to date. (2015-02-19)
 		#id:5e70eaeb-8525-42eb-9824-407482dc0588
 		#priority-parent:8da843b9-8dc7-47c7-9db3-e7209b1068fe
 	Generic CRUD operations on any list file
@@ -49,18 +52,11 @@
 		#id:876a0330-b332-4e55-94a5-efaa77f3f511
 		#priority-parent:bcac196a-52cf-4e95-8491-3cc5eafbe98b
 @cli
-	List contexts when asking for one
-		- I've used different sets of contexts in different files for different purposes. It would just help to see them displayed.
-		#type:feature
-		#id:fca19166-f471-49e5-864e-0386c098e41d
 	Non-interactive initialisation
 		- Specify file names on the command line instead of interactively.
 		#type:feature
 		#release:0.7
 		#id:71ac767b-391c-422e-b4be-b9e050a5b7e3
-	Sort command or option on process
-		#type:feature
-		#id:01206b3e-b3cb-4a34-975d-9e8035bd30bd
 	Wrap at spaces or punctuation
 		- It would look tidier if lines wrapped at natural spaces. (2014-06-02)
 		#type:feature
@@ -69,43 +65,22 @@
 		- To find and remove bottlenecks. (2014-06-02)
 		#type:feature
 		#id:aaf1e002-a674-4006-a7f0-b82fbad77470
-	Display depth for individual item search results
-		- Might be nice to know, but fairly easy to determine from Show-Ancestors.
-		#type:feature
-		#id:4158a739-966a-45e5-88e0-e9169a84b298
 	Add a URL directly
 		- Extract the page title for the item and store the URL as a tag.
 		- This would be very handy for my work priority-setting where I play off bugs vs features. (2015-01-28)
 		#type:feature
 		#id:1e0f158c-f8e4-44d7-82b5-2bef833490df
-	Change the disambiguation process to demand a single match
-		- Tough for short words that might appear everywhere. Allow IDs?
-		#type:feature
-		#id:fb247274-9a35-4f42-bb8c-4361cd29fd9e
 	Process all projects on "process" command
 		- Currently only processes projects at the head of the projects tree.
 		- Best to make sure all projects have a next item.
 		- On the other hand, it could be good to delay that for an unimportant project.
 		#type:feature
 		#id:76757caa-17d7-4a14-a337-afda259a9ab6
-	'Make-List' command to make a priority chain out of several items
-		- Could come in handy for book and movie sequences, perhaps.
-		#type:feature
-		#id:c7f20b28-948a-4530-be53-7234e8fbdb65
-	Undo command
-		- To move an item from the Done file back to the Todo list.
-		#type:feature
-		#release:0.7
-		#id:017bc96a-cdac-4e7e-9e5c-5e5e249f3f33
 	Export to text format
 		- There should be a round-trip export/import process.
 		#type:feature
 		#release:0.7
 		#id:87b4457b-752a-46d2-bbab-8a5c6f197309
-	Show parent/child relationship after setting it
-		- Right now, it's producing no output.
-		#type:feature
-		#id:fc49fb01-666a-48a9-b343-31b2ff613b87
 	Show project children
 		- There's no way to inspect project relationships from the command line.
 		#type:feature
@@ -114,33 +89,91 @@
 		- Just to add up everything that's there.
 		#type:feature
 		#id:b98263af-35a7-43f8-afc5-77880339f068
-	When processing projects, allow setting an existing item as next
-		- Instead of demanding a brand new action.
-		#type:feature
-		#id:b9e5e549-15cd-4732-a5ef-fef435e27e6b
-	Make sure the process command looks through all items for a project's next action
-		- I have a vague suspicion that it might only look at the head of the tree.
-		#type:feature
-		#id:c55e9746-839f-407c-a217-90b1b20351ba
 	Specify a done date
 		- Helpful for anything recorded as done a day or two after the fact.
 		#type:feature
 		#id:9efab255-6bbd-4481-be1e-e60c210acf46
+	Option interfaces
+		- Standard option interfaces to specify what kind of options are available to a command. Would help prevent bugs like improper handling of general flags.
+		#type:feature
+		#id:eafd7429-120e-4126-b710-cc143659bca2
+	Edit Notes command
+		- Just to modify existing notes if required.
+		#type:feature
+		#id:2fd5a81e-3ded-45d4-b777-1e889fcf1126
+	List contexts when asking for one
+		- I've used different sets of contexts in different files for different purposes. It would just help to see them displayed.
+		#type:feature
+		#id:fca19166-f471-49e5-864e-0386c098e41d
+		#priority-parent:71ac767b-391c-422e-b4be-b9e050a5b7e3
+	Sort command or option on process
+		#type:feature
+		#id:01206b3e-b3cb-4a34-975d-9e8035bd30bd
+		#priority-parent:ec98fd77-5d59-415d-a842-2f5a40b2eb2f
+	Display depth for individual item search results
+		- Might be nice to know, but fairly easy to determine from Show-Ancestors.
+		#type:feature
+		#id:4158a739-966a-45e5-88e0-e9169a84b298
+		#priority-parent:aaf1e002-a674-4006-a7f0-b82fbad77470
+	Change the disambiguation process to demand a single match
+		- Tough for short words that might appear everywhere. Allow IDs?
+		#type:feature
+		#id:fb247274-9a35-4f42-bb8c-4361cd29fd9e
+		#priority-parent:1e0f158c-f8e4-44d7-82b5-2bef833490df
+	'Make-List' command to make a priority chain out of several items
+		- Could come in handy for book and movie sequences, perhaps.
+		#type:feature
+		#id:c7f20b28-948a-4530-be53-7234e8fbdb65
+		#priority-parent:76757caa-17d7-4a14-a337-afda259a9ab6
+	Undo command
+		- To move an item from the Done file back to the Todo list.
+		#type:feature
+		#release:0.7
+		#id:017bc96a-cdac-4e7e-9e5c-5e5e249f3f33
+		#priority-parent:87b4457b-752a-46d2-bbab-8a5c6f197309
+	Show parent/child relationship after setting it
+		- Right now, it's producing no output.
+		#type:feature
+		#id:fc49fb01-666a-48a9-b343-31b2ff613b87
+		#priority-parent:e42814b6-5e57-413d-96f2-880064c58369
+	When processing projects, allow setting an existing item as next
+		- Instead of demanding a brand new action.
+		#type:feature
+		#id:b9e5e549-15cd-4732-a5ef-fef435e27e6b
+		#priority-parent:b98263af-35a7-43f8-afc5-77880339f068
+	Make sure the process command looks through all items for a project's next action
+		- I have a vague suspicion that it might only look at the head of the tree.
+		#type:feature
+		#id:c55e9746-839f-407c-a217-90b1b20351ba
+		#priority-parent:9efab255-6bbd-4481-be1e-e60c210acf46
 	Multi-line notes on new items
 		- It would be nice to be able to enter a lot of notes for a new item, if relevant.
 		#type:feature
 		#id:3bdcfae0-d59e-4097-8a53-9ed8a4bafc6e
-	Rank one context
-		- Could come in handy.
-		#type:feature
-		#id:c747b6f0-9780-482e-bfbd-1c45a6fd0fc4
-		#priority-parent:fca19166-f471-49e5-864e-0386c098e41d
+		#priority-parent:eafd7429-120e-4126-b710-cc143659bca2
 	Single-search version of set-parent and merge commands
 		- Typing the same search command for both seems silly. (2014-05-29)
 		#type:feature
 		#release:0.7
 		#id:633687e7-91ac-4190-b9d2-bfd0894218c1
 		#priority-parent:71ac767b-391c-422e-b4be-b9e050a5b7e3
+	Put a blank line between displayed items
+		- The down side is that fewer items will fit on the screen. (2014-06-12)
+		- Increases readability, especially with wrapped lines.
+		#type:feature
+		#id:f55128fc-8590-41f0-ad96-31a76b173f3f
+		#priority-parent:71ac767b-391c-422e-b4be-b9e050a5b7e3
+	Show priority depth in verbose output
+		- I want to know how deep certain items are. (2014-06-02)
+		- Maybe merge this with the individual item tree display idea. (2014-06-02)
+		#type:feature
+		#id:540d5e5a-e748-48d4-8131-ba284623b73a
+		#priority-parent:ec98fd77-5d59-415d-a842-2f5a40b2eb2f
+	Rank one context
+		- Could come in handy.
+		#type:feature
+		#id:c747b6f0-9780-482e-bfbd-1c45a6fd0fc4
+		#priority-parent:fca19166-f471-49e5-864e-0386c098e41d
 	'Prune-Leaves' command
 		- To remove any items without children and lighten the tree.
 		#type:feature
@@ -162,18 +195,6 @@
 		#type:feature
 		#id:37ed25d1-cd26-4ad0-b86b-896cca3f783c
 		#priority-parent:fca19166-f471-49e5-864e-0386c098e41d
-	Put a blank line between displayed items
-		- The down side is that fewer items will fit on the screen. (2014-06-12)
-		- Increases readability, especially with wrapped lines.
-		#type:feature
-		#id:f55128fc-8590-41f0-ad96-31a76b173f3f
-		#priority-parent:71ac767b-391c-422e-b4be-b9e050a5b7e3
-	Show priority depth in verbose output
-		- I want to know how deep certain items are. (2014-06-02)
-		- Maybe merge this with the individual item tree display idea. (2014-06-02)
-		#type:feature
-		#id:540d5e5a-e748-48d4-8131-ba284623b73a
-		#priority-parent:ec98fd77-5d59-415d-a842-2f5a40b2eb2f
 	Abort someday context assignment if no item is chosen
 		- It gets tedious to use two keystrokes where one would do.
 		#type:feature
@@ -267,12 +288,13 @@
 		#id:4f1a19ec-4ff9-4245-811f-6f1d4bcc9f49
 		#priority-parent:bdf4dbf2-cc3c-4004-811b-1d8371c37d3f
 @someday
-	Import from Pocket
-		#id:560190c3-9571-48e0-a951-3bbdba5c05d1
 	Import from RSS
 		- Can be used for just about anything, then.
 		#type:feature
 		#id:3d069478-d751-492c-8ca0-6fdd551f31eb
+	Import from Pocket
+		#id:560190c3-9571-48e0-a951-3bbdba5c05d1
+		#priority-parent:3d069478-d751-492c-8ca0-6fdd551f31eb
 	Rank second-tier items if there are no top-level comparisons to make
 		#id:11427126-1e6f-4242-85e0-08c29979031b
 		#priority-parent:560190c3-9571-48e0-a951-3bbdba5c05d1
@@ -293,13 +315,13 @@
 		- Google Tasks API: https://www.nuget.org/packages/Google.Apis.Tasks.v1/
 		#id:43b0868b-d3e5-477f-82cd-b7da7c01a092
 		#priority-parent:b84a8574-a3eb-4208-ba13-8746a9bca871
-	Add a timestamp when items are processed through the inbox.
-		#id:d7eec29c-e5c6-4347-8950-a9500cc56eb3
-		#priority-parent:43b0868b-d3e5-477f-82cd-b7da7c01a092
 	Selections of next actions, depending on the results of previous ones.
 		- eg "Check something" then "|@shopping Buy this" and "|@home Set up that".
 		#id:79db8c53-b314-4c57-a692-e4791e749215
 		#priority-parent:bcac196a-52cf-4e95-8491-3cc5eafbe98b
+	Add a timestamp when items are processed through the inbox.
+		#id:d7eec29c-e5c6-4347-8950-a9500cc56eb3
+		#priority-parent:43b0868b-d3e5-477f-82cd-b7da7c01a092
 	Detect "[x]" marks as completed items
 		#tickle-date:2014-04-16
 		#id:aa8b5a86-32d5-4445-a90e-ed517b77c292

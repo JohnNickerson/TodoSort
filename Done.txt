@@ -384,6 +384,12 @@
 		#type:bug
 		#done-date:2015-02-19
 		#id:f4523c09-f6c0-4ff5-a1e1-712f80786202
+@2015-02-20
+	Items get duplicated when processing Someday in the same file
+		- Still works when using a separate file, though.
+		#type:bug
+		#done-date:2015-02-20
+		#id:aa580e33-4974-44d3-bf1f-15ff195e026d
 @done
 	The Done list should be broken up into date sub lists rather than being a different format.
 		#id:3da6bbcb-9608-4289-a82c-50b29d7ee7ac
