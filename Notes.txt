@@ -52,11 +52,6 @@
 		#id:876a0330-b332-4e55-94a5-efaa77f3f511
 		#priority-parent:bcac196a-52cf-4e95-8491-3cc5eafbe98b
 @cli
-	Non-interactive initialisation
-		- Specify file names on the command line instead of interactively.
-		#type:feature
-		#release:0.7
-		#id:71ac767b-391c-422e-b4be-b9e050a5b7e3
 	Wrap at spaces or punctuation
 		- It would look tidier if lines wrapped at natural spaces. (2014-06-02)
 		#type:feature
@@ -101,13 +96,17 @@
 		- Just to modify existing notes if required.
 		#type:feature
 		#id:2fd5a81e-3ded-45d4-b777-1e889fcf1126
+	Textual tree display
+		- Model after Git, if possible.
+		#type:feature
+		#id:18e65381-8e47-48df-9fb6-87ef7ab741d1
 	List contexts when asking for one
 		- I've used different sets of contexts in different files for different purposes. It would just help to see them displayed.
 		#type:feature
 		#id:fca19166-f471-49e5-864e-0386c098e41d
-		#priority-parent:71ac767b-391c-422e-b4be-b9e050a5b7e3
 	Sort command or option on process
 		#type:feature
+		#release:0.7
 		#id:01206b3e-b3cb-4a34-975d-9e8035bd30bd
 		#priority-parent:ec98fd77-5d59-415d-a842-2f5a40b2eb2f
 	Display depth for individual item search results
@@ -151,18 +150,6 @@
 		#type:feature
 		#id:3bdcfae0-d59e-4097-8a53-9ed8a4bafc6e
 		#priority-parent:eafd7429-120e-4126-b710-cc143659bca2
-	Single-search version of set-parent and merge commands
-		- Typing the same search command for both seems silly. (2014-05-29)
-		#type:feature
-		#release:0.7
-		#id:633687e7-91ac-4190-b9d2-bfd0894218c1
-		#priority-parent:71ac767b-391c-422e-b4be-b9e050a5b7e3
-	Put a blank line between displayed items
-		- The down side is that fewer items will fit on the screen. (2014-06-12)
-		- Increases readability, especially with wrapped lines.
-		#type:feature
-		#id:f55128fc-8590-41f0-ad96-31a76b173f3f
-		#priority-parent:71ac767b-391c-422e-b4be-b9e050a5b7e3
 	Show priority depth in verbose output
 		- I want to know how deep certain items are. (2014-06-02)
 		- Maybe merge this with the individual item tree display idea. (2014-06-02)
@@ -174,11 +161,6 @@
 		#type:feature
 		#id:c747b6f0-9780-482e-bfbd-1c45a6fd0fc4
 		#priority-parent:fca19166-f471-49e5-864e-0386c098e41d
-	'Prune-Leaves' command
-		- To remove any items without children and lighten the tree.
-		#type:feature
-		#id:36bc69e0-6a88-42da-8e28-1440bfc876ce
-		#priority-parent:01206b3e-b3cb-4a34-975d-9e8035bd30bd
 	Show context name even for zero results
 		- Otherwise it's just empty output.
 		#type:feature
@@ -195,6 +177,11 @@
 		#type:feature
 		#id:37ed25d1-cd26-4ad0-b86b-896cca3f783c
 		#priority-parent:fca19166-f471-49e5-864e-0386c098e41d
+	'Prune-Leaves' command
+		- To remove any items without children and lighten the tree.
+		#type:feature
+		#id:36bc69e0-6a88-42da-8e28-1440bfc876ce
+		#priority-parent:01206b3e-b3cb-4a34-975d-9e8035bd30bd
 	Abort someday context assignment if no item is chosen
 		- It gets tedious to use two keystrokes where one would do.
 		#type:feature
@@ -203,12 +190,6 @@
 	Add tags on command line with add command
 		#type:feature
 		#id:734bc716-c2d6-44d6-8a7a-04fb0374238c
-		#priority-parent:8da453c8-362d-4545-bac4-c73c7843f3bf
-	Version command
-		- Just to display the version information.
-		#type:feature
-		#release:0.7
-		#id:05babc99-5f74-4397-bdc2-a9b85ec78716
 		#priority-parent:8da453c8-362d-4545-bac4-c73c7843f3bf
 	Randomise index for ranking
 		#release:0.7
@@ -231,14 +212,6 @@
 	Undefer a specific item
 		#release:0.7
 		#id:6dc916bc-4924-4300-8adb-89d20013dce1
-		#priority-parent:7488887c-bea1-4728-8d61-4f7ef21f76be
-	Search deferred and done items
-		- Allow searching in the separate someday and done files by specifying their contexts to advanced search.
-		- Merged key conflict: type:feature
-		- Merged with 'Advanced search in someday and done contexts' on 2014-08-27
-		#type:feature
-		#release:0.7
-		#id:93ee9286-2ee7-4252-bee8-1a3127d14d9e
 		#priority-parent:7488887c-bea1-4728-8d61-4f7ef21f76be
 	Display results by data binding instead of direct fetch
 		#type:feature

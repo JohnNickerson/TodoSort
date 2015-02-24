@@ -1,5 +1,6 @@
 ﻿using AssimilationSoftware.PimData.Interfaces;
 using AssimilationSoftware.PimData.Model;
+using AssimilationSoftware.TodoSort.Core.Search;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -58,6 +59,9 @@ namespace AssimilationSoftware.TodoSort.Core
         /// An event that indicates a property has changed value.
         /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
+        
+        private ISearchSpecification<ActionItem> _somedaySearchSpec;
+        private ISearchSpecification<ActionItem> _doneSearchSpec;
 
         /// <summary>
         /// Fires the PropertyChanged event with given arguments.
@@ -140,6 +144,60 @@ namespace AssimilationSoftware.TodoSort.Core
             {
                 _statusMessage = value;
                 RaisePropertyChanged("StatusMessage");
+            }
+        }
+
+        /// <summary>
+        /// A search specification for someday items.
+        /// </summary>
+        public ISearchSpecification<ActionItem> SomedaySearchSpecification
+        {
+            get
+            {
+                return _somedaySearchSpec ?? new TrueSpecification<ActionItem>();
+            }
+            set
+            {
+                _somedaySearchSpec = value;
+                RaisePropertyChanged("SomedaySearchSpecification", "SomedaySearchResults");
+            }
+        }
+
+        /// <summary>
+        /// Results of searching the Someday collection.
+        /// </summary>
+        public IEnumerable<ActionItem> SomedaySearchResults
+        {
+            get
+            {
+                return someday_items.Where(s => SomedaySearchSpecification.IsSatisfiedBy(s));
+            }
+        }
+
+        /// <summary>
+        /// A search specification for looking through the Done items.
+        /// </summary>
+        public ISearchSpecification<ActionItem> DoneSearchSpecification
+        {
+            get
+            {
+                return _doneSearchSpec ?? new TrueSpecification<ActionItem>();
+            }
+            set
+            {
+                _doneSearchSpec = value;
+                RaisePropertyChanged("DoneSearchSpecification", "DoneSearchResults");
+            }
+        }
+
+        /// <summary>
+        /// Search results from the Done collection.
+        /// </summary>
+        public IEnumerable<ActionItem> DoneSearchResults
+        {
+            get
+            {
+                return done_items.Where(s => DoneSearchSpecification.IsSatisfiedBy(s));
             }
         }
         #endregion
@@ -464,6 +522,10 @@ namespace AssimilationSoftware.TodoSort.Core
                 if (!target.Tags.ContainsKey(tag.Key))
                 {
                     target.Tags[tag.Key] = tag.Value;
+                }
+                else if (target.Tags[tag.Key] == tag.Value)
+                {
+                    // Both items have the same tag value. Just ignore it.
                 }
                 else
                 {

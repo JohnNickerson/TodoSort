@@ -41,20 +41,21 @@ namespace AssimilationSoftware.TodoSort.CLI
             bool changesettings = false;
             if (f == null || argverb == "init")
             {
-                f.TodoPath = ConfigurePath("todo.txt", "Configure path to 'todo' file", false);
-                f.SomedayPath = ConfigurePath("someday.txt", "Configure path to 'someday' file", true);
-                f.DonePath = ConfigurePath("done.txt", "Configure path to 'done' file", true);
+                InitSubOptions initty = (InitSubOptions)argsubs;
+                f.TodoPath = initty.TodoFile;
+                f.SomedayPath = initty.SomedayFile;
+                f.DonePath = initty.DoneFile;
 
                 changesettings = true;
 			}
 
             // Fix possible configuration problems.
-            if (f.SomedayPath == f.TodoPath)
+            if (f.SomedayPath == f.TodoPath || f.SomedayPath == string.Empty)
             {
                 f.SomedayPath = null;
                 changesettings = true;
             }
-            if (f.DonePath == f.TodoPath)
+            if (f.DonePath == f.TodoPath || f.DonePath == string.Empty)
             {
                 f.DonePath = null;
                 changesettings = true;
@@ -217,7 +218,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                     if (mergevictim != null)
                     {
                         Console.WriteLine("Confirm item to merge into:");
-                        vm.SearchTerm = mergeOptions.SecondSearchTerm;
+                        vm.SearchTerm = mergeOptions.SecondSearchTerm ?? mergeOptions.FirstSearchTerm;
                         var combined = Disambiguate(vm.SearchResults.Where(x => x.ID != mergevictim.ID).ToArray());
                         if (mergevictim != null && combined != null)
                         {
@@ -446,6 +447,32 @@ namespace AssimilationSoftware.TodoSort.CLI
                     break;
                 #endregion
 
+                #region Search Done
+                case "search-done":
+                    {
+                        // Construct a search specification.
+                        var search = ((AdvancedSearchSubOptions)argsubs).SearchSpecification;
+                        // Set the ViewModel property.
+                        vm.DoneSearchSpecification = search;
+                        // Report the results.
+                        PrintItems(vm.DoneSearchResults.ToArray());
+                    }
+                    break;
+                #endregion
+
+                #region Search Someday
+                case "search-someday":
+                    {
+                        // Construct a search specification.
+                        var search = ((AdvancedSearchSubOptions)argsubs).SearchSpecification;
+                        // Set the ViewModel property.
+                        vm.SomedaySearchSpecification = search;
+                        // Report the results.
+                        PrintItems(vm.SomedaySearchResults.ToArray());
+                    }
+                    break;
+                #endregion
+
                 #region Set Parent
                 case "set-parent":
                     {
@@ -454,7 +481,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                         vm.SearchTerm = setparentOptions.ChildSearchTerm;
                         var child = Disambiguate(vm.SearchResults);
                         Console.WriteLine("Confirm parent item:");
-                        vm.SearchTerm = setparentOptions.ParentSearchTerm;
+                        vm.SearchTerm = setparentOptions.ParentSearchTerm ?? setparentOptions.ChildSearchTerm;
                         var parent = Disambiguate(vm.SearchResults);
                         if (child != null && parent != null)
                         {
@@ -472,7 +499,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                         vm.SearchTerm = commandOptions.ChildSearchTerm;
                         var child = Disambiguate(vm.SearchResults);
                         Console.WriteLine("Confirm project:");
-                        vm.SearchTerm = commandOptions.ProjectSearchTerm;
+                        vm.SearchTerm = commandOptions.ProjectSearchTerm ?? commandOptions.ChildSearchTerm;
                         var project = Disambiguate(vm.SearchResults);
                         if (child != null && project != null)
                         {
@@ -629,6 +656,15 @@ namespace AssimilationSoftware.TodoSort.CLI
                     else
                     {
                         vm.ResetPriorityParents(unrankAllOptions.Context);
+                    }
+                    break;
+                #endregion
+
+                #region Version
+                case "version":
+                    {
+                        Console.WriteLine("TodoSort {0}", Assembly.GetExecutingAssembly().GetName().Version);
+                        Console.WriteLine("Copyright {0}", ((AssemblyCopyrightAttribute)Assembly.GetExecutingAssembly().GetCustomAttribute(typeof(AssemblyCopyrightAttribute))).Copyright);
                     }
                     break;
                 #endregion

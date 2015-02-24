@@ -68,6 +68,12 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
         [VerbOption("search", HelpText = "Search for matching text items.")]
         public SearchSubOptions SearchVerb { get; set; }
 
+        [VerbOption("search-done", HelpText = "Search through the collection of Done items.")]
+        public AdvancedSearchSubOptions SearchDoneVerb { get; set; }
+
+        [VerbOption("search-someday", HelpText = "Search through the collection of Someday/Deferred items.")]
+        public AdvancedSearchSubOptions SearchSomedayVerb { get; set; }
+
         [VerbOption("set-parent", HelpText = "Assigns one item to be the priority parent of another.")]
         public SetParentSubOptions SetParentVerb { get; set; }
 
@@ -94,6 +100,9 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
 
         [VerbOption("unrank-all", HelpText = "Removes all ranking data from a particular context or all items.")]
         public UnrankAllSubOptions UnrankAllVerb { get; set; }
+
+        [VerbOption("version", HelpText = "Displays version and copyright information.")]
+        public VersionSubOptions VersionVerb { get; set; }
         #endregion
 
 

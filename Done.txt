@@ -390,6 +390,35 @@
 		#type:bug
 		#done-date:2015-02-20
 		#id:aa580e33-4974-44d3-bf1f-15ff195e026d
+@2015-02-23
+	Non-interactive initialisation
+		- Specify file names on the command line instead of interactively.
+		#type:feature
+		#release:0.7
+		#done-date:2015-02-23
+		#id:71ac767b-391c-422e-b4be-b9e050a5b7e3
+	Single-search version of set-parent and merge commands
+		- Typing the same search command for both seems silly. (2014-05-29)
+		#type:feature
+		#release:0.7
+		#done-date:2015-02-23
+		#id:633687e7-91ac-4190-b9d2-bfd0894218c1
+	Version command
+		- Just to display the version information.
+		#type:feature
+		#release:0.7
+		#done-date:2015-02-23
+		#id:05babc99-5f74-4397-bdc2-a9b85ec78716
+@2015-02-24
+	Search deferred and done items
+		- Allow searching in the separate someday and done files by specifying their contexts to advanced search.
+		- Merged key conflict: type:feature
+		- Merged with 'Advanced search in someday and done contexts' on 2014-08-27
+		#type:feature
+		#release:0.7
+		#done-date:2015-02-24
+		#id:93ee9286-2ee7-4252-bee8-1a3127d14d9e
+		#priority-parent:7488887c-bea1-4728-8d61-4f7ef21f76be
 @done
 	The Done list should be broken up into date sub lists rather than being a different format.
 		#id:3da6bbcb-9608-4289-a82c-50b29d7ee7ac

@@ -1,4 +1,6 @@
-﻿using CommandLine;
+﻿using AssimilationSoftware.PimData.Model;
+using AssimilationSoftware.TodoSort.Core.Search;
+using CommandLine;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -52,6 +54,33 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
             {
                 MinDepth = value;
                 MaxDepth = value;
+            }
+        }
+
+        public ISearchSpecification<ActionItem> SearchSpecification
+        {
+            get
+            {
+                ISearchSpecification<ActionItem> result = new TagValueSpecification(TagName, TagValue)
+                    .And(new DepthRangeSearchSpecification(MinDepth, MaxDepth));
+                if (!string.IsNullOrEmpty(Context))
+                {
+                    result = result.And(new ExactPropertyValueSpecification<ActionItem, string>(i => i.Context, Context));
+                }
+                if (!string.IsNullOrEmpty(Title))
+                {
+                    result = result.And(new PartialPropertyValueSpecification<string>(i => i.Title, Title));
+                }
+                if (!string.IsNullOrEmpty(Note))
+                {
+                    result = result.And(new NoteSearchSpecification(Note));
+                }
+                if (!string.IsNullOrEmpty(ID))
+                {
+                    // TODO: PartialIdSearchSpecification to handle GUIDs better.
+                    result = result.And(new PartialPropertyValueSpecification<string>(i => i.ID.ToString(), ID));
+                }
+                return result;
             }
         }
     }

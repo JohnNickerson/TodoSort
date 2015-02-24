@@ -12,7 +12,7 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
         [Option('g', "target", HelpText = "A search term for the item to merge into.", Required = true)]
         public string FirstSearchTerm { get; set; }
 
-        [Option('s', "search", HelpText = "A search term for the item to be merged.", Required = true)]
+        [Option('s', "search", HelpText = "A search term for the item to be merged. Defaults to same as 'target' option.")]
         public string SecondSearchTerm { get; set; }
     }
 }

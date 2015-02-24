@@ -11,7 +11,7 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
         [Option('s', "search", HelpText = "A search term to find the child item.", Required = true)]
         public string ChildSearchTerm { get; set; }
 
-        [Option('g', "target", HelpText = "A search term to find the parent item.", Required = true)]
+        [Option('g', "target", HelpText = "A search term to find the parent item. Defaults to same as 'search' option.")]
         public string ParentSearchTerm { get; set; }
     }
 }
