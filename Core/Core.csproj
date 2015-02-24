@@ -45,12 +45,14 @@
     <Compile Include="Export\GraphVizExporter.cs" />
     <Compile Include="Export\HtmlExporter.cs" />
     <Compile Include="Export\IExporter.cs" />
+    <Compile Include="Export\TextExporter.cs" />
     <Compile Include="Import\IImporter.cs" />
-    <Compile Include="Import\TodoSortImporter.cs" />
+    <Compile Include="Import\TextImporter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Search\AndSpecification.cs" />
     <Compile Include="Search\DepthRangeSearchSpecification.cs" />
     <Compile Include="Search\ExactPropertyValueSpecification.cs" />
+    <Compile Include="Search\FullTextSearchSpecification.cs" />
     <Compile Include="Search\ISearchSpecification.cs" />
     <Compile Include="Search\NoteSearchSpecification.cs" />
     <Compile Include="Search\NotSpecification.cs" />

@@ -26,9 +26,12 @@ namespace AssimilationSoftware.TodoSort.Core
         bool someday_changes;
         bool done_changes;
 
-        string _searchTerm;
         private bool showHeadOnly = true;
         string _statusMessage;
+
+        private ISearchSpecification<ActionItem> _todoSearchSpec;
+        private ISearchSpecification<ActionItem> _somedaySearchSpec;
+        private ISearchSpecification<ActionItem> _doneSearchSpec;
         #endregion
 
         public ViewModel(IPimDataMapper<ActionItem> todo, IPimDataMapper<ActionItem> done, IPimDataMapper<ActionItem> someday)
@@ -51,7 +54,7 @@ namespace AssimilationSoftware.TodoSort.Core
             someday_changes = false;
             done_changes = false;
 
-            _searchTerm = string.Empty;
+            SearchSpecification = null;
         }
 
         #region Events
@@ -59,9 +62,6 @@ namespace AssimilationSoftware.TodoSort.Core
         /// An event that indicates a property has changed value.
         /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
-        
-        private ISearchSpecification<ActionItem> _somedaySearchSpec;
-        private ISearchSpecification<ActionItem> _doneSearchSpec;
 
         /// <summary>
         /// Fires the PropertyChanged event with given arguments.
@@ -99,22 +99,25 @@ namespace AssimilationSoftware.TodoSort.Core
 
         public string SearchTerm
         {
-            get
-            {
-                return _searchTerm;
-            }
             set
             {
-                _searchTerm = value;
+                SearchSpecification = new FullTextSearchSpecification(value);
                 RaisePropertyChanged("SearchTerm", "SearchResults");
             }
         }
 
-        public ActionItem[] SearchResults
+        public IEnumerable<ActionItem> SearchResults
         {
             get
             {
-                return this.Search(SearchTerm);
+                if (ShowHeadOnly)
+                {
+                    return this.todo_items.Where(i => SearchSpecification.And(new DepthRangeSearchSpecification(0, 0)).IsSatisfiedBy(i));
+                }
+                else
+                {
+                    return this.todo_items.Where(i => SearchSpecification.IsSatisfiedBy(i));
+                }
             }
         }
 
@@ -144,6 +147,19 @@ namespace AssimilationSoftware.TodoSort.Core
             {
                 _statusMessage = value;
                 RaisePropertyChanged("StatusMessage");
+            }
+        }
+
+        public ISearchSpecification<ActionItem> SearchSpecification
+        {
+            get
+            {
+                return _todoSearchSpec ?? new TrueSpecification<ActionItem>();
+            }
+            set
+            {
+                _todoSearchSpec = value;
+                RaisePropertyChanged("SearchSpecification", "SearchResults");
             }
         }
 
@@ -203,6 +219,7 @@ namespace AssimilationSoftware.TodoSort.Core
         #endregion
 
         #region Methods
+        [Obsolete]
         public ActionItem[] GetContextItems(string context)
         {
             // TODO: return Search(context, null, null, null, null, null); // ?
@@ -217,6 +234,7 @@ namespace AssimilationSoftware.TodoSort.Core
             }
         }
 
+        [Obsolete]
         public ActionItem[] GetChildItems(ActionItem selected)
         {
             var result = from m in todo_items where m.RankParent == selected select m;
@@ -365,67 +383,14 @@ namespace AssimilationSoftware.TodoSort.Core
             RaisePropertyChanged("SearchResults");
         }
 
-        /// <summary>
-        /// Finds items in the main list that match a given search term.
-        /// </summary>
-        /// <param name="search_term">The string to look for.</param>
-        /// <returns>A list of matching items.</returns>
-        /// <remarks>
-        /// Full-text search needs to be a different operation to advanced search. 
-        /// Full-text looks for text anywhere and returns all possible results. 
-        /// Advanced search looks for single records with *all* specified properties and returns only those best matches.
-        /// </remarks>
-        private ActionItem[] Search(string search_term)
-        {
-            // Full-text 
-            var result = (from i in todo_items
-                          where i.Title.ToLower().Contains(search_term.ToLower())
-                            || string.Join(Environment.NewLine, i.Notes).ToLower().Contains(search_term.ToLower())
-                            || string.Join(Environment.NewLine, i.Tags.Keys).ToLower().Contains(search_term.ToLower())
-                            || i.ID.ToString().StartsWith(search_term)
-                            || string.Join(Environment.NewLine, (from k in i.Tags select k.Value)).ToLower().Contains(search_term.ToLower())
-                          select i);
-            if (showHeadOnly)
-            {
-                return (from i in result where !todo_items.Contains(i.RankParent) select i).ToArray();
-            }
-            else
-            {
-                return result.ToArray();
-            }
-        }
-
-        /// <summary>
-        /// Advanced search_term. Any argument can be null to represent all values.
-        /// </summary>
-        /// <param name="context">The context to search_term for.</param>
-        /// <param name="partial_title">Part of the title.</param>
-        /// <param name="partial_note">Part of a note.</param>
-        /// <param name="partial_id">The beginning of the ID.</param>
-        /// <param name="has_tag">A tag name.</param>
-        /// <param name="tag_value">A tag value (not necessarily that of the named tag).</param>
-        /// <returns>An array of all matching items.</returns>
-        /// <remarks>TODO: If both has_tag and tag_value are specified, require that item.Tags[has_tag] contains tag_value.</remarks>
-        public ActionItem[] Search(string context, string partial_title, string partial_note, string partial_id, string has_tag, string tag_value, int mindepth, int maxdepth)
-        {
-            var result = (from i in todo_items
-                          where ((partial_title == null || i.Title.ToLower().Contains(partial_title.ToLower()))
-                          && (context == null || i.Context.ToLower() == context.ToLower())
-                          && (partial_note == null || string.Join(Environment.NewLine, i.Notes).ToLower().Contains(partial_note.ToLower()))
-                          && (has_tag == null || i.Tags.ContainsKey(has_tag))
-                          && (tag_value == null || string.Join(Environment.NewLine, from k in i.Tags select k.Value).ToLower().Contains(tag_value.ToLower())))
-                          && (partial_id == null || i.ID.ToString().ToLower().StartsWith(partial_id.ToLower()))
-                          && (i.RankDepth >= mindepth && i.RankDepth <= maxdepth)
-                          select i);
-            return result.ToArray();
-        }
-
+        [Obsolete]
         public List<ActionItem> GetProjectChildren(ActionItem actionItem)
         {
             var result = (from i in todo_items where i.Project == actionItem select i).ToList();
             return result.ToList();
         }
 
+        [Obsolete]
         public List<ActionItem> GetTickleDueItems()
         {
             return (from i in SomedayItems where i.TickleDate <= DateTime.Now select i).ToList();

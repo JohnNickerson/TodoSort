@@ -71,11 +71,6 @@
 		- On the other hand, it could be good to delay that for an unimportant project.
 		#type:feature
 		#id:76757caa-17d7-4a14-a337-afda259a9ab6
-	Export to text format
-		- There should be a round-trip export/import process.
-		#type:feature
-		#release:0.7
-		#id:87b4457b-752a-46d2-bbab-8a5c6f197309
 	Show project children
 		- There's no way to inspect project relationships from the command line.
 		#type:feature
@@ -104,6 +99,10 @@
 		- I've used different sets of contexts in different files for different purposes. It would just help to see them displayed.
 		#type:feature
 		#id:fca19166-f471-49e5-864e-0386c098e41d
+	Last page of Someday processing is blank
+		- When processing Someday items and the last item is at the end of a page (eg --pagesize 1) there will be a blank set displayed at the end.
+		#type:bug
+		#id:22ea6512-fd50-4714-8f20-ce7107edca63
 	Sort command or option on process
 		#type:feature
 		#release:0.7
@@ -214,6 +213,7 @@
 		#id:6dc916bc-4924-4300-8adb-89d20013dce1
 		#priority-parent:7488887c-bea1-4728-8d61-4f7ef21f76be
 	Display results by data binding instead of direct fetch
+		- Bypass any ViewModel methods that return a list of ActionItems. (2015-02-25)
 		#type:feature
 		#release:0.7
 		#id:b7a72b3f-f40d-4dc0-abcc-66ca522d3cbf

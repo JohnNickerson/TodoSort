@@ -43,7 +43,7 @@ namespace AssimilationSoftware.TodoSort.Core.Search
                 else
                 {
                     // Both tag and value.
-                    return b.Tags[_tagname] == _tagvalue;
+                    return b.Tags.ContainsKey(_tagname) && b.Tags[_tagname] == _tagvalue;
                 }
             }
         }

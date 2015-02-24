@@ -4,7 +4,9 @@ using AssimilationSoftware.PimData.Model;
 using AssimilationSoftware.TodoSort.CLI.Options;
 using AssimilationSoftware.TodoSort.CLI.Properties;
 using AssimilationSoftware.TodoSort.Core;
+using AssimilationSoftware.TodoSort.Core.Export;
 using AssimilationSoftware.TodoSort.Core.Import;
+using AssimilationSoftware.TodoSort.Core.Search;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -105,7 +107,8 @@ namespace AssimilationSoftware.TodoSort.CLI
                 case "advanced-search":
                     var searchterms = (AdvancedSearchSubOptions)argsubs;
                     searchterms.MaxDepth = Math.Max(searchterms.ShowAllItems ? Int32.MaxValue : 0, searchterms.MaxDepth);
-                    PrintItems(vm.Search(searchterms.Context, searchterms.Title, searchterms.Note, searchterms.ID, searchterms.TagName, searchterms.TagValue, searchterms.MinDepth, searchterms.MaxDepth));
+                    vm.SearchSpecification = searchterms.SearchSpecification;
+                    PrintItems(vm.SearchResults);
                     break;
                 #endregion
 
@@ -182,10 +185,14 @@ namespace AssimilationSoftware.TodoSort.CLI
                         case "graphviz":
                             exporter = new GraphVizExporter { Filename = exportOptions.Filename };
                             break;
+                        case "text":
+                            exporter = new TextExporter { Filename = exportOptions.Filename };
+                            break;
                     }
                     if (exporter != null)
                     {
-                        exporter.Export(vm.GetContextItems(exportOptions.Context).ToList());
+                        vm.SearchSpecification = new ExactPropertyValueSpecification<ActionItem, string>(i => i.Context, exportOptions.Context);
+                        exporter.Export(vm.SearchResults.ToList());
                     }
                     break;
                 #endregion
@@ -198,7 +205,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                         switch (importOptions.Format)
                         {
                             case "todosort":
-                                importer = new TodoSortImporter { Filename = importOptions.Filename };
+                                importer = new TextImporter { Filename = importOptions.Filename };
                                 break;
                         }
                         if (importer != null)
@@ -219,7 +226,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                     {
                         Console.WriteLine("Confirm item to merge into:");
                         vm.SearchTerm = mergeOptions.SecondSearchTerm ?? mergeOptions.FirstSearchTerm;
-                        var combined = Disambiguate(vm.SearchResults.Where(x => x.ID != mergevictim.ID).ToArray());
+                        var combined = Disambiguate(vm.SearchResults.Where(x => x.ID != mergevictim.ID));
                         if (mergevictim != null && combined != null)
                         {
                             vm.Merge(mergevictim, combined);
@@ -455,7 +462,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                         // Set the ViewModel property.
                         vm.DoneSearchSpecification = search;
                         // Report the results.
-                        PrintItems(vm.DoneSearchResults.ToArray());
+                        PrintItems(vm.DoneSearchResults);
                     }
                     break;
                 #endregion
@@ -468,7 +475,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                         // Set the ViewModel property.
                         vm.SomedaySearchSpecification = search;
                         // Report the results.
-                        PrintItems(vm.SomedaySearchResults.ToArray());
+                        PrintItems(vm.SomedaySearchResults);
                     }
                     break;
                 #endregion
@@ -814,7 +821,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             return preset;
         }
 
-        private static void PrintItems(params ActionItem[] list)
+        private static void PrintItems(IEnumerable<ActionItem> list)
         {
             string last_context = string.Empty;
             foreach (ActionItem i in from a in list orderby a.Context, a.Title select a)
@@ -927,7 +934,7 @@ commands:
 ", Assembly.GetExecutingAssembly().GetName().Version));
         }
 
-		private static ActionItem Disambiguate(ActionItem[] todolist)
+		private static ActionItem Disambiguate(IEnumerable<ActionItem> todolist)
 		{
 			ActionItem selected = null;
 

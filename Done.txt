@@ -424,6 +424,13 @@
 		#release:0.7
 		#done-date:2015-02-24
 		#id:e9e564f5-090e-47d2-9a51-006c6e6302db
+@2015-02-25
+	Export to text format
+		- There should be a round-trip export/import process.
+		#type:feature
+		#release:0.7
+		#done-date:2015-02-25
+		#id:87b4457b-752a-46d2-bbab-8a5c6f197309
 @done
 	The Done list should be broken up into date sub lists rather than being a different format.
 		#id:3da6bbcb-9608-4289-a82c-50b29d7ee7ac
