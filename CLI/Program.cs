@@ -871,7 +871,8 @@ namespace AssimilationSoftware.TodoSort.CLI
                         WrapOutput(string.Format("        #{0}:", k.Key), k.Value, wrapwidth);
                     }
                 }
-                // TODO: ID, priority-parent and other special tags.
+                WrapOutput("        #ID:", i.ID.ToString(), wrapwidth);
+                // TODO: priority-parent and other special tags.
             }
         }
 

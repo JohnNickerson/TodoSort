@@ -418,7 +418,12 @@
 		#release:0.7
 		#done-date:2015-02-24
 		#id:93ee9286-2ee7-4252-bee8-1a3127d14d9e
-		#priority-parent:7488887c-bea1-4728-8d61-4f7ef21f76be
+	Display item IDs in verbose results
+		- If you can search by ID, you should be able to search for them, too.
+		#type:feature
+		#release:0.7
+		#done-date:2015-02-24
+		#id:e9e564f5-090e-47d2-9a51-006c6e6302db
 @done
 	The Done list should be broken up into date sub lists rather than being a different format.
 		#id:3da6bbcb-9608-4289-a82c-50b29d7ee7ac
