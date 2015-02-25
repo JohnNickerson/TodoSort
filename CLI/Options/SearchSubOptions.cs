@@ -1,4 +1,6 @@
-﻿using CommandLine;
+﻿using AssimilationSoftware.PimData.Model;
+using AssimilationSoftware.TodoSort.Core.Search;
+using CommandLine;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,5 +15,20 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
 
         [Option('i', "id", HelpText = "The beginning of the ID of the item to work on.")]
         public string ItemId { get; set; }
+
+        public ISearchSpecification<ActionItem> SearchSpecification
+        {
+            get
+            {
+                if (!string.IsNullOrEmpty(ItemId))
+                {
+                    return new IdSearchSpecification(ItemId).And(new FullTextSearchSpecification(SearchTerm));
+                }
+                else
+                {
+                    return new FullTextSearchSpecification(SearchTerm);
+                }
+            }
+        }
     }
 }

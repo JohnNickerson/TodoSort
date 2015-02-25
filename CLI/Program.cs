@@ -116,7 +116,8 @@ namespace AssimilationSoftware.TodoSort.CLI
                 case "count-children":
                     {
                         CountChildrenSubOptions countOptions = (CountChildrenSubOptions)argsubs;
-                        foreach (var item in vm.GetContextItems(countOptions.Context))
+                        vm.SearchSpecification = new ContextSearchSpecification(countOptions.Context);
+                        foreach (var item in vm.SearchResults)
                         {
                             PrintItem(item, null);
                             // Actually count the children.
@@ -133,7 +134,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                 case "defer":
                     // Move the item and its sub-items to the "someday" file.
                     DeferSubOptions deferopts = ((DeferSubOptions)argsubs);
-                    vm.SearchTerm = deferopts.SearchTerm;
+                    vm.SearchSpecification = deferopts.SearchSpecification;
                     selected = Disambiguate(vm.SearchResults);
                     if (selected != null)
                     {
@@ -152,7 +153,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                 #region Delete
                 case "delete":
                     // Find a matching item to delete.
-                    vm.SearchTerm = ((DeleteSubOptions)argsubs).SearchTerm;
+                    vm.SearchSpecification = ((DeleteSubOptions)argsubs).SearchSpecification;
                     selected = Disambiguate(vm.SearchResults);
                     vm.Delete(selected);
                     break;
@@ -161,7 +162,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                 #region Done
                 case "done":
                     // If there is a next action, create a new item and add it to the correct context.
-                    vm.SearchTerm = ((DoneSubOptions)argsubs).SearchTerm;
+                    vm.SearchSpecification = ((DoneSubOptions)argsubs).SearchSpecification;
                     selected = Disambiguate(vm.SearchResults);
                     if (selected != null)
                     {
@@ -240,7 +241,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                 case "move":
                     {
                         var moveOptions = (MoveSubOptions)argsubs;
-                        vm.SearchTerm = moveOptions.SearchTerm;
+                        vm.SearchSpecification = moveOptions.SearchSpecification;
                         selected = Disambiguate(vm.SearchResults);
                         if (selected != null)
                         {
@@ -255,7 +256,8 @@ namespace AssimilationSoftware.TodoSort.CLI
                     {
                         var moveAllOptions = (MoveAllSubOptions)argsubs;
                         vm.ShowHeadOnly = false; // Make sure we move all items in the context, not just the head.
-                        var items = vm.GetContextItems(moveAllOptions.Search).ToList();
+                        vm.SearchSpecification = new ContextSearchSpecification(moveAllOptions.Search);
+                        var items = vm.SearchResults.ToList();
                         int counter = 0;
                         while (items.Count > 0)
                         {
@@ -272,7 +274,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                 case "note":
                     // Add a note to a task.
                     NoteSubOptions noteOptions = (NoteSubOptions)argsubs;
-                    vm.SearchTerm = noteOptions.SearchTerm;
+                    vm.SearchSpecification = noteOptions.SearchSpecification;
                     selected = Disambiguate(vm.SearchResults);
                     if (selected != null)
                     {
@@ -287,7 +289,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                 case "open-tag":
                     // Read a tag and pass it through to the "start" argverb. Intended for URLs and file names.
                     OpenTagSubOptions opentagOptions = (OpenTagSubOptions)argsubs;
-                    vm.SearchTerm = opentagOptions.SearchTerm;
+                    vm.SearchSpecification = opentagOptions.SearchSpecification;
                     selected = Disambiguate(vm.SearchResults);
                     if (selected != null)
                     {
@@ -322,7 +324,8 @@ namespace AssimilationSoftware.TodoSort.CLI
                     // Go over the @someday items and look for tickle dates.
                     vm.Undefer("inbox", vm.GetTickleDueItems().ToArray());
 
-                    var inbox = vm.GetContextItems("inbox").ToList();
+                    vm.SearchSpecification = new ContextSearchSpecification("inbox");
+                    var inbox = vm.SearchResults.ToList();
                     for (int i = 0; i < inbox.Count; i++)
                     {
                         // Assign the @inbox items to contexts.
@@ -376,34 +379,36 @@ namespace AssimilationSoftware.TodoSort.CLI
                 case "rank":
                     // for each context..
                     bool quitandsave = false;
+                    vm.ShowHeadOnly = true;
                     foreach (string con in vm.GetContextNames("inbox", "done"))
                     {
                         if (quitandsave) break;
                         // select all items without rank parents
-                        var items = (from i in vm.GetContextItems(con) where i.RankParent == null select i).ToList();
+                        vm.SearchSpecification = new ContextSearchSpecification(con);
+                        var items = vm.SearchResults;
                         // TODO: randomise an index list
                         // show pairs of items
-                        if (items.Count > 1)
+                        if (items.Count() > 1)
                         {
                             Console.WriteLine(string.Format("{1}{1}@{0}", con, Environment.NewLine));
                         }
-                        for (int x = 0; x < items.Count - 1; x += 2)
+                        for (int x = 0; x < items.Count() - 1; x++)
                         {
                             if (quitandsave) break;
                             // get vote
-                            Console.WriteLine("{0}/{1} ({2}%) complete", x, items.Count, 100 * x / items.Count);
-                            PrintItem(items[x], 1);
-                            PrintItem(items[x + 1], 2);
+                            Console.WriteLine("{0}/{1} ({2}%) complete", x, items.Count(), 100 * x / items.Count());
+                            PrintItem(items.ElementAt(x), 1);
+                            PrintItem(items.ElementAt(x + 1), 2);
                             Console.Write("Which of these is more important? (q=quit) ");
                             var k = Console.ReadKey();
                             // assign parents based on vote
                             switch (k.KeyChar)
                             {
                                 case '1':
-                                    vm.SetParent(items[x + 1], items[x]);
+                                    vm.SetParent(items.ElementAt(x + 1), items.ElementAt(x));
                                     break;
                                 case '2':
-                                    vm.SetParent(items[x], items[x + 1]);
+                                    vm.SetParent(items.ElementAt(x), items.ElementAt(x + 1));
                                     break;
                                 case 'q':
                                     Console.WriteLine();
@@ -436,7 +441,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                 case "rename":
                     // Rename an item.
                     RenameSubOptions renameOptions = (RenameSubOptions)argsubs;
-                    vm.SearchTerm = renameOptions.SearchTerm;
+                    vm.SearchSpecification = renameOptions.SearchSpecification;
                     selected = Disambiguate(vm.SearchResults);
                     if (selected != null)
                     {
@@ -449,7 +454,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                 #region Search
                 case "search":
                     // Search for matching items.
-                    vm.SearchTerm = ((SearchSubOptions)argsubs).SearchTerm;
+                    vm.SearchSpecification = ((SearchSubOptions)argsubs).SearchSpecification;
                     PrintItems(vm.SearchResults);
                     break;
                 #endregion
@@ -529,7 +534,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                 case "show-parents":
                     {
                         ShowParentsSubOptions showParentOptions = (ShowParentsSubOptions)argsubs;
-                        vm.SearchTerm = showParentOptions.SearchTerm;
+                        vm.SearchSpecification = showParentOptions.SearchSpecification;
                         selected = Disambiguate(vm.SearchResults);
                         if (selected != null)
                         {
@@ -626,7 +631,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                 case "tag":
                     // Search for a matching item.
                     TagSubOptions tagOptions = (TagSubOptions)argsubs;
-                    vm.SearchTerm = tagOptions.SearchTerm;
+                    vm.SearchSpecification = tagOptions.SearchSpecification;
                     selected = Disambiguate(vm.SearchResults);
                     if (selected != null)
                     {
@@ -638,8 +643,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                 #region Unrank
                 case "unrank":
                     UnrankSubOptions unrankOptions = (UnrankSubOptions)argsubs;
-                    vm.ShowHeadOnly = !unrankOptions.SearchAll;
-                    vm.SearchTerm = unrankOptions.SearchTerm;
+                    vm.SearchSpecification = unrankOptions.SearchSpecification;
                     selected = Disambiguate(vm.SearchResults);
                     if (selected != null)
                     {
