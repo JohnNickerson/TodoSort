@@ -153,7 +153,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                 #region Delete
                 case "delete":
                     // Find a matching item to delete.
-                    vm.SearchSpecification = ((DeleteSubOptions)argsubs).SearchSpecification;
+                    vm.SearchSpecification = ((SearchSubOptions)argsubs).SearchSpecification;
                     selected = Disambiguate(vm.SearchResults);
                     vm.Delete(selected);
                     break;
@@ -162,7 +162,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                 #region Done
                 case "done":
                     // If there is a next action, create a new item and add it to the correct context.
-                    vm.SearchSpecification = ((DoneSubOptions)argsubs).SearchSpecification;
+                    vm.SearchSpecification = ((SearchSubOptions)argsubs).SearchSpecification;
                     selected = Disambiguate(vm.SearchResults);
                     if (selected != null)
                     {
@@ -322,7 +322,8 @@ namespace AssimilationSoftware.TodoSort.CLI
                 #region Process
                 case "process":
                     // Go over the @someday items and look for tickle dates.
-                    vm.Undefer("inbox", vm.GetTickleDueItems().ToArray());
+                    vm.SearchSpecification = new TickleDateSearchSpecification(null, DateTime.Today);
+                    vm.Undefer("inbox", vm.SearchResults.ToArray());
 
                     vm.SearchSpecification = new ContextSearchSpecification("inbox");
                     var inbox = vm.SearchResults.ToList();
@@ -338,10 +339,12 @@ namespace AssimilationSoftware.TodoSort.CLI
                     }
 
                     // Need to find projects for which there is no next action. I hate that kind of query. It's a "where not exists (subquery)".
-                    var projects = vm.GetContextItems("projects").ToList();
+                    vm.SearchSpecification = new ContextSearchSpecification("projects");
+                    var projects = vm.SearchResults.ToList();
                     for (int i = 0; i < projects.Count; i++)
                     {
-                        if (vm.GetProjectChildren(projects[i]).Count() == 0)
+                        vm.SearchSpecification = new ProjectChildrenSearchSpecification(projects[i]);
+                        if (vm.SearchResults.Count() == 0)
                         {
                             // Add next actions for projects.
                             Console.WriteLine("What is the next action required on this project?");
@@ -385,14 +388,14 @@ namespace AssimilationSoftware.TodoSort.CLI
                         if (quitandsave) break;
                         // select all items without rank parents
                         vm.SearchSpecification = new ContextSearchSpecification(con);
-                        var items = vm.SearchResults;
+                        var items = vm.SearchResults.ToArray();
                         // TODO: randomise an index list
                         // show pairs of items
                         if (items.Count() > 1)
                         {
                             Console.WriteLine(string.Format("{1}{1}@{0}", con, Environment.NewLine));
                         }
-                        for (int x = 0; x < items.Count() - 1; x++)
+                        for (int x = 0; x < items.Count() - 1; x += 2)
                         {
                             if (quitandsave) break;
                             // get vote
@@ -525,15 +528,15 @@ namespace AssimilationSoftware.TodoSort.CLI
                 case "show":
                     // Display one context.
                     ShowSubOptions showOptions = (ShowSubOptions)argsubs;
-                    var list = vm.GetContextItems(showOptions.Context);
-                    PrintItems(list);
+                    vm.SearchSpecification = new ContextSearchSpecification(showOptions.Context);
+                    PrintItems(vm.SearchResults);
                     break;
                 #endregion
 
                 #region Show Parents
                 case "show-parents":
                     {
-                        ShowParentsSubOptions showParentOptions = (ShowParentsSubOptions)argsubs;
+                        var showParentOptions = (SearchSubOptions)argsubs;
                         vm.SearchSpecification = showParentOptions.SearchSpecification;
                         selected = Disambiguate(vm.SearchResults);
                         if (selected != null)
@@ -601,8 +604,8 @@ namespace AssimilationSoftware.TodoSort.CLI
 
                 #region Summary
                 case "summary":
-                    var summaryArgs = (SummarySubOptions)argsubs;
-                    var summarydata = (from c in vm.GetContextNames() select new { Context = c, Count = vm.GetContextItems(c).Count() });
+                    var summaryArgs = (UniversalOptions)argsubs;
+                    var summarydata = (from i in vm.SearchResults group i by i.Context into c select new { Context = c.Key, Count = c.Count() });
 
                     int maxwidth = (summarydata.Count() > 0 ? (from r in summarydata select r.Context.Length).Max() : 0);
                     int maxnum = (summarydata.Count() > 0 ? (from c in summarydata select c.Count).Max() : 0);
@@ -615,7 +618,8 @@ namespace AssimilationSoftware.TodoSort.CLI
                         if (summaryArgs.Verbose)
                         {
                             // Show a summary of numbers at each depth.
-                            var detailed = (from r in vm.GetContextItems(c.Context) group r by r.RankDepth into g select new { Depth = g.Key, Count = g.Count() });
+                            vm.SearchSpecification = new ContextSearchSpecification(c.Context);
+                            var detailed = (from r in vm.SearchResults group r by r.RankDepth into g select new { Depth = g.Key, Count = g.Count() });
                             foreach (var d in detailed)
                             {
                                 format = string.Format("\t{{0}}\t{{1,{0}}} item{1}", Math.Ceiling(Math.Log10(maxnum)), (d.Count == 1 ? "" : "s"));
@@ -630,7 +634,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                 #region Tag
                 case "tag":
                     // Search for a matching item.
-                    TagSubOptions tagOptions = (TagSubOptions)argsubs;
+                    var tagOptions = (SearchSubOptions)argsubs;
                     vm.SearchSpecification = tagOptions.SearchSpecification;
                     selected = Disambiguate(vm.SearchResults);
                     if (selected != null)
@@ -640,9 +644,37 @@ namespace AssimilationSoftware.TodoSort.CLI
                     break;
                 #endregion
 
+                #region Undefer
+                case "undefer":
+                    {
+                        var undeferOptions = (SearchSubOptions)argsubs;
+                        vm.SomedaySearchSpecification = undeferOptions.SearchSpecification;
+                        selected = Disambiguate(vm.SomedaySearchResults);
+                        if (selected != null)
+                        {
+                            vm.Undefer("inbox", selected);
+                        }
+                    }
+                    break;
+                #endregion
+
+                #region Undo
+                case "undo":
+                    {
+                        var undoOptions = (SearchSubOptions)argsubs;
+                        vm.DoneSearchSpecification = undoOptions.SearchSpecification;
+                        selected = Disambiguate(vm.DoneSearchResults);
+                        if (selected != null)
+                        {
+                            vm.Undo("inbox", selected);
+                        }
+                    }
+                    break;
+                #endregion
+
                 #region Unrank
                 case "unrank":
-                    UnrankSubOptions unrankOptions = (UnrankSubOptions)argsubs;
+                    var unrankOptions = (SearchSubOptions)argsubs;
                     vm.SearchSpecification = unrankOptions.SearchSpecification;
                     selected = Disambiguate(vm.SearchResults);
                     if (selected != null)
@@ -685,17 +717,20 @@ namespace AssimilationSoftware.TodoSort.CLI
             // Move to the "done" file any items with a context of @done.
             if (donemapper != null)
             {
-                vm.MarkDone(vm.GetContextItems("done").ToArray());
+                vm.SearchSpecification = new ContextSearchSpecification("done");
+                vm.MarkDone(vm.SearchResults.ToArray());
             }
 
             // Move any "someday" items in the main list to the someday file.
             if (somedaymapper != null)
             {
-                vm.Defer(vm.GetContextItems("someday").ToArray());
+                vm.SearchSpecification = new ContextSearchSpecification("someday");
+                vm.Defer(vm.SearchResults.ToArray());
             }
 
             // Delete any items with a context of "delete".
-            vm.Delete(vm.GetContextItems("delete").ToArray());
+            vm.SearchSpecification = new ContextSearchSpecification("delete");
+            vm.Delete(vm.SearchResults.ToArray());
             #endregion
 
             if (selected != null)
@@ -750,7 +785,14 @@ namespace AssimilationSoftware.TodoSort.CLI
                     case '3':
                         Console.WriteLine("What tag to open?");
                         var tag = Console.ReadLine();
-                        OpenItemTag(item.Tags[tag]);
+                        if (item.Tags.ContainsKey(tag))
+                        {
+                            OpenItemTag(item.Tags[tag]);
+                        }
+                        else
+                        {
+                            Console.WriteLine("Tag not found on this item.");
+                        }
                         break;
                     case '5':
                         TagItem(vm, item);

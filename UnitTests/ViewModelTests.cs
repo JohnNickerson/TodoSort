@@ -1,6 +1,7 @@
 ﻿using AssimilationSoftware.PimData.Interfaces;
 using AssimilationSoftware.PimData.Model;
 using AssimilationSoftware.TodoSort.Core;
+using AssimilationSoftware.TodoSort.Core.Search;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -51,7 +52,8 @@ namespace AssimilationSoftware.TodoSort.UnitTests
             var a = new ActionItem("someday", "An item to defer");
             todo.Save(a);
 
-            vm.Defer(vm.GetContextItems("someday").ToArray());
+            vm.SearchSpecification = new ContextSearchSpecification("someday");
+            vm.Defer(vm.SearchResults.ToArray());
 
             var b = someday.Load(a.ID);
             Assert.NotNull(b);
@@ -74,7 +76,8 @@ namespace AssimilationSoftware.TodoSort.UnitTests
             todo.Save(project);
             todo.Save(child);
 
-            vm.Defer(vm.GetContextItems("someday").ToArray());
+            vm.SearchSpecification = new ContextSearchSpecification("someday");
+            vm.Defer(vm.SearchResults.ToArray());
 
             var b = someday.Load(project.ID);
             var c = someday.Load(child.ID);
@@ -123,7 +126,8 @@ namespace AssimilationSoftware.TodoSort.UnitTests
 
             // When looking for project children, always return all, regardless of ShowHeadOnly setting?
             vm.ShowHeadOnly = true;
-            Assert.Contains(testitemlow, vm.GetProjectChildren(testproject));
+            vm.SearchSpecification = new ProjectChildrenSearchSpecification(testproject);
+            Assert.Contains(testitemlow, vm.SearchResults);
         }
     }
 }

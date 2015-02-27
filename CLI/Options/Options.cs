@@ -24,10 +24,10 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
         public DeferSubOptions DeferVerb { get; set; }
 
         [VerbOption("delete", HelpText = "Delete an item without doing it.")]
-        public DeleteSubOptions DeleteVerb { get; set; }
+        public SearchSubOptions DeleteVerb { get; set; }
 
         [VerbOption("done", HelpText = "Move an item to the done file.")]
-        public DoneSubOptions DoneVerb { get; set; }
+        public SearchSubOptions DoneVerb { get; set; }
 
         [VerbOption("export", HelpText = "Save a formatted copy of a list to file.")]
         public ExportSubOptions ExportVerb { get; set; }
@@ -60,7 +60,7 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
         public PruneSubOptions PruneVerb { get; set; }
 
         [VerbOption("rank", HelpText = "Vote on the relative importance of items to assign priorities.")]
-        public RankSubOptions RankVerb { get; set; }
+        public UniversalOptions RankVerb { get; set; }
 
         [VerbOption("rename", HelpText = "Change the name of an item.")]
         public RenameSubOptions RenameVerb { get; set; }
@@ -84,19 +84,19 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
         public ShowSubOptions ShowVerb { get; set; }
 
         [VerbOption("show-parents", HelpText = "Shows an item and its parent chain up to the root of the tree.")]
-        public ShowParentsSubOptions ShowParentsVerb { get; set; }
+        public SearchSubOptions ShowParentsVerb { get; set; }
 
         [VerbOption("someday", HelpText = "Review the someday file, assigning 10% to an active context.")]
         public SomedaySubOptions SomedayVerb { get; set; }
 
         [VerbOption("summary", HelpText = "Show context names and number of items in each.")]
-        public SummarySubOptions SummaryVerb { get; set; }
+        public UniversalOptions SummaryVerb { get; set; }
 
         [VerbOption("tag", HelpText = "Adds tags to an item.")]
-        public TagSubOptions TagVerb { get; set; }
+        public SearchSubOptions TagVerb { get; set; }
 
         [VerbOption("unrank", HelpText = "Remove priority ranking data for one particular item.")]
-        public UnrankSubOptions UnrankVerb { get; set; }
+        public SearchSubOptions UnrankVerb { get; set; }
 
         [VerbOption("unrank-all", HelpText = "Removes all ranking data from a particular context or all items.")]
         public UnrankAllSubOptions UnrankAllVerb { get; set; }

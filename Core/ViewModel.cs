@@ -92,7 +92,7 @@ namespace AssimilationSoftware.TodoSort.Core
                 }
                 else
                 {
-                    return GetContextItems("someday").ToList();
+                    return todo_items.Where(i => i.Context == "someday").ToList();
                 }
             }
         }
@@ -219,20 +219,6 @@ namespace AssimilationSoftware.TodoSort.Core
         #endregion
 
         #region Methods
-        [Obsolete]
-        public ActionItem[] GetContextItems(string context)
-        {
-            // TODO: return Search(context, null, null, null, null, null); // ?
-            var result = from m in todo_items where m.Context.ToLower().Equals(context.ToLower()) select m;
-            if (showHeadOnly)
-            {
-                return (from i in result where i.RankParent == null select i).ToArray();
-            }
-            else
-            {
-                return result.ToArray();
-            }
-        }
 
         [Obsolete]
         public ActionItem[] GetChildItems(ActionItem selected)
@@ -370,6 +356,36 @@ namespace AssimilationSoftware.TodoSort.Core
                 {
                     to_undefer.Enqueue(c);
                 }
+            }
+        }
+
+        /// <summary>
+        /// Moves an item from the Done list to the main list.
+        /// </summary>
+        /// <param name="actionItem"></param>
+        public void Undo(string context, params ActionItem[] selection)
+        {
+            Queue<ActionItem> to_undo = new Queue<ActionItem>(selection);
+            while (to_undo.Count > 0)
+            {
+                ActionItem i = to_undo.Dequeue();
+                if (context == "inbox" && i.Tags.ContainsKey("previous-context") && i.Tags["previous-context"] != "done")
+                {
+                    i.Context = i.Tags["previous-context"];
+                    i.Tags.Remove("previous-context");
+                }
+                else
+                {
+                    i.Context = context;
+                }
+                if (done_mapper != null)
+                {
+                    todo_items.Add(i);
+                    done_items.Remove(i);
+                }
+                done_changes = true;
+                todo_changes = true;
+                i.DoneDate = null;
             }
         }
 
@@ -520,7 +536,8 @@ namespace AssimilationSoftware.TodoSort.Core
         public void ResetPriorityParents(string context)
         {
             ShowHeadOnly = false;
-            foreach (var i in GetContextItems(context))
+            SearchSpecification = new ContextSearchSpecification(context);
+            foreach (var i in SearchResults)
             {
                 ResetPriorityParents(i);
             }

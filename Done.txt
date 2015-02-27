@@ -431,6 +431,24 @@
 		#release:0.7
 		#done-date:2015-02-25
 		#id:87b4457b-752a-46d2-bbab-8a5c6f197309
+@2015-02-27
+	Undo command
+		- To move an item from the Done file back to the Todo list.
+		#type:feature
+		#release:0.7
+		#done-date:2015-02-27
+		#id:017bc96a-cdac-4e7e-9e5c-5e5e249f3f33
+	Undefer a specific item
+		#release:0.7
+		#done-date:2015-02-27
+		#id:6dc916bc-4924-4300-8adb-89d20013dce1
+	Add direct ID search to universal options
+		- Will allow easier offline actions.
+		- Not yet used. I'd rather have a partial ID than a full GUID for search. (2014-06-04)
+		#release:0.7
+		#done-date:2015-02-27
+		#id:bf85cc86-e64b-46dd-b051-db459c6f27e2
+		#priority-parent:fca19166-f471-49e5-864e-0386c098e41d
 @done
 	The Done list should be broken up into date sub lists rather than being a different format.
 		#id:3da6bbcb-9608-4289-a82c-50b29d7ee7ac

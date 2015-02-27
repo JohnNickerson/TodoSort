@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace AssimilationSoftware.TodoSort.CLI.Options
 {
+    [Obsolete("Empty options class.")]
     public class ShowParentsSubOptions : SearchSubOptions
     {
     }

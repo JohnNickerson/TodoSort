@@ -18,8 +18,7 @@ namespace AssimilationSoftware.TodoSort.Core.Search
 
         public bool IsSatisfiedBy(ActionItem b)
         {
-            return b.ID.ToString().ToLower().StartsWith(_searchTerm)
-                || b.Title.ToLower().Contains(_searchTerm)
+            return b.Title.ToLower().Contains(_searchTerm)
                 || b.Notes.Any(n => n.ToLower().Contains(_searchTerm))
                 || string.Join(Environment.NewLine, b.Tags.Keys).ToLower().Contains(_searchTerm)
                 || string.Join(Environment.NewLine, b.Tags.Values).ToLower().Contains(_searchTerm);

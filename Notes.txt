@@ -106,11 +106,19 @@
 		- When processing Someday items and the last item is at the end of a page (eg --pagesize 1) there will be a blank set displayed at the end.
 		#type:bug
 		#id:22ea6512-fd50-4714-8f20-ce7107edca63
-	Undo command
-		- To move an item from the Done file back to the Todo list.
+	Date range search on done items
+		- Might also want tickle date range search on Someday items.
+		#type:feature
+		#id:ee025349-1ecb-4cdb-9db9-47efa4cae73d
+	Count and confirm for bulk operations
+		- When moving/unranking etc a lot of items at once, display a message about it like 'Moving 683 items from X to Y. Continue?'
+		#type:feature
+		#id:c78b118f-87a5-4997-be23-d39f0ceb4b38
+	Display results by data binding instead of direct fetch
+		- Bypass any ViewModel methods that return a list of ActionItems. (2015-02-25)
 		#type:feature
 		#release:0.7
-		#id:017bc96a-cdac-4e7e-9e5c-5e5e249f3f33
+		#id:b7a72b3f-f40d-4dc0-abcc-66ca522d3cbf
 	Sort command or option on process
 		#type:feature
 		#release:0.7
@@ -168,16 +176,14 @@
 		#command:show
 		#id:8da453c8-362d-4545-bac4-c73c7843f3bf
 		#priority-parent:fca19166-f471-49e5-864e-0386c098e41d
-	Add direct ID search to universal options
-		- Will allow easier offline actions.
-		- Not yet used. I'd rather have a partial ID than a full GUID for search. (2014-06-04)
-		#release:0.7
-		#id:bf85cc86-e64b-46dd-b051-db459c6f27e2
-		#priority-parent:fca19166-f471-49e5-864e-0386c098e41d
 	Change console output to an export module used by default
 		#type:feature
 		#id:37ed25d1-cd26-4ad0-b86b-896cca3f783c
 		#priority-parent:fca19166-f471-49e5-864e-0386c098e41d
+	Keep processing while more items still in inbox or projects.
+		#type:feature
+		#id:f5a3d428-5de0-4aa0-8e88-edcc3800ba5e
+		#priority-parent:b7a72b3f-f40d-4dc0-abcc-66ca522d3cbf
 	'Prune-Leaves' command
 		- To remove any items without children and lighten the tree.
 		#type:feature
@@ -210,20 +216,6 @@
 		#type:feature
 		#id:0cfcf140-77f1-455e-a762-f432499512de
 		#priority-parent:734bc716-c2d6-44d6-8a7a-04fb0374238c
-	Undefer a specific item
-		#release:0.7
-		#id:6dc916bc-4924-4300-8adb-89d20013dce1
-		#priority-parent:7488887c-bea1-4728-8d61-4f7ef21f76be
-	Display results by data binding instead of direct fetch
-		- Bypass any ViewModel methods that return a list of ActionItems. (2015-02-25)
-		#type:feature
-		#release:0.7
-		#id:b7a72b3f-f40d-4dc0-abcc-66ca522d3cbf
-		#priority-parent:6dc916bc-4924-4300-8adb-89d20013dce1
-	Keep processing while more items still in inbox or projects.
-		#type:feature
-		#id:f5a3d428-5de0-4aa0-8e88-edcc3800ba5e
-		#priority-parent:b7a72b3f-f40d-4dc0-abcc-66ca522d3cbf
 @gui
 	Open url via GUI
 		- With this, mark as done and ranking, I'll have my main playlist functions in the GUI.

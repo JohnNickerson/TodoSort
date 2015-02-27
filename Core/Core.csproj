@@ -60,8 +60,10 @@
     <Compile Include="Search\NotSpecification.cs" />
     <Compile Include="Search\OrSpecification.cs" />
     <Compile Include="Search\PartialPropertyValueSpecification.cs" />
+    <Compile Include="Search\ProjectChildrenSearchSpecification.cs" />
     <Compile Include="Search\SpecificationExtensionMethods.cs" />
     <Compile Include="Search\TagValueSpecification.cs" />
+    <Compile Include="Search\TickleDateSearchSpecification.cs" />
     <Compile Include="Search\TrueSpecification.cs" />
     <Compile Include="ViewModel.cs" />
   </ItemGroup>

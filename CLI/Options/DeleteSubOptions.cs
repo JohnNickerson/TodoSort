@@ -5,6 +5,7 @@ using System.Text;
 
 namespace AssimilationSoftware.TodoSort.CLI.Options
 {
+    [Obsolete("Empty options class.")]
     public class DeleteSubOptions : SearchSubOptions
     {
     }
