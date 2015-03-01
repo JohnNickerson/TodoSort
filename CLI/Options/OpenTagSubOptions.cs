@@ -6,7 +6,7 @@ using System.Text;
 
 namespace AssimilationSoftware.TodoSort.CLI.Options
 {
-    public class OpenTagSubOptions : SearchSubOptions
+    public class OpenTagSubOptions : SingleSearchSubOptions
     {
         [Option('t', "tag", HelpText = "The tag to open.", Required = true)]
         public string Tag { get; set; }

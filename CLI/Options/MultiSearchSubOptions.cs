@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace AssimilationSoftware.TodoSort.CLI.Options
 {
-    public class AdvancedSearchSubOptions : UniversalOptions
+    public class MultiSearchSubOptions : UniversalOptions
     {
         // Context
         [Option('c', "context", HelpText = "The context to search in.")]
@@ -18,6 +18,10 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
         // Partial prefix
         [Option('n', "name", HelpText = "Partial name to search for.")]
         public string Title { get; set; }
+
+        // Keyword (full-text search)
+        [Option('s', "search", HelpText = "Full-text search keyword.")]
+        public string Keyword { get; set; }
 
         // Tag name
         [Option('t', "tag", HelpText = "Tag name.")]
@@ -40,8 +44,26 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
         public int MinDepth { get; set; }
 
         // Maximum depth } Can be set together by one Depth option (ie "set { MinDepth = value; MaxDepth = value; }")
+        private int _maxdepth;
         [Option("maxdepth", HelpText = "The maximum priority depth for results.", DefaultValue = 0)]
-        public int MaxDepth { get; set; }
+        public int MaxDepth
+        {
+            get
+            {
+                if (ShowAllItems)
+                {
+                    return Int32.MaxValue;
+                }
+                else
+                {
+                    return _maxdepth;
+                }
+            }
+            set
+            {
+                _maxdepth = value;
+            }
+        }
 
         [Option('d', "depth", HelpText = "Absolute depth to search at.")]
         public int Depth
@@ -78,7 +100,11 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
                 if (!string.IsNullOrEmpty(ID))
                 {
                     // TODO: PartialIdSearchSpecification to handle GUIDs better.
-                    result = result.And(new PartialPropertyValueSpecification<string>(i => i.ID.ToString(), ID));
+                    result = result.And(new IdSearchSpecification(ID));
+                }
+                if (!string.IsNullOrEmpty(Keyword))
+                {
+                    result = result.And(new FullTextSearchSpecification(Keyword));
                 }
                 return result;
             }

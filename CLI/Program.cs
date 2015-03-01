@@ -103,15 +103,6 @@ namespace AssimilationSoftware.TodoSort.CLI
                     break;
                 #endregion
 
-                #region Advanced Search
-                case "advanced-search":
-                    var searchterms = (AdvancedSearchSubOptions)argsubs;
-                    searchterms.MaxDepth = Math.Max(searchterms.ShowAllItems ? Int32.MaxValue : 0, searchterms.MaxDepth);
-                    vm.SearchSpecification = searchterms.SearchSpecification;
-                    PrintItems(vm.SearchResults);
-                    break;
-                #endregion
-
                 #region Count Children
                 case "count-children":
                     {
@@ -153,7 +144,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                 #region Delete
                 case "delete":
                     // Find a matching item to delete.
-                    vm.SearchSpecification = ((SearchSubOptions)argsubs).SearchSpecification;
+                    vm.SearchSpecification = ((SingleSearchSubOptions)argsubs).SearchSpecification;
                     selected = Disambiguate(vm.SearchResults);
                     vm.Delete(selected);
                     break;
@@ -162,7 +153,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                 #region Done
                 case "done":
                     // If there is a next action, create a new item and add it to the correct context.
-                    vm.SearchSpecification = ((SearchSubOptions)argsubs).SearchSpecification;
+                    vm.SearchSpecification = ((SingleSearchSubOptions)argsubs).SearchSpecification;
                     selected = Disambiguate(vm.SearchResults);
                     if (selected != null)
                     {
@@ -457,7 +448,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                 #region Search
                 case "search":
                     // Search for matching items.
-                    vm.SearchSpecification = ((SearchSubOptions)argsubs).SearchSpecification;
+                    vm.SearchSpecification = ((MultiSearchSubOptions)argsubs).SearchSpecification;
                     PrintItems(vm.SearchResults);
                     break;
                 #endregion
@@ -466,7 +457,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                 case "search-done":
                     {
                         // Construct a search specification.
-                        var search = ((AdvancedSearchSubOptions)argsubs).SearchSpecification;
+                        var search = ((MultiSearchSubOptions)argsubs).SearchSpecification;
                         // Set the ViewModel property.
                         vm.DoneSearchSpecification = search;
                         // Report the results.
@@ -479,7 +470,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                 case "search-someday":
                     {
                         // Construct a search specification.
-                        var search = ((AdvancedSearchSubOptions)argsubs).SearchSpecification;
+                        var search = ((MultiSearchSubOptions)argsubs).SearchSpecification;
                         // Set the ViewModel property.
                         vm.SomedaySearchSpecification = search;
                         // Report the results.
@@ -524,19 +515,10 @@ namespace AssimilationSoftware.TodoSort.CLI
                     break;
                 #endregion
 
-                #region Show
-                case "show":
-                    // Display one context.
-                    ShowSubOptions showOptions = (ShowSubOptions)argsubs;
-                    vm.SearchSpecification = new ContextSearchSpecification(showOptions.Context);
-                    PrintItems(vm.SearchResults);
-                    break;
-                #endregion
-
                 #region Show Parents
                 case "show-parents":
                     {
-                        var showParentOptions = (SearchSubOptions)argsubs;
+                        var showParentOptions = (SingleSearchSubOptions)argsubs;
                         vm.SearchSpecification = showParentOptions.SearchSpecification;
                         selected = Disambiguate(vm.SearchResults);
                         if (selected != null)
@@ -634,7 +616,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                 #region Tag
                 case "tag":
                     // Search for a matching item.
-                    var tagOptions = (SearchSubOptions)argsubs;
+                    var tagOptions = (SingleSearchSubOptions)argsubs;
                     vm.SearchSpecification = tagOptions.SearchSpecification;
                     selected = Disambiguate(vm.SearchResults);
                     if (selected != null)
@@ -647,7 +629,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                 #region Undefer
                 case "undefer":
                     {
-                        var undeferOptions = (SearchSubOptions)argsubs;
+                        var undeferOptions = (SingleSearchSubOptions)argsubs;
                         vm.SomedaySearchSpecification = undeferOptions.SearchSpecification;
                         selected = Disambiguate(vm.SomedaySearchResults);
                         if (selected != null)
@@ -661,7 +643,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                 #region Undo
                 case "undo":
                     {
-                        var undoOptions = (SearchSubOptions)argsubs;
+                        var undoOptions = (SingleSearchSubOptions)argsubs;
                         vm.DoneSearchSpecification = undoOptions.SearchSpecification;
                         selected = Disambiguate(vm.DoneSearchResults);
                         if (selected != null)
@@ -674,7 +656,7 @@ namespace AssimilationSoftware.TodoSort.CLI
 
                 #region Unrank
                 case "unrank":
-                    var unrankOptions = (SearchSubOptions)argsubs;
+                    var unrankOptions = (SingleSearchSubOptions)argsubs;
                     vm.SearchSpecification = unrankOptions.SearchSpecification;
                     selected = Disambiguate(vm.SearchResults);
                     if (selected != null)

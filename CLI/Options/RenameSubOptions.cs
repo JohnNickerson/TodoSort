@@ -6,7 +6,7 @@ using System.Text;
 
 namespace AssimilationSoftware.TodoSort.CLI.Options
 {
-    public class RenameSubOptions : SearchSubOptions
+    public class RenameSubOptions : SingleSearchSubOptions
     {
         [Option('n', "name", HelpText = "New title.", Required = true)]
         public string NewTitle { get; set; }

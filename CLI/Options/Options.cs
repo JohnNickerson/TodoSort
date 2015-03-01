@@ -14,9 +14,6 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
         [VerbOption("add", HelpText = "Adds a new action to a list")]
         public AddSubOptions AddVerb { get; set; }
 
-        [VerbOption("advanced-search", HelpText = "Advanced search.")]
-        public AdvancedSearchSubOptions AdvancedSearchVerb { get; set; }
-
         [VerbOption("count-children", HelpText = "Counts the children of a given item.")]
         public CountChildrenSubOptions CountChildrenVerb { get; set; }
 
@@ -24,10 +21,10 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
         public DeferSubOptions DeferVerb { get; set; }
 
         [VerbOption("delete", HelpText = "Delete an item without doing it.")]
-        public SearchSubOptions DeleteVerb { get; set; }
+        public SingleSearchSubOptions DeleteVerb { get; set; }
 
         [VerbOption("done", HelpText = "Move an item to the done file.")]
-        public SearchSubOptions DoneVerb { get; set; }
+        public SingleSearchSubOptions DoneVerb { get; set; }
 
         [VerbOption("export", HelpText = "Save a formatted copy of a list to file.")]
         public ExportSubOptions ExportVerb { get; set; }
@@ -54,7 +51,7 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
         public OpenTagSubOptions OpenTagVerb { get; set; }
 
         [VerbOption("process", HelpText = "Housekeeping. Assign each inbox item to a context, ensure each project has a next action.")]
-        public ProcessSubOptions ProcessVerb { get; set; }
+        public NoSubOptions ProcessVerb { get; set; }
 
         [VerbOption("prune", HelpText = "Defer all items at or below a given depth.")]
         public PruneSubOptions PruneVerb { get; set; }
@@ -65,14 +62,14 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
         [VerbOption("rename", HelpText = "Change the name of an item.")]
         public RenameSubOptions RenameVerb { get; set; }
 
-        [VerbOption("search", HelpText = "Search for matching text items.")]
-        public SearchSubOptions SearchVerb { get; set; }
+        [VerbOption("search", HelpText = "Search through the collection of items.")]
+        public MultiSearchSubOptions SearchVerb { get; set; }
 
         [VerbOption("search-done", HelpText = "Search through the collection of Done items.")]
-        public AdvancedSearchSubOptions SearchDoneVerb { get; set; }
+        public MultiSearchSubOptions SearchDoneVerb { get; set; }
 
         [VerbOption("search-someday", HelpText = "Search through the collection of Someday/Deferred items.")]
-        public AdvancedSearchSubOptions SearchSomedayVerb { get; set; }
+        public MultiSearchSubOptions SearchSomedayVerb { get; set; }
 
         [VerbOption("set-parent", HelpText = "Assigns one item to be the priority parent of another.")]
         public SetParentSubOptions SetParentVerb { get; set; }
@@ -80,11 +77,8 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
         [VerbOption("set-project", HelpText = "Sets one item to be the project parent of another.")]
         public SetProjectSubOptions SetProjectVerb { get; set; }
 
-        [VerbOption("show", HelpText = "Display all items in a context.")]
-        public ShowSubOptions ShowVerb { get; set; }
-
         [VerbOption("show-parents", HelpText = "Shows an item and its parent chain up to the root of the tree.")]
-        public SearchSubOptions ShowParentsVerb { get; set; }
+        public SingleSearchSubOptions ShowParentsVerb { get; set; }
 
         [VerbOption("someday", HelpText = "Review the someday file, assigning 10% to an active context.")]
         public SomedaySubOptions SomedayVerb { get; set; }
@@ -93,16 +87,16 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
         public UniversalOptions SummaryVerb { get; set; }
 
         [VerbOption("tag", HelpText = "Adds tags to an item.")]
-        public SearchSubOptions TagVerb { get; set; }
+        public SingleSearchSubOptions TagVerb { get; set; }
 
         [VerbOption("unrank", HelpText = "Remove priority ranking data for one particular item.")]
-        public SearchSubOptions UnrankVerb { get; set; }
+        public SingleSearchSubOptions UnrankVerb { get; set; }
 
         [VerbOption("unrank-all", HelpText = "Removes all ranking data from a particular context or all items.")]
         public UnrankAllSubOptions UnrankAllVerb { get; set; }
 
         [VerbOption("version", HelpText = "Displays version and copyright information.")]
-        public VersionSubOptions VersionVerb { get; set; }
+        public NoSubOptions VersionVerb { get; set; }
         #endregion
 
 

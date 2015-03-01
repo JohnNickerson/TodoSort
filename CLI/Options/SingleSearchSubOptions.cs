@@ -8,7 +8,7 @@ using System.Text;
 
 namespace AssimilationSoftware.TodoSort.CLI.Options
 {
-    public class SearchSubOptions : UniversalOptions
+    public class SingleSearchSubOptions : UniversalOptions
     {
         [Option('s', "search", HelpText = "A partial name, tag value or note contents to search for.")]
         public string SearchTerm { get; set; }
