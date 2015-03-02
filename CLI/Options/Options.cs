@@ -15,7 +15,7 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
         public AddSubOptions AddVerb { get; set; }
 
         [VerbOption("count-children", HelpText = "Counts the children of a given item.")]
-        public CountChildrenSubOptions CountChildrenVerb { get; set; }
+        public MultiSearchSubOptions CountChildrenVerb { get; set; }
 
         [VerbOption("defer", HelpText = "Move an item to the someday file.")]
         public DeferSubOptions DeferVerb { get; set; }
@@ -53,8 +53,8 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
         [VerbOption("process", HelpText = "Housekeeping. Assign each inbox item to a context, ensure each project has a next action.")]
         public NoSubOptions ProcessVerb { get; set; }
 
-        [VerbOption("prune", HelpText = "Defer all items at or below a given depth.")]
-        public PruneSubOptions PruneVerb { get; set; }
+        [VerbOption("defer-all", HelpText = "Defer all items that match given search criteria.")]
+        public MultiSearchSubOptions PruneVerb { get; set; }
 
         [VerbOption("rank", HelpText = "Vote on the relative importance of items to assign priorities.")]
         public UniversalOptions RankVerb { get; set; }
@@ -92,8 +92,8 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
         [VerbOption("unrank", HelpText = "Remove priority ranking data for one particular item.")]
         public SingleSearchSubOptions UnrankVerb { get; set; }
 
-        [VerbOption("unrank-all", HelpText = "Removes all ranking data from a particular context or all items.")]
-        public UnrankAllSubOptions UnrankAllVerb { get; set; }
+        [VerbOption("unrank-all", HelpText = "Removes all ranking data from a set of items.")]
+        public MultiSearchSubOptions UnrankAllVerb { get; set; }
 
         [VerbOption("version", HelpText = "Displays version and copyright information.")]
         public NoSubOptions VersionVerb { get; set; }

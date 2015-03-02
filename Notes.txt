@@ -1,8 +1,4 @@
 @backend
-	Specification pattern for all search functions
-		- Allows more complex searches and allows the ViewModel to be far more agnostic about search criteria.
-		#release:0.7
-		#id:69b705d5-82fa-4c58-9db9-1184cf1da239
 	Always rank project items together
 		- Children of the same project need to be ordered against each other, not necessarily everything else.
 		#type:feature
@@ -110,11 +106,6 @@
 		- When moving/unranking etc a lot of items at once, display a message about it like 'Moving 683 items from X to Y. Continue?'
 		#type:feature
 		#id:c78b118f-87a5-4997-be23-d39f0ceb4b38
-	Display results by data binding instead of direct fetch
-		- Bypass any ViewModel methods that return a list of ActionItems. (2015-02-25)
-		#type:feature
-		#release:0.7
-		#id:b7a72b3f-f40d-4dc0-abcc-66ca522d3cbf
 	Randomise index for ranking
 		#release:0.7
 		#id:7488887c-bea1-4728-8d61-4f7ef21f76be
@@ -126,6 +117,9 @@
 		#type:feature
 		#release:0.7
 		#id:123147fc-8bd8-40e0-8b92-4b425d0a1259
+	Keep processing while more items still in inbox or projects.
+		#type:feature
+		#id:f5a3d428-5de0-4aa0-8e88-edcc3800ba5e
 	Sort command or option on process
 		#type:feature
 		#release:0.7
@@ -187,10 +181,6 @@
 		#type:feature
 		#id:37ed25d1-cd26-4ad0-b86b-896cca3f783c
 		#priority-parent:fca19166-f471-49e5-864e-0386c098e41d
-	Keep processing while more items still in inbox or projects.
-		#type:feature
-		#id:f5a3d428-5de0-4aa0-8e88-edcc3800ba5e
-		#priority-parent:b7a72b3f-f40d-4dc0-abcc-66ca522d3cbf
 	'Prune-Leaves' command
 		- To remove any items without children and lighten the tree.
 		#type:feature

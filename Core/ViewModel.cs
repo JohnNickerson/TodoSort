@@ -216,17 +216,17 @@ namespace AssimilationSoftware.TodoSort.Core
                 return done_items.Where(s => DoneSearchSpecification.IsSatisfiedBy(s));
             }
         }
+
+        public List<ActionItem> Items
+        {
+            get
+            {
+                return todo_items;
+            }
+        }
         #endregion
 
         #region Methods
-
-        [Obsolete]
-        public ActionItem[] GetChildItems(ActionItem selected)
-        {
-            var result = from m in todo_items where m.RankParent == selected select m;
-            return result.ToArray();
-        }
-
         public void Save()
         {
             if (todo_changes)
@@ -399,39 +399,17 @@ namespace AssimilationSoftware.TodoSort.Core
             RaisePropertyChanged("SearchResults");
         }
 
-        [Obsolete]
-        public List<ActionItem> GetProjectChildren(ActionItem actionItem)
-        {
-            var result = (from i in todo_items where i.Project == actionItem select i).ToList();
-            return result.ToList();
-        }
-
-        [Obsolete]
-        public List<ActionItem> GetTickleDueItems()
-        {
-            return (from i in SomedayItems where i.TickleDate <= DateTime.Now select i).ToList();
-        }
-
         public IEnumerable<string> GetContextNames(params string[] exclude)
         {
             return (from i in todo_items select i.Context).Distinct().Except(exclude);
         }
 
-        public void ResetPriorityParents()
+        public void ResetPriorityParents(params ActionItem[] items)
         {
-            foreach (var i in todo_items)
+            foreach (var selected in items)
             {
-                i.RankParent = null;
-                todo_changes = true;
-            }
-        }
-
-        public void ResetPriorityParents(ActionItem selected)
-        {
-            selected.RankParent = null;
-            foreach (var i in todo_items)
-            {
-                if (i.RankParent == selected)
+                selected.RankParent = null;
+                foreach (var i in todo_items.Where(t => t.RankParent == selected))
                 {
                     i.RankParent = null;
                 }
@@ -467,12 +445,6 @@ namespace AssimilationSoftware.TodoSort.Core
         {
             item.Context = newcontext;
             todo_changes = true;
-        }
-
-        public void PruneBelowDepth(int depth)
-        {
-            var results = from i in todo_items where i.RankDepth >= depth select i;
-            Defer(results.ToArray());
         }
 
         public void AddNote(ActionItem item, string note)
@@ -531,16 +503,6 @@ namespace AssimilationSoftware.TodoSort.Core
             target.Notes.Add(string.Format("Merged with '{0}' on {1:yyyy-MM-dd}", child.Title, DateTime.Now));
             Delete(child);
             todo_changes = true;
-        }
-
-        public void ResetPriorityParents(string context)
-        {
-            ShowHeadOnly = false;
-            SearchSpecification = new ContextSearchSpecification(context);
-            foreach (var i in SearchResults)
-            {
-                ResetPriorityParents(i);
-            }
         }
         #endregion
     }

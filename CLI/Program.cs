@@ -106,15 +106,14 @@ namespace AssimilationSoftware.TodoSort.CLI
                 #region Count Children
                 case "count-children":
                     {
-                        CountChildrenSubOptions countOptions = (CountChildrenSubOptions)argsubs;
-                        vm.SearchSpecification = new ContextSearchSpecification(countOptions.Context);
-                        foreach (var item in vm.SearchResults)
+                        var countOptions = (MultiSearchSubOptions)argsubs;
+                        vm.SearchSpecification = countOptions.SearchSpecification;
+                        var childcounts = from p in vm.SearchResults select new { Item = p, ChildCount = (from c in vm.Items where c.RankParent == p select c).Count() };
+                        foreach (var item in childcounts)
                         {
-                            PrintItem(item, null);
-                            // Actually count the children.
-                            var m = vm.GetChildItems(item).Count();
-                            Console.WriteLine(string.Format("\t{0} children", m));
-                            vm.SetTag(item, "children", m.ToString());
+                            PrintItem(item.Item, null);
+                            Console.WriteLine(string.Format("\t{0} children", item.ChildCount));
+                            vm.SetTag(item.Item, "children", item.ChildCount.ToString());
                         }
                         selected = null;
                     }
@@ -168,7 +167,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                     // TODO: Work with Mustache# to externalise the formatting.
                     // TODO: Write to the console if the filename is empty.
                     IExporter exporter = null;
-                    ExportSubOptions exportOptions = (ExportSubOptions)argsubs;
+                    var exportOptions = (ExportSubOptions)argsubs;
                     switch (exportOptions.Format)
                     {
                         case "html":
@@ -183,7 +182,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                     }
                     if (exporter != null)
                     {
-                        vm.SearchSpecification = new ExactPropertyValueSpecification<ActionItem, string>(i => i.Context, exportOptions.Context);
+                        vm.SearchSpecification = exportOptions.SearchSpecification;
                         exporter.Export(vm.SearchResults.ToList());
                     }
                     break;
@@ -361,11 +360,12 @@ namespace AssimilationSoftware.TodoSort.CLI
                     break;
                 #endregion
 
-                #region Prune
-                case "prune":
+                #region Defer All
+                case "defer-all":
                     // Delete items below a specified depth.
-                    PruneSubOptions pruneOptions = (PruneSubOptions)argsubs;
-                    vm.PruneBelowDepth(pruneOptions.Depth);
+                    var pruneOptions = (MultiSearchSubOptions)argsubs;
+                    vm.SearchSpecification = pruneOptions.SearchSpecification;
+                    vm.Defer(vm.SearchResults.ToArray());
                     break;
                 #endregion
 
@@ -668,19 +668,15 @@ namespace AssimilationSoftware.TodoSort.CLI
 
                 #region Unrank All
                 case "unrank-all":
-                    UnrankAllSubOptions unrankAllOptions = (UnrankAllSubOptions)argsubs;
-                    if (string.IsNullOrWhiteSpace(unrankAllOptions.Context))
                     {
-                        Console.Write("Do you really want to destroy all ranking data and start over [Y/N]?");
+                        var unrankAllOptions = (MultiSearchSubOptions)argsubs;
+                        vm.SearchSpecification = unrankAllOptions.SearchSpecification;
+                        Console.WriteLine("About to delete all ranking data for {0} items. Continue [Y/N]?", vm.SearchResults.Count());
                         var k = Console.ReadKey();
                         if (k.KeyChar.ToString().ToLower() == "y")
                         {
-                            vm.ResetPriorityParents();
+                            vm.ResetPriorityParents(vm.SearchResults.ToArray());
                         }
-                    }
-                    else
-                    {
-                        vm.ResetPriorityParents(unrankAllOptions.Context);
                     }
                     break;
                 #endregion
@@ -925,41 +921,6 @@ namespace AssimilationSoftware.TodoSort.CLI
                 Console.WriteLine(line);
                 content = content.Remove(0, Math.Min(printwidth, content.Length));
             }
-        }
-
-        [Obsolete]
-        private static void PrintHelp(string command)
-        {
-            // Print usage text on the console.
-            Console.WriteLine(string.Format(@"
-TodoSort v{0}
-
-usage:
-TodoSort.exe [command] [args]
-
-commands:
-    add         Add a new item to the list.
-    defer       Move an item to the someday file.
-    delete      Delete an item without doing it.
-    done        Move an item to the done file.
-    note        Add a note to an item.
-    open-tag    Opens (with Windows Explorer) a given tag for a given item.
-                    eg 'open-tag searchterm url'.
-    process     Housekeeping:
-                    + Assign each inbox item to a context
-                    + Ensure each project has a next action.
-    prune       Defer all items at or below a given depth.
-    rename      Change the name of an item.
-    search      Search for matching text items.
-    show        Display all items in a context.
-    someday     Review the someday file, assigning 10% to an active context.
-    summary     Show context names and number of items in each.
-    rank        Vote on the relative importance of items to assign priorities.
-    unrank      Reset ranking data for one item or all items.
-    tag         Adds tags to an item.
-    export      Print a Graphviz DOT language representation of one context's
-                priorities, or an HTML page.
-", Assembly.GetExecutingAssembly().GetName().Version));
         }
 
 		private static ActionItem Disambiguate(IEnumerable<ActionItem> todolist)

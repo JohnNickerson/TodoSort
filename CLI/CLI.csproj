@@ -80,7 +80,6 @@
     <Compile Include="FolderSettings.cs" />
     <Compile Include="Options\AddSubOptions.cs" />
     <Compile Include="Options\MultiSearchSubOptions.cs" />
-    <Compile Include="Options\CountChildrenSubOptions.cs" />
     <Compile Include="Options\DeferSubOptions.cs" />
     <Compile Include="Options\ExportSubOptions.cs" />
     <Compile Include="Options\ImportSubOptions.cs" />
@@ -92,14 +91,12 @@
     <Compile Include="Options\OpenTagSubOptions.cs" />
     <Compile Include="Options\Options.cs" />
     <Compile Include="Options\NoSubOptions.cs" />
-    <Compile Include="Options\PruneSubOptions.cs" />
     <Compile Include="Options\RenameSubOptions.cs" />
     <Compile Include="Options\SingleSearchSubOptions.cs" />
     <Compile Include="Options\SetParentSubOptions.cs" />
     <Compile Include="Options\SetProjectSubOptions.cs" />
     <Compile Include="Options\SomedaySubOptions.cs" />
     <Compile Include="Options\UniversalOptions.cs" />
-    <Compile Include="Options\UnrankAllSubOptions.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Settings.Designer.cs">

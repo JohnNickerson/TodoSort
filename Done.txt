@@ -448,7 +448,18 @@
 		#release:0.7
 		#done-date:2015-02-27
 		#id:bf85cc86-e64b-46dd-b051-db459c6f27e2
-		#priority-parent:fca19166-f471-49e5-864e-0386c098e41d
+@2015-03-02
+	Display results by data binding instead of direct fetch
+		- Bypass any ViewModel methods that return a list of ActionItems. (2015-02-25)
+		#type:feature
+		#release:0.7
+		#done-date:2015-03-02
+		#id:b7a72b3f-f40d-4dc0-abcc-66ca522d3cbf
+	Specification pattern for all search functions
+		- Allows more complex searches and allows the ViewModel to be far more agnostic about search criteria.
+		#release:0.7
+		#done-date:2015-03-02
+		#id:69b705d5-82fa-4c58-9db9-1184cf1da239
 @done
 	The Done list should be broken up into date sub lists rather than being a different format.
 		#id:3da6bbcb-9608-4289-a82c-50b29d7ee7ac
