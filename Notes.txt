@@ -13,7 +13,6 @@
 	Mustache-sharp template engine for exports
 		#url:https://github.com/jehugaleahsa/mustache-sharp
 		#id:c16bf60e-abb0-4847-867b-cba0df9e7e3e
-		#priority-parent:69b705d5-82fa-4c58-9db9-1184cf1da239
 	Automatic 'important' ranked items
 		- Unable to be voted down, automatically win votes, skipped when two important ones are against each other.
 		#type:feature
@@ -120,11 +119,6 @@
 	Keep processing while more items still in inbox or projects.
 		#type:feature
 		#id:f5a3d428-5de0-4aa0-8e88-edcc3800ba5e
-	Sort command or option on process
-		#type:feature
-		#release:0.7
-		#id:01206b3e-b3cb-4a34-975d-9e8035bd30bd
-		#priority-parent:ec98fd77-5d59-415d-a842-2f5a40b2eb2f
 	Display depth for individual item search results
 		- Might be nice to know, but fairly easy to determine from Show-Ancestors.
 		#type:feature

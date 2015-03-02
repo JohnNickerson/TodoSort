@@ -11,6 +11,10 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
 {
     public class MultiSearchSubOptions : UniversalOptions
     {
+        // Sort
+        [Option("sort", HelpText = "The name of a tag to sort by.")]
+        public string SortTag { get; set; }
+
         // Context
         [Option('c', "context", HelpText = "The context to search in.")]
         public string Context { get; set; }

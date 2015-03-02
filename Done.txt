@@ -460,6 +460,13 @@
 		#release:0.7
 		#done-date:2015-03-02
 		#id:69b705d5-82fa-4c58-9db9-1184cf1da239
+@2015-03-03
+	Sort command or option on process
+		#type:feature
+		#release:0.7
+		#done-date:2015-03-03
+		#id:01206b3e-b3cb-4a34-975d-9e8035bd30bd
+		#priority-parent:ec98fd77-5d59-415d-a842-2f5a40b2eb2f
 @done
 	The Done list should be broken up into date sub lists rather than being a different format.
 		#id:3da6bbcb-9608-4289-a82c-50b29d7ee7ac

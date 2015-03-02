@@ -448,8 +448,9 @@ namespace AssimilationSoftware.TodoSort.CLI
                 #region Search
                 case "search":
                     // Search for matching items.
-                    vm.SearchSpecification = ((MultiSearchSubOptions)argsubs).SearchSpecification;
-                    PrintItems(vm.SearchResults);
+                    var searchOptions = ((MultiSearchSubOptions)argsubs);
+                    vm.SearchSpecification = searchOptions.SearchSpecification;
+                    PrintItems(searchOptions.SortTag, vm.SearchResults);
                     break;
                 #endregion
 
@@ -457,11 +458,11 @@ namespace AssimilationSoftware.TodoSort.CLI
                 case "search-done":
                     {
                         // Construct a search specification.
-                        var search = ((MultiSearchSubOptions)argsubs).SearchSpecification;
+                        var search = ((MultiSearchSubOptions)argsubs);
                         // Set the ViewModel property.
-                        vm.DoneSearchSpecification = search;
+                        vm.DoneSearchSpecification = search.SearchSpecification;
                         // Report the results.
-                        PrintItems(vm.DoneSearchResults);
+                        PrintItems(search.SortTag, vm.DoneSearchResults);
                     }
                     break;
                 #endregion
@@ -470,11 +471,11 @@ namespace AssimilationSoftware.TodoSort.CLI
                 case "search-someday":
                     {
                         // Construct a search specification.
-                        var search = ((MultiSearchSubOptions)argsubs).SearchSpecification;
+                        var search = ((MultiSearchSubOptions)argsubs);
                         // Set the ViewModel property.
-                        vm.SomedaySearchSpecification = search;
+                        vm.SomedaySearchSpecification = search.SearchSpecification;
                         // Report the results.
-                        PrintItems(vm.SomedaySearchResults);
+                        PrintItems(search.SortTag, vm.SomedaySearchResults);
                     }
                     break;
                 #endregion
@@ -845,10 +846,15 @@ namespace AssimilationSoftware.TodoSort.CLI
             return preset;
         }
 
-        private static void PrintItems(IEnumerable<ActionItem> list)
+        private static void PrintItems(string sorttag, IEnumerable<ActionItem> list)
         {
             string last_context = string.Empty;
-            foreach (ActionItem i in from a in list orderby a.Context, a.Title select a)
+            var sortedlist = from a in list orderby a.Context, a.Title select a;
+            if (!string.IsNullOrEmpty(sorttag) && sorttag != "title")
+            {
+                sortedlist = from a in list orderby a.Context, a.Tags.ContainsKey(sorttag) ? a.Tags[sorttag] : string.Empty select a;
+            }
+            foreach (ActionItem i in sortedlist)
             {
                 if (i.Context != last_context)
                 {
