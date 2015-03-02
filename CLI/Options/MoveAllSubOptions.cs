@@ -7,12 +7,9 @@ using System.Threading.Tasks;
 
 namespace AssimilationSoftware.TodoSort.CLI.Options
 {
-    public class MoveAllSubOptions
+    public class MoveAllSubOptions : MultiSearchSubOptions
     {
-        [Option('c', "context", HelpText = "The new context to which the items should be moved.", Required = true)]
+        [Option('g', "target", HelpText = "The new context to which the items should be moved.", Required = true)]
         public string NewContext { get; set; }
-
-        [Option('s', "search", HelpText = "The current context from which items should be moved.", Required = true)]
-        public string Search { get; set; }
     }
 }

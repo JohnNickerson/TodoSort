@@ -246,7 +246,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                     {
                         var moveAllOptions = (MoveAllSubOptions)argsubs;
                         vm.ShowHeadOnly = false; // Make sure we move all items in the context, not just the head.
-                        vm.SearchSpecification = new ContextSearchSpecification(moveAllOptions.Search);
+                        vm.SearchSpecification = moveAllOptions.SearchSpecification;
                         var items = vm.SearchResults.ToList();
                         int counter = 0;
                         while (items.Count > 0)
@@ -255,7 +255,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                             items.RemoveAt(0);
                             counter++;
                         }
-                        Console.WriteLine(string.Format("{0} items moved from @{1} to @{2}", counter, moveAllOptions.Search, moveAllOptions.NewContext));
+                        Console.WriteLine(string.Format("{0} items moved to @{1}", counter, moveAllOptions.NewContext));
                     }
                     break;
                 #endregion
