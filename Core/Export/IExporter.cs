@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AssimilationSoftware.TodoSort.Core
+namespace AssimilationSoftware.TodoSort.Core.Export
 {
     public interface IExporter
     {

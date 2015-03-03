@@ -7,9 +7,6 @@
 		- To allow undeleting items if required.
 		#type:feature
 		#id:11761e28-949d-470d-aeb8-b7cd1d4bc58a
-	Fix Core namespaces
-		- Some classes have moved around.
-		#id:197bf029-1bc4-4ac3-8632-580da0ce9fa7
 	Mustache-sharp template engine for exports
 		#url:https://github.com/jehugaleahsa/mustache-sharp
 		#id:c16bf60e-abb0-4847-867b-cba0df9e7e3e
@@ -54,10 +51,6 @@
 		- It would look tidier if lines wrapped at natural spaces. (2014-06-02)
 		#type:feature
 		#id:ec98fd77-5d59-415d-a842-2f5a40b2eb2f
-	Summary by order (number of children)
-		- To find and remove bottlenecks. (2014-06-02)
-		#type:feature
-		#id:aaf1e002-a674-4006-a7f0-b82fbad77470
 	Add a URL directly
 		- Extract the page title for the item and store the URL as a tag.
 		- This would be very handy for my work priority-setting where I play off bugs vs features. (2015-01-28)
@@ -123,7 +116,6 @@
 		- Might be nice to know, but fairly easy to determine from Show-Ancestors.
 		#type:feature
 		#id:4158a739-966a-45e5-88e0-e9169a84b298
-		#priority-parent:aaf1e002-a674-4006-a7f0-b82fbad77470
 	Change the disambiguation process to demand a single match
 		- Tough for short words that might appear everywhere. Allow IDs?
 		#type:feature
@@ -175,11 +167,6 @@
 		#type:feature
 		#id:37ed25d1-cd26-4ad0-b86b-896cca3f783c
 		#priority-parent:fca19166-f471-49e5-864e-0386c098e41d
-	'Prune-Leaves' command
-		- To remove any items without children and lighten the tree.
-		#type:feature
-		#id:36bc69e0-6a88-42da-8e28-1440bfc876ce
-		#priority-parent:01206b3e-b3cb-4a34-975d-9e8035bd30bd
 	Abort someday context assignment if no item is chosen
 		- It gets tedious to use two keystrokes where one would do.
 		#type:feature

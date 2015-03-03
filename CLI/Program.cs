@@ -365,67 +365,72 @@ namespace AssimilationSoftware.TodoSort.CLI
                     // Delete items below a specified depth.
                     var pruneOptions = (MultiSearchSubOptions)argsubs;
                     vm.SearchSpecification = pruneOptions.SearchSpecification;
-                    vm.Defer(vm.SearchResults.ToArray());
+                        Console.WriteLine("About to defer {0} items. Continue [Y/N]?", vm.SearchResults.Count());
+                        var k = Console.ReadKey();
+                        if (k.KeyChar.ToString().ToLower() == "y")
+                        {
+                            vm.Defer(vm.SearchResults.ToArray());
+                        }
                     break;
                 #endregion
 
                 #region Rank
                 case "rank":
-                    // for each context..
-                    bool quitandsave = false;
-                    vm.ShowHeadOnly = true;
-                    foreach (string con in vm.GetContextNames("inbox", "done"))
                     {
-                        if (quitandsave) break;
-                        // select all items without rank parents
-                        vm.SearchSpecification = new ContextSearchSpecification(con);
-                        var items = vm.SearchResults.ToArray();
-                        // TODO: randomise an index list
-                        // show pairs of items
-                        if (items.Count() > 1)
-                        {
-                            Console.WriteLine(string.Format("{1}{1}@{0}", con, Environment.NewLine));
-                        }
-                        for (int x = 0; x < items.Count() - 1; x += 2)
+                        // for each context..
+                        bool quitandsave = false;
+                        vm.ShowHeadOnly = true;
+                        foreach (string con in vm.GetContextNames("inbox", "done"))
                         {
                             if (quitandsave) break;
-                            // get vote
-                            Console.WriteLine("{0}/{1} ({2}%) complete", x, items.Count(), 100 * x / items.Count());
-                            PrintItem(items.ElementAt(x), 1);
-                            PrintItem(items.ElementAt(x + 1), 2);
-                            Console.Write("Which of these is more important? (q=quit) ");
-                            var k = Console.ReadKey();
-                            // assign parents based on vote
-                            switch (k.KeyChar)
+                            // select all items without rank parents
+                            vm.SearchSpecification = new ContextSearchSpecification(con);
+                            var items = vm.SearchResults.ToArray();
+                            // TODO: randomise an index list
+                            // show pairs of items
+                            if (items.Count() > 1)
                             {
-                                case '1':
-                                    vm.SetParent(items.ElementAt(x + 1), items.ElementAt(x));
-                                    break;
-                                case '2':
-                                    vm.SetParent(items.ElementAt(x), items.ElementAt(x + 1));
-                                    break;
-                                case 'q':
-                                    Console.WriteLine();
-                                    Console.WriteLine("Quitting. Save ranking so far?");
-                                    Console.WriteLine("\tY: Quit and save.");
-                                    Console.WriteLine("\tN: Quit without saving (all work this session will be lost, no undo).");
-                                    Console.WriteLine("\tC: Cancel (default). Return to ranking.");
-                                    k = Console.ReadKey();
-                                    switch (k.KeyChar)
-                                    {
-                                        case 'y':
-                                            // Quit and save.
-                                            quitandsave = true;
-                                            break;
-                                        case 'n':
-                                            // Quit without saving.
-                                            return;
-                                        // Default. No action. Just return to ranking.
-                                    }
-                                    break;
+                                Console.WriteLine(string.Format("{1}{1}@{0}", con, Environment.NewLine));
                             }
-                            Console.WriteLine();
-                            Console.WriteLine();
+                            for (int x = 0; x < items.Count() - 1; x += 2)
+                            {
+                                if (quitandsave) break;
+                                // get vote
+                                Console.WriteLine("{0}/{1} ({2}%) complete", x, items.Count(), 100 * x / items.Count());
+                                PrintItem(items.ElementAt(x), 1);
+                                PrintItem(items.ElementAt(x + 1), 2);
+                                Console.Write("Which of these is more important? (q=quit) ");
+                                // assign parents based on vote
+                                switch (Console.ReadKey().KeyChar)
+                                {
+                                    case '1':
+                                        vm.SetParent(items.ElementAt(x + 1), items.ElementAt(x));
+                                        break;
+                                    case '2':
+                                        vm.SetParent(items.ElementAt(x), items.ElementAt(x + 1));
+                                        break;
+                                    case 'q':
+                                        Console.WriteLine();
+                                        Console.WriteLine("Quitting. Save ranking so far?");
+                                        Console.WriteLine("\tY: Quit and save.");
+                                        Console.WriteLine("\tN: Quit without saving (all work this session will be lost, no undo).");
+                                        Console.WriteLine("\tC: Cancel (default). Return to ranking.");
+                                        switch (Console.ReadKey().KeyChar)
+                                        {
+                                            case 'y':
+                                                // Quit and save.
+                                                quitandsave = true;
+                                                break;
+                                            case 'n':
+                                                // Quit without saving.
+                                                return;
+                                            // Default. No action. Just return to ranking.
+                                        }
+                                        break;
+                                }
+                                Console.WriteLine();
+                                Console.WriteLine();
+                            }
                         }
                     }
                     break;
@@ -673,8 +678,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                         var unrankAllOptions = (MultiSearchSubOptions)argsubs;
                         vm.SearchSpecification = unrankAllOptions.SearchSpecification;
                         Console.WriteLine("About to delete all ranking data for {0} items. Continue [Y/N]?", vm.SearchResults.Count());
-                        var k = Console.ReadKey();
-                        if (k.KeyChar.ToString().ToLower() == "y")
+                        if (Console.ReadKey().KeyChar.ToString().ToLower() == "y")
                         {
                             vm.ResetPriorityParents(vm.SearchResults.ToArray());
                         }

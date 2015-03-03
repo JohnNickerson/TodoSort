@@ -466,7 +466,18 @@
 		#release:0.7
 		#done-date:2015-03-03
 		#id:01206b3e-b3cb-4a34-975d-9e8035bd30bd
-		#priority-parent:ec98fd77-5d59-415d-a842-2f5a40b2eb2f
+	'Prune-Leaves' command
+		- To remove any items without children and lighten the tree.
+		- count-children then defer-all with children:0 (2015-03-03)
+		#type:feature
+		#done-date:2015-03-03
+		#id:36bc69e0-6a88-42da-8e28-1440bfc876ce
+@2015-03-04
+	Fix Core namespaces
+		- Some classes have moved around.
+		#release:0.7
+		#done-date:2015-03-04
+		#id:197bf029-1bc4-4ac3-8632-580da0ce9fa7
 @done
 	The Done list should be broken up into date sub lists rather than being a different format.
 		#id:3da6bbcb-9608-4289-a82c-50b29d7ee7ac
