@@ -852,7 +852,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             var sortedlist = from a in list orderby a.Context, a.Title select a;
             if (!string.IsNullOrEmpty(sorttag) && sorttag != "title")
             {
-                sortedlist = from a in list orderby a.Context, a.Tags.ContainsKey(sorttag) ? a.Tags[sorttag] : string.Empty select a;
+                sortedlist = list.OrderBy(a => a.Context).ThenBy(a => a.Tags.ContainsKey(sorttag) ? a.Tags[sorttag] : string.Empty, new SemiNumericComparer());
             }
             foreach (ActionItem i in sortedlist)
             {
