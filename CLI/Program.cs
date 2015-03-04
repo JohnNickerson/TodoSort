@@ -386,7 +386,17 @@ namespace AssimilationSoftware.TodoSort.CLI
                             // select all items without rank parents
                             vm.SearchSpecification = new ContextSearchSpecification(con);
                             var items = vm.SearchResults.ToArray();
-                            // TODO: randomise an index list
+                            var index = new List<int>();
+                            for (int dex = 0; dex < items.Count(); dex++) index.Add(dex);
+                            // randomise an index list
+                            var rand = new Random();
+                            for (int dex = 0; dex < index.Count; dex++)
+                            {
+                                int r = rand.Next(index.Count);
+                                int b = index[dex];
+                                index[dex] = index[r];
+                                index[r] = b;
+                            }
                             // show pairs of items
                             if (items.Count() > 1)
                             {
@@ -397,17 +407,17 @@ namespace AssimilationSoftware.TodoSort.CLI
                                 if (quitandsave) break;
                                 // get vote
                                 Console.WriteLine("{0}/{1} ({2}%) complete", x, items.Count(), 100 * x / items.Count());
-                                PrintItem(items.ElementAt(x), 1);
-                                PrintItem(items.ElementAt(x + 1), 2);
+                                PrintItem(items.ElementAt(index[x]), 1);
+                                PrintItem(items.ElementAt(index[x + 1]), 2);
                                 Console.Write("Which of these is more important? (q=quit) ");
                                 // assign parents based on vote
                                 switch (Console.ReadKey().KeyChar)
                                 {
                                     case '1':
-                                        vm.SetParent(items.ElementAt(x + 1), items.ElementAt(x));
+                                        vm.SetParent(items.ElementAt(index[x + 1]), items.ElementAt(index[x]));
                                         break;
                                     case '2':
-                                        vm.SetParent(items.ElementAt(x), items.ElementAt(x + 1));
+                                        vm.SetParent(items.ElementAt(index[x]), items.ElementAt(index[x + 1]));
                                         break;
                                     case 'q':
                                         Console.WriteLine();

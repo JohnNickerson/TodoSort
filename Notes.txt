@@ -98,9 +98,6 @@
 		- When moving/unranking etc a lot of items at once, display a message about it like 'Moving 683 items from X to Y. Continue?'
 		#type:feature
 		#id:c78b118f-87a5-4997-be23-d39f0ceb4b38
-	Randomise index for ranking
-		#release:0.7
-		#id:7488887c-bea1-4728-8d61-4f7ef21f76be
 	De-duplicate command
 		- Search and merge duplicates
 		- Kind of difficult with this data, but worth it. (2014-06-17)
