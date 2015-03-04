@@ -79,6 +79,7 @@
   <ItemGroup>
     <Compile Include="FolderSettings.cs" />
     <Compile Include="Options\AddSubOptions.cs" />
+    <Compile Include="Options\DoneSearchSubOptions.cs" />
     <Compile Include="Options\MultiSearchSubOptions.cs" />
     <Compile Include="Options\DeferSubOptions.cs" />
     <Compile Include="Options\ExportSubOptions.cs" />
@@ -95,6 +96,7 @@
     <Compile Include="Options\SingleSearchSubOptions.cs" />
     <Compile Include="Options\SetParentSubOptions.cs" />
     <Compile Include="Options\SetProjectSubOptions.cs" />
+    <Compile Include="Options\SomedaySearchSubOptions.cs" />
     <Compile Include="Options\SomedaySubOptions.cs" />
     <Compile Include="Options\UniversalOptions.cs" />
     <Compile Include="Program.cs" />

@@ -52,6 +52,8 @@
     <Compile Include="Search\AndSpecification.cs" />
     <Compile Include="Search\ContextSearchSpecification.cs" />
     <Compile Include="Search\DepthRangeSearchSpecification.cs" />
+    <Compile Include="Search\DoneDateGreaterThanSpecification.cs" />
+    <Compile Include="Search\DoneDateLessThanSpecification.cs" />
     <Compile Include="Search\ExactPropertyValueSpecification.cs" />
     <Compile Include="Search\FullTextSearchSpecification.cs" />
     <Compile Include="Search\IdSearchSpecification.cs" />
@@ -63,6 +65,8 @@
     <Compile Include="Search\ProjectChildrenSearchSpecification.cs" />
     <Compile Include="Search\SpecificationExtensionMethods.cs" />
     <Compile Include="Search\TagValueSpecification.cs" />
+    <Compile Include="Search\TickleDateGreaterThanSpecification.cs" />
+    <Compile Include="Search\TickleDateLessThanSpecification.cs" />
     <Compile Include="Search\TickleDateSearchSpecification.cs" />
     <Compile Include="Search\TrueSpecification.cs" />
     <Compile Include="SemiNumericComparer.cs" />

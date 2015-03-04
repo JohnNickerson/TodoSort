@@ -478,6 +478,11 @@
 		#release:0.7
 		#done-date:2015-03-04
 		#id:197bf029-1bc4-4ac3-8632-580da0ce9fa7
+	Date range condition on done and someday searches.
+		#type:feature
+		#release:0.7
+		#done-date:2015-03-04
+		#id:123147fc-8bd8-40e0-8b92-4b425d0a1259
 @done
 	The Done list should be broken up into date sub lists rather than being a different format.
 		#id:3da6bbcb-9608-4289-a82c-50b29d7ee7ac

@@ -83,7 +83,7 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
             }
         }
 
-        public ISearchSpecification<ActionItem> SearchSpecification
+        public virtual ISearchSpecification<ActionItem> SearchSpecification
         {
             get
             {

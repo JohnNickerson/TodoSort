@@ -105,10 +105,6 @@
 		- Search and merge duplicates
 		- Kind of difficult with this data, but worth it. (2014-06-17)
 		#id:841c5d7b-d1c5-4a3e-8618-cfff08ef4c20
-	Date range condition on done and someday searches.
-		#type:feature
-		#release:0.7
-		#id:123147fc-8bd8-40e0-8b92-4b425d0a1259
 	Keep processing while more items still in inbox or projects.
 		#type:feature
 		#id:f5a3d428-5de0-4aa0-8e88-edcc3800ba5e

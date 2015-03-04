@@ -463,7 +463,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                 case "search-done":
                     {
                         // Construct a search specification.
-                        var search = ((MultiSearchSubOptions)argsubs);
+                        var search = ((DoneSearchSubOptions)argsubs);
                         // Set the ViewModel property.
                         vm.DoneSearchSpecification = search.SearchSpecification;
                         // Report the results.
@@ -476,7 +476,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                 case "search-someday":
                     {
                         // Construct a search specification.
-                        var search = ((MultiSearchSubOptions)argsubs);
+                        var search = ((SomedaySearchSubOptions)argsubs);
                         // Set the ViewModel property.
                         vm.SomedaySearchSpecification = search.SearchSpecification;
                         // Report the results.

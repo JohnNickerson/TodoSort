@@ -66,10 +66,10 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
         public MultiSearchSubOptions SearchVerb { get; set; }
 
         [VerbOption("search-done", HelpText = "Search through the collection of Done items.")]
-        public MultiSearchSubOptions SearchDoneVerb { get; set; }
+        public DoneSearchSubOptions SearchDoneVerb { get; set; }
 
         [VerbOption("search-someday", HelpText = "Search through the collection of Someday/Deferred items.")]
-        public MultiSearchSubOptions SearchSomedayVerb { get; set; }
+        public SomedaySearchSubOptions SearchSomedayVerb { get; set; }
 
         [VerbOption("set-parent", HelpText = "Assigns one item to be the priority parent of another.")]
         public SetParentSubOptions SetParentVerb { get; set; }
