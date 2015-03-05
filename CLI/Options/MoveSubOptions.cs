@@ -9,7 +9,7 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
 {
     public class MoveSubOptions : SingleSearchSubOptions
     {
-        [Option('c', "context", HelpText = "The new context to which the item should be moved.", Required = true)]
+        [Option('g', "target", HelpText = "The new context to which the item should be moved.", Required = true)]
         public string NewContext { get; set; }
     }
 }

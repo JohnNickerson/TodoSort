@@ -32,7 +32,7 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
         public string TagName { get; set; }
 
         // Tag value
-        [Option('u', "value", HelpText = "Partial tag value.")]
+        [Option('u', "value", HelpText = "Tag value.")]
         public string TagValue { get; set; }
 
         // Partial note
@@ -69,7 +69,7 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
             }
         }
 
-        [Option('d', "depth", HelpText = "Absolute depth to search at.")]
+        [Option('d', "depth", HelpText = "Absolute depth to search at (sets min and max).")]
         public int Depth
         {
             get
