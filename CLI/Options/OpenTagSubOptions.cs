@@ -16,5 +16,8 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
 
         [Option("rename", HelpText = "Rename after opening.", DefaultValue = false)]
         public bool Rename { get; set; }
+
+        [Option("retag", HelpText = "Apply new tags after opening.", DefaultValue = false)]
+        public bool Retag { get; set; }
     }
 }

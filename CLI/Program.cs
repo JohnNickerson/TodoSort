@@ -299,6 +299,10 @@ namespace AssimilationSoftware.TodoSort.CLI
                                     vm.Rename(selected, newtitle);
                                 }
                             }
+                            if (opentagOptions.Retag)
+                            {
+                                TagItem(vm, selected);
+                            }
                             if (opentagOptions.MarkAsDone)
                             {
                                 vm.MarkDone(null, selected);
