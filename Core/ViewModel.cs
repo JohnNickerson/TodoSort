@@ -271,11 +271,11 @@ namespace AssimilationSoftware.TodoSort.Core
         /// Mark an item as done.
         /// </summary>
         /// <param name="doneitem">The item to mark as done.</param>
-        public void MarkDone(params ActionItem[] doneitems)
+        public void MarkDone(DateTime? donedate, params ActionItem[] doneitems)
         {
             foreach (ActionItem doneitem in doneitems)
             {
-                doneitem.DoneDate = DateTime.Now;
+                doneitem.DoneDate = donedate.HasValue ? donedate.Value : DateTime.Now;
                 if (done_mapper != null)
                 {
                     doneitem.Context = string.Format("{0:yyyy-MM-dd}", doneitem.DoneDate);

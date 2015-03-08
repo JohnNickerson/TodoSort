@@ -84,7 +84,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
 
         private void ItemDisplay_MarkDone(object sender, ActionItemEventArgs e)
         {
-            vm.MarkDone(e.Item);
+            vm.MarkDone(null, e.Item);
         }
 
         private void SaveCommandExecuted(object sender, ExecutedRoutedEventArgs e)

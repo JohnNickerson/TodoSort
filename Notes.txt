@@ -10,6 +10,10 @@
 	Mustache-sharp template engine for exports
 		#url:https://github.com/jehugaleahsa/mustache-sharp
 		#id:c16bf60e-abb0-4847-867b-cba0df9e7e3e
+	Remove a previous-context tag if it references the current context
+		- It shouldn't happen, but if it does, it shouldn't remain.
+		#type:feature
+		#id:a889729c-2c1d-4a39-9a66-050a73988d9d
 	Automatic 'important' ranked items
 		- Unable to be voted down, automatically win votes, skipped when two important ones are against each other.
 		#type:feature
@@ -70,10 +74,6 @@
 		- Just to add up everything that's there.
 		#type:feature
 		#id:b98263af-35a7-43f8-afc5-77880339f068
-	Specify a done date
-		- Helpful for anything recorded as done a day or two after the fact.
-		#type:feature
-		#id:9efab255-6bbd-4481-be1e-e60c210acf46
 	Option interfaces
 		- Standard option interfaces to specify what kind of options are available to a command. Would help prevent bugs like improper handling of general flags.
 		#type:feature
@@ -109,6 +109,9 @@
 		- Might be nice to know, but fairly easy to determine from Show-Ancestors.
 		#type:feature
 		#id:4158a739-966a-45e5-88e0-e9169a84b298
+	Tag an item after opening a tag
+		- Renaming without the option to tag is a pain.
+		#id:97153710-42f6-4608-b022-09c80cc038ea
 	Change the disambiguation process to demand a single match
 		- Tough for short words that might appear everywhere. Allow IDs?
 		#type:feature

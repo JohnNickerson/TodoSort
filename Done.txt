@@ -488,6 +488,13 @@
 		#release:0.7
 		#done-date:2015-03-04
 		#id:7488887c-bea1-4728-8d61-4f7ef21f76be
+@2015-03-09
+	Specify a done date
+		- Helpful for anything recorded as done a day or two after the fact.
+		#type:feature
+		#release:0.7
+		#done-date:2015-03-09
+		#id:9efab255-6bbd-4481-be1e-e60c210acf46
 @done
 	The Done list should be broken up into date sub lists rather than being a different format.
 		#id:3da6bbcb-9608-4289-a82c-50b29d7ee7ac

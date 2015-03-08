@@ -151,12 +151,15 @@ namespace AssimilationSoftware.TodoSort.CLI
 
                 #region Done
                 case "done":
-                    // If there is a next action, create a new item and add it to the correct context.
-                    vm.SearchSpecification = ((SingleSearchSubOptions)argsubs).SearchSpecification;
-                    selected = Disambiguate(vm.SearchResults);
-                    if (selected != null)
                     {
-                        vm.MarkDone(selected);
+                        // If there is a next action, create a new item and add it to the correct context.
+                        var doneopts = (DoneSubOptions)argsubs;
+                        vm.SearchSpecification = doneopts.SearchSpecification;
+                        selected = Disambiguate(vm.SearchResults);
+                        if (selected != null)
+                        {
+                            vm.MarkDone(doneopts.DoneDate, selected);
+                        }
                     }
                     break;
                 #endregion
@@ -298,7 +301,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                             }
                             if (opentagOptions.MarkAsDone)
                             {
-                                vm.MarkDone(selected);
+                                vm.MarkDone(null, selected);
                             }
                         }
                         else
@@ -711,7 +714,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             if (donemapper != null)
             {
                 vm.SearchSpecification = new ContextSearchSpecification("done");
-                vm.MarkDone(vm.SearchResults.ToArray());
+                vm.MarkDone(null, vm.SearchResults.ToArray());
             }
 
             // Move any "someday" items in the main list to the someday file.
