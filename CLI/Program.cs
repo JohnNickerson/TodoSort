@@ -925,6 +925,14 @@ namespace AssimilationSoftware.TodoSort.CLI
                         WrapOutput(string.Format("        #{0}:", k.Key), k.Value, wrapwidth);
                     }
                 }
+                if (i.DoneDate.HasValue)
+                {
+                    WrapOutput("        #done-date:", i.DoneDate.Value.ToString("yyyy-MM-dd"), wrapwidth);
+                }
+                if (i.TickleDate.HasValue)
+                {
+                    WrapOutput("        #tickle-date:", i.TickleDate.Value.ToString("yyyy-MM-dd"), wrapwidth);
+                }
                 WrapOutput("        #ID:", i.ID.ToString(), wrapwidth);
                 // TODO: priority-parent and other special tags.
             }
