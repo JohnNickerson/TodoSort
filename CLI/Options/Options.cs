@@ -24,7 +24,7 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
         public SingleSearchSubOptions DeleteVerb { get; set; }
 
         [VerbOption("done", HelpText = "Move an item to the done file.")]
-        public SingleSearchSubOptions DoneVerb { get; set; }
+        public DoneSubOptions DoneVerb { get; set; }
 
         [VerbOption("export", HelpText = "Save a formatted copy of a list to file.")]
         public ExportSubOptions ExportVerb { get; set; }
