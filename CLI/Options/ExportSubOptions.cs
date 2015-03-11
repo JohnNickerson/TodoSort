@@ -8,7 +8,7 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
 {
     public class ExportSubOptions : MultiSearchSubOptions
     {
-        [Option('e', "format", HelpText = "The export format to use: html or graphviz.", DefaultValue = "html")]
+        [Option('e', "format", HelpText = "The export format to use: html, graphviz or text.", DefaultValue = "html")]
         public string Format { get; set; }
 
         [Option('f', "file", HelpText = "The filename to write to.")]

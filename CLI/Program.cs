@@ -182,6 +182,9 @@ namespace AssimilationSoftware.TodoSort.CLI
                         case "text":
                             exporter = new TextExporter { Filename = exportOptions.Filename };
                             break;
+                        default:
+                            Console.WriteLine("Unknown output file format.");
+                            break;
                     }
                     if (exporter != null)
                     {

@@ -109,9 +109,10 @@
 		- Might be nice to know, but fairly easy to determine from Show-Ancestors.
 		#type:feature
 		#id:4158a739-966a-45e5-88e0-e9169a84b298
-	Tag an item after opening a tag
-		- Renaming without the option to tag is a pain.
-		#id:97153710-42f6-4608-b022-09c80cc038ea
+	Make sure the process command looks through all items for a project's next action
+		- I have a vague suspicion that it might only look at the head of the tree.
+		#type:feature
+		#id:c55e9746-839f-407c-a217-90b1b20351ba
 	Change the disambiguation process to demand a single match
 		- Tough for short words that might appear everywhere. Allow IDs?
 		#type:feature
@@ -132,11 +133,6 @@
 		#type:feature
 		#id:b9e5e549-15cd-4732-a5ef-fef435e27e6b
 		#priority-parent:b98263af-35a7-43f8-afc5-77880339f068
-	Make sure the process command looks through all items for a project's next action
-		- I have a vague suspicion that it might only look at the head of the tree.
-		#type:feature
-		#id:c55e9746-839f-407c-a217-90b1b20351ba
-		#priority-parent:9efab255-6bbd-4481-be1e-e60c210acf46
 	Multi-line notes on new items
 		- It would be nice to be able to enter a lot of notes for a new item, if relevant.
 		#type:feature
@@ -148,8 +144,9 @@
 		#type:feature
 		#id:540d5e5a-e748-48d4-8131-ba284623b73a
 		#priority-parent:ec98fd77-5d59-415d-a842-2f5a40b2eb2f
-	Rank one context
+	Use MultiSearch options for rank command
 		- Could come in handy.
+		- Will allow ranking all second-tier items, a given context, all leaves etc. Powerful. (2015-03-11)
 		#type:feature
 		#id:c747b6f0-9780-482e-bfbd-1c45a6fd0fc4
 		#priority-parent:fca19166-f471-49e5-864e-0386c098e41d

@@ -495,6 +495,11 @@
 		#release:0.7
 		#done-date:2015-03-09
 		#id:9efab255-6bbd-4481-be1e-e60c210acf46
+@2015-03-11
+	Tag an item after opening a tag
+		- Renaming without the option to tag is a pain.
+		#done-date:2015-03-11
+		#id:97153710-42f6-4608-b022-09c80cc038ea
 @done
 	The Done list should be broken up into date sub lists rather than being a different format.
 		#id:3da6bbcb-9608-4289-a82c-50b29d7ee7ac
