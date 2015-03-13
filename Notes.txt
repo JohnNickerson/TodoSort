@@ -14,6 +14,10 @@
 		- It shouldn't happen, but if it does, it shouldn't remain.
 		#type:feature
 		#id:a889729c-2c1d-4a39-9a66-050a73988d9d
+	Empty tags
+		- Allow tags where their existence is all that matters.
+		#type:feature
+		#id:47cd35de-c4fb-4c77-8be3-b4cd7d69e5d7
 	Automatic 'important' ranked items
 		- Unable to be voted down, automatically win votes, skipped when two important ones are against each other.
 		#type:feature
@@ -113,6 +117,14 @@
 		- I have a vague suspicion that it might only look at the head of the tree.
 		#type:feature
 		#id:c55e9746-839f-407c-a217-90b1b20351ba
+	Tag-All command
+		- To apply a particular tag to all of a set of search results.
+		#type:feature
+		#id:269e322b-e58a-46cd-b3ec-d57cedbe1eaa
+	Allow adding an item with the Done command
+		- Sometimes, being able to create a new item instead of having to look for it first would be handy.
+		#type:feature
+		#id:55334296-a38c-4268-adf7-7e9cabd9e07a
 	Change the disambiguation process to demand a single match
 		- Tough for short words that might appear everywhere. Allow IDs?
 		#type:feature

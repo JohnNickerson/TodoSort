@@ -186,7 +186,7 @@ namespace AssimilationSoftware.TodoSort.Core
         {
             get
             {
-                return someday_items.Where(s => SomedaySearchSpecification.IsSatisfiedBy(s));
+                return SomedayItems.Where(s => SomedaySearchSpecification.IsSatisfiedBy(s));
             }
         }
 
@@ -213,7 +213,7 @@ namespace AssimilationSoftware.TodoSort.Core
         {
             get
             {
-                return done_items.Where(s => DoneSearchSpecification.IsSatisfiedBy(s));
+                return DoneItems.Where(s => DoneSearchSpecification.IsSatisfiedBy(s));
             }
         }
 
@@ -222,6 +222,21 @@ namespace AssimilationSoftware.TodoSort.Core
             get
             {
                 return todo_items;
+            }
+        }
+
+        public List<ActionItem> DoneItems
+        {
+            get
+            {
+                if (done_mapper == null)
+                {
+                    return todo_items.Where(i => i.Context == "done").ToList();
+                }
+                else
+                {
+                    return done_items;
+                }
             }
         }
         #endregion
