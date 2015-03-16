@@ -322,7 +322,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                 #region Process
                 case "process":
                     // Go over the @someday items and look for tickle dates.
-                    vm.SearchSpecification = new TickleDateSearchSpecification(null, DateTime.Today);
+                    vm.SomedaySearchSpecification = new TickleDateSearchSpecification(null, DateTime.Today);
                     vm.Undefer("inbox", vm.SearchResults.ToArray());
 
                     vm.SearchSpecification = new ContextSearchSpecification("inbox");
