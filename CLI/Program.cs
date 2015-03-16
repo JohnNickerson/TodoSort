@@ -217,12 +217,12 @@ namespace AssimilationSoftware.TodoSort.CLI
                 case "merge":
                     var mergeOptions = (MergeSubOptions)argsubs;
                     Console.WriteLine("Confirm child item:");
-                    vm.SearchTerm = mergeOptions.FirstSearchTerm;
+                    vm.SearchTerm = mergeOptions.ChildSearchTerm ?? mergeOptions.TargetSearchTerm;
                     var mergevictim = Disambiguate(vm.SearchResults);
                     if (mergevictim != null)
                     {
                         Console.WriteLine("Confirm item to merge into:");
-                        vm.SearchTerm = mergeOptions.SecondSearchTerm ?? mergeOptions.FirstSearchTerm;
+                        vm.SearchTerm = mergeOptions.TargetSearchTerm;
                         var combined = Disambiguate(vm.SearchResults.Where(x => x.ID != mergevictim.ID));
                         if (mergevictim != null && combined != null)
                         {

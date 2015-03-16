@@ -125,6 +125,15 @@
 		- Sometimes, being able to create a new item instead of having to look for it first would be handy.
 		#type:feature
 		#id:55334296-a38c-4268-adf7-7e9cabd9e07a
+	Export iCal format for Someday items
+		- Might comprise two new features.
+		- Useful for my upcoming movies list. (2015-03-16)
+		#type:feature
+		#id:b27942a1-1960-41fe-a38a-1189d75d1700
+	Hide NSFW-tagged items
+		- Might be easiest to specify with advanced search.
+		#type:feature
+		#id:314d8cbb-f519-4b49-bd2c-b3ceeb05a912
 	Change the disambiguation process to demand a single match
 		- Tough for short words that might appear everywhere. Allow IDs?
 		#type:feature
