@@ -89,6 +89,12 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
         [VerbOption("tag", HelpText = "Adds tags to an item.")]
         public SingleSearchSubOptions TagVerb { get; set; }
 
+        [VerbOption("undefer", HelpText = "Move an item from the Someday list to the main list.")]
+        public SingleSearchSubOptions UndeferVerb { get; set; }
+
+        [VerbOption("undo", HelpText = "Move an item from the Done list back to the main list.")]
+        public SingleSearchSubOptions UndoVerb { get; set; }
+
         [VerbOption("unrank", HelpText = "Remove priority ranking data for one particular item.")]
         public SingleSearchSubOptions UnrankVerb { get; set; }
 

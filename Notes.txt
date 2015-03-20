@@ -18,6 +18,10 @@
 		- Allow tags where their existence is all that matters.
 		#type:feature
 		#id:47cd35de-c4fb-4c77-8be3-b4cd7d69e5d7
+	Use a dictionary in-memory for faster access by ID
+		- Also should prevent duplicated IDs, which have been an occasional problem.
+		#type:architecture
+		#id:f8032315-e652-4a6d-b110-23ea6c4297d9
 	Automatic 'important' ranked items
 		- Unable to be voted down, automatically win votes, skipped when two important ones are against each other.
 		#type:feature
@@ -44,6 +48,7 @@
 		- Useful for when the files are not up to date (eg Dropbox sync has fallen behind).
 		- Serialise options classes?
 		- Store commands as files in a folder. Apply in-memory but not to disk. Separate 'apply' command for when all up to date. (2015-02-19)
+		- Conflict detection: were all changes made in one place since the last 'apply' operation? (2015-03-19)
 		#id:5e70eaeb-8525-42eb-9824-407482dc0588
 		#priority-parent:8da843b9-8dc7-47c7-9db3-e7209b1068fe
 	Generic CRUD operations on any list file
