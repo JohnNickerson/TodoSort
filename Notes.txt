@@ -13,6 +13,7 @@
 	Remove a previous-context tag if it references the current context
 		- It shouldn't happen, but if it does, it shouldn't remain.
 		#type:feature
+		#release:0.8
 		#id:a889729c-2c1d-4a39-9a66-050a73988d9d
 	Empty tags
 		- Allow tags where their existence is all that matters.
@@ -21,6 +22,7 @@
 	Use a dictionary in-memory for faster access by ID
 		- Also should prevent duplicated IDs, which have been an occasional problem.
 		#type:architecture
+		#release:0.8
 		#id:f8032315-e652-4a6d-b110-23ea6c4297d9
 	Automatic 'important' ranked items
 		- Unable to be voted down, automatically win votes, skipped when two important ones are against each other.
@@ -49,6 +51,7 @@
 		- Serialise options classes?
 		- Store commands as files in a folder. Apply in-memory but not to disk. Separate 'apply' command for when all up to date. (2015-02-19)
 		- Conflict detection: were all changes made in one place since the last 'apply' operation? (2015-03-19)
+		#release:0.8
 		#id:5e70eaeb-8525-42eb-9824-407482dc0588
 		#priority-parent:8da843b9-8dc7-47c7-9db3-e7209b1068fe
 	Generic CRUD operations on any list file
@@ -63,6 +66,7 @@
 	Wrap at spaces or punctuation
 		- It would look tidier if lines wrapped at natural spaces. (2014-06-02)
 		#type:feature
+		#release:0.8
 		#id:ec98fd77-5d59-415d-a842-2f5a40b2eb2f
 	Add a URL directly
 		- Extract the page title for the item and store the URL as a tag.
@@ -78,10 +82,12 @@
 	Show project children
 		- There's no way to inspect project relationships from the command line.
 		#type:feature
+		#release:0.8
 		#id:e42814b6-5e57-413d-96f2-880064c58369
 	Add a total count to the summary view
 		- Just to add up everything that's there.
 		#type:feature
+		#release:0.8
 		#id:b98263af-35a7-43f8-afc5-77880339f068
 	Option interfaces
 		- Standard option interfaces to specify what kind of options are available to a command. Would help prevent bugs like improper handling of general flags.
@@ -94,10 +100,12 @@
 	Textual tree display
 		- Model after Git, if possible.
 		#type:feature
+		#release:0.8
 		#id:18e65381-8e47-48df-9fb6-87ef7ab741d1
 	List contexts when asking for one
 		- I've used different sets of contexts in different files for different purposes. It would just help to see them displayed.
 		#type:feature
+		#release:0.8
 		#id:fca19166-f471-49e5-864e-0386c098e41d
 	Last page of Someday processing is blank
 		- When processing Someday items and the last item is at the end of a page (eg --pagesize 1) there will be a blank set displayed at the end.
@@ -106,6 +114,7 @@
 	Count and confirm for bulk operations
 		- When moving/unranking etc a lot of items at once, display a message about it like 'Moving 683 items from X to Y. Continue?'
 		#type:feature
+		#release:0.8
 		#id:c78b118f-87a5-4997-be23-d39f0ceb4b38
 	De-duplicate command
 		- Search and merge duplicates
@@ -121,6 +130,7 @@
 	Make sure the process command looks through all items for a project's next action
 		- I have a vague suspicion that it might only look at the head of the tree.
 		#type:feature
+		#release:0.8
 		#id:c55e9746-839f-407c-a217-90b1b20351ba
 	Tag-All command
 		- To apply a particular tag to all of a set of search results.
@@ -152,6 +162,7 @@
 	Show parent/child relationship after setting it
 		- Right now, it's producing no output.
 		#type:feature
+		#release:0.8
 		#id:fc49fb01-666a-48a9-b343-31b2ff613b87
 		#priority-parent:e42814b6-5e57-413d-96f2-880064c58369
 	When processing projects, allow setting an existing item as next
@@ -180,17 +191,13 @@
 		- Otherwise it's just empty output.
 		#type:feature
 		#command:show
+		#release:0.8
 		#id:8da453c8-362d-4545-bac4-c73c7843f3bf
 		#priority-parent:fca19166-f471-49e5-864e-0386c098e41d
 	Change console output to an export module used by default
 		#type:feature
 		#id:37ed25d1-cd26-4ad0-b86b-896cca3f783c
 		#priority-parent:fca19166-f471-49e5-864e-0386c098e41d
-	Abort someday context assignment if no item is chosen
-		- It gets tedious to use two keystrokes where one would do.
-		#type:feature
-		#id:c2e2a39e-c67c-46a1-a505-06d581944482
-		#priority-parent:c747b6f0-9780-482e-bfbd-1c45a6fd0fc4
 	Add tags on command line with add command
 		#type:feature
 		#id:734bc716-c2d6-44d6-8a7a-04fb0374238c

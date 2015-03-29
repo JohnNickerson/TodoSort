@@ -323,7 +323,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                 case "process":
                     // Go over the @someday items and look for tickle dates.
                     vm.SomedaySearchSpecification = new TickleDateSearchSpecification(null, DateTime.Today);
-                    vm.Undefer("inbox", vm.SearchResults.ToArray());
+                    vm.Undefer("inbox", vm.SomedaySearchResults.ToArray());
 
                     vm.SearchSpecification = new ContextSearchSpecification("inbox");
                     var inbox = vm.SearchResults.ToList();
@@ -475,7 +475,14 @@ namespace AssimilationSoftware.TodoSort.CLI
                     // Search for matching items.
                     var searchOptions = ((MultiSearchSubOptions)argsubs);
                     vm.SearchSpecification = searchOptions.SearchSpecification;
-                    PrintItems(searchOptions.SortTag, vm.SearchResults);
+                    if (searchOptions.PrintTree)
+                    {
+                        PrintTree(vm.SearchResults, true);
+                    }
+                    else
+                    {
+                        PrintItems(searchOptions.SortTag, vm.SearchResults);
+                    }
                     break;
                 #endregion
 
@@ -886,6 +893,84 @@ namespace AssimilationSoftware.TodoSort.CLI
                 }
                 PrintItem(i, null);
                 last_context = i.Context;
+            }
+        }
+
+        private static void PrintTree(IEnumerable<ActionItem> list, bool showAncestors)
+        {
+            List<ActionItem> ancestors = new List<ActionItem>();
+            ancestors.AddRange(list);
+            if (showAncestors)
+            {
+                // Fill out the results.
+                for (int i = 0; i < ancestors.Count; i++)
+                {
+                    if (ancestors[i].RankParent != null && !ancestors.Contains(ancestors[i].RankParent))
+                    {
+                        ancestors.Add(ancestors[i].RankParent);
+                    }
+                }
+            }
+
+            // Find the roots.
+            var roots = ancestors.Where(t => t.RankParent == null || !ancestors.Contains(t.RankParent));
+
+            foreach (var r in roots)
+            {
+                PrintTree(1, r, list, ancestors);
+                Console.WriteLine();
+                Console.WriteLine();
+            }
+        }
+
+        private static void PrintTree(int indent, ActionItem root, IEnumerable<ActionItem> tree, IEnumerable<ActionItem> ancestors)
+        {
+            var children = ancestors.Where(i => i.RankParent == root);
+            var prefix = new StringBuilder();
+            var padline = new StringBuilder();
+            for (int i = 0; i < indent; i++)
+            {
+                if (i < indent - 1)
+                {
+                    prefix.Append("| ");
+                }
+                else
+                {
+                    prefix.Append("* ");
+                }
+                padline.Append("| ");
+            }
+            Console.Write(prefix);
+            string name = root.Title.Substring(0, Math.Min(80 - prefix.Length, root.Title.Length));
+            if (tree != null && tree.Contains(root))
+            {
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.Write(name);
+                Console.ResetColor();
+            }
+            else
+            {
+                Console.Write(name);
+            }
+            if (name.Length + prefix.Length < 80)
+            {
+                Console.WriteLine();
+            }
+
+            for (int j = 0; j < children.Count(); j++)
+            {
+                Console.Write(padline.ToString().Trim());
+                var child = children.ElementAt(j);
+                if (j < children.Count() - 1)
+                {
+                    Console.WriteLine("\\");
+                    PrintTree(indent + 1, child, tree, ancestors);
+                }
+                else
+                {
+                    Console.WriteLine();
+                    PrintTree(indent, child, tree, ancestors);
+                }
             }
         }
 

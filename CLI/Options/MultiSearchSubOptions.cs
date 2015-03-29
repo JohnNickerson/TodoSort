@@ -113,5 +113,8 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
                 return result;
             }
         }
+
+        [Option("tree", HelpText = "Display results in a tree format.")]
+        public bool PrintTree { get; set; }
     }
 }
