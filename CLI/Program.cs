@@ -656,6 +656,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                     {
                         TagItem(vm, selected);
                     }
+                    verbose = true; // Display the newly-added tags.
                     break;
                 #endregion
 
@@ -917,59 +918,67 @@ namespace AssimilationSoftware.TodoSort.CLI
 
             foreach (var r in roots)
             {
-                PrintTree(1, r, list, ancestors);
+                PrintTree(r, list, ancestors);
                 Console.WriteLine();
                 Console.WriteLine();
             }
         }
 
-        private static void PrintTree(int indent, ActionItem root, IEnumerable<ActionItem> tree, IEnumerable<ActionItem> ancestors)
+        private struct PrintTreeItem
         {
-            var children = ancestors.Where(i => i.RankParent == root);
-            var prefix = new StringBuilder();
-            var padline = new StringBuilder();
-            for (int i = 0; i < indent; i++)
-            {
-                if (i < indent - 1)
-                {
-                    prefix.Append("| ");
-                }
-                else
-                {
-                    prefix.Append("* ");
-                }
-                padline.Append("| ");
-            }
-            Console.Write(prefix);
-            string name = root.Title.Substring(0, Math.Min(80 - prefix.Length, root.Title.Length));
-            if (tree != null && tree.Contains(root))
-            {
-                Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.Write(name);
-                Console.ResetColor();
-            }
-            else
-            {
-                Console.Write(name);
-            }
-            if (name.Length + prefix.Length < 80)
-            {
-                Console.WriteLine();
-            }
+            public ActionItem Item;
+            public int Depth;
+            public string PadLine;
+        }
 
-            for (int j = 0; j < children.Count(); j++)
+        private static void PrintTree(ActionItem root, IEnumerable<ActionItem> tree, IEnumerable<ActionItem> ancestors)
+        {
+            var stack = new Stack<PrintTreeItem>();
+            stack.Push(new PrintTreeItem { Item = root, Depth = 1, PadLine = null });
+            while (stack.Count > 0)
             {
-                Console.Write(padline.ToString().Trim());
-                var child = children.ElementAt(j);
-                if (j < children.Count() - 1)
+                var node = stack.Pop();
+                int indent = node.Depth;
+                ActionItem focus = node.Item;
+                var children = ancestors.Where(i => i.RankParent == focus);
+                var prefix = new StringBuilder();
+                var padline = new StringBuilder();
+                for (int i = 0; i < indent; i++)
                 {
-                    Console.WriteLine("\\");
-                    PrintTree(indent + 1, child, tree, ancestors);
+                    if (i < indent - 1)
+                    {
+                        prefix.Append("| ");
+                    }
+                    else
+                    {
+                        prefix.Append("* ");
+                    }
+                    padline.Append("| ");
+                }
+                if (!string.IsNullOrEmpty(node.PadLine))
+                {
+                    Console.WriteLine(node.PadLine);
+                }
+                Console.Write(prefix);
+                string name = focus.Title.Substring(0, Math.Min(80 - prefix.Length, focus.Title.Length));
+                if (tree != null && tree.Contains(focus))
+                {
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.Write(name);
+                    Console.ResetColor();
                 }
                 else
+                {
+                    Console.Write(name);
+                }
+                if (name.Length + prefix.Length < 80)
                 {
                     Console.WriteLine();
-                    PrintTree(indent, child, tree, ancestors);
+                }
+
+                for (int j = 0; j < children.Count(); j++)
+                {
+                    stack.Push(new PrintTreeItem { Item = children.ElementAt(j), PadLine = padline.ToString().Trim() + (j == 0 ? "" : "\\"), Depth = node.Depth + (j == 0 ? 0 : 1) });
                 }
             }
         }
