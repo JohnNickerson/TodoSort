@@ -477,7 +477,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                     vm.SearchSpecification = searchOptions.SearchSpecification;
                     if (searchOptions.PrintTree)
                     {
-                        PrintTree(vm.SearchResults, true);
+                        PrintTree(vm.SearchResults.ToList(), true);
                     }
                     else
                     {
@@ -897,7 +897,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             }
         }
 
-        private static void PrintTree(IEnumerable<ActionItem> list, bool showAncestors)
+        private static void PrintTree(List<ActionItem> list, bool showAncestors)
         {
             List<ActionItem> ancestors = new List<ActionItem>();
             ancestors.AddRange(list);
@@ -931,7 +931,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             public string PadLine;
         }
 
-        private static void PrintTree(ActionItem root, IEnumerable<ActionItem> tree, IEnumerable<ActionItem> ancestors)
+        private static void PrintTree(ActionItem root, List<ActionItem> tree, List<ActionItem> ancestors)
         {
             var stack = new Stack<PrintTreeItem>();
             stack.Push(new PrintTreeItem { Item = root, Depth = 1, PadLine = null });
