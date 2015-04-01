@@ -521,10 +521,12 @@ namespace AssimilationSoftware.TodoSort.CLI
                         var child = Disambiguate(vm.SearchResults);
                         Console.WriteLine("Confirm parent item:");
                         vm.SearchTerm = setparentOptions.ParentSearchTerm ?? setparentOptions.ChildSearchTerm;
-                        var parent = Disambiguate(vm.SearchResults);
+                        var parent = Disambiguate(vm.SearchResults.Where(x => x.ID != child.ID));
                         if (child != null && parent != null)
                         {
                             vm.SetParent(child, parent);
+                            Console.WriteLine();
+                            PrintTree(new List<ActionItem> { { child }, { parent } }, false);
                         }
                     }
                     break;

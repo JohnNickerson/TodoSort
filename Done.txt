@@ -500,6 +500,21 @@
 		- Renaming without the option to tag is a pain.
 		#done-date:2015-03-11
 		#id:97153710-42f6-4608-b022-09c80cc038ea
+@2015-03-31
+	Textual tree display
+		- Model after Git, if possible.
+		#type:feature
+		#release:0.8
+		#done-date:2015-03-31
+		#id:18e65381-8e47-48df-9fb6-87ef7ab741d1
+@2015-04-01
+	Show parent/child relationship after setting it
+		- Right now, it's producing no output.
+		#type:feature
+		#release:0.8
+		#done-date:2015-04-01
+		#id:fc49fb01-666a-48a9-b343-31b2ff613b87
+		#priority-parent:e42814b6-5e57-413d-96f2-880064c58369
 @done
 	The Done list should be broken up into date sub lists rather than being a different format.
 		#id:3da6bbcb-9608-4289-a82c-50b29d7ee7ac

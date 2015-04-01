@@ -21,6 +21,8 @@
 		#id:47cd35de-c4fb-4c77-8be3-b4cd7d69e5d7
 	Use a dictionary in-memory for faster access by ID
 		- Also should prevent duplicated IDs, which have been an occasional problem.
+		- Done in an experimental branch. (2015-03-31)
+		- Method signatures and internal operations don't really mean increased speed. (2015-03-31)
 		#type:architecture
 		#release:0.8
 		#id:f8032315-e652-4a6d-b110-23ea6c4297d9
@@ -97,11 +99,6 @@
 		- Just to modify existing notes if required.
 		#type:feature
 		#id:2fd5a81e-3ded-45d4-b777-1e889fcf1126
-	Textual tree display
-		- Model after Git, if possible.
-		#type:feature
-		#release:0.8
-		#id:18e65381-8e47-48df-9fb6-87ef7ab741d1
 	List contexts when asking for one
 		- I've used different sets of contexts in different files for different purposes. It would just help to see them displayed.
 		#type:feature
@@ -149,6 +146,14 @@
 		- Might be easiest to specify with advanced search.
 		#type:feature
 		#id:314d8cbb-f519-4b49-bd2c-b3ceeb05a912
+	Set project on add
+		- Allow the user to search for and set a project as part of the Add command.
+		#type:feature
+		#id:df1b6700-a5c7-4ef0-a41c-337758dda012
+	Remove the Show-Parents command
+		- Now better covered by the Search command with tree output.
+		#release:0.8
+		#id:f6032615-976f-4ba4-884c-24905de9068f
 	Change the disambiguation process to demand a single match
 		- Tough for short words that might appear everywhere. Allow IDs?
 		#type:feature
@@ -159,12 +164,6 @@
 		#type:feature
 		#id:c7f20b28-948a-4530-be53-7234e8fbdb65
 		#priority-parent:76757caa-17d7-4a14-a337-afda259a9ab6
-	Show parent/child relationship after setting it
-		- Right now, it's producing no output.
-		#type:feature
-		#release:0.8
-		#id:fc49fb01-666a-48a9-b343-31b2ff613b87
-		#priority-parent:e42814b6-5e57-413d-96f2-880064c58369
 	When processing projects, allow setting an existing item as next
 		- Instead of demanding a brand new action.
 		#type:feature
