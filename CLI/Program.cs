@@ -333,6 +333,8 @@ namespace AssimilationSoftware.TodoSort.CLI
                         Console.WriteLine("To which context should this item go?");
                         ActionItem first = inbox[i];
                         PrintItem(first, null);
+                        Console.WriteLine();
+                        PrintContexts(vm);
                         string newcontext = Console.ReadLine();
                         vm.SetContext(first, newcontext);
                         Console.WriteLine();
@@ -352,6 +354,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                             PrintItem(first, null);
                             string nextaction = Console.ReadLine();
                             Console.WriteLine("...and to what context does it belong?");
+                            PrintContexts(vm);
                             string newcontext = Console.ReadLine();
                             if (nextaction == newcontext)
                             {
@@ -550,41 +553,6 @@ namespace AssimilationSoftware.TodoSort.CLI
                     break;
                 #endregion
 
-                #region Show Parents
-                case "show-parents":
-                    {
-                        var showParentOptions = (SingleSearchSubOptions)argsubs;
-                        vm.SearchSpecification = showParentOptions.SearchSpecification;
-                        selected = Disambiguate(vm.SearchResults);
-                        if (selected != null)
-                        {
-                            // Build the chain of parent items up the tree.
-                            List<ActionItem> ancestors = new List<ActionItem>();
-                            ancestors.Add(selected);
-                            while (selected.RankParent != null)
-                            {
-                                selected = selected.RankParent;
-                                ancestors.Add(selected);
-                            }
-                            // Show the tree.
-                            Console.WriteLine();
-                            while (ancestors.Count > 0)
-                            {
-                                PrintItem(ancestors[ancestors.Count - 1], null);
-                                ancestors.RemoveAt(ancestors.Count - 1);
-                                if (ancestors.Count > 0)
-                                {
-                                    Console.WriteLine("\t/|\\");
-                                    Console.WriteLine("\t |");
-                                }
-                            }
-                            Console.WriteLine();
-                            selected = null;
-                        }
-                    }
-                    break;
-                #endregion
-
                 #region Someday
                 case "someday":
                     {
@@ -755,6 +723,14 @@ namespace AssimilationSoftware.TodoSort.CLI
             vm.Save();
         }
 
+        private static void PrintContexts(ViewModel vm)
+        {
+            foreach (var c in vm.GetContextNames())
+            {
+                Console.WriteLine(c);
+            }
+        }
+
         private static void OpenItemTag(string tagvalue)
         {
             System.Diagnostics.Process p = new System.Diagnostics.Process();
@@ -786,6 +762,8 @@ namespace AssimilationSoftware.TodoSort.CLI
                         else
                         {
                             Console.WriteLine("To which context should this item go?");
+                            // List contexts.
+                            PrintContexts(vm);
                             string newcontext = Console.ReadLine();
                             vm.Undefer(newcontext, item);
                         }

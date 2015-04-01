@@ -514,7 +514,18 @@
 		#release:0.8
 		#done-date:2015-04-01
 		#id:fc49fb01-666a-48a9-b343-31b2ff613b87
-		#priority-parent:e42814b6-5e57-413d-96f2-880064c58369
+@2015-04-02
+	Remove the Show-Parents command
+		- Now better covered by the Search command with tree output.
+		#release:0.8
+		#done-date:2015-04-02
+		#id:f6032615-976f-4ba4-884c-24905de9068f
+	List contexts when asking for one
+		- I've used different sets of contexts in different files for different purposes. It would just help to see them displayed.
+		#type:feature
+		#release:0.8
+		#done-date:2015-04-02
+		#id:fca19166-f471-49e5-864e-0386c098e41d
 @done
 	The Done list should be broken up into date sub lists rather than being a different format.
 		#id:3da6bbcb-9608-4289-a82c-50b29d7ee7ac

@@ -1,15 +1,4 @@
 @backend
-	Always rank project items together
-		- Children of the same project need to be ordered against each other, not necessarily everything else.
-		#type:feature
-		#id:f10b1166-8dff-432b-869f-4cc29dccef22
-	Trash context
-		- To allow undeleting items if required.
-		#type:feature
-		#id:11761e28-949d-470d-aeb8-b7cd1d4bc58a
-	Mustache-sharp template engine for exports
-		#url:https://github.com/jehugaleahsa/mustache-sharp
-		#id:c16bf60e-abb0-4847-867b-cba0df9e7e3e
 	Remove a previous-context tag if it references the current context
 		- It shouldn't happen, but if it does, it shouldn't remain.
 		#type:feature
@@ -26,6 +15,20 @@
 		#type:architecture
 		#release:0.8
 		#id:f8032315-e652-4a6d-b110-23ea6c4297d9
+	Always rank project items together
+		- Children of the same project need to be ordered against each other, not necessarily everything else.
+		#type:feature
+		#id:f10b1166-8dff-432b-869f-4cc29dccef22
+		#priority-parent:47cd35de-c4fb-4c77-8be3-b4cd7d69e5d7
+	Trash context
+		- To allow undeleting items if required.
+		#type:feature
+		#id:11761e28-949d-470d-aeb8-b7cd1d4bc58a
+		#priority-parent:f8032315-e652-4a6d-b110-23ea6c4297d9
+	Mustache-sharp template engine for exports
+		#url:https://github.com/jehugaleahsa/mustache-sharp
+		#id:c16bf60e-abb0-4847-867b-cba0df9e7e3e
+		#priority-parent:a889729c-2c1d-4a39-9a66-050a73988d9d
 	Automatic 'important' ranked items
 		- Unable to be voted down, automatically win votes, skipped when two important ones are against each other.
 		#type:feature
@@ -70,17 +73,6 @@
 		#type:feature
 		#release:0.8
 		#id:ec98fd77-5d59-415d-a842-2f5a40b2eb2f
-	Add a URL directly
-		- Extract the page title for the item and store the URL as a tag.
-		- This would be very handy for my work priority-setting where I play off bugs vs features. (2015-01-28)
-		#type:feature
-		#id:1e0f158c-f8e4-44d7-82b5-2bef833490df
-	Process all projects on "process" command
-		- Currently only processes projects at the head of the projects tree.
-		- Best to make sure all projects have a next item.
-		- On the other hand, it could be good to delay that for an unimportant project.
-		#type:feature
-		#id:76757caa-17d7-4a14-a337-afda259a9ab6
 	Show project children
 		- There's no way to inspect project relationships from the command line.
 		#type:feature
@@ -95,15 +87,6 @@
 		- Standard option interfaces to specify what kind of options are available to a command. Would help prevent bugs like improper handling of general flags.
 		#type:feature
 		#id:eafd7429-120e-4126-b710-cc143659bca2
-	Edit Notes command
-		- Just to modify existing notes if required.
-		#type:feature
-		#id:2fd5a81e-3ded-45d4-b777-1e889fcf1126
-	List contexts when asking for one
-		- I've used different sets of contexts in different files for different purposes. It would just help to see them displayed.
-		#type:feature
-		#release:0.8
-		#id:fca19166-f471-49e5-864e-0386c098e41d
 	Last page of Someday processing is blank
 		- When processing Someday items and the last item is at the end of a page (eg --pagesize 1) there will be a blank set displayed at the end.
 		#type:bug
@@ -117,53 +100,77 @@
 		- Search and merge duplicates
 		- Kind of difficult with this data, but worth it. (2014-06-17)
 		#id:841c5d7b-d1c5-4a3e-8618-cfff08ef4c20
-	Keep processing while more items still in inbox or projects.
-		#type:feature
-		#id:f5a3d428-5de0-4aa0-8e88-edcc3800ba5e
-	Display depth for individual item search results
-		- Might be nice to know, but fairly easy to determine from Show-Ancestors.
-		#type:feature
-		#id:4158a739-966a-45e5-88e0-e9169a84b298
-	Make sure the process command looks through all items for a project's next action
-		- I have a vague suspicion that it might only look at the head of the tree.
-		#type:feature
-		#release:0.8
-		#id:c55e9746-839f-407c-a217-90b1b20351ba
-	Tag-All command
-		- To apply a particular tag to all of a set of search results.
-		#type:feature
-		#id:269e322b-e58a-46cd-b3ec-d57cedbe1eaa
-	Allow adding an item with the Done command
-		- Sometimes, being able to create a new item instead of having to look for it first would be handy.
-		#type:feature
-		#id:55334296-a38c-4268-adf7-7e9cabd9e07a
 	Export iCal format for Someday items
 		- Might comprise two new features.
 		- Useful for my upcoming movies list. (2015-03-16)
 		#type:feature
 		#id:b27942a1-1960-41fe-a38a-1189d75d1700
-	Hide NSFW-tagged items
-		- Might be easiest to specify with advanced search.
-		#type:feature
-		#id:314d8cbb-f519-4b49-bd2c-b3ceeb05a912
 	Set project on add
 		- Allow the user to search for and set a project as part of the Add command.
 		#type:feature
 		#id:df1b6700-a5c7-4ef0-a41c-337758dda012
-	Remove the Show-Parents command
-		- Now better covered by the Search command with tree output.
+	Allow adding an item with the Done command
+		- Sometimes, being able to create a new item instead of having to look for it first would be handy.
+		#type:feature
+		#id:55334296-a38c-4268-adf7-7e9cabd9e07a
+	Use MultiSearch options for rank command
+		- Could come in handy.
+		- Will allow ranking all second-tier items, a given context, all leaves etc. Powerful. (2015-03-11)
+		#type:feature
+		#id:c747b6f0-9780-482e-bfbd-1c45a6fd0fc4
+	Show context name even for zero results
+		- Otherwise it's just empty output.
+		- What command? (2015-04-02)
+		#type:feature
+		#command:show
 		#release:0.8
-		#id:f6032615-976f-4ba4-884c-24905de9068f
-	Change the disambiguation process to demand a single match
-		- Tough for short words that might appear everywhere. Allow IDs?
+		#id:8da453c8-362d-4545-bac4-c73c7843f3bf
+	Change console output to an export module used by default
 		#type:feature
-		#id:fb247274-9a35-4f42-bb8c-4361cd29fd9e
-		#priority-parent:1e0f158c-f8e4-44d7-82b5-2bef833490df
-	'Make-List' command to make a priority chain out of several items
-		- Could come in handy for book and movie sequences, perhaps.
+		#id:37ed25d1-cd26-4ad0-b86b-896cca3f783c
+	Add a URL directly
+		- Extract the page title for the item and store the URL as a tag.
+		- This would be very handy for my work priority-setting where I play off bugs vs features. (2015-01-28)
 		#type:feature
-		#id:c7f20b28-948a-4530-be53-7234e8fbdb65
-		#priority-parent:76757caa-17d7-4a14-a337-afda259a9ab6
+		#id:1e0f158c-f8e4-44d7-82b5-2bef833490df
+		#priority-parent:e42814b6-5e57-413d-96f2-880064c58369
+	Process all projects on "process" command
+		- Currently only processes projects at the head of the projects tree.
+		- Best to make sure all projects have a next item.
+		- On the other hand, it could be good to delay that for an unimportant project.
+		#type:feature
+		#id:76757caa-17d7-4a14-a337-afda259a9ab6
+		#priority-parent:b98263af-35a7-43f8-afc5-77880339f068
+	Edit Notes command
+		- Just to modify existing notes if required.
+		#type:feature
+		#id:2fd5a81e-3ded-45d4-b777-1e889fcf1126
+		#priority-parent:b27942a1-1960-41fe-a38a-1189d75d1700
+	Keep processing while more items still in inbox or projects.
+		#type:feature
+		#id:f5a3d428-5de0-4aa0-8e88-edcc3800ba5e
+		#priority-parent:22ea6512-fd50-4714-8f20-ce7107edca63
+	Display depth for individual item search results
+		- Might be nice to know, but fairly easy to determine from Show-Ancestors.
+		#type:feature
+		#id:4158a739-966a-45e5-88e0-e9169a84b298
+		#priority-parent:c78b118f-87a5-4997-be23-d39f0ceb4b38
+	Make sure the process command looks through all items for a project's next action
+		- I have a vague suspicion that it might only look at the head of the tree.
+		#type:feature
+		#release:0.8
+		#id:c55e9746-839f-407c-a217-90b1b20351ba
+		#priority-parent:ec98fd77-5d59-415d-a842-2f5a40b2eb2f
+	Tag-All command
+		- To apply a particular tag to all of a set of search results.
+		#type:feature
+		#id:269e322b-e58a-46cd-b3ec-d57cedbe1eaa
+		#priority-parent:eafd7429-120e-4126-b710-cc143659bca2
+	Hide NSFW-tagged items
+		- Might be easiest to specify with advanced search.
+		#type:feature
+		#id:314d8cbb-f519-4b49-bd2c-b3ceeb05a912
+		#priority-parent:841c5d7b-d1c5-4a3e-8618-cfff08ef4c20
 	When processing projects, allow setting an existing item as next
 		- Instead of demanding a brand new action.
 		#type:feature
@@ -180,23 +187,6 @@
 		#type:feature
 		#id:540d5e5a-e748-48d4-8131-ba284623b73a
 		#priority-parent:ec98fd77-5d59-415d-a842-2f5a40b2eb2f
-	Use MultiSearch options for rank command
-		- Could come in handy.
-		- Will allow ranking all second-tier items, a given context, all leaves etc. Powerful. (2015-03-11)
-		#type:feature
-		#id:c747b6f0-9780-482e-bfbd-1c45a6fd0fc4
-		#priority-parent:fca19166-f471-49e5-864e-0386c098e41d
-	Show context name even for zero results
-		- Otherwise it's just empty output.
-		#type:feature
-		#command:show
-		#release:0.8
-		#id:8da453c8-362d-4545-bac4-c73c7843f3bf
-		#priority-parent:fca19166-f471-49e5-864e-0386c098e41d
-	Change console output to an export module used by default
-		#type:feature
-		#id:37ed25d1-cd26-4ad0-b86b-896cca3f783c
-		#priority-parent:fca19166-f471-49e5-864e-0386c098e41d
 	Add tags on command line with add command
 		#type:feature
 		#id:734bc716-c2d6-44d6-8a7a-04fb0374238c
@@ -205,6 +195,16 @@
 		#type:feature
 		#id:05e78d12-11a3-4a31-9906-d0ca2ca3b0c1
 		#priority-parent:37ed25d1-cd26-4ad0-b86b-896cca3f783c
+	Change the disambiguation process to demand a single match
+		- Tough for short words that might appear everywhere. Allow IDs?
+		#type:feature
+		#id:fb247274-9a35-4f42-bb8c-4361cd29fd9e
+		#priority-parent:1e0f158c-f8e4-44d7-82b5-2bef833490df
+	'Make-List' command to make a priority chain out of several items
+		- Could come in handy for book and movie sequences, perhaps.
+		#type:feature
+		#id:c7f20b28-948a-4530-be53-7234e8fbdb65
+		#priority-parent:76757caa-17d7-4a14-a337-afda259a9ab6
 	Copy tag to clipboard
 		- Or export directly to clipboard instead of file.
 		#type:feature
