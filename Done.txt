@@ -526,6 +526,12 @@
 		#release:0.8
 		#done-date:2015-04-02
 		#id:fca19166-f471-49e5-864e-0386c098e41d
+	Add a total count to the summary view
+		- Just to add up everything that's there.
+		#type:feature
+		#release:0.8
+		#done-date:2015-04-02
+		#id:b98263af-35a7-43f8-afc5-77880339f068
 @done
 	The Done list should be broken up into date sub lists rather than being a different format.
 		#id:3da6bbcb-9608-4289-a82c-50b29d7ee7ac

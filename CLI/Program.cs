@@ -594,8 +594,11 @@ namespace AssimilationSoftware.TodoSort.CLI
 
                     int maxwidth = (summarydata.Count() > 0 ? (from r in summarydata select r.Context.Length).Max() : 0);
                     int maxnum = (summarydata.Count() > 0 ? (from c in summarydata select c.Count).Max() : 0);
+                    int total = 0;
                     foreach (var c in summarydata)
                     {
+                        total += c.Count;
+
                         // @context         n item(s)
                         string format = string.Format("@{{0}}\t{{1,{0}}} item{1}", Math.Ceiling(Math.Log10(maxnum)), (c.Count == 1 ? "" : "s"));
                         Console.WriteLine(format, c.Context.PadRight(maxwidth), c.Count);
@@ -613,6 +616,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                             Console.WriteLine();
                         }
                     }
+                    Console.WriteLine("Total\t{0}", total);
                     break;
                 #endregion
 

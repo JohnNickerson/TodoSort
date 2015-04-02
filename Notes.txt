@@ -78,11 +78,6 @@
 		#type:feature
 		#release:0.8
 		#id:e42814b6-5e57-413d-96f2-880064c58369
-	Add a total count to the summary view
-		- Just to add up everything that's there.
-		#type:feature
-		#release:0.8
-		#id:b98263af-35a7-43f8-afc5-77880339f068
 	Option interfaces
 		- Standard option interfaces to specify what kind of options are available to a command. Would help prevent bugs like improper handling of general flags.
 		#type:feature
