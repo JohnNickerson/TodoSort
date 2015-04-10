@@ -8,16 +8,17 @@ namespace AssimilationSoftware.TodoSort.Core.Search
 {
     public class NotSpecification<T> : ISearchSpecification<T>
     {
-        private ISearchSpecification<T> condition;
+        private List<ISearchSpecification<T>> _conditions;
 
-        public NotSpecification(ISearchSpecification<T> cond)
+        public NotSpecification(params ISearchSpecification<T>[] cond)
         {
-            condition = cond;
+            _conditions = new List<ISearchSpecification<T>>();
+            _conditions.AddRange(cond);
         }
 
         public bool IsSatisfiedBy(T b)
         {
-            return !condition.IsSatisfiedBy(b);
+            return !_conditions.Any(c => c.IsSatisfiedBy(b));
         }
     }
 }

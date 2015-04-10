@@ -14,6 +14,9 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
         [VerbOption("add", HelpText = "Adds a new action to a list")]
         public AddSubOptions AddVerb { get; set; }
 
+        [VerbOption("advanced-search", HelpText = "Advanced search with Lisp-like expression syntax (and (or (not term term))).")]
+        public AdvancedSearchOptions AdvancedSearchVerb { get; set; }
+
         [VerbOption("count-children", HelpText = "Counts the children of a given item.")]
         public MultiSearchSubOptions CountChildrenVerb { get; set; }
 

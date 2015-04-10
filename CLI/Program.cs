@@ -103,6 +103,15 @@ namespace AssimilationSoftware.TodoSort.CLI
                     break;
                 #endregion
 
+                #region Advanced Search
+                case "advanced-search":
+                    {
+                        vm.SearchSpecification = ((AdvancedSearchOptions)argsubs).SearchSpecification;
+                        PrintItems("title", vm.SearchResults);
+                        break;
+                    }
+                #endregion
+
                 #region Count Children
                 case "count-children":
                     {
@@ -593,14 +602,14 @@ namespace AssimilationSoftware.TodoSort.CLI
                     var summarydata = (from i in vm.SearchResults group i by i.Context into c select new { Context = c.Key, Count = c.Count() });
 
                     int maxwidth = (summarydata.Count() > 0 ? (from r in summarydata select r.Context.Length).Max() : 0);
-                    int maxnum = (summarydata.Count() > 0 ? (from c in summarydata select c.Count).Max() : 0);
+                    var maxnum = Math.Ceiling(Math.Log10((summarydata.Count() > 0 ? (from c in summarydata select c.Count).Max() : 0)));
                     int total = 0;
                     foreach (var c in summarydata)
                     {
                         total += c.Count;
 
                         // @context         n item(s)
-                        string format = string.Format("@{{0}}\t{{1,{0}}} item{1}", Math.Ceiling(Math.Log10(maxnum)), (c.Count == 1 ? "" : "s"));
+                        string format = string.Format("@{{0}}\t{{1,{0}}} item{1}", maxnum, (c.Count == 1 ? "" : "s"));
                         Console.WriteLine(format, c.Context.PadRight(maxwidth), c.Count);
 
                         if (summaryArgs.Verbose)
@@ -610,7 +619,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                             var detailed = (from r in vm.SearchResults group r by r.RankDepth into g select new { Depth = g.Key, Count = g.Count() });
                             foreach (var d in detailed)
                             {
-                                format = string.Format("\t{{0}}\t{{1,{0}}} item{1}", Math.Ceiling(Math.Log10(maxnum)), (d.Count == 1 ? "" : "s"));
+                                format = string.Format("\t{{0}}\t{{1,{0}}} item{1}", maxnum, (d.Count == 1 ? "" : "s"));
                                 Console.WriteLine(format, d.Depth, d.Count);
                             }
                             Console.WriteLine();

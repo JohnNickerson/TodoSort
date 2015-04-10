@@ -9,18 +9,23 @@ namespace AssimilationSoftware.TodoSort.Core.Search
 {
     public class OrSpecification<T> : ISearchSpecification<T>
     {
-        private ISearchSpecification<T> _conditionOne;
-        private ISearchSpecification<T> _conditionTwo;
+        private List<ISearchSpecification<T>> _conditions;
 
-        public OrSpecification(ISearchSpecification<T> first, ISearchSpecification<T> second)
+        public OrSpecification(params ISearchSpecification<T>[] conds)
         {
-            _conditionOne = first;
-            _conditionTwo = second;
+            _conditions = new List<ISearchSpecification<T>>();
+            _conditions.AddRange(conds);
         }
 
         public bool IsSatisfiedBy(T b)
         {
-            return _conditionOne.IsSatisfiedBy(b) || _conditionTwo.IsSatisfiedBy(b);
+            bool sat = false;
+            foreach (var cond in _conditions)
+            {
+                sat |= cond.IsSatisfiedBy(b);
+                if (sat) break;
+            }
+            return sat;
         }
     }
 }
