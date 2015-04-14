@@ -16,21 +16,26 @@
 		#type:architecture
 		#release:0.8
 		#id:f8032315-e652-4a6d-b110-23ea6c4297d9
-		#priority-parent:a889729c-2c1d-4a39-9a66-050a73988d9d
+	Mustache-sharp template engine for exports
+		#url:https://github.com/jehugaleahsa/mustache-sharp
+		#id:c16bf60e-abb0-4847-867b-cba0df9e7e3e
+	Trash context
+		- To allow undeleting items if required.
+		#type:feature
+		#id:11761e28-949d-470d-aeb8-b7cd1d4bc58a
+	Work offline
+		- Enqueue commands to process later without changing files.
+		- Useful for when the files are not up to date (eg Dropbox sync has fallen behind).
+		- Serialise options classes?
+		- Store commands as files in a folder. Apply in-memory but not to disk. Separate 'apply' command for when all up to date. (2015-02-19)
+		- Conflict detection: were all changes made in one place since the last 'apply' operation? (2015-03-19)
+		#release:0.8
+		#id:5e70eaeb-8525-42eb-9824-407482dc0588
 	Always rank project items together
 		- Children of the same project need to be ordered against each other, not necessarily everything else.
 		#type:feature
 		#id:f10b1166-8dff-432b-869f-4cc29dccef22
 		#priority-parent:47cd35de-c4fb-4c77-8be3-b4cd7d69e5d7
-	Mustache-sharp template engine for exports
-		#url:https://github.com/jehugaleahsa/mustache-sharp
-		#id:c16bf60e-abb0-4847-867b-cba0df9e7e3e
-		#priority-parent:a889729c-2c1d-4a39-9a66-050a73988d9d
-	Trash context
-		- To allow undeleting items if required.
-		#type:feature
-		#id:11761e28-949d-470d-aeb8-b7cd1d4bc58a
-		#priority-parent:f8032315-e652-4a6d-b110-23ea6c4297d9
 	Automatic 'important' ranked items
 		- Unable to be voted down, automatically win votes, skipped when two important ones are against each other.
 		#type:feature
@@ -52,15 +57,6 @@
 		- I tend not to use these myself, though.
 		#id:102fa8ac-653a-4d3f-b172-a0d3bf3824d8
 		#priority-parent:8da843b9-8dc7-47c7-9db3-e7209b1068fe
-	Work offline
-		- Enqueue commands to process later without changing files.
-		- Useful for when the files are not up to date (eg Dropbox sync has fallen behind).
-		- Serialise options classes?
-		- Store commands as files in a folder. Apply in-memory but not to disk. Separate 'apply' command for when all up to date. (2015-02-19)
-		- Conflict detection: were all changes made in one place since the last 'apply' operation? (2015-03-19)
-		#release:0.8
-		#id:5e70eaeb-8525-42eb-9824-407482dc0588
-		#priority-parent:8da843b9-8dc7-47c7-9db3-e7209b1068fe
 	Generic CRUD operations on any list file
 		- Move to another list file or sub-list, too
 		#id:bcac196a-52cf-4e95-8491-3cc5eafbe98b
@@ -70,11 +66,6 @@
 		#id:876a0330-b332-4e55-94a5-efaa77f3f511
 		#priority-parent:bcac196a-52cf-4e95-8491-3cc5eafbe98b
 @cli
-	Wrap at spaces or punctuation
-		- It would look tidier if lines wrapped at natural spaces. (2014-06-02)
-		#type:feature
-		#release:0.8
-		#id:ec98fd77-5d59-415d-a842-2f5a40b2eb2f
 	Show project children
 		- There's no way to inspect project relationships from the command line.
 		#type:feature
@@ -108,6 +99,50 @@
 		- Mindepth and Maxdepth don't seem to do anything.
 		#type:bug
 		#id:1320d43f-3717-43f4-9c67-af52b8cb42ca
+	Allow more specific advanced search functions
+		- For instance, parse (tag foo) as looking for a tag called foo.
+		#type:feature
+		#id:9d3a89f1-3f37-4af0-89cb-0ddf43b7d707
+	Sort Someday results by tickle date
+		#type:feature
+		#id:650e2c9b-784d-4687-9d62-1d8d950c3989
+	Sort by dynamic child count
+		- Instead of requiring a precalculation.
+		#type:feature
+		#id:71b48b73-88c5-4196-a379-46ef9964288b
+	Count and confirm for bulk operations
+		- When moving/unranking etc a lot of items at once, display a message about it like 'Moving 683 items from X to Y. Continue?'
+		#type:feature
+		#release:0.8
+		#id:c78b118f-87a5-4997-be23-d39f0ceb4b38
+	Process all projects on "process" command
+		- Currently only processes projects at the head of the projects tree.
+		- Best to make sure all projects have a next item.
+		- On the other hand, it could be good to delay that for an unimportant project.
+		#type:feature
+		#id:76757caa-17d7-4a14-a337-afda259a9ab6
+	Add a URL directly
+		- Extract the page title for the item and store the URL as a tag.
+		- This would be very handy for my work priority-setting where I play off bugs vs features. (2015-01-28)
+		#type:feature
+		#id:1e0f158c-f8e4-44d7-82b5-2bef833490df
+	Make sure the process command looks through all items for a project's next action
+		- I have a vague suspicion that it might only look at the head of the tree.
+		#type:feature
+		#release:0.8
+		#id:c55e9746-839f-407c-a217-90b1b20351ba
+	Show priority depth in verbose output
+		- I want to know how deep certain items are. (2014-06-02)
+		- Maybe merge this with the individual item tree display idea. (2014-06-02)
+		#type:feature
+		#id:540d5e5a-e748-48d4-8131-ba284623b73a
+	Add tags on command line with add command
+		#type:feature
+		#id:734bc716-c2d6-44d6-8a7a-04fb0374238c
+	Display depth for individual item search results
+		- Might be nice to know, but fairly easy to determine from Show-Ancestors.
+		#type:feature
+		#id:4158a739-966a-45e5-88e0-e9169a84b298
 	Option interfaces
 		- Standard option interfaces to specify what kind of options are available to a command. Would help prevent bugs like improper handling of general flags.
 		#type:feature
@@ -118,12 +153,6 @@
 		#type:bug
 		#id:22ea6512-fd50-4714-8f20-ce7107edca63
 		#priority-parent:b9e5e549-15cd-4732-a5ef-fef435e27e6b
-	Count and confirm for bulk operations
-		- When moving/unranking etc a lot of items at once, display a message about it like 'Moving 683 items from X to Y. Continue?'
-		#type:feature
-		#release:0.8
-		#id:c78b118f-87a5-4997-be23-d39f0ceb4b38
-		#priority-parent:ec98fd77-5d59-415d-a842-2f5a40b2eb2f
 	Allow adding an item with the Done command
 		- Sometimes, being able to create a new item instead of having to look for it first would be handy.
 		#type:feature
@@ -139,68 +168,16 @@
 		#type:feature
 		#id:37ed25d1-cd26-4ad0-b86b-896cca3f783c
 		#priority-parent:b27942a1-1960-41fe-a38a-1189d75d1700
-	Process all projects on "process" command
-		- Currently only processes projects at the head of the projects tree.
-		- Best to make sure all projects have a next item.
-		- On the other hand, it could be good to delay that for an unimportant project.
-		#type:feature
-		#id:76757caa-17d7-4a14-a337-afda259a9ab6
-		#priority-parent:8da453c8-362d-4545-bac4-c73c7843f3bf
-	Add a URL directly
-		- Extract the page title for the item and store the URL as a tag.
-		- This would be very handy for my work priority-setting where I play off bugs vs features. (2015-01-28)
-		#type:feature
-		#id:1e0f158c-f8e4-44d7-82b5-2bef833490df
-		#priority-parent:e42814b6-5e57-413d-96f2-880064c58369
 	Edit Notes command
 		- Just to modify existing notes if required.
 		#type:feature
 		#id:2fd5a81e-3ded-45d4-b777-1e889fcf1126
 		#priority-parent:b27942a1-1960-41fe-a38a-1189d75d1700
-	Make sure the process command looks through all items for a project's next action
-		- I have a vague suspicion that it might only look at the head of the tree.
-		#type:feature
-		#release:0.8
-		#id:c55e9746-839f-407c-a217-90b1b20351ba
-		#priority-parent:ec98fd77-5d59-415d-a842-2f5a40b2eb2f
 	Hide NSFW-tagged items
 		- Might be easiest to specify with advanced search.
 		#type:feature
 		#id:314d8cbb-f519-4b49-bd2c-b3ceeb05a912
 		#priority-parent:841c5d7b-d1c5-4a3e-8618-cfff08ef4c20
-	Show priority depth in verbose output
-		- I want to know how deep certain items are. (2014-06-02)
-		- Maybe merge this with the individual item tree display idea. (2014-06-02)
-		#type:feature
-		#id:540d5e5a-e748-48d4-8131-ba284623b73a
-		#priority-parent:ec98fd77-5d59-415d-a842-2f5a40b2eb2f
-	Add tags on command line with add command
-		#type:feature
-		#id:734bc716-c2d6-44d6-8a7a-04fb0374238c
-		#priority-parent:8da453c8-362d-4545-bac4-c73c7843f3bf
-	Keep processing while more items still in inbox or projects.
-		#type:feature
-		#id:f5a3d428-5de0-4aa0-8e88-edcc3800ba5e
-		#priority-parent:22ea6512-fd50-4714-8f20-ce7107edca63
-	Display depth for individual item search results
-		- Might be nice to know, but fairly easy to determine from Show-Ancestors.
-		#type:feature
-		#id:4158a739-966a-45e5-88e0-e9169a84b298
-		#priority-parent:c78b118f-87a5-4997-be23-d39f0ceb4b38
-	Tag-All command
-		- To apply a particular tag to all of a set of search results.
-		#type:feature
-		#id:269e322b-e58a-46cd-b3ec-d57cedbe1eaa
-		#priority-parent:eafd7429-120e-4126-b710-cc143659bca2
-	Multi-line notes on new items
-		- It would be nice to be able to enter a lot of notes for a new item, if relevant.
-		#type:feature
-		#id:3bdcfae0-d59e-4097-8a53-9ed8a4bafc6e
-		#priority-parent:eafd7429-120e-4126-b710-cc143659bca2
-	Make "export" a universal option for output instead of its own command
-		#type:feature
-		#id:05e78d12-11a3-4a31-9906-d0ca2ca3b0c1
-		#priority-parent:37ed25d1-cd26-4ad0-b86b-896cca3f783c
 	'Make-List' command to make a priority chain out of several items
 		- Could come in handy for book and movie sequences, perhaps.
 		#type:feature
@@ -216,6 +193,24 @@
 		#type:feature
 		#id:0cfcf140-77f1-455e-a762-f432499512de
 		#priority-parent:734bc716-c2d6-44d6-8a7a-04fb0374238c
+	Keep processing while more items still in inbox or projects.
+		#type:feature
+		#id:f5a3d428-5de0-4aa0-8e88-edcc3800ba5e
+		#priority-parent:22ea6512-fd50-4714-8f20-ce7107edca63
+	Tag-All command
+		- To apply a particular tag to all of a set of search results.
+		#type:feature
+		#id:269e322b-e58a-46cd-b3ec-d57cedbe1eaa
+		#priority-parent:eafd7429-120e-4126-b710-cc143659bca2
+	Multi-line notes on new items
+		- It would be nice to be able to enter a lot of notes for a new item, if relevant.
+		#type:feature
+		#id:3bdcfae0-d59e-4097-8a53-9ed8a4bafc6e
+		#priority-parent:eafd7429-120e-4126-b710-cc143659bca2
+	Make "export" a universal option for output instead of its own command
+		#type:feature
+		#id:05e78d12-11a3-4a31-9906-d0ca2ca3b0c1
+		#priority-parent:37ed25d1-cd26-4ad0-b86b-896cca3f783c
 @gui
 	Open url via GUI
 		- With this, mark as done and ranking, I'll have my main playlist functions in the GUI.

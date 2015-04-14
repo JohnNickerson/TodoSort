@@ -1035,17 +1035,28 @@ namespace AssimilationSoftware.TodoSort.CLI
         private static void WrapOutput(string indent, string content, int width)
         {
             var printwidth = width - indent.Length;
-            Console.Write(indent);
-            Console.WriteLine(content.Substring(0, Math.Min(printwidth, content.Length)));
-            content = content.Remove(0, Math.Min(printwidth, content.Length));
-            while (content.Length > 0)
+            List<char> breaks = new List<char> { { ' ' }, { '\t' }, { '-' }, { '/' }, { '=' }, { '&' }, { '+' }, { '_' } };
+            StringBuilder line = new StringBuilder();
+            line.Append(indent);
+            while (content.Length > printwidth)
             {
-                var line = new StringBuilder();
-                line.Append(' ', indent.Length);
-                line.Append(content.Substring(0, Math.Min(printwidth, content.Length)));
+                int snip = Math.Min(printwidth, content.Length);
+                for (int i = snip; i > 0; i--)
+                {
+                    if (breaks.Contains(content[i]))
+                    {
+                        snip = i;
+                        break;
+                    }
+                }
+                line.Append(content.Substring(0, snip));
+                content = content.Remove(0, snip);
                 Console.WriteLine(line);
-                content = content.Remove(0, Math.Min(printwidth, content.Length));
+                line.Clear();
+                line.Append(' ', indent.Length);
             }
+            Console.Write(line);
+            Console.WriteLine(content);
         }
 
 		private static ActionItem Disambiguate(IEnumerable<ActionItem> todolist)

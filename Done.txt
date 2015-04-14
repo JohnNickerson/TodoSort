@@ -538,6 +538,13 @@
 		#type:feature
 		#done-date:2015-04-10
 		#id:d3d60a5b-f6a0-4059-b5e0-57365948cd71
+@2015-04-14
+	Wrap at spaces or punctuation
+		- It would look tidier if lines wrapped at natural spaces. (2014-06-02)
+		#type:feature
+		#release:0.8
+		#done-date:2015-04-14
+		#id:ec98fd77-5d59-415d-a842-2f5a40b2eb2f
 @done
 	The Done list should be broken up into date sub lists rather than being a different format.
 		#id:3da6bbcb-9608-4289-a82c-50b29d7ee7ac
