@@ -95,10 +95,6 @@
 		- Instead of demanding a brand new action.
 		#type:feature
 		#id:b9e5e549-15cd-4732-a5ef-fef435e27e6b
-	Advanced search depth options don't work properly
-		- Mindepth and Maxdepth don't seem to do anything.
-		#type:bug
-		#id:1320d43f-3717-43f4-9c67-af52b8cb42ca
 	Allow more specific advanced search functions
 		- For instance, parse (tag foo) as looking for a tag called foo.
 		#type:feature

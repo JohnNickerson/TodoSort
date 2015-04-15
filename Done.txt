@@ -545,6 +545,12 @@
 		#release:0.8
 		#done-date:2015-04-14
 		#id:ec98fd77-5d59-415d-a842-2f5a40b2eb2f
+@2015-04-16
+	Advanced search depth options don't work properly
+		- Mindepth and Maxdepth don't seem to do anything.
+		#type:bug
+		#done-date:2015-04-16
+		#id:1320d43f-3717-43f4-9c67-af52b8cb42ca
 @done
 	The Done list should be broken up into date sub lists rather than being a different format.
 		#id:3da6bbcb-9608-4289-a82c-50b29d7ee7ac

@@ -79,7 +79,14 @@ namespace AssimilationSoftware.TodoSort.CLI
             if (argsubs is UniversalOptions)
             {
                 verbose = ((UniversalOptions)argsubs).Verbose;
-                vm.ShowHeadOnly = !((UniversalOptions)argsubs).ShowAllItems;
+                if (!(argsubs is MultiSearchSubOptions))
+                {
+                    vm.ShowHeadOnly = !((UniversalOptions)argsubs).ShowAllItems;
+                }
+                else
+                {
+                    vm.ShowHeadOnly = false;
+                }
             }
 
             // Search for a matching item in all contexts.
@@ -1035,7 +1042,7 @@ namespace AssimilationSoftware.TodoSort.CLI
         private static void WrapOutput(string indent, string content, int width)
         {
             var printwidth = width - indent.Length;
-            List<char> breaks = new List<char> { { ' ' }, { '\t' }, { '-' }, { '/' }, { '=' }, { '&' }, { '+' }, { '_' } };
+            var breaks = " \t-/=&+_";
             StringBuilder line = new StringBuilder();
             line.Append(indent);
             while (content.Length > printwidth)
@@ -1050,7 +1057,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                     }
                 }
                 line.Append(content.Substring(0, snip));
-                content = content.Remove(0, snip);
+                content = content.Remove(0, snip).TrimStart();
                 Console.WriteLine(line);
                 line.Clear();
                 line.Append(' ', indent.Length);
