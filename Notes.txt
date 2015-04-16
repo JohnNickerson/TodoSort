@@ -41,12 +41,6 @@
 		#type:feature
 		#id:0e40530b-c740-414b-bfed-e88394b8f9fa
 		#priority-parent:f10b1166-8dff-432b-869f-4cc29dccef22
-	JoinSearch-style search queries
-		- The JoinSearch function will need to be modified to work over objects this way, but the parser should be helpful.
-		- Might need new functions to search particular object properties like tags.
-		- Or maybe LINQ via the command line?
-		#id:59162543-9d87-41e1-a601-6fc7462f6fbd
-		#priority-parent:f10b1166-8dff-432b-869f-4cc29dccef22
 	Recurring reminders and items
 		- Serialise with "repeats" tags? Need to prototype it.
 		- When a recurring item is marked as done, instead of moving, one copy goes to the "done" list and one to the "someday" list.
@@ -61,10 +55,6 @@
 		- Move to another list file or sub-list, too
 		#id:bcac196a-52cf-4e95-8491-3cc5eafbe98b
 		#priority-parent:8da843b9-8dc7-47c7-9db3-e7209b1068fe
-	Use a second ViewModel for reviewing the Someday list?
-		- Just because it's a special-purpose function working on a different file.
-		#id:876a0330-b332-4e55-94a5-efaa77f3f511
-		#priority-parent:bcac196a-52cf-4e95-8491-3cc5eafbe98b
 @cli
 	Show project children
 		- There's no way to inspect project relationships from the command line.
@@ -84,7 +74,7 @@
 		- Allow the user to search for and set a project as part of the Add command.
 		#type:feature
 		#id:df1b6700-a5c7-4ef0-a41c-337758dda012
-	Show context name even for zero results
+	Show a message when no search results are found
 		- Otherwise it's just empty output.
 		- What command? (2015-04-02)
 		#type:feature
@@ -143,7 +133,6 @@
 		- Standard option interfaces to specify what kind of options are available to a command. Would help prevent bugs like improper handling of general flags.
 		#type:feature
 		#id:eafd7429-120e-4126-b710-cc143659bca2
-		#priority-parent:1320d43f-3717-43f4-9c67-af52b8cb42ca
 	Last page of Someday processing is blank
 		- When processing Someday items and the last item is at the end of a page (eg --pagesize 1) there will be a blank set displayed at the end.
 		#type:bug
@@ -154,12 +143,6 @@
 		#type:feature
 		#id:55334296-a38c-4268-adf7-7e9cabd9e07a
 		#priority-parent:841c5d7b-d1c5-4a3e-8618-cfff08ef4c20
-	Use MultiSearch options for rank command
-		- Could come in handy.
-		- Will allow ranking all second-tier items, a given context, all leaves etc. Powerful. (2015-03-11)
-		#type:feature
-		#id:c747b6f0-9780-482e-bfbd-1c45a6fd0fc4
-		#priority-parent:df1b6700-a5c7-4ef0-a41c-337758dda012
 	Change console output to an export module used by default
 		#type:feature
 		#id:37ed25d1-cd26-4ad0-b86b-896cca3f783c
@@ -189,10 +172,6 @@
 		#type:feature
 		#id:0cfcf140-77f1-455e-a762-f432499512de
 		#priority-parent:734bc716-c2d6-44d6-8a7a-04fb0374238c
-	Keep processing while more items still in inbox or projects.
-		#type:feature
-		#id:f5a3d428-5de0-4aa0-8e88-edcc3800ba5e
-		#priority-parent:22ea6512-fd50-4714-8f20-ce7107edca63
 	Tag-All command
 		- To apply a particular tag to all of a set of search results.
 		#type:feature
@@ -203,6 +182,10 @@
 		#type:feature
 		#id:3bdcfae0-d59e-4097-8a53-9ed8a4bafc6e
 		#priority-parent:eafd7429-120e-4126-b710-cc143659bca2
+	Keep processing while more items still in inbox or projects.
+		#type:feature
+		#id:f5a3d428-5de0-4aa0-8e88-edcc3800ba5e
+		#priority-parent:22ea6512-fd50-4714-8f20-ce7107edca63
 	Make "export" a universal option for output instead of its own command
 		#type:feature
 		#id:05e78d12-11a3-4a31-9906-d0ca2ca3b0c1
@@ -250,12 +233,12 @@
 		- Can be used for just about anything, then.
 		#type:feature
 		#id:3d069478-d751-492c-8ca0-6fdd551f31eb
+	Detect "[x]" marks as completed items
+		#tickle-date:2014-04-16
+		#id:aa8b5a86-32d5-4445-a90e-ed517b77c292
 	Import from Pocket
 		#id:560190c3-9571-48e0-a951-3bbdba5c05d1
 		#priority-parent:3d069478-d751-492c-8ca0-6fdd551f31eb
-	Rank second-tier items if there are no top-level comparisons to make
-		#id:11427126-1e6f-4242-85e0-08c29979031b
-		#priority-parent:560190c3-9571-48e0-a951-3bbdba5c05d1
 	Extensible command framework?
 		- Doesn't seem like a great idea, actually.
 		#id:3e979de9-32a2-466c-87f0-b23768955a95
@@ -280,7 +263,3 @@
 	Add a timestamp when items are processed through the inbox.
 		#id:d7eec29c-e5c6-4347-8950-a9500cc56eb3
 		#priority-parent:43b0868b-d3e5-477f-82cd-b7da7c01a092
-	Detect "[x]" marks as completed items
-		#tickle-date:2014-04-16
-		#id:aa8b5a86-32d5-4445-a90e-ed517b77c292
-		#priority-parent:876a0330-b332-4e55-94a5-efaa77f3f511

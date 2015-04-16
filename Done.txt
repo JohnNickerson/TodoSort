@@ -551,6 +551,19 @@
 		#type:bug
 		#done-date:2015-04-16
 		#id:1320d43f-3717-43f4-9c67-af52b8cb42ca
+	JoinSearch-style search queries
+		- The JoinSearch function will need to be modified to work over objects this way, but the parser should be helpful.
+		- Might need new functions to search particular object properties like tags.
+		- Or maybe LINQ via the command line?
+		#done-date:2015-04-16
+		#id:59162543-9d87-41e1-a601-6fc7462f6fbd
+	Use MultiSearch options for rank command
+		- Could come in handy.
+		- Will allow ranking all second-tier items, a given context, all leaves etc. Powerful. (2015-03-11)
+		#type:feature
+		#done-date:2015-04-16
+		#id:c747b6f0-9780-482e-bfbd-1c45a6fd0fc4
+		#priority-parent:df1b6700-a5c7-4ef0-a41c-337758dda012
 @done
 	The Done list should be broken up into date sub lists rather than being a different format.
 		#id:3da6bbcb-9608-4289-a82c-50b29d7ee7ac

@@ -60,7 +60,7 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
         public MultiSearchSubOptions PruneVerb { get; set; }
 
         [VerbOption("rank", HelpText = "Vote on the relative importance of items to assign priorities.")]
-        public UniversalOptions RankVerb { get; set; }
+        public MultiSearchSubOptions RankVerb { get; set; }
 
         [VerbOption("rename", HelpText = "Change the name of an item.")]
         public RenameSubOptions RenameVerb { get; set; }

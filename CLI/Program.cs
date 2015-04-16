@@ -406,6 +406,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                 #region Rank
                 case "rank":
                     {
+                        var rankOptions = (MultiSearchSubOptions)argsubs;
                         // for each context..
                         bool quitandsave = false;
                         vm.ShowHeadOnly = true;
@@ -413,7 +414,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                         {
                             if (quitandsave) break;
                             // select all items without rank parents
-                            vm.SearchSpecification = new ContextSearchSpecification(con);
+                            vm.SearchSpecification = new ContextSearchSpecification(con).And(rankOptions.SearchSpecification);
                             var items = vm.SearchResults.ToArray();
                             var index = new List<int>();
                             for (int dex = 0; dex < items.Count(); dex++) index.Add(dex);
