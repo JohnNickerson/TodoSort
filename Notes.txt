@@ -23,6 +23,11 @@
 		- Conflict detection: were all changes made in one place since the last 'apply' operation? (2015-03-19)
 		#release:0.8
 		#id:5e70eaeb-8525-42eb-9824-407482dc0588
+	Increase merge-friendliness by always sorting text files by ID
+		- Should be handy for Git branches.
+		- Make it an option? (2015-04-17)
+		#type:feature
+		#id:5bd414f0-3288-419c-ade0-23bccfa2cff7
 	Always rank project items together
 		- Children of the same project need to be ordered against each other, not necessarily everything else.
 		#type:feature

@@ -714,7 +714,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                 case "version":
                     {
                         Console.WriteLine("TodoSort {0}", Assembly.GetExecutingAssembly().GetName().Version);
-                        Console.WriteLine("Copyright {0}", ((AssemblyCopyrightAttribute)Assembly.GetExecutingAssembly().GetCustomAttribute(typeof(AssemblyCopyrightAttribute))).Copyright);
+                        Console.WriteLine(((AssemblyCopyrightAttribute)Assembly.GetExecutingAssembly().GetCustomAttribute(typeof(AssemblyCopyrightAttribute))).Copyright);
                     }
                     break;
                 #endregion
