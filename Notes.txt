@@ -8,14 +8,6 @@
 		- Allow tags where their existence is all that matters.
 		#type:feature
 		#id:47cd35de-c4fb-4c77-8be3-b4cd7d69e5d7
-	Use a dictionary in-memory for faster access by ID
-		- Also should prevent duplicated IDs, which have been an occasional problem.
-		- Done in an experimental branch. (2015-03-31)
-		- Method signatures and internal operations don't really mean increased speed. (2015-03-31)
-		- This might be better worked out in PimData for faster parent-child relationship constructing. (2015-04-08)
-		#type:architecture
-		#release:0.8
-		#id:f8032315-e652-4a6d-b110-23ea6c4297d9
 	Mustache-sharp template engine for exports
 		#url:https://github.com/jehugaleahsa/mustache-sharp
 		#id:c16bf60e-abb0-4847-867b-cba0df9e7e3e

@@ -590,6 +590,17 @@
 		#release:0.8
 		#done-date:2015-04-17
 		#id:e42814b6-5e57-413d-96f2-880064c58369
+@2015-04-13
+	Use a dictionary in-memory for faster access by ID
+		- Also should prevent duplicated IDs, which have been an occasional problem.
+		- Done in an experimental branch. (2015-03-31)
+		- Method signatures and internal operations don't really mean increased speed. (2015-03-31)
+		- This might be better worked out in PimData for faster parent-child relationship constructing. (2015-04-08)
+		#type:architecture
+		#release:0.8
+		#done-date:2015-04-13
+		#id:f8032315-e652-4a6d-b110-23ea6c4297d9
+		#priority-parent:a889729c-2c1d-4a39-9a66-050a73988d9d
 @done
 	The Done list should be broken up into date sub lists rather than being a different format.
 		#id:3da6bbcb-9608-4289-a82c-50b29d7ee7ac
