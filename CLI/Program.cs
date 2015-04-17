@@ -356,11 +356,12 @@ namespace AssimilationSoftware.TodoSort.CLI
                         Console.WriteLine();
                     }
 
-                    // Need to find projects for which there is no next action. I hate that kind of query. It's a "where not exists (subquery)".
+                    // Need to find projects for which there is no next action.
                     vm.SearchSpecification = new ContextSearchSpecification("projects");
                     var projects = vm.SearchResults.ToList();
                     for (int i = 0; i < projects.Count; i++)
                     {
+                        vm.ShowHeadOnly = false;
                         vm.SearchSpecification = new ProjectChildrenSearchSpecification(projects[i]);
                         if (vm.SearchResults.Count() == 0)
                         {
@@ -495,7 +496,11 @@ namespace AssimilationSoftware.TodoSort.CLI
                     // Search for matching items.
                     var searchOptions = ((MultiSearchSubOptions)argsubs);
                     vm.SearchSpecification = searchOptions.SearchSpecification;
-                    if (searchOptions.PrintTree)
+                    if (vm.SearchResults.Count() == 0)
+                    {
+                        Console.WriteLine("No results found.");
+                    }
+                    else if (searchOptions.PrintTree)
                     {
                         PrintTree(vm.SearchResults.ToList(), true);
                     }

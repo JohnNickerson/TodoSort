@@ -563,7 +563,33 @@
 		#type:feature
 		#done-date:2015-04-16
 		#id:c747b6f0-9780-482e-bfbd-1c45a6fd0fc4
-		#priority-parent:df1b6700-a5c7-4ef0-a41c-337758dda012
+@2015-04-17
+	Count and confirm for bulk operations
+		- When moving/unranking etc a lot of items at once, display a message about it like 'Moving 683 items from X to Y. Continue?'
+		#type:feature
+		#release:0.8
+		#done-date:2015-04-17
+		#id:c78b118f-87a5-4997-be23-d39f0ceb4b38
+	Show a message when no search results are found
+		- Otherwise it's just empty output.
+		- What command? (2015-04-02)
+		#type:feature
+		#command:show
+		#release:0.8
+		#done-date:2015-04-17
+		#id:8da453c8-362d-4545-bac4-c73c7843f3bf
+	Make sure the process command looks through all items for a project's next action
+		- I have a vague suspicion that it might only look at the head of the tree.
+		#type:feature
+		#release:0.8
+		#done-date:2015-04-17
+		#id:c55e9746-839f-407c-a217-90b1b20351ba
+	Show project children
+		- There's no way to inspect project relationships from the command line.
+		#type:feature
+		#release:0.8
+		#done-date:2015-04-17
+		#id:e42814b6-5e57-413d-96f2-880064c58369
 @done
 	The Done list should be broken up into date sub lists rather than being a different format.
 		#id:3da6bbcb-9608-4289-a82c-50b29d7ee7ac

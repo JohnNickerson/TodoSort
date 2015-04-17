@@ -56,11 +56,6 @@
 		#id:bcac196a-52cf-4e95-8491-3cc5eafbe98b
 		#priority-parent:8da843b9-8dc7-47c7-9db3-e7209b1068fe
 @cli
-	Show project children
-		- There's no way to inspect project relationships from the command line.
-		#type:feature
-		#release:0.8
-		#id:e42814b6-5e57-413d-96f2-880064c58369
 	De-duplicate command
 		- Search and merge duplicates
 		- Kind of difficult with this data, but worth it. (2014-06-17)
@@ -74,13 +69,6 @@
 		- Allow the user to search for and set a project as part of the Add command.
 		#type:feature
 		#id:df1b6700-a5c7-4ef0-a41c-337758dda012
-	Show a message when no search results are found
-		- Otherwise it's just empty output.
-		- What command? (2015-04-02)
-		#type:feature
-		#command:show
-		#release:0.8
-		#id:8da453c8-362d-4545-bac4-c73c7843f3bf
 	When processing projects, allow setting an existing item as next
 		- Instead of demanding a brand new action.
 		#type:feature
@@ -96,11 +84,6 @@
 		- Instead of requiring a precalculation.
 		#type:feature
 		#id:71b48b73-88c5-4196-a379-46ef9964288b
-	Count and confirm for bulk operations
-		- When moving/unranking etc a lot of items at once, display a message about it like 'Moving 683 items from X to Y. Continue?'
-		#type:feature
-		#release:0.8
-		#id:c78b118f-87a5-4997-be23-d39f0ceb4b38
 	Process all projects on "process" command
 		- Currently only processes projects at the head of the projects tree.
 		- Best to make sure all projects have a next item.
@@ -112,11 +95,6 @@
 		- This would be very handy for my work priority-setting where I play off bugs vs features. (2015-01-28)
 		#type:feature
 		#id:1e0f158c-f8e4-44d7-82b5-2bef833490df
-	Make sure the process command looks through all items for a project's next action
-		- I have a vague suspicion that it might only look at the head of the tree.
-		#type:feature
-		#release:0.8
-		#id:c55e9746-839f-407c-a217-90b1b20351ba
 	Show priority depth in verbose output
 		- I want to know how deep certain items are. (2014-06-02)
 		- Maybe merge this with the individual item tree display idea. (2014-06-02)

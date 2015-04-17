@@ -43,6 +43,10 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
         [Option('i', "id", HelpText = "The beginning of an item ID.")]
         public string ID { get; set; }
 
+        // Project ID
+        [Option("project", HelpText = "The beginning of a project ID.")]
+        public string ProjectID { get; set; }
+
         // Minimum depth }
         [Option("mindepth", HelpText = "The minimum priority depth for results.", DefaultValue = 0)]
         public int MinDepth { get; set; }
@@ -105,6 +109,10 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
                 {
                     // TODO: PartialIdSearchSpecification to handle GUIDs better.
                     result = result.And(new IdSearchSpecification(ID));
+                }
+                if (!string.IsNullOrEmpty(ProjectID))
+                {
+                    result = result.And(new ProjectChildrenSearchSpecification(ProjectID));
                 }
                 if (!string.IsNullOrEmpty(Keyword))
                 {

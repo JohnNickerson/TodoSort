@@ -9,16 +9,21 @@ namespace AssimilationSoftware.TodoSort.Core.Search
 {
     public class ProjectChildrenSearchSpecification : ISearchSpecification<ActionItem>
     {
-        private ActionItem _project;
+        private string _projectId;
 
         public ProjectChildrenSearchSpecification(ActionItem project)
         {
-            _project = project;
+            _projectId = project.ID.ToString().ToLower();
+        }
+
+        public ProjectChildrenSearchSpecification(string id)
+        {
+            _projectId = id;
         }
 
         public bool IsSatisfiedBy(ActionItem b)
         {
-            return b.Project == _project;
+            return b.Project != null && b.Project.ID.ToString().ToLower().StartsWith(_projectId);
         }
     }
 }
