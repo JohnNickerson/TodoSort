@@ -350,7 +350,14 @@ namespace AssimilationSoftware.TodoSort.Core
                 ActionItem i = to_undefer.Dequeue();
                 if (context == "inbox" && i.Tags.ContainsKey("previous-context"))
                 {
-                    i.Context = i.Tags["previous-context"];
+                    if (i.Tags["previous-context"] != i.Context)
+                    {
+                        i.Context = i.Tags["previous-context"];
+                    }
+                    else
+                    {
+                        i.Context = context;
+                    }
                     i.Tags.Remove("previous-context");
                 }
                 else

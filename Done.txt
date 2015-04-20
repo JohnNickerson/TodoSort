@@ -605,6 +605,13 @@
 		#type:bug
 		#done-date:2015-04-17
 		#id:b7b87efd-5399-4c57-b3db-dce3cded7eef
+@2015-04-20
+	Remove a previous-context tag if it references the current context
+		- It shouldn't happen, but if it does, it shouldn't remain.
+		#type:feature
+		#release:0.8
+		#done-date:2015-04-20
+		#id:a889729c-2c1d-4a39-9a66-050a73988d9d
 @done
 	The Done list should be broken up into date sub lists rather than being a different format.
 		#id:3da6bbcb-9608-4289-a82c-50b29d7ee7ac

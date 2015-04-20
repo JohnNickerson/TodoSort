@@ -99,7 +99,7 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
                     .And(new DepthRangeSearchSpecification(MinDepth, MaxDepth));
                 if (!string.IsNullOrEmpty(Context))
                 {
-                    result = result.And(new ExactPropertyValueSpecification<ActionItem, string>(i => i.Context, Context));
+                    result = result.And(new ContextSearchSpecification(Context));
                 }
                 if (!string.IsNullOrEmpty(Title))
                 {

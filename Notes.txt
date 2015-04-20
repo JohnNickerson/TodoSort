@@ -1,9 +1,4 @@
 @backend
-	Remove a previous-context tag if it references the current context
-		- It shouldn't happen, but if it does, it shouldn't remain.
-		#type:feature
-		#release:0.8
-		#id:a889729c-2c1d-4a39-9a66-050a73988d9d
 	Empty tags
 		- Allow tags where their existence is all that matters.
 		#type:feature
