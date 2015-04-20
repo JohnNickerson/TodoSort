@@ -51,6 +51,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Search\AndSpecification.cs" />
     <Compile Include="Search\ContextSearchSpecification.cs" />
+    <Compile Include="Search\PriorityChildrenSearchSpecification.cs" />
     <Compile Include="Search\DepthRangeSearchSpecification.cs" />
     <Compile Include="Search\DoneDateGreaterThanSpecification.cs" />
     <Compile Include="Search\DoneDateLessThanSpecification.cs" />

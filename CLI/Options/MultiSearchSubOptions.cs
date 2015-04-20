@@ -47,6 +47,10 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
         [Option("project", HelpText = "The beginning of a project ID.")]
         public string ProjectID { get; set; }
 
+        // Priority parent ID
+        [Option("parent", HelpText = "The beginning of a priority parent ID.")]
+        public string PriorityParentID { get; set; }
+
         // Minimum depth }
         [Option("mindepth", HelpText = "The minimum priority depth for results.", DefaultValue = 0)]
         public int MinDepth { get; set; }
@@ -113,6 +117,10 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
                 if (!string.IsNullOrEmpty(ProjectID))
                 {
                     result = result.And(new ProjectChildrenSearchSpecification(ProjectID));
+                }
+                if (!string.IsNullOrEmpty(PriorityParentID))
+                {
+                    result = result.And(new PriorityChildrenSearchSpecification(PriorityParentID));
                 }
                 if (!string.IsNullOrEmpty(Keyword))
                 {
