@@ -92,6 +92,9 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
         [VerbOption("tag", HelpText = "Adds tags to an item.")]
         public SingleSearchSubOptions TagVerb { get; set; }
 
+        [VerbOption("tag-all", HelpText = "Applies a particular tag to a set of items.")]
+        public TagAllSubOptions TagAllVerb { get; set; }
+
         [VerbOption("undefer", HelpText = "Move an item from the Someday list to the main list.")]
         public SingleSearchSubOptions UndeferVerb { get; set; }
 

@@ -656,6 +656,27 @@ namespace AssimilationSoftware.TodoSort.CLI
                     break;
                 #endregion
 
+                #region Tag All
+                case "tag-all":
+                    {
+                        var tagAllOptions = (TagAllSubOptions)argsubs;
+                        vm.SearchSpecification = tagAllOptions.SearchSpecification;
+                        var items = vm.SearchResults.ToArray();
+                        foreach (var i in items)
+                        {
+                            if (string.IsNullOrWhiteSpace(tagAllOptions.TagValue))
+                            {
+                                vm.RemoveTag(i, tagAllOptions.TagName);
+                            }
+                            else
+                            {
+                                vm.SetTag(i, tagAllOptions.TagName, tagAllOptions.TagValue);
+                            }
+                        }
+                    }
+                    break;
+                #endregion
+
                 #region Undefer
                 case "undefer":
                     {
