@@ -45,6 +45,7 @@
     <Compile Include="Export\GraphVizExporter.cs" />
     <Compile Include="Export\HtmlExporter.cs" />
     <Compile Include="Export\IExporter.cs" />
+    <Compile Include="Export\TemplateExporter.cs" />
     <Compile Include="Export\TextExporter.cs" />
     <Compile Include="Import\IImporter.cs" />
     <Compile Include="Import\TextImporter.cs" />

@@ -182,25 +182,31 @@ namespace AssimilationSoftware.TodoSort.CLI
 
                 #region Export
                 case "export":
-                    // Write GraphViz source.
                     // TODO: Work with Mustache# to externalise the formatting.
                     // TODO: Write to the console if the filename is empty.
                     IExporter exporter = null;
                     var exportOptions = (ExportSubOptions)argsubs;
-                    switch (exportOptions.Format)
+                    if (!string.IsNullOrEmpty(exportOptions.TemplateFilename))
                     {
-                        case "html":
-                            exporter = new HtmlExporter { Filename = exportOptions.Filename };
-                            break;
-                        case "graphviz":
-                            exporter = new GraphVizExporter { Filename = exportOptions.Filename };
-                            break;
-                        case "text":
-                            exporter = new TextExporter { Filename = exportOptions.Filename };
-                            break;
-                        default:
-                            Console.WriteLine("Unknown output file format.");
-                            break;
+                        exporter = new TemplateExporter(exportOptions.Filename, exportOptions.TemplateFilename);
+                    }
+                    else
+                    {
+                        switch (exportOptions.Format)
+                        {
+                            case "html":
+                                exporter = new HtmlExporter { Filename = exportOptions.Filename };
+                                break;
+                            case "graphviz":
+                                exporter = new GraphVizExporter { Filename = exportOptions.Filename };
+                                break;
+                            case "text":
+                                exporter = new TextExporter { Filename = exportOptions.Filename };
+                                break;
+                            default:
+                                Console.WriteLine("Unknown output file format.");
+                                break;
+                        }
                     }
                     if (exporter != null)
                     {

@@ -612,6 +612,13 @@
 		#release:0.8
 		#done-date:2015-04-20
 		#id:a889729c-2c1d-4a39-9a66-050a73988d9d
+@2015-06-16
+	Tag-All command
+		- To apply a particular tag to all of a set of search results.
+		#type:feature
+		#done-date:2015-06-16
+		#id:269e322b-e58a-46cd-b3ec-d57cedbe1eaa
+		#priority-parent:eafd7429-120e-4126-b710-cc143659bca2
 @done
 	The Done list should be broken up into date sub lists rather than being a different format.
 		#id:3da6bbcb-9608-4289-a82c-50b29d7ee7ac

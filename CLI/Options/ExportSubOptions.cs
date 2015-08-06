@@ -13,5 +13,8 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
 
         [Option('f', "file", HelpText = "The filename to write to.")]
         public string Filename { get; set; }
+
+        [Option("template", HelpText = "A template file to use for the output format. Overrides 'format' if present.")]
+        public string TemplateFilename { get; set; }
     }
 }

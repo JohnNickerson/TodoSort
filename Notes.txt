@@ -51,6 +51,7 @@
 	De-duplicate command
 		- Search and merge duplicates
 		- Kind of difficult with this data, but worth it. (2014-06-17)
+		- Perhaps specify the tags to match on. (2015-06-16)
 		#id:841c5d7b-d1c5-4a3e-8618-cfff08ef4c20
 	Export iCal format for Someday items
 		- Might comprise two new features.
@@ -103,6 +104,9 @@
 		- Standard option interfaces to specify what kind of options are available to a command. Would help prevent bugs like improper handling of general flags.
 		#type:feature
 		#id:eafd7429-120e-4126-b710-cc143659bca2
+	Use word wrap for status messages while adding new items
+		#type:feature
+		#id:e4807656-e261-4f76-9db6-181d4387d118
 	Last page of Someday processing is blank
 		- When processing Someday items and the last item is at the end of a page (eg --pagesize 1) there will be a blank set displayed at the end.
 		#type:bug
@@ -142,11 +146,6 @@
 		#type:feature
 		#id:0cfcf140-77f1-455e-a762-f432499512de
 		#priority-parent:734bc716-c2d6-44d6-8a7a-04fb0374238c
-	Tag-All command
-		- To apply a particular tag to all of a set of search results.
-		#type:feature
-		#id:269e322b-e58a-46cd-b3ec-d57cedbe1eaa
-		#priority-parent:eafd7429-120e-4126-b710-cc143659bca2
 	Multi-line notes on new items
 		- It would be nice to be able to enter a lot of notes for a new item, if relevant.
 		#type:feature
