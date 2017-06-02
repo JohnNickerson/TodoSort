@@ -966,6 +966,7 @@ namespace AssimilationSoftware.TodoSort.CLI
 
         private static void PrintTree(ActionItem root, List<ActionItem> tree, List<ActionItem> ancestors)
         {
+            var conwide = Console.WindowWidth;
             var stack = new Stack<PrintTreeItem>();
             stack.Push(new PrintTreeItem { Item = root, Depth = 1, PadLine = null });
             while (stack.Count > 0)
@@ -993,7 +994,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                     Console.WriteLine(node.PadLine);
                 }
                 Console.Write(prefix);
-                string name = focus.Title.Substring(0, Math.Min(80 - prefix.Length, focus.Title.Length));
+                string name = focus.Title.Substring(0, Math.Min(conwide - prefix.Length, focus.Title.Length));
                 if (tree != null && tree.Contains(focus))
                 {
                     Console.ForegroundColor = ConsoleColor.Yellow;
@@ -1004,7 +1005,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                 {
                     Console.Write(name);
                 }
-                if (name.Length + prefix.Length < 80)
+                if (name.Length + prefix.Length < conwide)
                 {
                     Console.WriteLine();
                 }
@@ -1025,7 +1026,7 @@ namespace AssimilationSoftware.TodoSort.CLI
         /// </remarks>
         private static void PrintItem(ActionItem i, int? index)
         {
-            int wrapwidth = 79;
+            int wrapwidth = Console.WindowWidth - 1;
             string title = i.Title;
             if (i.Tags.ContainsKey("type"))
             {

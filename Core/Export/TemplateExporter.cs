@@ -27,7 +27,7 @@ namespace AssimilationSoftware.TodoSort.Core.Export
             int tagindex = 1;
             while (_template.IndexOf("{{tag:") > 0)
             {
-                // Extrag the tag name.
+                // Extract the tag name.
                 int placeholderloc = _template.IndexOf("{{tag:");
                 int taglength = _template.IndexOf("}}", placeholderloc) - placeholderloc - 6;
                 string tag = _template.Substring(placeholderloc + 6, taglength);

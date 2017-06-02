@@ -24,9 +24,13 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
                 {
                     return new IdSearchSpecification(ItemId);
                 }
-                else
+                else if (!string.IsNullOrEmpty(SearchTerm))
                 {
                     return new FullTextSearchSpecification(SearchTerm);
+                }
+                else
+                {
+                    return new TrueSpecification<ActionItem>();
                 }
             }
         }

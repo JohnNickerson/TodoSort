@@ -80,9 +80,6 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
         [VerbOption("set-project", HelpText = "Sets one item to be the project parent of another.")]
         public SetProjectSubOptions SetProjectVerb { get; set; }
 
-        [VerbOption("show-parents", HelpText = "Shows an item and its parent chain up to the root of the tree.")]
-        public SingleSearchSubOptions ShowParentsVerb { get; set; }
-
         [VerbOption("someday", HelpText = "Review the someday file, assigning 10% to an active context.")]
         public SomedaySubOptions SomedayVerb { get; set; }
 
