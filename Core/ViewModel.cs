@@ -448,7 +448,42 @@ namespace AssimilationSoftware.TodoSort.Core
         public void SetParent(ActionItem child, ActionItem parent)
         {
             child.RankParent = parent;
+            // Increment the "upvotes" counter.
+            SetTag(parent, "upvotes", (GetIntTag(parent, "upvotes", 0) + 1).ToString());
             todo_changes = true;
+        }
+
+        public string GetStringTag(ActionItem item, string tagname, string fallback = "")
+        {
+            if (!item.Tags.ContainsKey(tagname))
+            {
+                return fallback;
+            }
+            else
+            {
+                return item.Tags[tagname];
+            }
+        }
+
+        public int GetIntTag(ActionItem item, string tagname, int fallback)
+        {
+            if (!item.Tags.ContainsKey(tagname))
+            {
+                return fallback;
+            }
+            else
+            {
+                var curval = fallback;
+                var success = int.TryParse(item.Tags[tagname], out curval);
+                if (success)
+                {
+                    return curval;
+                }
+                else
+                {
+                    return fallback;
+                }
+            }
         }
 
         public void SetProject(ActionItem child, ActionItem project)

@@ -917,7 +917,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             var sortedlist = from a in list orderby a.Context, a.Title select a;
             if (!string.IsNullOrEmpty(sorttag) && sorttag != "title")
             {
-                sortedlist = list.OrderBy(a => a.Context).ThenBy(a => a.Tags.ContainsKey(sorttag) ? a.Tags[sorttag] : string.Empty, new SemiNumericComparer());
+                sortedlist = list.OrderBy(a => a.Context).ThenBy(a => a.Tags.ContainsKey(sorttag) ? a.Tags[sorttag] : "0", new SemiNumericComparer());
             }
             foreach (ActionItem i in sortedlist)
             {

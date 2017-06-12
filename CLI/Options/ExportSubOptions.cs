@@ -11,7 +11,7 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
         [Option('e', "format", HelpText = "The export format to use: html, graphviz or text.", DefaultValue = "html")]
         public string Format { get; set; }
 
-        [Option('f', "file", HelpText = "The filename to write to.")]
+        [Option('f', "file", HelpText = "The filename to write to.", Required = true)]
         public string Filename { get; set; }
 
         [Option("template", HelpText = "A template file to use for the output format. Overrides 'format' if present.")]
