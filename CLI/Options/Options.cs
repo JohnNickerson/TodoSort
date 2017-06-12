@@ -17,11 +17,11 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
         [VerbOption("advanced-search", HelpText = "Advanced search with Lisp-like expression syntax (and (or (not term term))).")]
         public AdvancedSearchOptions AdvancedSearchVerb { get; set; }
 
-        [VerbOption("count-children", HelpText = "Counts the children of a given item.")]
-        public MultiSearchSubOptions CountChildrenVerb { get; set; }
-
         [VerbOption("defer", HelpText = "Move an item to the someday file.")]
         public DeferSubOptions DeferVerb { get; set; }
+
+        [VerbOption("defer-all", HelpText = "Defer all items that match given search criteria.")]
+        public MultiSearchSubOptions PruneVerb { get; set; }
 
         [VerbOption("delete", HelpText = "Delete an item without doing it.")]
         public SingleSearchSubOptions DeleteVerb { get; set; }
@@ -55,9 +55,6 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
 
         [VerbOption("process", HelpText = "Housekeeping. Assign each inbox item to a context, ensure each project has a next action.")]
         public NoSubOptions ProcessVerb { get; set; }
-
-        [VerbOption("defer-all", HelpText = "Defer all items that match given search criteria.")]
-        public MultiSearchSubOptions PruneVerb { get; set; }
 
         [VerbOption("rank", HelpText = "Vote on the relative importance of items to assign priorities.")]
         public MultiSearchSubOptions RankVerb { get; set; }

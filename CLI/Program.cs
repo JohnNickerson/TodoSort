@@ -119,23 +119,6 @@ namespace AssimilationSoftware.TodoSort.CLI
                     }
                 #endregion
 
-                #region Count Children
-                case "count-children":
-                    {
-                        var countOptions = (MultiSearchSubOptions)argsubs;
-                        vm.SearchSpecification = countOptions.SearchSpecification;
-                        var childcounts = from p in vm.SearchResults select new { Item = p, ChildCount = (from c in vm.Items where c.RankParent == p select c).Count() };
-                        foreach (var item in childcounts)
-                        {
-                            PrintItem(item.Item, null);
-                            Console.WriteLine(string.Format("\t{0} children", item.ChildCount));
-                            vm.SetTag(item.Item, "children", item.ChildCount.ToString());
-                        }
-                        selected = null;
-                    }
-                    break;
-                #endregion
-
                 #region Defer
                 case "defer":
                     // Move the item and its sub-items to the "someday" file.
