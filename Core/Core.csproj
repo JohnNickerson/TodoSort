@@ -42,6 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ActionItem_Extensions.cs" />
     <Compile Include="Export\GraphVizExporter.cs" />
     <Compile Include="Export\HtmlExporter.cs" />
     <Compile Include="Export\IExporter.cs" />
