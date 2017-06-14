@@ -472,7 +472,6 @@ namespace AssimilationSoftware.TodoSort.Core
             // In order, set parents.
             for (int i = 0; i < vine.Count; i++)
             {
-                // New parent = floor( (i+1) / branchfactor )
                 var newdex = (int)Math.Floor((double)i / branchfactor) - 1;
                 if (newdex == -1)
                 {
