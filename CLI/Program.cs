@@ -123,8 +123,16 @@ namespace AssimilationSoftware.TodoSort.CLI
                 case "balance":
                     {
                         var balopts = (BalanceOptions)argsubs;
-                        vm.SearchSpecification = balopts.SearchSpecification;
-                        vm.Balance(vm.SearchResults.ToArray(), balopts.BranchFactor);
+                        // Validate the branching factor: must be greater than zero.
+                        if (balopts.BranchFactor > 0)
+                        {
+                            vm.SearchSpecification = balopts.SearchSpecification;
+                            vm.Balance(vm.SearchResults.ToArray(), balopts.BranchFactor);
+                        }
+                        else
+                        {
+                            Console.WriteLine("Branching factor must be greater than zero.");
+                        }
                         break;
                     }
                 #endregion

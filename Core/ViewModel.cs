@@ -300,6 +300,7 @@ namespace AssimilationSoftware.TodoSort.Core
                 else
                 {
                     doneitem.Context = "done";
+                    ResetPriorityParents(doneitem); // Or else it will continue to hide its children by default.
                 }
                 done_changes = true;
                 todo_changes = true;
@@ -326,6 +327,10 @@ namespace AssimilationSoftware.TodoSort.Core
                 {
                     someday_items.Add(i);
                     todo_items.Remove(i);
+                }
+                else
+                {
+                    ResetPriorityParents(i); // To avoid hiding children while deferred.
                 }
                 someday_changes = true;
                 todo_changes = true;
