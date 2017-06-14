@@ -33,11 +33,17 @@ namespace AssimilationSoftware.TodoSort.Core
 
         public static int Depth(this ActionItem item)
         {
-            if (item.RankParent == null)
+            int deep = 0;
+            var chain = new List<ActionItem>();
+            chain.Add(item);
+            var parent = item.RankParent;
+            while (parent != null && !chain.Contains(parent))
             {
-                return 0;
+                deep++;
+                parent = parent.RankParent;
+                chain.Add(parent);
             }
-            return 1 + item.Depth();
+            return deep;
         }
     }
 }

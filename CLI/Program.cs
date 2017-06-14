@@ -119,6 +119,16 @@ namespace AssimilationSoftware.TodoSort.CLI
                     }
                 #endregion
 
+                #region Balance
+                case "balance":
+                    {
+                        var balopts = (BalanceOptions)argsubs;
+                        vm.SearchSpecification = balopts.SearchSpecification;
+                        vm.Balance(vm.SearchResults.ToArray(), balopts.BranchFactor);
+                        break;
+                    }
+                #endregion
+
                 #region Defer
                 case "defer":
                     // Move the item and its sub-items to the "someday" file.

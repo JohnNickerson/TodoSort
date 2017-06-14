@@ -81,6 +81,7 @@
     <Compile Include="FolderSettings.cs" />
     <Compile Include="Options\AddSubOptions.cs" />
     <Compile Include="Options\AdvancedSearchOptions.cs" />
+    <Compile Include="Options\BalanceOptions.cs" />
     <Compile Include="Options\DoneSearchSubOptions.cs" />
     <Compile Include="Options\DoneSubOptions.cs" />
     <Compile Include="Options\MultiSearchSubOptions.cs" />

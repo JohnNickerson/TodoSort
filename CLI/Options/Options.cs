@@ -17,6 +17,9 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
         [VerbOption("advanced-search", HelpText = "Advanced search with Lisp-like expression syntax (and (or (not term term))).")]
         public AdvancedSearchOptions AdvancedSearchVerb { get; set; }
 
+        [VerbOption("balance", HelpText = "Balances a selection of items into a tree with a specified branching factor")]
+        public BalanceOptions BalanceVerb { get; set; }
+
         [VerbOption("defer", HelpText = "Move an item to the someday file.")]
         public DeferSubOptions DeferVerb { get; set; }
 

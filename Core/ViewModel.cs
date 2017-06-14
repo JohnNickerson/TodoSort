@@ -465,6 +465,27 @@ namespace AssimilationSoftware.TodoSort.Core
             }
         }
 
+        public void Balance(ActionItem[] items, int branchfactor)
+        {
+            // Line up the items from the given context by depth and upvotes.
+            var vine = (from a in items orderby a.Depth(), a.GetIntTag("upvotes", 0) select a).ToList();
+            // In order, set parents.
+            for (int i = 0; i < vine.Count; i++)
+            {
+                // New parent = floor( (i+1) / branchfactor )
+                var newdex = (int)Math.Floor((double)i / branchfactor) - 1;
+                if (newdex == -1)
+                {
+                    vine[i].RankParent = null;
+                }
+                else
+                {
+                    vine[i].RankParent = vine[newdex];
+                }
+            }
+            todo_changes = true;
+        }
+
         public int GetIntTag(ActionItem item, string tagname, int fallback)
         {
             if (!item.Tags.ContainsKey(tagname))
