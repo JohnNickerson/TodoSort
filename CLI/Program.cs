@@ -549,18 +549,31 @@ namespace AssimilationSoftware.TodoSort.CLI
                     {
                         SetParentSubOptions setparentOptions = (SetParentSubOptions)argsubs;
                         Console.WriteLine("Confirm child item:");
-                        vm.SearchTerm = setparentOptions.ChildSearchTerm;
+                        vm.SearchSpecification = setparentOptions.ChildSearchSpecification;
                         var child = Disambiguate(vm.SearchResults);
                         Console.WriteLine("Confirm parent item:");
-                        vm.SearchTerm = setparentOptions.ParentSearchTerm ?? setparentOptions.ChildSearchTerm;
+                        vm.SearchSpecification = setparentOptions.ParentSearchSpecification;
                         if (child != null)
                         {
+                            // TODO: Allow null parent.
                             var parent = Disambiguate(vm.SearchResults.Where(x => x.ID != child.ID));
                             if (parent != null)
                             {
                                 vm.SetParent(child, parent);
                                 Console.WriteLine();
                                 PrintTree(new List<ActionItem> { { child }, { parent } }, false);
+                            }
+                            else
+                            {
+                                // Null parent. Confirm to set to nothing.
+                                Console.WriteLine("No parent selected. Remove current priority parent? [Y/N]");
+                                k = Console.ReadKey();
+                                if (k.KeyChar.ToString().ToLower() == "y")
+                                {
+                                    vm.SetParent(child, null);
+                                    Console.WriteLine();
+                                    PrintTree(new List<ActionItem> { child }, false);
+                                }
                             }
                         }
                     }

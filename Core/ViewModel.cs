@@ -446,15 +446,18 @@ namespace AssimilationSoftware.TodoSort.Core
 
         public void SetTag(ActionItem selected, string tagname, string value)
         {
-            selected.Tags[tagname] = value;
-            todo_changes = true;
+            if (selected != null)
+            {
+                selected.Tags[tagname] = value;
+                todo_changes = true;
+            }
         }
 
         public void SetParent(ActionItem child, ActionItem parent)
         {
             child.RankParent = parent;
             // Increment the "upvotes" counter.
-            SetTag(parent, "upvotes", (GetIntTag(parent, "upvotes", 0) + 1).ToString());
+            SetTag(parent, "upvotes", (parent.GetIntTag("upvotes", 0) + 1).ToString());
             todo_changes = true;
         }
 
@@ -488,27 +491,6 @@ namespace AssimilationSoftware.TodoSort.Core
                 }
             }
             todo_changes = true;
-        }
-
-        public int GetIntTag(ActionItem item, string tagname, int fallback)
-        {
-            if (!item.Tags.ContainsKey(tagname))
-            {
-                return fallback;
-            }
-            else
-            {
-                var curval = fallback;
-                var success = int.TryParse(item.Tags[tagname], out curval);
-                if (success)
-                {
-                    return curval;
-                }
-                else
-                {
-                    return fallback;
-                }
-            }
         }
 
         public void SetProject(ActionItem child, ActionItem project)

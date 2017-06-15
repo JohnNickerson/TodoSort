@@ -1,4 +1,6 @@
-﻿using CommandLine;
+﻿using AssimilationSoftware.PimData.Model;
+using AssimilationSoftware.TodoSort.Core.Search;
+using CommandLine;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,5 +15,31 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
 
         [Option('g', "target", HelpText = "A search term to find the parent item. Defaults to same as 'search' option.")]
         public string ParentSearchTerm { get; set; }
+
+        public ISearchSpecification<ActionItem> ChildSearchSpecification
+        {
+            get
+            {
+                ISearchSpecification<ActionItem> spec = new FullTextSearchSpecification(ChildSearchTerm);
+                if (ShowAllItems)
+                {
+                    spec = spec.And(new DepthRangeSearchSpecification(-1, int.MaxValue));
+                }
+                return spec;
+            }
+        }
+
+        public ISearchSpecification<ActionItem> ParentSearchSpecification
+        {
+            get
+            {
+                ISearchSpecification<ActionItem> spec = new FullTextSearchSpecification(ParentSearchTerm ?? ChildSearchTerm);
+                if (ShowAllItems)
+                {
+                    spec = spec.And(new DepthRangeSearchSpecification(0, int.MaxValue));
+                }
+                return spec;
+            }
+        }
     }
 }
