@@ -31,6 +31,7 @@ namespace AssimilationSoftware.TodoSort.Core
             return fallback;
         }
 
+        [Obsolete("Use ActionItem.RankDepth instead.")]
         public static int Depth(this ActionItem item)
         {
             int deep = 0;

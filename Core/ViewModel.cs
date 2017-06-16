@@ -476,7 +476,7 @@ namespace AssimilationSoftware.TodoSort.Core
         public void Balance(ActionItem[] items, int branchfactor)
         {
             // Line up the items from the given context by depth and upvotes.
-            var vine = (from a in items orderby a.Depth(), a.GetIntTag("upvotes", 0) select a).ToList();
+            var vine = items.OrderBy(a => a.Depth()).ThenByDescending(a => a.GetIntTag("upvotes", 0)).ToList();
             // In order, set parents.
             for (int i = 0; i < vine.Count; i++)
             {
