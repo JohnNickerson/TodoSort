@@ -30,21 +30,5 @@ namespace AssimilationSoftware.TodoSort.Core
             }
             return fallback;
         }
-
-        [Obsolete("Use ActionItem.RankDepth instead.")]
-        public static int Depth(this ActionItem item)
-        {
-            int deep = 0;
-            var chain = new List<ActionItem>();
-            chain.Add(item);
-            var parent = item.RankParent;
-            while (parent != null && !chain.Contains(parent))
-            {
-                deep++;
-                parent = parent.RankParent;
-                chain.Add(parent);
-            }
-            return deep;
-        }
     }
 }

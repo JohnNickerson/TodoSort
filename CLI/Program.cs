@@ -127,12 +127,26 @@ namespace AssimilationSoftware.TodoSort.CLI
                         if (balopts.BranchFactor > 0)
                         {
                             vm.SearchSpecification = balopts.SearchSpecification;
-                            vm.Balance(vm.SearchResults.ToArray(), balopts.BranchFactor);
+                            var vine = vm.SearchResults.OrderBy(i => i.RankDepth).ThenByDescending(i => i.GetIntTag("upvotes", 0)).ToArray();
+                            vm.Balance(vine, balopts.BranchFactor);
                         }
                         else
                         {
                             Console.WriteLine("Branching factor must be greater than zero.");
                         }
+                        break;
+                    }
+                #endregion
+
+                #region Chain
+                case "chain":
+                    {
+                        var balopts = (BalanceOptions)argsubs;
+                        vm.SearchSpecification = balopts.SearchSpecification;
+                        var vine = vm.SearchResults.OrderBy(i => i.GetIntTag("order", 0)).ToArray();
+                        vm.Balance(vine, 1, false);
+                        // Show the resulting chain.
+                        PrintTree(vm.SearchResults.ToList(), true);
                         break;
                     }
                 #endregion

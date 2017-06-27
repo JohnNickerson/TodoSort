@@ -473,21 +473,24 @@ namespace AssimilationSoftware.TodoSort.Core
             }
         }
 
-        public void Balance(ActionItem[] items, int branchfactor)
+        public void Balance(ActionItem[] items, int branchfactor, bool setNullParents = true)
         {
-            // Line up the items from the given context by depth and upvotes.
-            var vine = items.OrderBy(a => a.Depth()).ThenByDescending(a => a.GetIntTag("upvotes", 0)).ToList();
+            // Assume that the items have already been sorted.
             // In order, set parents.
-            for (int i = 0; i < vine.Count; i++)
+            for (int i = 0; i < items.Count(); i++)
             {
                 var newdex = (int)Math.Floor((double)i / branchfactor) - 1;
                 if (newdex == -1)
                 {
-                    vine[i].RankParent = null;
+                    if (setNullParents || items.Contains(items[i].RankParent))
+                    {
+                        // Only reset the parent if requested or if not doing so would cause a loop.
+                        items[i].RankParent = null;
+                    }
                 }
                 else
                 {
-                    vine[i].RankParent = vine[newdex];
+                    items[i].RankParent = items[newdex];
                 }
             }
             todo_changes = true;

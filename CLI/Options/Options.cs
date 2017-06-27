@@ -20,6 +20,9 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
         [VerbOption("balance", HelpText = "Balances a selection of items into a tree with a specified branching factor")]
         public BalanceOptions BalanceVerb { get; set; }
 
+        [VerbOption("chain", HelpText = "Reorders a set of items into a chain by their 'order' attribute")]
+        public BalanceOptions ChainVerb { get; set; }
+
         [VerbOption("defer", HelpText = "Move an item to the someday file.")]
         public DeferSubOptions DeferVerb { get; set; }
 
