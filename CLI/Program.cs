@@ -1100,7 +1100,11 @@ namespace AssimilationSoftware.TodoSort.CLI
                     WrapOutput("        #tickle-date:", i.TickleDate.Value.ToString("yyyy-MM-dd"), wrapwidth);
                 }
                 WrapOutput("        #ID:", i.ID.ToString(), wrapwidth);
-                // TODO: priority-parent and other special tags.
+                if (i.Project != null)
+                {
+                    WrapOutput("        #project:", string.Format("{0} - {1}", i.Project.ID, i.Project.Title), wrapwidth);
+                }
+                // TODO: Any other special tags?
             }
         }
 
