@@ -30,5 +30,10 @@ namespace AssimilationSoftware.TodoSort.Core
             }
             return fallback;
         }
+
+        public static int Upvotes(this ActionItem item)
+        {
+            return GetIntTag(item, "upvotes", 0);
+        }
     }
 }

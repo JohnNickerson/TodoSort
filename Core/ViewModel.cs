@@ -537,7 +537,9 @@ namespace AssimilationSoftware.TodoSort.Core
             // Combine the two items.
             // Add notes and tags from second to first.
             target.Notes.AddRange(child.Notes);
-            foreach (var tag in child.Tags)
+            // Update the vote count.
+            target.Tags["upvotes"] = (child.Upvotes() + target.Upvotes()).ToString();
+            foreach (var tag in child.Tags.Where(t => t.Key != "upvotes"))
             {
                 if (!target.Tags.ContainsKey(tag.Key))
                 {
