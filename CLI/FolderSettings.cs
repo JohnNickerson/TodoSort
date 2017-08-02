@@ -40,6 +40,15 @@ namespace AssimilationSoftware.TodoSort.CLI
                         }
                     }
                 }
+                // Normalise values.
+                if (result.SomedayPath == result.TodoPath || result.SomedayPath == string.Empty)
+                {
+                    result.SomedayPath = null;
+                }
+                if (result.DonePath == result.TodoPath || result.DonePath == string.Empty)
+                {
+                    result.DonePath = null;
+                }
                 return result;
             }
             else

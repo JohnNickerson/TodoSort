@@ -22,12 +22,9 @@ namespace AssimilationSoftware.TodoSort.CLI
 
         static void Main(string[] args)
         {
-			// Check settings
-            string settingspath = Path.Combine(Directory.GetCurrentDirectory(), ".todosort");
-            FolderSettings f = FolderSettings.LoadFrom(settingspath);
-
             string argverb = string.Empty;
             object argsubs = null;
+            string settingspath = Path.Combine(Directory.GetCurrentDirectory(), ".todosort");
             var options = new Options.Options();
             if (!CommandLine.Parser.Default.ParseArguments(args, options,
                 (verb, subOptions) =>
@@ -38,37 +35,23 @@ namespace AssimilationSoftware.TodoSort.CLI
             {
                 Environment.Exit(CommandLine.Parser.DefaultExitCodeFail);
             }
-
-
-            bool changesettings = false;
-            if (f == null || argverb == "init")
+            else if (argverb == "init")
             {
                 InitSubOptions initty = (InitSubOptions)argsubs;
-                f.TodoPath = initty.TodoFile;
-                f.SomedayPath = initty.SomedayFile;
-                f.DonePath = initty.DoneFile;
+                var initsettings = new FolderSettings();
+                initsettings.TodoPath = initty.TodoFile;
+                initsettings.SomedayPath = initty.SomedayFile;
+                initsettings.DonePath = initty.DoneFile;
 
-                changesettings = true;
-			}
-
-            // Fix possible configuration problems.
-            if (f.SomedayPath == f.TodoPath || f.SomedayPath == string.Empty)
-            {
-                f.SomedayPath = null;
-                changesettings = true;
-            }
-            if (f.DonePath == f.TodoPath || f.DonePath == string.Empty)
-            {
-                f.DonePath = null;
-                changesettings = true;
-            }
-
-            if (changesettings)
-            {
                 // Save settings.
-                FolderSettings.SaveTo(settingspath, f);
+                FolderSettings.SaveTo(settingspath, initsettings);
+                return;
             }
-
+            else if (!File.Exists(settingspath))
+            {
+                // Ask for initialisation? Just use defaults.
+            }
+            var f = FolderSettings.LoadFrom(settingspath);
             ActionItemDiskMapper todomapper = new ActionItemDiskMapper(f.TodoPath);
             ActionItemDiskMapper somedaymapper = (f.SomedayPath == null ? null : new ActionItemDiskMapper(f.SomedayPath));
             ActionItemDiskMapper donemapper = (f.DonePath == null ? null : new ActionItemDiskMapper(f.DonePath));
@@ -89,7 +72,6 @@ namespace AssimilationSoftware.TodoSort.CLI
                 }
             }
 
-            // Search for a matching item in all contexts.
             ActionItem selected = null;
             switch (argverb)
             {
