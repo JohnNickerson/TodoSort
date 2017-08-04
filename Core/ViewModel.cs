@@ -18,10 +18,8 @@ namespace AssimilationSoftware.TodoSort.Core
         List<ActionItem> done_items;
 
         IPimDataMapper<ActionItem> todo_mapper;
-        IPimDataMapper<ActionItem> someday_mapper;
-        IPimDataMapper<ActionItem> done_mapper;
 
-        // Track whether changes have been made to the "someday" file, to avoid rewriting it if possible.
+        // Track whether changes have been made to each file, to avoid rewriting them if possible.
         bool todo_changes;
         bool someday_changes;
         bool done_changes;
@@ -34,21 +32,11 @@ namespace AssimilationSoftware.TodoSort.Core
         private ISearchSpecification<ActionItem> _doneSearchSpec;
         #endregion
 
-        public ViewModel(IPimDataMapper<ActionItem> todo, IPimDataMapper<ActionItem> done, IPimDataMapper<ActionItem> someday)
+        public ViewModel(IPimDataMapper<ActionItem> todo)
         {
             todo_mapper = todo;
-            done_mapper = done;
-            someday_mapper = someday;
 
             todo_items = todo.LoadAll();
-            if (someday_mapper != null)
-            {
-                someday_items = someday.LoadAll();
-            }
-            if (done_mapper != null)
-            {
-                done_items = done.LoadAll();
-            }
 
             todo_changes = false;
             someday_changes = false;
@@ -86,14 +74,7 @@ namespace AssimilationSoftware.TodoSort.Core
         {
             get
             {
-                if (someday_mapper != null)
-                {
-                    return someday_items;
-                }
-                else
-                {
-                    return todo_items.Where(i => i.Context == "someday").ToList();
-                }
+                return todo_items.Where(i => i.Context == "someday").ToList();
             }
         }
 
@@ -229,14 +210,7 @@ namespace AssimilationSoftware.TodoSort.Core
         {
             get
             {
-                if (done_mapper == null)
-                {
-                    return todo_items.Where(i => i.Context == "done").ToList();
-                }
-                else
-                {
-                    return done_items;
-                }
+                return todo_items.Where(i => i.Context == "done").ToList();
             }
         }
         #endregion
@@ -248,16 +222,6 @@ namespace AssimilationSoftware.TodoSort.Core
             {
                 todo_mapper.SaveAll((from i in todo_items orderby i.RankDepth select i).ToList());
                 todo_changes = false;
-            }
-            if (someday_changes && someday_mapper != null)
-            {
-                someday_mapper.SaveAll((from i in someday_items orderby i.Title select i).ToList());
-                someday_changes = false;
-            }
-            if (done_changes && done_mapper != null)
-            {
-                done_mapper.SaveAll((from i in done_items orderby i.DoneDate select i).ToList());
-                done_changes = false;
             }
         }
 
@@ -291,17 +255,8 @@ namespace AssimilationSoftware.TodoSort.Core
             foreach (ActionItem doneitem in doneitems)
             {
                 doneitem.DoneDate = donedate.HasValue ? donedate.Value : DateTime.Now;
-                if (done_mapper != null)
-                {
-                    doneitem.Context = string.Format("{0:yyyy-MM-dd}", doneitem.DoneDate);
-                    done_items.Add(doneitem);
-                    todo_items.Remove(doneitem);
-                }
-                else
-                {
-                    doneitem.Context = "done";
-                    ResetPriorityParents(doneitem); // Or else it will continue to hide its children by default.
-                }
+                doneitem.Context = "done";
+                ResetPriorityParents(doneitem); // Or else it will continue to hide its children by default.
                 done_changes = true;
                 todo_changes = true;
             }
@@ -323,15 +278,7 @@ namespace AssimilationSoftware.TodoSort.Core
                     i.Tags["previous-context"] = i.Context;
                     i.Context = "someday";
                 }
-                if (someday_mapper != null)
-                {
-                    someday_items.Add(i);
-                    todo_items.Remove(i);
-                }
-                else
-                {
-                    ResetPriorityParents(i); // To avoid hiding children while deferred.
-                }
+                ResetPriorityParents(i); // To avoid hiding children while deferred.
                 someday_changes = true;
                 todo_changes = true;
 
@@ -369,11 +316,6 @@ namespace AssimilationSoftware.TodoSort.Core
                 {
                     i.Context = context;
                 }
-                if (someday_mapper != null)
-                {
-                    todo_items.Add(i);
-                    someday_items.Remove(i);
-                }
                 someday_changes = true;
                 todo_changes = true;
                 i.TickleDate = null;
@@ -404,11 +346,6 @@ namespace AssimilationSoftware.TodoSort.Core
                 else
                 {
                     i.Context = context;
-                }
-                if (done_mapper != null)
-                {
-                    todo_items.Add(i);
-                    done_items.Remove(i);
                 }
                 done_changes = true;
                 todo_changes = true;

@@ -56,7 +56,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             ActionItemDiskMapper somedaymapper = (f.SomedayPath == null ? null : new ActionItemDiskMapper(f.SomedayPath));
             ActionItemDiskMapper donemapper = (f.DonePath == null ? null : new ActionItemDiskMapper(f.DonePath));
 
-            ViewModel vm = new ViewModel(todomapper, donemapper, somedaymapper);
+            ViewModel vm = new ViewModel(todomapper);
 
             // Set universal options.
             if (argsubs is UniversalOptions)

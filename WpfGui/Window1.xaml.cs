@@ -38,7 +38,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
 
         private void RefreshViewModel()
         {
-            vm = new ViewModel(new ActionItemDiskMapper(Settings.Default.Todo), new ActionItemDiskMapper(Settings.Default.Done), new ActionItemDiskMapper(Settings.Default.Someday));
+            vm = new ViewModel(new ActionItemDiskMapper(Settings.Default.Todo));
             this.DataContext = vm;
         }
 

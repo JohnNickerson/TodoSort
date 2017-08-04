@@ -20,7 +20,7 @@ namespace AssimilationSoftware.TodoSort.UnitTests
         public void Search_Tag_Names()
         {
             var mockmapper = new MockMapper();
-            ViewModel vm = new ViewModel(mockmapper, mockmapper, mockmapper);
+            ViewModel vm = new ViewModel(mockmapper);
 
             var a = new ActionItem("inbox", "This item should match");
             a.Tags["spice"] = "melange";
@@ -46,7 +46,7 @@ namespace AssimilationSoftware.TodoSort.UnitTests
             var todo = new MockMapper();
             var someday = new MockMapper();
             var done = new MockMapper();
-            ViewModel vm = new ViewModel(todo, done, someday);
+            ViewModel vm = new ViewModel(todo);
 
             // Add an item to the "someday" context.
             var a = new ActionItem("someday", "An item to defer");
@@ -67,7 +67,7 @@ namespace AssimilationSoftware.TodoSort.UnitTests
             var todo = new MockMapper();
             var someday = new MockMapper();
             var done = new MockMapper();
-            ViewModel vm = new ViewModel(todo, done, someday);
+            ViewModel vm = new ViewModel(todo);
 
             // Add an item to the "someday" context.
             var project = new ActionItem("someday", "A project item to defer");
@@ -96,7 +96,7 @@ namespace AssimilationSoftware.TodoSort.UnitTests
             var todo = new MockMapper();
             var someday = new MockMapper();
             var done = new MockMapper();
-            ViewModel vm = new ViewModel(todo, done, someday);
+            ViewModel vm = new ViewModel(todo);
 
             var deferitem = new ActionItem("inbox", "Waiting for a good Superman movie");
             vm.AddItem(deferitem);
@@ -114,7 +114,7 @@ namespace AssimilationSoftware.TodoSort.UnitTests
         public void Low_Priority_Next_Project_Action()
         {
             var todo = new MockMapper();
-            ViewModel vm = new ViewModel(todo, null, null);
+            ViewModel vm = new ViewModel(todo);
 
             var testproject = new ActionItem("projects", "The test project");
             var testitemhigh = new ActionItem("todo", "High priority item");
