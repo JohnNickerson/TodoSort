@@ -133,6 +133,54 @@ namespace AssimilationSoftware.TodoSort.CLI
                     }
                 #endregion
 
+                #region Dedupe
+                case "dedupe":
+                    {
+                        var ddup = (DedupeOptions)argsubs;
+                        foreach (var duptit in vm.GetDuplicateTitles())
+                        {
+                            // Search by title
+                            vm.SearchSpecification = new ExactPropertyValueSpecification<ActionItem, string>(i => i.Title, duptit);
+                            // Present options for merging
+                            // Get user input
+                            Console.WriteLine();
+                            Console.WriteLine("Select one item to merge all others into (i = ignore):");
+                            var master = Disambiguate(vm.SearchResults);
+                            if (master != null)
+                            {
+                                // Merge all into master.
+                                foreach (var c in vm.SearchResults.Except(new[] { master }).ToList())
+                                {
+                                    vm.Merge(c, master);
+                                }
+                            }
+                        }
+                        if (!string.IsNullOrEmpty(ddup.Tag))
+                        {
+                            foreach (var duptag in vm.GetDuplicateTags(ddup.Tag))
+                            {
+                                // Search by tag
+                                vm.SearchSpecification = new TagValueSpecification(ddup.Tag, duptag);
+                                // Present options for merging
+                                // Get user input.
+                                Console.WriteLine();
+                                Console.WriteLine("Select one item to merge all others into (i = ignore):");
+                                var master = Disambiguate(vm.SearchResults);
+                                if (master != null)
+                                {
+                                    // Merge into master.
+                                    foreach (var c in vm.SearchResults.Except(new[] { master }).ToList())
+                                    {
+                                        vm.Merge(c, master);
+                                    }
+                                }
+                            }
+                        }
+                        vm.Save();
+                    }
+                    break;
+                #endregion
+
                 #region Defer
                 case "defer":
                     // Move the item and its sub-items to the "someday" file.

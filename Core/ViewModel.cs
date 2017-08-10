@@ -198,6 +198,25 @@ namespace AssimilationSoftware.TodoSort.Core
             }
         }
 
+        /// <summary>
+        /// Searches for items with identical titles and report those titles.
+        /// </summary>
+        /// <returns>A list of titles that are duplicated in the collection.</returns>
+        public IEnumerable<string> GetDuplicateTitles()
+        {
+            return SearchResults.GroupBy(i => i.Title).Where(g => g.Count() > 1).Select(g => g.Key).ToList();
+        }
+
+        /// <summary>
+        /// Searches for tag values that are duplicated among multiple items and reports those tag values.
+        /// </summary>
+        /// <param name="tag">The name of the tag to retrieve.</param>
+        /// <returns>A list of tag values.</returns>
+        public IEnumerable<string> GetDuplicateTags(string tag)
+        {
+            return SearchResults.GroupBy(i => i.Tags.ContainsKey(tag) ? i.Tags[tag] : "").Where(g => g.Count() > 1).Select(g => g.Key).ToList();
+        }
+
         public List<ActionItem> Items
         {
             get
