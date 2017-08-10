@@ -120,6 +120,28 @@ namespace AssimilationSoftware.TodoSort.CLI
                     }
                 #endregion
 
+                #region Bump
+                case "bump":
+                    {
+                        var bumpOpts = (SingleSearchSubOptions)argsubs;
+                        vm.SearchSpecification = bumpOpts.SearchSpecification;
+                        var target = Disambiguate(vm.SearchResults);
+                        if (target != null)
+                        {
+                            // Before
+                            PrintTree(new List<ActionItem>(new[] { target }), true);
+                            var depth = target.RankDepth / 2;
+                            while (target.RankDepth > depth && target.RankParent != null)
+                            {
+                                vm.SetParent(target, target.RankParent.RankParent);
+                            }
+                            // After
+                            PrintTree(new List<ActionItem>(new[] { target }), true);
+                        }
+                    }
+                    break;
+                #endregion
+
                 #region Chain
                 case "chain":
                     {
