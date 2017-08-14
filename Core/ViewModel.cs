@@ -139,7 +139,8 @@ namespace AssimilationSoftware.TodoSort.Core
             }
             set
             {
-                _todoSearchSpec = value;
+                // Always exclude "done" and "someday" contexts, now that we're working with just one list.
+                _todoSearchSpec = value.And(new NotSpecification<ActionItem>(new ContextSearchSpecification("done"), new ContextSearchSpecification("someday")));
                 RaisePropertyChanged("SearchSpecification", "SearchResults");
             }
         }
