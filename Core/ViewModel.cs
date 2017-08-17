@@ -280,7 +280,7 @@ namespace AssimilationSoftware.TodoSort.Core
                 done_changes = true;
                 todo_changes = true;
             }
-            RaisePropertyChanged("SearchResults");
+            RaisePropertyChanged("SearchResults", "DoneSearchResults");
         }
 
         /// <summary>
@@ -308,6 +308,7 @@ namespace AssimilationSoftware.TodoSort.Core
                     to_defer.Enqueue(c);
                 }
             }
+            RaisePropertyChanged("SearchResults", "SomedaySearchResults");
         }
         
         /// <summary>
