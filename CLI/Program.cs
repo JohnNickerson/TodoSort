@@ -159,6 +159,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                 case "dedupe":
                     {
                         var ddup = (DedupeOptions)argsubs;
+                        vm.SearchSpecification = new TrueSpecification<ActionItem>();
                         foreach (var duptit in vm.GetDuplicateTitles())
                         {
                             // Search by title
@@ -701,6 +702,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                 #region Summary
                 case "summary":
                     var summaryArgs = (UniversalOptions)argsubs;
+                    vm.SearchSpecification = new TrueSpecification<ActionItem>();
                     var summarydata = (from i in vm.SearchResults group i by i.Context into c select new { Context = c.Key, Count = c.Count() });
 
                     int maxwidth = (summarydata.Count() > 0 ? (from r in summarydata select r.Context.Length).Max() : 0);

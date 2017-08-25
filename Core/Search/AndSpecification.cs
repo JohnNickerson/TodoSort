@@ -21,7 +21,10 @@ namespace AssimilationSoftware.TodoSort.Core.Search
             bool sat = true;
             foreach (var cond in _conditions)
             {
-                sat &= cond.IsSatisfiedBy(b);
+                if (cond != null)
+                {
+                    sat &= cond.IsSatisfiedBy(b);
+                }
                 if (!sat) break;
             }
             return sat;
