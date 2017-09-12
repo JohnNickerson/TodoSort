@@ -593,7 +593,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                         // Set the ViewModel property.
                         vm.DoneSearchSpecification = search.SearchSpecification;
                         // Report the results.
-                        PrintItems(search.SortTag, vm.DoneSearchResults);
+                        PrintItems(search.SortTag ?? "done-date", vm.DoneSearchResults);
                     }
                     break;
                 #endregion
@@ -606,7 +606,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                         // Set the ViewModel property.
                         vm.SomedaySearchSpecification = search.SearchSpecification;
                         // Report the results.
-                        PrintItems(search.SortTag, vm.SomedaySearchResults);
+                        PrintItems(search.SortTag ?? "tickle-date", vm.SomedaySearchResults);
                     }
                     break;
                 #endregion
@@ -999,10 +999,18 @@ namespace AssimilationSoftware.TodoSort.CLI
         private static void PrintItems(string sorttag, IEnumerable<ActionItem> list)
         {
             string last_context = string.Empty;
-            var sortedlist = from a in list orderby a.Context, a.Title select a;
-            if (!string.IsNullOrEmpty(sorttag) && sorttag != "title")
+            var sortedlist = from a in list orderby a.Context select a;
+            if (sorttag == "tickle-date")
             {
-                sortedlist = list.OrderBy(a => a.Context).ThenBy(a => a.Tags.ContainsKey(sorttag) ? a.Tags[sorttag] : "0", new SemiNumericComparer());
+                sortedlist = sortedlist.ThenBy(i => i.TickleDate ?? DateTime.Now);
+            }
+            else if (sorttag == "title" || string.IsNullOrEmpty(sorttag))
+            {
+                sortedlist = sortedlist.ThenBy(i => i.Title);
+            }
+            else
+            {
+                sortedlist = sortedlist.ThenBy(a => a.Tags.ContainsKey(sorttag) ? a.Tags[sorttag] : "0", new SemiNumericComparer());
             }
             foreach (ActionItem i in sortedlist)
             {
