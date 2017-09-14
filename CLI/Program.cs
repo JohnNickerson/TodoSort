@@ -1230,51 +1230,5 @@ namespace AssimilationSoftware.TodoSort.CLI
 			}
 			return selected;
 		}
-
-        /// <summary>
-        /// Prompts to configure a path based on an existing value.
-        /// </summary>
-        /// <param name="path">The path as it exists. May include "{MyDocs}" as a placeholder.</param>
-        /// <param name="prompt">The human-friendly name of the folder to be used as a cue.</param>
-        /// <returns>The correct path as provided by the user.</returns>
-        public static string ConfigurePath(string path, string prompt, bool allowNull)
-        {
-            // Special folder replacements.
-            path = path.Replace("{MyDocs}", Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments));
-            path = path.Replace("{MyPictures}", Environment.GetFolderPath(Environment.SpecialFolder.MyPictures));
-            path = path.Replace("{MachineName}", Environment.MachineName);
-
-            Console.WriteLine("Configure path to {0}:", prompt);
-            if (allowNull)
-            {
-                Console.WriteLine("Type correct value, [Enter] to accept default or type the word \"null\" for null.");
-            }
-            else
-            {
-                Console.WriteLine("Type correct value or [Enter] to accept default.");
-            }
-            if (path != null && path.Length > 0)
-            {
-                Console.WriteLine(Path.GetFullPath(path));
-            }
-            else
-            {
-                Console.WriteLine("[no default]");
-            }
-            var response = Console.ReadLine();
-            if (response.Trim().Length > 0)
-            {
-                if (allowNull && response.ToLower().Trim() == "null")
-                {
-                    path = null;
-                }
-                else
-                {
-                    path = response;
-                }
-                Console.WriteLine();
-            }
-            return path;
-        }
     }
 }
