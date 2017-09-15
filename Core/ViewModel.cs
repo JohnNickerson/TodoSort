@@ -248,6 +248,11 @@ namespace AssimilationSoftware.TodoSort.Core
         public void AddItem(ActionItem next)
         {
             todo_items.Add(next);
+            // Special case: if adding straight to the "done" list, and there is no date, mark as today.
+            if (next.Context == "done" && !next.DoneDate.HasValue)
+            {
+                next.DoneDate = DateTime.Today;
+            }
             todo_changes = true;
         }
 
