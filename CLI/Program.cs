@@ -785,12 +785,12 @@ namespace AssimilationSoftware.TodoSort.CLI
                 #region Undo
                 case "undo":
                     {
-                        var undoOptions = (SingleSearchSubOptions)argsubs;
+                        var undoOptions = (UndoSubOptions)argsubs;
                         vm.DoneSearchSpecification = undoOptions.SearchSpecification;
                         selected = Disambiguate(vm.DoneSearchResults);
                         if (selected != null)
                         {
-                            vm.Undo("inbox", selected);
+                            vm.Undo(undoOptions.NewContext, selected);
                         }
                     }
                     break;

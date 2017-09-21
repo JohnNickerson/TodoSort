@@ -104,6 +104,7 @@
     <Compile Include="Options\SomedaySearchSubOptions.cs" />
     <Compile Include="Options\SomedaySubOptions.cs" />
     <Compile Include="Options\TagAllSubOptions.cs" />
+    <Compile Include="Options\UndoSubOptions.cs" />
     <Compile Include="Options\UniversalOptions.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

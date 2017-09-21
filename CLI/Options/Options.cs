@@ -105,7 +105,7 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
         public SingleSearchSubOptions UndeferVerb { get; set; }
 
         [VerbOption("undo", HelpText = "Move an item from the Done list back to the main list.")]
-        public SingleSearchSubOptions UndoVerb { get; set; }
+        public UndoSubOptions UndoVerb { get; set; }
 
         [VerbOption("unrank", HelpText = "Remove priority ranking data for one particular item.")]
         public SingleSearchSubOptions UnrankVerb { get; set; }
