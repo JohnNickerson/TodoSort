@@ -1000,7 +1000,11 @@ namespace AssimilationSoftware.TodoSort.CLI
         {
             string last_context = string.Empty;
             var sortedlist = from a in list orderby a.Context select a;
-            if (sorttag == "tickle-date")
+            if (sorttag == "done-date")
+            {
+                sortedlist = sortedlist.ThenBy(i => i.DoneDate ?? DateTime.Now);
+            }
+            else if (sorttag == "tickle-date")
             {
                 sortedlist = sortedlist.ThenBy(i => i.TickleDate ?? DateTime.Now);
             }
@@ -1125,6 +1129,15 @@ namespace AssimilationSoftware.TodoSort.CLI
             {
                 title = string.Format("{1} [{0}]", i.Tags["type"].ToUpper(), title);
             }
+            if (i.DoneDate.HasValue)
+            {
+                title = string.Format("[{0:yyyy-MM-dd}] {1}", i.DoneDate.Value, title);
+            }
+            if (i.TickleDate.HasValue)
+            {
+                title = string.Format("[{0:yyyy-MM-dd}] {1}", i.TickleDate.Value, title);
+            }
+
             if (index.HasValue)
             {
                 StringBuilder prefix = new StringBuilder();
