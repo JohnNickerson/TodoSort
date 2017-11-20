@@ -11,5 +11,8 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
     {
         [Option('g', "target", HelpText = "The new context to which the item should be moved.", Required = true)]
         public string NewContext { get; set; }
+
+        [Option("unrank", HelpText = "Also remove rank parent and child relationships.", DefaultValue = false)]
+        public bool Unrank { get; set; }
     }
 }

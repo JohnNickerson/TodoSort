@@ -332,6 +332,10 @@ namespace AssimilationSoftware.TodoSort.CLI
                         if (selected != null)
                         {
                             vm.SetContext(selected, moveOptions.NewContext);
+                            if (moveOptions.Unrank)
+                            {
+                                vm.ResetPriorityParents(selected);
+                            }
                         }
                     }
                     break;
