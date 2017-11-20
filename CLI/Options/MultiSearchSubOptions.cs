@@ -132,5 +132,8 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
 
         [Option("tree", HelpText = "Display results in a tree format.")]
         public bool PrintTree { get; set; }
+
+        [Option("nocount", HelpText = "Hide the item count after printing results", DefaultValue = false)]
+        public bool NoCount { get; set; }
     }
 }

@@ -49,5 +49,8 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
                 }
             }
         }
+
+        [Option("nocount", HelpText = "Hide the item count after printing results", DefaultValue = false)]
+        public bool NoCount { get; set; }
     }
 }

@@ -585,6 +585,10 @@ namespace AssimilationSoftware.TodoSort.CLI
                     else
                     {
                         PrintItems(searchOptions.SortTag, vm.SearchResults);
+                        if (!searchOptions.NoCount)
+                        {
+                            Console.WriteLine("{0} item(s) found.", vm.SearchResults.Count());
+                        }
                     }
                     break;
                 #endregion
@@ -598,6 +602,10 @@ namespace AssimilationSoftware.TodoSort.CLI
                         vm.DoneSearchSpecification = search.SearchSpecification;
                         // Report the results.
                         PrintItems(search.SortTag ?? "done-date", vm.DoneSearchResults);
+                        if (!search.NoCount)
+                        {
+                            Console.WriteLine("{0} item(s) found.", vm.DoneSearchResults.Count());
+                        }
                     }
                     break;
                 #endregion
@@ -611,6 +619,10 @@ namespace AssimilationSoftware.TodoSort.CLI
                         vm.SomedaySearchSpecification = search.SearchSpecification;
                         // Report the results.
                         PrintItems(search.SortTag ?? "tickle-date", vm.SomedaySearchResults);
+                        if (!search.NoCount)
+                        {
+                            Console.WriteLine("{0} item(s) found.", vm.SomedaySearchResults.Count());
+                        }
                     }
                     break;
                 #endregion
