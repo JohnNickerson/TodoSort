@@ -125,7 +125,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                     {
                         var bumpOpts = (SingleSearchSubOptions)argsubs;
                         vm.SearchSpecification = bumpOpts.SearchSpecification;
-                        var target = Disambiguate(vm.SearchResults);
+                        var target = Disambiguate(vm.SearchResults, !string.IsNullOrEmpty(bumpOpts.ItemId));
                         if (target != null)
                         {
                             // Before
@@ -209,7 +209,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                     // Move the item and its sub-items to the "someday" file.
                     DeferSubOptions deferopts = ((DeferSubOptions)argsubs);
                     vm.SearchSpecification = deferopts.SearchSpecification;
-                    selected = Disambiguate(vm.SearchResults);
+                    selected = Disambiguate(vm.SearchResults, !string.IsNullOrEmpty(deferopts.ItemId));
                     if (selected != null)
                     {
                         if (deferopts.TickleDate.HasValue)
@@ -228,7 +228,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                 case "delete":
                     // Find a matching item to delete.
                     vm.SearchSpecification = ((SingleSearchSubOptions)argsubs).SearchSpecification;
-                    selected = Disambiguate(vm.SearchResults);
+                    selected = Disambiguate(vm.SearchResults, !string.IsNullOrEmpty(((SingleSearchSubOptions)argsubs).ItemId));
                     vm.Delete(selected);
                     break;
                 #endregion
@@ -239,7 +239,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                         // If there is a next action, create a new item and add it to the correct context.
                         var doneopts = (DoneSubOptions)argsubs;
                         vm.SearchSpecification = doneopts.SearchSpecification;
-                        selected = Disambiguate(vm.SearchResults);
+                        selected = Disambiguate(vm.SearchResults, !string.IsNullOrEmpty(doneopts.ItemId));
                         if (selected != null)
                         {
                             vm.MarkDone(doneopts.DoneDate, selected);
@@ -328,7 +328,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                     {
                         var moveOptions = (MoveSubOptions)argsubs;
                         vm.SearchSpecification = moveOptions.SearchSpecification;
-                        selected = Disambiguate(vm.SearchResults);
+                        selected = Disambiguate(vm.SearchResults, !string.IsNullOrEmpty(moveOptions.ItemId));
                         if (selected != null)
                         {
                             vm.SetContext(selected, moveOptions.NewContext);
@@ -361,7 +361,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                     // Add a note to a task.
                     NoteSubOptions noteOptions = (NoteSubOptions)argsubs;
                     vm.SearchSpecification = noteOptions.SearchSpecification;
-                    selected = Disambiguate(vm.SearchResults);
+                    selected = Disambiguate(vm.SearchResults, !string.IsNullOrEmpty(noteOptions.ItemId));
                     if (selected != null)
                     {
                         // Force verbose mode to display all notes and tags.
@@ -376,7 +376,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                     // Read a tag and pass it through to the "start" argverb. Intended for URLs and file names.
                     OpenTagSubOptions opentagOptions = (OpenTagSubOptions)argsubs;
                     vm.SearchSpecification = opentagOptions.SearchSpecification;
-                    selected = Disambiguate(vm.SearchResults);
+                    selected = Disambiguate(vm.SearchResults, !string.IsNullOrEmpty(opentagOptions.ItemId));
                     if (selected != null)
                     {
                         if (selected.Tags.ContainsKey(opentagOptions.Tag))
@@ -556,7 +556,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                     // Rename an item.
                     RenameSubOptions renameOptions = (RenameSubOptions)argsubs;
                     vm.SearchSpecification = renameOptions.SearchSpecification;
-                    selected = Disambiguate(vm.SearchResults);
+                    selected = Disambiguate(vm.SearchResults, !string.IsNullOrEmpty(renameOptions.ItemId));
                     if (selected != null)
                     {
                         vm.Rename(selected, renameOptions.NewTitle);
@@ -738,7 +738,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                     // Search for a matching item.
                     var tagOptions = (SingleSearchSubOptions)argsubs;
                     vm.SearchSpecification = tagOptions.SearchSpecification;
-                    selected = Disambiguate(vm.SearchResults);
+                    selected = Disambiguate(vm.SearchResults, !string.IsNullOrEmpty(tagOptions.ItemId));
                     if (selected != null)
                     {
                         TagItem(vm, selected);
@@ -773,7 +773,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                     {
                         var undeferOptions = (SingleSearchSubOptions)argsubs;
                         vm.SomedaySearchSpecification = undeferOptions.SearchSpecification;
-                        selected = Disambiguate(vm.SomedaySearchResults);
+                        selected = Disambiguate(vm.SomedaySearchResults, !string.IsNullOrEmpty(undeferOptions.ItemId));
                         if (selected != null)
                         {
                             vm.Undefer("inbox", selected);
@@ -787,7 +787,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                     {
                         var undoOptions = (UndoSubOptions)argsubs;
                         vm.DoneSearchSpecification = undoOptions.SearchSpecification;
-                        selected = Disambiguate(vm.DoneSearchResults);
+                        selected = Disambiguate(vm.DoneSearchResults, !string.IsNullOrEmpty(undoOptions.ItemId));
                         if (selected != null)
                         {
                             vm.Undo(undoOptions.NewContext, selected);
@@ -800,7 +800,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                 case "unrank":
                     var unrankOptions = (SingleSearchSubOptions)argsubs;
                     vm.SearchSpecification = unrankOptions.SearchSpecification;
-                    selected = Disambiguate(vm.SearchResults);
+                    selected = Disambiguate(vm.SearchResults, !string.IsNullOrEmpty(unrankOptions.ItemId));
                     if (selected != null)
                     {
                         vm.ResetPriorityParents(selected);
@@ -1210,7 +1210,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             Console.WriteLine(content);
         }
 
-		private static ActionItem Disambiguate(IEnumerable<ActionItem> todolist)
+		private static ActionItem Disambiguate(IEnumerable<ActionItem> todolist, bool autoAcceptOne = false)
 		{
 			ActionItem selected = null;
 
@@ -1223,6 +1223,12 @@ namespace AssimilationSoftware.TodoSort.CLI
 			{
 				Console.WriteLine("Too many search matches. Try to be more specific. No action will be taken this time.");
 			}
+            else if (todolist.Count() == 1 && autoAcceptOne)
+            {
+                PrintItem(todolist.ElementAt(0), null);
+                Console.WriteLine("Auto-accepting...");
+                selected = todolist.ElementAt(0);
+            }
 			else
 			{
                 for (int i = 0; i < todolist.Count(); i++)
