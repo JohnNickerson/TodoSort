@@ -3,9 +3,6 @@
 		- Allow tags where their existence is all that matters.
 		#type:feature
 		#id:47cd35de-c4fb-4c77-8be3-b4cd7d69e5d7
-	Mustache-sharp template engine for exports
-		#url:https://github.com/jehugaleahsa/mustache-sharp
-		#id:c16bf60e-abb0-4847-867b-cba0df9e7e3e
 	Trash context
 		- To allow undeleting items if required.
 		#type:feature
@@ -48,11 +45,6 @@
 		#id:bcac196a-52cf-4e95-8491-3cc5eafbe98b
 		#priority-parent:8da843b9-8dc7-47c7-9db3-e7209b1068fe
 @cli
-	De-duplicate command
-		- Search and merge duplicates
-		- Kind of difficult with this data, but worth it. (2014-06-17)
-		- Perhaps specify the tags to match on. (2015-06-16)
-		#id:841c5d7b-d1c5-4a3e-8618-cfff08ef4c20
 	Export iCal format for Someday items
 		- Might comprise two new features.
 		- Useful for my upcoming movies list. (2015-03-16)
@@ -70,9 +62,6 @@
 		- For instance, parse (tag foo) as looking for a tag called foo.
 		#type:feature
 		#id:9d3a89f1-3f37-4af0-89cb-0ddf43b7d707
-	Sort Someday results by tickle date
-		#type:feature
-		#id:650e2c9b-784d-4687-9d62-1d8d950c3989
 	Sort by dynamic child count
 		- Instead of requiring a precalculation.
 		#type:feature
@@ -107,16 +96,19 @@
 	Use word wrap for status messages while adding new items
 		#type:feature
 		#id:e4807656-e261-4f76-9db6-181d4387d118
+	Allow adding an item with the Done command
+		- Sometimes, being able to create a new item instead of having to look for it first would be handy.
+		#type:feature
+		#id:55334296-a38c-4268-adf7-7e9cabd9e07a
+	Hide NSFW-tagged items
+		- Might be easiest to specify with advanced search.
+		#type:feature
+		#id:314d8cbb-f519-4b49-bd2c-b3ceeb05a912
 	Last page of Someday processing is blank
 		- When processing Someday items and the last item is at the end of a page (eg --pagesize 1) there will be a blank set displayed at the end.
 		#type:bug
 		#id:22ea6512-fd50-4714-8f20-ce7107edca63
 		#priority-parent:b9e5e549-15cd-4732-a5ef-fef435e27e6b
-	Allow adding an item with the Done command
-		- Sometimes, being able to create a new item instead of having to look for it first would be handy.
-		#type:feature
-		#id:55334296-a38c-4268-adf7-7e9cabd9e07a
-		#priority-parent:841c5d7b-d1c5-4a3e-8618-cfff08ef4c20
 	Change console output to an export module used by default
 		#type:feature
 		#id:37ed25d1-cd26-4ad0-b86b-896cca3f783c
@@ -126,11 +118,6 @@
 		#type:feature
 		#id:2fd5a81e-3ded-45d4-b777-1e889fcf1126
 		#priority-parent:b27942a1-1960-41fe-a38a-1189d75d1700
-	Hide NSFW-tagged items
-		- Might be easiest to specify with advanced search.
-		#type:feature
-		#id:314d8cbb-f519-4b49-bd2c-b3ceeb05a912
-		#priority-parent:841c5d7b-d1c5-4a3e-8618-cfff08ef4c20
 	'Make-List' command to make a priority chain out of several items
 		- Could come in handy for book and movie sequences, perhaps.
 		#type:feature
@@ -159,6 +146,21 @@
 		#type:feature
 		#id:05e78d12-11a3-4a31-9906-d0ca2ca3b0c1
 		#priority-parent:37ed25d1-cd26-4ad0-b86b-896cca3f783c
+@done
+	Sort Someday results by tickle date
+		#type:feature
+		#done-date:2017-11-21
+		#id:650e2c9b-784d-4687-9d62-1d8d950c3989
+	De-duplicate command
+		- Search and merge duplicates
+		- Kind of difficult with this data, but worth it. (2014-06-17)
+		- Perhaps specify the tags to match on. (2015-06-16)
+		#done-date:2017-11-21
+		#id:841c5d7b-d1c5-4a3e-8618-cfff08ef4c20
+	Mustache-sharp template engine for exports
+		#url:https://github.com/jehugaleahsa/mustache-sharp
+		#done-date:2017-11-21
+		#id:c16bf60e-abb0-4847-867b-cba0df9e7e3e
 @gui
 	Open url via GUI
 		- With this, mark as done and ranking, I'll have my main playlist functions in the GUI.
