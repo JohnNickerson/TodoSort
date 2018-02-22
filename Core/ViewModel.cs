@@ -445,7 +445,7 @@ namespace AssimilationSoftware.TodoSort.Core
                 var newdex = (int)Math.Floor((double)i / branchfactor) - 1;
                 if (newdex == -1)
                 {
-                    if (setNullParents || items.Contains(items[i].RankParent))
+                    if (setNullParents || items.Intersect(Ancestors(items[i])).Count() > 0)
                     {
                         // Only reset the parent if requested or if not doing so would cause a loop.
                         items[i].RankParent = null;
@@ -457,6 +457,19 @@ namespace AssimilationSoftware.TodoSort.Core
                 }
             }
             todo_changes = true;
+        }
+
+        private IEnumerable<ActionItem> Ancestors(ActionItem actionItem)
+        {
+            var a = new List<ActionItem>
+            {
+                actionItem
+            };
+            for (var b = actionItem.RankParent; b != null && !a.Contains(b); b = b.RankParent)
+            {
+                a.Add(b);
+            }
+            return a;
         }
 
         public void SetProject(ActionItem child, ActionItem project)
