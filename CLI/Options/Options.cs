@@ -14,7 +14,7 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
         [VerbOption("add", HelpText = "Adds a new action to a list")]
         public AddSubOptions AddVerb { get; set; }
 
-        [VerbOption("advanced-search", HelpText = "Advanced search with Lisp-like expression syntax (and (or (not term term))).")]
+        [VerbOption("advanced-search", HelpText = "Advanced search with Lisp-like expression syntax (and (or (not term another))).")]
         public AdvancedSearchOptions AdvancedSearchVerb { get; set; }
 
         [VerbOption("balance", HelpText = "Balances a selection of items into a tree with a specified branching factor")]
@@ -108,7 +108,7 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
         public UndoSubOptions UndoVerb { get; set; }
 
         [VerbOption("unrank", HelpText = "Remove priority ranking data for one particular item.")]
-        public SingleSearchSubOptions UnrankVerb { get; set; }
+        public UnrankSubOptions UnrankVerb { get; set; }
 
         [VerbOption("unrank-all", HelpText = "Removes all ranking data from a set of items.")]
         public MultiSearchSubOptions UnrankAllVerb { get; set; }

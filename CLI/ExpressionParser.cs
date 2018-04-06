@@ -36,7 +36,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             }
             if (cardcount != 0)
             {
-                throw new ArgumentException("Unbalanced paretheses in expression.");
+                throw new ArgumentException("Unbalanced parentheses in expression.");
             }
             if (inquotes)
             {

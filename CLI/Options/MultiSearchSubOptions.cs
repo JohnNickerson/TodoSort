@@ -55,7 +55,7 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
         [Option("mindepth", HelpText = "The minimum priority depth for results.", DefaultValue = 0)]
         public int MinDepth { get; set; }
 
-        // Maximum depth } Can be set together by one Depth option (ie "set { MinDepth = value; MaxDepth = value; }")
+        // Maximum depth } Can be set together by one Depth option (i.e. "set { MinDepth = value; MaxDepth = value; }")
         private int _maxdepth;
         [Option("maxdepth", HelpText = "The maximum priority depth for results.", DefaultValue = 0)]
         public int MaxDepth

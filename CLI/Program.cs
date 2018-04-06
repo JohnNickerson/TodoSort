@@ -565,6 +565,10 @@ namespace AssimilationSoftware.TodoSort.CLI
                     {
                         vm.Rename(selected, renameOptions.NewTitle);
                         Console.WriteLine("Item renamed.");
+                        if (renameOptions.Retag)
+                        {
+                            TagItem(vm, selected);
+                        }
                     }
                     break;
                 #endregion

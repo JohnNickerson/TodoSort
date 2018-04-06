@@ -10,5 +10,8 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
     {
         [Option('n', "name", HelpText = "New title.", Required = true)]
         public string NewTitle { get; set; }
+
+        [Option("retag", HelpText = "Apply new tags after opening.", DefaultValue = false)]
+        public bool Retag { get; set; }
     }
 }
