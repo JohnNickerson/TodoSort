@@ -108,7 +108,7 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
         public UndoSubOptions UndoVerb { get; set; }
 
         [VerbOption("unrank", HelpText = "Remove priority ranking data for one particular item.")]
-        public UnrankSubOptions UnrankVerb { get; set; }
+        public SingleSearchSubOptions UnrankVerb { get; set; }
 
         [VerbOption("unrank-all", HelpText = "Removes all ranking data from a set of items.")]
         public MultiSearchSubOptions UnrankAllVerb { get; set; }
