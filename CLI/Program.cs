@@ -279,7 +279,14 @@ namespace AssimilationSoftware.TodoSort.CLI
                     if (exporter != null)
                     {
                         vm.SearchSpecification = exportOptions.SearchSpecification;
-                        exporter.Export(vm.SearchResults.ToList());
+                        if (string.IsNullOrEmpty(exportOptions.SortTag))
+                        {
+                            exporter.Export(vm.SearchResults.ToList());
+                        }
+                        else
+                        {
+                            exporter.Export(ApplySort(exportOptions.SortTag, vm.SearchResults).ToList());
+                        }
                     }
                     break;
                 #endregion
@@ -1016,9 +1023,8 @@ namespace AssimilationSoftware.TodoSort.CLI
             return preset;
         }
 
-        private static void PrintItems(string sorttag, IEnumerable<ActionItem> list)
+        private static IOrderedEnumerable<ActionItem> ApplySort(string sorttag, IEnumerable<ActionItem> list)
         {
-            string last_context = string.Empty;
             var sortedlist = from a in list orderby a.Context select a;
             if (sorttag == "done-date")
             {
@@ -1036,6 +1042,13 @@ namespace AssimilationSoftware.TodoSort.CLI
             {
                 sortedlist = sortedlist.ThenBy(a => a.Tags.ContainsKey(sorttag) ? a.Tags[sorttag] : "0", new SemiNumericComparer());
             }
+            return sortedlist;
+        }
+
+        private static void PrintItems(string sorttag, IEnumerable<ActionItem> list)
+        {
+            string last_context = string.Empty;
+            var sortedlist = ApplySort(sorttag, list);
             foreach (ActionItem i in sortedlist)
             {
                 if (i.Context != last_context)
@@ -1241,7 +1254,12 @@ namespace AssimilationSoftware.TodoSort.CLI
 			}
             else if (todolist.Count() > 9)
 			{
-				Console.WriteLine("Too many search matches. Try to be more specific. No action will be taken this time.");
+                // Print the items so we know what to narrow down.
+                for (int i = 0; i < todolist.Count(); i++)
+                {
+                    PrintItem(todolist.ElementAt(i), null);
+                }
+                Console.WriteLine("Too many search matches. Try to be more specific. No action will be taken this time.");
 			}
             else if (todolist.Count() == 1 && autoAcceptOne)
             {
