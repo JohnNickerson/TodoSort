@@ -5,22 +5,16 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
              d:DesignHeight="60" d:DesignWidth="300" DataContext="{Binding}">
-    <Grid>
+    <Grid Height="Auto">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="30" />
-            <ColumnDefinition />
+            <ColumnDefinition Width="*" />
             <ColumnDefinition Width="30" />
         </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="30" />
-            <RowDefinition Height="30" />
-        </Grid.RowDefinitions>
         
-        <TextBox Name="Context" Grid.Column="0" Grid.Row="0" Text="{Binding Path=Context}" Grid.ColumnSpan="2" />
-
-        <CheckBox Name="Done" Grid.Column="0" Grid.Row="1" Margin="3" HorizontalAlignment="Center" VerticalAlignment="Center" ToolTip="Done?" IsChecked="{Binding Path=IsDone}" Checked="Done_Checked" />
-        <TextBox Name="Title" Grid.Column="1" Grid.Row="1" Text="{Binding Path=Title}" />
-        <Button Name="Delete" Grid.Column="2" Grid.Row="1" Margin="3" ToolTip="Delete" Click="Delete_Click">
+        <CheckBox Name="Done" Grid.Column="0" Grid.Row="0" Margin="3" HorizontalAlignment="Center" VerticalAlignment="Center" ToolTip="Done?" IsChecked="{Binding Path=IsDone}" Checked="Done_Checked" />
+        <TextBox Name="Title" Grid.Column="1" Grid.Row="0" Text="{Binding Path=Title}" Height="30" Margin="1" VerticalAlignment="Center" />
+        <Button Name="Delete" Grid.Column="2" Grid.Row="0" Margin="3" ToolTip="Delete" Click="Delete_Click" Height="30">
             <Image Source="edit-delete-5.png" />
         </Button>
     </Grid>

@@ -52,24 +52,10 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             dlg.Title = "Todo file";
 
             // Show open file dialog box
-            Nullable<bool> result = dlg.ShowDialog();
+            bool? result = dlg.ShowDialog();
             if (result == true)
             {
                 Settings.Default.Todo = dlg.FileName;
-            }
-
-            dlg.Title = "Done file";
-            result = dlg.ShowDialog();
-            if (result == true)
-            {
-                Settings.Default.Done = dlg.FileName;
-            }
-
-            dlg.Title = "Someday file";
-            result = dlg.ShowDialog();
-            if (result == true)
-            {
-                Settings.Default.Someday = dlg.FileName;
             }
 
             Settings.Default.Reconfigure = false;
@@ -90,6 +76,13 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         private void SaveCommandExecuted(object sender, ExecutedRoutedEventArgs e)
         {
             vm.Save();
+        }
+
+        private void OpenCommandExecuted(object sender, ExecutedRoutedEventArgs e)
+        {
+            // TODO: Browse for a file.
+            Reconfigure(sender, e);
+            RefreshViewModel();
         }
 	}
 }
