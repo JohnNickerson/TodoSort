@@ -1,4 +1,5 @@
-﻿using AssimilationSoftware.PimData.Model;
+﻿using AssimilationSoftware.PimData.Mappers.Text;
+using AssimilationSoftware.PimData.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +14,7 @@ namespace AssimilationSoftware.TodoSort.Core.Import
 
         public ActionItem[] GetAllItems()
         {
-            var m = new PimData.Mappers.ActionItemDiskMapper(Filename);
+            var m = new ActionItemDiskMapper(Filename);
             return m.LoadAll().ToArray();
         }
     }

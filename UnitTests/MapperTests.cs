@@ -1,4 +1,5 @@
 ﻿using AssimilationSoftware.PimData.Mappers;
+using AssimilationSoftware.PimData.Mappers.Text;
 using AssimilationSoftware.PimData.Model;
 using System;
 using System.Collections.Generic;

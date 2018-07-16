@@ -1,5 +1,6 @@
 ﻿using AssimilationSoftware.PimData.Interfaces;
 using AssimilationSoftware.PimData.Mappers;
+using AssimilationSoftware.PimData.Mappers.Text;
 using AssimilationSoftware.PimData.Model;
 using AssimilationSoftware.TodoSort.CLI.Options;
 using AssimilationSoftware.TodoSort.CLI.Properties;

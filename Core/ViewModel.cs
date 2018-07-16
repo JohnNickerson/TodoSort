@@ -14,15 +14,11 @@ namespace AssimilationSoftware.TodoSort.Core
     {
         #region Fields
         List<ActionItem> todo_items;
-        List<ActionItem> someday_items;
-        List<ActionItem> done_items;
 
         IPimDataMapper<ActionItem> todo_mapper;
 
         // Track whether changes have been made to each file, to avoid rewriting them if possible.
         bool todo_changes;
-        bool someday_changes;
-        bool done_changes;
 
         private bool showHeadOnly = true;
         string _statusMessage;
@@ -39,8 +35,6 @@ namespace AssimilationSoftware.TodoSort.Core
             todo_items = todo.LoadAll();
 
             todo_changes = false;
-            someday_changes = false;
-            done_changes = false;
 
             SearchSpecification = null;
         }
@@ -282,7 +276,6 @@ namespace AssimilationSoftware.TodoSort.Core
                 doneitem.DoneDate = donedate.HasValue ? donedate.Value : DateTime.Now;
                 doneitem.Context = "done";
                 ResetPriorityParents(doneitem); // Or else it will continue to hide its children by default.
-                done_changes = true;
                 todo_changes = true;
             }
             RaisePropertyChanged("SearchResults", "DoneSearchResults");
@@ -304,7 +297,6 @@ namespace AssimilationSoftware.TodoSort.Core
                     i.Context = "someday";
                 }
                 ResetPriorityParents(i); // To avoid hiding children while deferred.
-                someday_changes = true;
                 todo_changes = true;
 
                 //TODO: If this item was the project for another, defer that one too.
@@ -342,7 +334,6 @@ namespace AssimilationSoftware.TodoSort.Core
                 {
                     i.Context = context;
                 }
-                someday_changes = true;
                 todo_changes = true;
                 i.TickleDate = null;
 
@@ -373,7 +364,6 @@ namespace AssimilationSoftware.TodoSort.Core
                 {
                     i.Context = context;
                 }
-                done_changes = true;
                 todo_changes = true;
                 i.DoneDate = null;
             }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AssimilationSoftware.PimData.Mappers.Text;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,7 +13,7 @@ namespace AssimilationSoftware.TodoSort.Core.Export
 
         public void Export(List<PimData.Model.ActionItem> items)
         {
-            var m = new PimData.Mappers.ActionItemDiskMapper(Filename);
+            var m = new ActionItemDiskMapper(Filename);
             m.SaveAll(items);
         }
     }
