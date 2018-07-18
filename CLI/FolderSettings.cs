@@ -10,7 +10,9 @@ namespace AssimilationSoftware.TodoSort.CLI
     public class FolderSettings
     {
         public string TodoPath { get; set; }
+        [Obsolete("No more multi-file setups")]
         public string DonePath { get; set; }
+        [Obsolete("No more multi-file setups")]
         public string SomedayPath { get; set; }
 
         public static FolderSettings LoadFrom(string path)
@@ -29,31 +31,16 @@ namespace AssimilationSoftware.TodoSort.CLI
                             case "todopath":
                                 result.TodoPath = setting[1];
                                 break;
-                            case "donepath":
-                                result.DonePath = setting[1];
-                                break;
-                            case "somedaypath":
-                                result.SomedayPath = setting[1];
-                                break;
                             default:
                                 break;
                         }
                     }
                 }
-                // Normalise values.
-                if (result.SomedayPath == result.TodoPath || result.SomedayPath == string.Empty)
-                {
-                    result.SomedayPath = null;
-                }
-                if (result.DonePath == result.TodoPath || result.DonePath == string.Empty)
-                {
-                    result.DonePath = null;
-                }
                 return result;
             }
             else
             {
-                return new FolderSettings { TodoPath = "todo.txt", SomedayPath = "someday.txt", DonePath = "done.txt" };
+                return new FolderSettings { TodoPath = "todo.txt" };
             }
         }
 
@@ -61,14 +48,6 @@ namespace AssimilationSoftware.TodoSort.CLI
         {
             StringBuilder output = new StringBuilder();
             output.AppendLine(string.Format("TodoPath={0}", tosave.TodoPath));
-            if (tosave.SomedayPath != null)
-            {
-                output.AppendLine(string.Format("SomedayPath={0}", tosave.SomedayPath));
-            }
-            if (tosave.DonePath != null)
-            {
-                output.AppendLine(string.Format("DonePath={0}", tosave.DonePath));
-            }
             File.WriteAllText(path, output.ToString());
         }
     }

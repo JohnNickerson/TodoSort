@@ -31,6 +31,7 @@ namespace AssimilationSoftware.TodoSort.Core
             return fallback;
         }
 
+        [Obsolete("Native property in PimData 0.6.0")]
         public static int Upvotes(this ActionItem item)
         {
             return GetIntTag(item, "upvotes", 0);

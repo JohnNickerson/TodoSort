@@ -1,24 +1,18 @@
 ﻿using AssimilationSoftware.PimData.Interfaces;
 using AssimilationSoftware.PimData.Model;
+using AssimilationSoftware.TodoSort.Core.Data;
 using AssimilationSoftware.TodoSort.Core.Search;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.IO;
 using System.Linq;
-using System.Text;
 
 namespace AssimilationSoftware.TodoSort.Core
 {
     public class ViewModel : INotifyPropertyChanged
     {
         #region Fields
-        List<ActionItem> todo_items;
-
-        IPimDataMapper<ActionItem> todo_mapper;
-
-        // Track whether changes have been made to each file, to avoid rewriting them if possible.
-        bool todo_changes;
+        ITodoRepository _repository;
 
         private bool showHeadOnly = true;
         string _statusMessage;
@@ -30,12 +24,7 @@ namespace AssimilationSoftware.TodoSort.Core
 
         public ViewModel(IPimDataMapper<ActionItem> todo)
         {
-            todo_mapper = todo;
-
-            todo_items = todo.LoadAll();
-
-            todo_changes = false;
-
+            _repository = new TodoRepository(todo);
             SearchSpecification = null;
         }
 
@@ -68,7 +57,7 @@ namespace AssimilationSoftware.TodoSort.Core
         {
             get
             {
-                return todo_items.Where(i => i.Context == "someday").ToList();
+                return _repository.SomedayItems.ToList();
             }
         }
 
@@ -87,11 +76,11 @@ namespace AssimilationSoftware.TodoSort.Core
             {
                 if (ShowHeadOnly)
                 {
-                    return this.todo_items.Where(i => SearchSpecification.And(new DepthRangeSearchSpecification(0, 0)).IsSatisfiedBy(i));
+                    return _repository.FindAll().Where(i => SearchSpecification.And(new DepthRangeSearchSpecification(0, 0)).IsSatisfiedBy(i));
                 }
                 else
                 {
-                    return this.todo_items.Where(i => SearchSpecification.IsSatisfiedBy(i));
+                    return _repository.FindAll().Where(i => SearchSpecification.IsSatisfiedBy(i));
                 }
             }
         }
@@ -212,19 +201,11 @@ namespace AssimilationSoftware.TodoSort.Core
             return SearchResults.GroupBy(i => i.Tags.ContainsKey(tag) ? i.Tags[tag] : "").Where(g => g.Count() > 1).Select(g => g.Key).ToList();
         }
 
-        public List<ActionItem> Items
-        {
-            get
-            {
-                return todo_items;
-            }
-        }
-
         public List<ActionItem> DoneItems
         {
             get
             {
-                return todo_items.Where(i => i.Context == "done").ToList();
+                return _repository.DoneItems.ToList();
             }
         }
         #endregion
@@ -232,22 +213,18 @@ namespace AssimilationSoftware.TodoSort.Core
         #region Methods
         public void Save()
         {
-            if (todo_changes)
-            {
-                todo_mapper.SaveAll((from i in todo_items orderby i.RankDepth select i).ToList());
-                todo_changes = false;
-            }
+            _repository.SaveChanges();
+            //todo_mapper.SaveAll((from i in Items orderby i.RankDepth select i).ToList());
         }
 
         public void AddItem(ActionItem next)
         {
-            todo_items.Add(next);
             // Special case: if adding straight to the "done" list, and there is no date, mark as today.
             if (next.Context == "done" && !next.DoneDate.HasValue)
             {
                 next.DoneDate = DateTime.Today;
             }
-            todo_changes = true;
+            _repository.Create(next);
         }
 
         public void AddAllItems(string context, params ActionItem[] items)
@@ -276,7 +253,7 @@ namespace AssimilationSoftware.TodoSort.Core
                 doneitem.DoneDate = donedate.HasValue ? donedate.Value : DateTime.Now;
                 doneitem.Context = "done";
                 ResetPriorityParents(doneitem); // Or else it will continue to hide its children by default.
-                todo_changes = true;
+                _repository.Update(doneitem);
             }
             RaisePropertyChanged("SearchResults", "DoneSearchResults");
         }
@@ -297,10 +274,10 @@ namespace AssimilationSoftware.TodoSort.Core
                     i.Context = "someday";
                 }
                 ResetPriorityParents(i); // To avoid hiding children while deferred.
-                todo_changes = true;
+                _repository.Update(i);
 
-                //TODO: If this item was the project for another, defer that one too.
-                foreach (ActionItem c in (from a in todo_items where a.Project == i select a))
+                // If this item was the project for another, defer that one too.
+                foreach (ActionItem c in _repository.GetProjectItems(i))
                 {
                     to_defer.Enqueue(c);
                 }
@@ -334,8 +311,8 @@ namespace AssimilationSoftware.TodoSort.Core
                 {
                     i.Context = context;
                 }
-                todo_changes = true;
                 i.TickleDate = null;
+                _repository.Update(i);
 
                 // If this item was the project for another, undefer that one, too.
                 foreach (ActionItem c in (from a in SomedayItems where a.Project == i select a))
@@ -364,8 +341,8 @@ namespace AssimilationSoftware.TodoSort.Core
                 {
                     i.Context = context;
                 }
-                todo_changes = true;
                 i.DoneDate = null;
+                _repository.Update(i);
             }
         }
 
@@ -373,15 +350,14 @@ namespace AssimilationSoftware.TodoSort.Core
         {
             foreach (ActionItem i in selection)
             {
-                todo_items.Remove(i);
-                todo_changes = true;
+                _repository.Delete(i);
             }
             RaisePropertyChanged("SearchResults");
         }
 
         public IEnumerable<string> GetContextNames(params string[] exclude)
         {
-            return (from i in todo_items select i.Context).Distinct().Except(exclude);
+            return _repository.GetContexts(exclude); 
         }
 
         public void ResetPriorityParents(params ActionItem[] items)
@@ -389,12 +365,13 @@ namespace AssimilationSoftware.TodoSort.Core
             foreach (var selected in items)
             {
                 selected.RankParent = null;
-                foreach (var i in todo_items.Where(t => t.RankParent == selected))
+                _repository.Update(selected);
+                foreach (var i in _repository.GetChildren(selected))
                 {
                     i.RankParent = null;
+                    _repository.Update(i);
                 }
             }
-            todo_changes = true;
         }
 
         public void SetTag(ActionItem selected, string tagname, string value)
@@ -402,7 +379,7 @@ namespace AssimilationSoftware.TodoSort.Core
             if (selected != null)
             {
                 selected.Tags[tagname] = value;
-                todo_changes = true;
+                _repository.Update(selected);
             }
         }
 
@@ -410,8 +387,9 @@ namespace AssimilationSoftware.TodoSort.Core
         {
             child.RankParent = parent;
             // Increment the "upvotes" counter.
-            SetTag(parent, "upvotes", (parent.GetIntTag("upvotes", 0) + 1).ToString());
-            todo_changes = true;
+            parent.Upvotes++;
+            _repository.Update(child);
+            _repository.Update(parent);
         }
 
         public string GetStringTag(ActionItem item, string tagname, string fallback = "")
@@ -435,21 +413,22 @@ namespace AssimilationSoftware.TodoSort.Core
                 var newdex = (int)Math.Floor((double)i / branchfactor) - 1;
                 if (newdex == -1)
                 {
-                    if (setNullParents || items.Intersect(Ancestors(items[i])).Count() > 0)
+                    if (setNullParents || items.Intersect(GetAncestors(items[i])).Count() > 0)
                     {
                         // Only reset the parent if requested or if not doing so would cause a loop.
                         items[i].RankParent = null;
+                        _repository.Update(items[i]);
                     }
                 }
                 else
                 {
                     items[i].RankParent = items[newdex];
+                    _repository.Update(items[i]);
                 }
             }
-            todo_changes = true;
         }
 
-        private IEnumerable<ActionItem> Ancestors(ActionItem actionItem)
+        private IEnumerable<ActionItem> GetAncestors(ActionItem actionItem)
         {
             var a = new List<ActionItem>
             {
@@ -465,7 +444,7 @@ namespace AssimilationSoftware.TodoSort.Core
         public void SetProject(ActionItem child, ActionItem project)
         {
             child.Project = project;
-            todo_changes = true;
+            _repository.Update(child);
         }
 
         public void Defer(ActionItem deferitem, DateTime tickleDate)
@@ -477,25 +456,25 @@ namespace AssimilationSoftware.TodoSort.Core
         public void SetContext(ActionItem item, string newcontext)
         {
             item.Context = newcontext;
-            todo_changes = true;
+            _repository.Update(item);
         }
 
         public void AddNote(ActionItem item, string note)
         {
             item.Notes.Add(string.Format("{0} ({1:yyyy-MM-dd})", note, DateTime.Now));
-            todo_changes = true;
+            _repository.Update(item);
         }
 
         public void Rename(ActionItem item, string retitle)
         {
             item.Title = retitle;
-            todo_changes = true;
+            _repository.Update(item);
         }
 
         public void RemoveTag(ActionItem item, string tagname)
         {
             item.Tags.Remove(tagname);
-            todo_changes = true;
+            _repository.Update(item);
         }
 
         public void Merge(ActionItem child, ActionItem target)
@@ -504,8 +483,8 @@ namespace AssimilationSoftware.TodoSort.Core
             // Add notes and tags from second to first.
             target.Notes.AddRange(child.Notes);
             // Update the vote count.
-            target.Tags["upvotes"] = (child.Upvotes() + target.Upvotes()).ToString();
-            foreach (var tag in child.Tags.Where(t => t.Key != "upvotes"))
+            target.Upvotes = child.Upvotes + target.Upvotes;
+            foreach (var tag in child.Tags)
             {
                 if (!target.Tags.ContainsKey(tag.Key))
                 {
@@ -522,8 +501,7 @@ namespace AssimilationSoftware.TodoSort.Core
                 }
             }
             // Set any child objects from second to first.
-            var children = from i in todo_items where i.RankParent == child select i;
-            foreach (var c in children)
+            foreach (var c in _repository.GetChildren(child))
             {
                 c.RankParent = target;
             }
@@ -536,8 +514,8 @@ namespace AssimilationSoftware.TodoSort.Core
                 target.TickleDate = child.TickleDate;
             }
             target.Notes.Add(string.Format("Merged with '{0}' on {1:yyyy-MM-dd}", child.Title, DateTime.Now));
+            _repository.Update(target);
             Delete(child);
-            todo_changes = true;
         }
         #endregion
     }

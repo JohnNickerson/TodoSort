@@ -1,9 +1,6 @@
-﻿using AssimilationSoftware.PimData.Interfaces;
-using AssimilationSoftware.PimData.Mappers;
-using AssimilationSoftware.PimData.Mappers.Text;
+﻿using AssimilationSoftware.PimData.Mappers.Text;
 using AssimilationSoftware.PimData.Model;
 using AssimilationSoftware.TodoSort.CLI.Options;
-using AssimilationSoftware.TodoSort.CLI.Properties;
 using AssimilationSoftware.TodoSort.Core;
 using AssimilationSoftware.TodoSort.Core.Export;
 using AssimilationSoftware.TodoSort.Core.Import;
@@ -41,9 +38,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                 InitSubOptions initty = (InitSubOptions)argsubs;
                 var initsettings = new FolderSettings();
                 initsettings.TodoPath = initty.TodoFile;
-                initsettings.SomedayPath = initty.SomedayFile;
-                initsettings.DonePath = initty.DoneFile;
-
+                
                 // Save settings.
                 FolderSettings.SaveTo(settingspath, initsettings);
                 return;
@@ -54,8 +49,6 @@ namespace AssimilationSoftware.TodoSort.CLI
             }
             var f = FolderSettings.LoadFrom(settingspath);
             ActionItemDiskMapper todomapper = new ActionItemDiskMapper(f.TodoPath);
-            ActionItemDiskMapper somedaymapper = (f.SomedayPath == null ? null : new ActionItemDiskMapper(f.SomedayPath));
-            ActionItemDiskMapper donemapper = (f.DonePath == null ? null : new ActionItemDiskMapper(f.DonePath));
 
             ViewModel vm = new ViewModel(todomapper);
 
@@ -861,20 +854,6 @@ namespace AssimilationSoftware.TodoSort.CLI
             }
 
             #region Tidy up
-            // Move to the "done" file any items with a context of @done.
-            if (donemapper != null)
-            {
-                vm.SearchSpecification = new ContextSearchSpecification("done");
-                vm.MarkDone(null, vm.SearchResults.ToArray());
-            }
-
-            // Move any "someday" items in the main list to the someday file.
-            if (somedaymapper != null)
-            {
-                vm.SearchSpecification = new ContextSearchSpecification("someday");
-                vm.Defer(vm.SearchResults.ToArray());
-            }
-
             // Delete any items with a context of "delete".
             vm.SearchSpecification = new ContextSearchSpecification("delete");
             vm.Delete(vm.SearchResults.ToArray());
