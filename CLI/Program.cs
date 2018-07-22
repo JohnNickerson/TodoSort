@@ -474,12 +474,12 @@ namespace AssimilationSoftware.TodoSort.CLI
                     // Delete items below a specified depth.
                     var pruneOptions = (MultiSearchSubOptions)argsubs;
                     vm.SearchSpecification = pruneOptions.SearchSpecification;
-                        Console.WriteLine("About to defer {0} items. Continue [Y/N]?", vm.SearchResults.Count());
-                        var k = Console.ReadKey();
-                        if (k.KeyChar.ToString().ToLower() == "y")
-                        {
-                            vm.Defer(vm.SearchResults.ToArray());
-                        }
+					Console.WriteLine("About to defer {0} items. Continue [Y/N]?", vm.SearchResults.Count());
+					var k = Console.ReadKey();
+					if (k.KeyChar.ToString().ToLower() == "y")
+					{
+						vm.Defer(vm.SearchResults.ToArray());
+					}
                     break;
                 #endregion
 
@@ -1014,6 +1014,10 @@ namespace AssimilationSoftware.TodoSort.CLI
             {
                 sortedlist = sortedlist.ThenBy(i => i.TickleDate ?? DateTime.Now);
             }
+			else if (sorttag == "upvotes")
+			{
+				sortedlist = sortedlist.ThenBy(i => i.Upvotes);
+			}
             else if (sorttag == "title" || string.IsNullOrEmpty(sorttag))
             {
                 sortedlist = sortedlist.ThenBy(i => i.Title);

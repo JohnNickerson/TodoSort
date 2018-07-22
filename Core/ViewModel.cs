@@ -198,7 +198,7 @@ namespace AssimilationSoftware.TodoSort.Core
         /// <returns>A list of tag values.</returns>
         public IEnumerable<string> GetDuplicateTags(string tag)
         {
-            return SearchResults.GroupBy(i => i.Tags.ContainsKey(tag) ? i.Tags[tag] : "").Where(g => g.Count() > 1).Select(g => g.Key).ToList();
+            return SearchResults.Where(a => a.Tags.ContainsKey(tag)).GroupBy(i => i.Tags[tag]).Where(g => g.Count() > 1).Select(g => g.Key).ToList();
         }
 
         public List<ActionItem> DoneItems
