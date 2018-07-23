@@ -37,7 +37,7 @@ namespace AssimilationSoftware.TodoSort.Core.Data
 
         public IEnumerable<string> GetContexts(params string[] exclude)
         {
-            return (from i in Items select i.Context).Distinct().Except(exclude);
+            return (from i in FindAll() select i.Context).Distinct().Except(exclude);
         }
 
         public IEnumerable<ActionItem> GetProjectItems(ActionItem i)

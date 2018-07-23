@@ -387,9 +387,12 @@ namespace AssimilationSoftware.TodoSort.Core
         {
             child.RankParent = parent;
             // Increment the "upvotes" counter.
-            parent.Upvotes++;
+            if (parent != null)
+            {
+                parent.Upvotes++;
+               _repository.Update(parent);
+            }
             _repository.Update(child);
-            _repository.Update(parent);
         }
 
         public string GetStringTag(ActionItem item, string tagname, string fallback = "")
