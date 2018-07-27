@@ -32,7 +32,7 @@ namespace AssimilationSoftware.TodoSort.Core.Data
 
         public IEnumerable<ActionItem> GetChildren(ActionItem selected)
         {
-            return FindAll().Where(t => t.RankParent.Equals(selected));
+            return FindAll().Where(t => t.RankParent != null && t.RankParent.Equals(selected));
         }
 
         public IEnumerable<string> GetContexts(params string[] exclude)
@@ -42,7 +42,7 @@ namespace AssimilationSoftware.TodoSort.Core.Data
 
         public IEnumerable<ActionItem> GetProjectItems(ActionItem i)
         {
-            return FindAll().Where(a => a.Project.Equals(i));
+            return FindAll().Where(a => a.Project != null && a.Project.Equals(i));
         }
     }
 }

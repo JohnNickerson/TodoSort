@@ -12,7 +12,7 @@ namespace AssimilationSoftware.TodoSort.UnitTests
     {
         private List<ActionItem> _items = new List<ActionItem>();
 
-        public PimData.Model.ActionItem Load(Guid id)
+        public ActionItem Load(Guid id)
         {
             var search = (from i in _items where i.ID == id select i);
             if (search.Count() > 0)
@@ -25,12 +25,12 @@ namespace AssimilationSoftware.TodoSort.UnitTests
             }
         }
 
-        public List<PimData.Model.ActionItem> LoadAll()
+        public IEnumerable<ActionItem> LoadAll()
         {
             return _items;
         }
 
-        public void Save(PimData.Model.ActionItem item)
+        public void Save(ActionItem item)
         {
             if (!_items.Contains(item))
             {
@@ -38,9 +38,9 @@ namespace AssimilationSoftware.TodoSort.UnitTests
             }
         }
 
-        public void SaveAll(List<PimData.Model.ActionItem> items)
+        public void SaveAll(IEnumerable<ActionItem> items)
         {
-            _items = items;
+            _items = items.ToList();
         }
 
         public void Delete(ActionItem item)

@@ -1183,6 +1183,10 @@ namespace AssimilationSoftware.TodoSort.CLI
                         WrapOutput(string.Format("        #{0}:", k.Key), k.Value, wrapwidth);
                     }
                 }
+                if (i.Upvotes > 0)
+                {
+                    WrapOutput("        #upvotes:", i.Upvotes.ToString(), wrapwidth);
+                }
                 if (i.DoneDate.HasValue)
                 {
                     WrapOutput("        #done-date:", i.DoneDate.Value.ToString("yyyy-MM-dd"), wrapwidth);

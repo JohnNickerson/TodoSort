@@ -20,17 +20,7 @@ namespace AssimilationSoftware.TodoSort.Core.Search
 
         public bool IsSatisfiedBy(ActionItem b)
         {
-            // Case-insensitive search. It's not very straightforward.
-            // TODO: Start with a case-insensitive dictionary. Needs modification of PimData.
-            var caseless = b.Tags;
-            try
-            {
-                caseless = new Dictionary<string, string>(b.Tags, StringComparer.CurrentCultureIgnoreCase);
-            }
-            catch
-            {
-                // Tag case collisions. Just use the original.
-            }
+            // Case-insensitive search. ActionItem.Tags uses a case-insensitive comparer, so we should be good to go.
             if (string.IsNullOrEmpty(_tagvalue))
             {
                 if (string.IsNullOrEmpty(_tagname))
@@ -41,7 +31,7 @@ namespace AssimilationSoftware.TodoSort.Core.Search
                 else
                 {
                     // Tag name but no value.
-                    return caseless.ContainsKey(_tagname);
+                    return b.Tags.ContainsKey(_tagname);
                 }
             }
             else
@@ -49,7 +39,7 @@ namespace AssimilationSoftware.TodoSort.Core.Search
                 if (string.IsNullOrEmpty(_tagname))
                 {
                     // No tag, just value. Need to search one by one.
-                    foreach (var v in caseless.Values)
+                    foreach (var v in b.Tags.Values)
                     {
                         if (v.ToLower() == _tagvalue.ToLower())
                         {
@@ -61,7 +51,7 @@ namespace AssimilationSoftware.TodoSort.Core.Search
                 else
                 {
                     // Both tag and value.
-                    return caseless.ContainsKey(_tagname) && caseless[_tagname].ToLower() == _tagvalue.ToLower();
+                    return b.Tags.ContainsKey(_tagname) && b.Tags[_tagname].ToLower() == _tagvalue.ToLower();
                 }
             }
         }
