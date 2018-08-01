@@ -13,8 +13,12 @@ namespace AssimilationSoftware.TodoSort.Core.Import
 
         public ActionItem[] GetAllItems()
         {
-            var m = new PimData.Mappers.ActionItemDiskMapper(Filename);
-            return m.LoadAll().ToArray();
+            var m = new PimData.Mappers.ActionItemDiskMapper(Filename).LoadAll();
+            foreach (var i in m.Where(a => string.IsNullOrEmpty(a.Context)))
+            {
+                i.Context = "inbox";
+            }
+            return m.ToArray();
         }
     }
 }

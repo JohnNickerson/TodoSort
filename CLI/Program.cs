@@ -73,6 +73,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             }
 
             ActionItem selected = null;
+            var force_save = false;
             switch (argverb)
             {
                 #region Add
@@ -423,6 +424,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                 #region Process
                 case "process":
                     // Go over the @someday items and look for tickle dates.
+                    force_save = (argsubs as ProcessOptions).Force;
                     vm.SomedaySearchSpecification = new TickleDateSearchSpecification(null, DateTime.Today);
                     vm.Undefer("inbox", vm.SomedaySearchResults.ToArray());
 
@@ -472,6 +474,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                             Console.WriteLine();
                         }
                     }
+                    
                     break;
                 #endregion
 
@@ -885,7 +888,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             }
 
 			// Rewrite the files
-            vm.Save();
+            vm.Save(force_save);
         }
 
         private static void PrintContexts(ViewModel vm)

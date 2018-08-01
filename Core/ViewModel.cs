@@ -236,9 +236,9 @@ namespace AssimilationSoftware.TodoSort.Core
         #endregion
 
         #region Methods
-        public void Save()
+        public void Save(bool force_save = false)
         {
-            if (todo_changes)
+            if (todo_changes || force_save)
             {
                 todo_mapper.SaveAll((from i in todo_items orderby i.RankDepth select i).ToList());
                 todo_changes = false;
