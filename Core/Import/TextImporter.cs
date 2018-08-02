@@ -1,10 +1,6 @@
-﻿using AssimilationSoftware.PimData.Mappers.Text;
+using AssimilationSoftware.PimData.Mappers.Text;
 using AssimilationSoftware.PimData.Model;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AssimilationSoftware.TodoSort.Core.Import
 {
@@ -14,8 +10,12 @@ namespace AssimilationSoftware.TodoSort.Core.Import
 
         public ActionItem[] GetAllItems()
         {
-            var m = new ActionItemDiskMapper(Filename);
-            return m.LoadAll().ToArray();
+            var m = new ActionItemDiskMapper(Filename).LoadAll();
+			foreach (var i in m.Where(a => string.IsNullOrEmpty(a.Context)))
+			{
+				i.Context = "inbox";
+			}
+            return m.ToArray();
         }
     }
 }

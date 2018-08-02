@@ -97,6 +97,7 @@
     <Compile Include="Options\OpenTagSubOptions.cs" />
     <Compile Include="Options\Options.cs" />
     <Compile Include="Options\NoSubOptions.cs" />
+    <Compile Include="Options\ProcessOptions.cs" />
     <Compile Include="Options\RenameSubOptions.cs" />
     <Compile Include="Options\SingleSearchSubOptions.cs" />
     <Compile Include="Options\SetParentSubOptions.cs" />

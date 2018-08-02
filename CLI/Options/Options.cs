@@ -66,7 +66,7 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
         public OpenTagSubOptions OpenTagVerb { get; set; }
 
         [VerbOption("process", HelpText = "Housekeeping. Assign each inbox item to a context, ensure each project has a next action.")]
-        public NoSubOptions ProcessVerb { get; set; }
+        public ProcessOptions ProcessVerb { get; set; }
 
         [VerbOption("rank", HelpText = "Vote on the relative importance of items to assign priorities.")]
         public MultiSearchSubOptions RankVerb { get; set; }

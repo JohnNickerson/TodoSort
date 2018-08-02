@@ -211,10 +211,9 @@ namespace AssimilationSoftware.TodoSort.Core
         #endregion
 
         #region Methods
-        public void Save()
+        public void Save(bool force_save = false)
         {
             _repository.SaveChanges();
-            //todo_mapper.SaveAll((from i in Items orderby i.RankDepth select i).ToList());
         }
 
         public void AddItem(ActionItem next)
