@@ -25,7 +25,7 @@
             </MenuItem>
         </Menu>
 
-        <ListBox Grid.Row="1" Grid.Column="0" Name="Contexts" ItemsSource="{Binding Path=Contexts}" MinWidth="85">
+        <ListBox Grid.Row="1" Grid.Column="0" Name="Contexts" ItemsSource="{Binding Path=Contexts}" SelectedItem="{Binding Path=CurrentContext}" MinWidth="85">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <TextBlock Text="{Binding}" MinWidth="200"/>
@@ -34,11 +34,25 @@
         </ListBox>
 
         <ListView Grid.Row="1" Grid.Column="1" Name="SearchResultsList" ItemsSource="{Binding Path=SearchResults}">
-            <ListView.ItemTemplate>
-                <DataTemplate>
-                    <w:ItemDisplay DataContext="{Binding}" DeleteItem="ItemDisplay_DeleteItem" MarkDone="ItemDisplay_MarkDone" />
-                </DataTemplate>
-            </ListView.ItemTemplate>
+            <ListView.View>
+				<GridView>
+					<GridViewColumn>
+						<DataTemplate>
+							<CheckBox IsChecked="{Binding Path=IsDone}"/>
+						</DataTemplate>
+					</GridViewColumn>
+					<GridViewColumn>
+						<DataTemplate>
+							<TextBlock Text="{Binding Path=Title}"/>
+						</DataTemplate>
+					</GridViewColumn>
+					<GridViewColumn>
+						<DataTemplate>
+							<Button Content="Open" Command="Open" CommandParameter="{Binding}" Margin="1"/>
+						</DataTemplate>
+					</GridViewColumn>
+				</GridView>
+            </ListView.View>
         </ListView>
 	</Grid>
 </Window>

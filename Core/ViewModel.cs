@@ -14,8 +14,6 @@ namespace AssimilationSoftware.TodoSort.Core
     {
         #region Fields
         List<ActionItem> todo_items;
-        List<ActionItem> someday_items;
-        List<ActionItem> done_items;
 
         IPimDataMapper<ActionItem> todo_mapper;
 
