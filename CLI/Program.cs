@@ -388,7 +388,15 @@ namespace AssimilationSoftware.TodoSort.CLI
                         if (selected.Tags.ContainsKey(opentagOptions.Tag))
                         {
                             string tagvalue = selected.Tags[opentagOptions.Tag];
-                            OpenItemTag(tagvalue);
+                            if (opentagOptions.Copy)
+                            {
+                                //System.Windows.Forms.Clipboard.SetText(tagvalue);
+                                // ^^ This doesn't work.
+                            }
+                            else
+                            {
+                                OpenItemTag(tagvalue);
+                            }
                             if (opentagOptions.Rename)
                             {
                                 Console.WriteLine("What new title should this item have?");

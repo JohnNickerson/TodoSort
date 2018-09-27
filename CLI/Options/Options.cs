@@ -38,6 +38,9 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
         [VerbOption("delete", HelpText = "Delete an item without doing it.")]
         public SingleSearchSubOptions DeleteVerb { get; set; }
 
+        [VerbOption("delete-done", HelpText = "Delete an item from the @done list.")]
+        public SingleSearchSubOptions DeleteDoneVerb { get; set; }
+
         [VerbOption("done", HelpText = "Move an item to the done file.")]
         public DoneSubOptions DoneVerb { get; set; }
 

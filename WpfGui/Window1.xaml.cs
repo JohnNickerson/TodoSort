@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Windows;
@@ -13,9 +14,7 @@ using System.Windows.Shapes;
 using AssimilationSoftware.PimData;
 using AssimilationSoftware.PimData.Mappers;
 using AssimilationSoftware.PimData.Model;
-using AssimilationSoftware.TodoSort.WpfGui.Properties;
 using AssimilationSoftware.TodoSort.Core;
-using AssimilationSoftware.PimData.Mappers.Text;
 
 namespace AssimilationSoftware.TodoSort.WpfGui
 {
@@ -24,66 +23,29 @@ namespace AssimilationSoftware.TodoSort.WpfGui
 	/// </summary>
 	public partial class Window1 : Window
 	{
-        private ViewModel vm;
+        private MainViewModel vm;
 
 		public Window1()
 		{
 			InitializeComponent();
-
-            if (Settings.Default.Reconfigure)
-            {
-                Reconfigure(this, null);
-            }
-            RefreshViewModel();
+		    vm = new MainViewModel(null);
+		    DataContext = vm;
 		}
 
-        private void RefreshViewModel()
-        {
-            vm = new ViewModel(new ActionItemDiskMapper(Settings.Default.Todo));
-            this.DataContext = vm;
-        }
+	    private void OpenClick(object sender, RoutedEventArgs e)
+	    {
+	        vm.OpenCommandExecuted(sender, e);
+	    }
 
-        public void Reconfigure(object sender, RoutedEventArgs args)
-        {
-            // Configure open file dialog box
-            Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
-            dlg.FileName = "Document"; // Default file name
-            dlg.DefaultExt = ".txt"; // Default file extension
-            dlg.Filter = "Text documents (.txt)|*.txt"; // Filter files by extension
-            dlg.Title = "Todo file";
+	    private void SaveClick(object sender, RoutedEventArgs e)
+	    {
+	        vm.SaveCommandExecuted(sender, e);
+	    }
 
-            // Show open file dialog box
-            bool? result = dlg.ShowDialog();
-            if (result == true)
-            {
-                Settings.Default.Todo = dlg.FileName;
-            }
-
-            Settings.Default.Reconfigure = false;
-            Settings.Default.Save();
-            RefreshViewModel();
-        }
-
-        private void ItemDisplay_DeleteItem(object sender, ActionItemEventArgs e)
-        {
-            vm.Delete(e.Item);
-        }
-
-        private void ItemDisplay_MarkDone(object sender, ActionItemEventArgs e)
-        {
-            vm.MarkDone(null, e.Item);
-        }
-
-        private void SaveCommandExecuted(object sender, ExecutedRoutedEventArgs e)
-        {
-            vm.Save();
-        }
-
-        private void OpenCommandExecuted(object sender, ExecutedRoutedEventArgs e)
-        {
-            // TODO: Browse for a file.
-            Reconfigure(sender, e);
-            RefreshViewModel();
-        }
+	    private void OpenUrlClick(object sender, RequestNavigateEventArgs e)
+	    {
+	        Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
+	        e.Handled = true;
+	    }
 	}
 }
