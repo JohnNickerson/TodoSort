@@ -16,7 +16,13 @@
             <MenuItem Header="_File">
                 <MenuItem Header="_Open" Click="OpenClick" />
                 <MenuItem Header="_Save" Click="SaveClick" />
-                <MenuItem Header="Recent" IsEnabled="False"/>
+                <MenuItem Header="Recent" IsEnabled="True" ItemsSource="{Binding Path=RecentFileList}">
+                    <MenuItem.ItemTemplate>
+                        <DataTemplate>
+                            <MenuItem Header="{Binding}" Command="{Binding Path=DataContext.OpenRecentCommand, RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="{Binding}"/>
+                        </DataTemplate>
+                    </MenuItem.ItemTemplate>
+                </MenuItem>
                 <MenuItem Header="E_xit" Command="Close" />
             </MenuItem>
         </Menu>

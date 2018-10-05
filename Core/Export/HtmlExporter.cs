@@ -20,6 +20,10 @@ namespace AssimilationSoftware.TodoSort.Core.Export
             foreach (var n in items)
             {
                 var line = n.Title;
+                if (n.Tags.ContainsKey("nsfw") && n.Tags["nsfw"].ToLower() == "true")
+                {
+                    line = "----NSFW----";
+                }
                 result.Append("<input type=\"checkbox\">");
                 if (n.Tags.ContainsKey("url"))
                 {

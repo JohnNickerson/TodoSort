@@ -13,6 +13,7 @@ using AssimilationSoftware.PimData.Model;
 using AssimilationSoftware.TodoSort.Core;
 using AssimilationSoftware.TodoSort.Core.Data;
 using AssimilationSoftware.TodoSort.Core.Search;
+using AssimilationSoftware.TodoSort.WpfGui.Properties;
 using Microsoft.Win32;
 
 namespace AssimilationSoftware.TodoSort.WpfGui
@@ -26,6 +27,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         private ITodoRepository _repo;
         private ViewModel _api;
         public event PropertyChangedEventHandler PropertyChanged;
+        private RelayCommand<string> _openRecentCommand;
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
@@ -45,11 +47,27 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         private void OpenFile(string filename)
         {
             FileName = filename;
+
+            // Store the file name as the most recent one opened.
+            RecentFileList.Remove(filename);
+            RecentFileList.Insert(0, filename);
+            while (RecentFileList.Count > 10)
+            {
+                RecentFileList.RemoveAt(10);
+            }
+            SaveSettings();
+
             _mapper = new ActionItemDiskMapper(FileName);
             _repo = new Core.Data.TodoRepository(_mapper);
             _api = new Core.ViewModel(_mapper);
             OnPropertyChanged("Contexts");
             OnPropertyChanged("Items");
+            OnPropertyChanged("RecentFileList");
+        }
+
+        private void SaveSettings()
+        {
+            Settings.Default.Save();
         }
 
         public void OpenUrlCommandExecuted(ActionItem item)
@@ -105,6 +123,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             {
                 _fileName = value;
                 OnPropertyChanged();
+                OnPropertyChanged("WindowTitle");
             }
         }
 
@@ -115,6 +134,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             {
                 _hasUnsavedChanges = value;
                 OnPropertyChanged();
+                OnPropertyChanged("WindowTitle");
             }
         }
 
@@ -131,6 +151,21 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                 return new List<ActionViewItem>();
             }
         }
+
+        public string WindowTitle => $"TodoSort {FileName} {(HasUnsavedChanges ? "*" : "")}";
+
+        public List<string> RecentFileList
+        {
+            get { return Settings.Default.RecentFiles ?? (Settings.Default.RecentFiles = new List<string>()); }
+            set
+            {
+                Settings.Default.RecentFiles = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public RelayCommand<string> OpenRecentCommand =>
+            _openRecentCommand ?? (_openRecentCommand = new RelayCommand<string>(OpenFile));
 
         #endregion
     }

@@ -15,6 +15,7 @@ using AssimilationSoftware.PimData;
 using AssimilationSoftware.PimData.Mappers;
 using AssimilationSoftware.PimData.Model;
 using AssimilationSoftware.TodoSort.Core;
+using AssimilationSoftware.TodoSort.WpfGui.Properties;
 
 namespace AssimilationSoftware.TodoSort.WpfGui
 {
@@ -28,7 +29,12 @@ namespace AssimilationSoftware.TodoSort.WpfGui
 		public Window1()
 		{
 			InitializeComponent();
-		    vm = new MainViewModel(null);
+		    string lastfile = null;
+		    if (Settings.Default.RecentFiles != null && Settings.Default.RecentFiles.Count > 0)
+		    {
+		        lastfile = Settings.Default.RecentFiles[0];
+		    }
+		    vm = new MainViewModel(lastfile);
 		    DataContext = vm;
 		}
 

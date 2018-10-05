@@ -1048,7 +1048,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             {
                 if (i.Context != last_context)
                 {
-                    Console.WriteLine(string.Format("@{0}", i.Context));
+                    Console.WriteLine("@{0}", i.Context);
                 }
                 PrintItem(i, null);
                 last_context = i.Context;
@@ -1120,6 +1120,10 @@ namespace AssimilationSoftware.TodoSort.CLI
                 }
                 Console.Write(prefix);
                 string name = focus.Title.Substring(0, Math.Min(conwide - prefix.Length, focus.Title.Length));
+                if (focus.Tags.ContainsKey("nsfw") && focus.Tags["nsfw"].ToLower() == "true")
+                {
+                    name = "----NSFW----";
+                }
                 if (tree != null && tree.Contains(focus))
                 {
                     Console.ForegroundColor = ConsoleColor.Yellow;
@@ -1153,6 +1157,10 @@ namespace AssimilationSoftware.TodoSort.CLI
         {
             int wrapwidth = Console.WindowWidth - 1;
             string title = i.Title;
+            if (i.Tags.ContainsKey("nsfw") && i.Tags["nsfw"].ToLower() == "true")
+            {
+                title = "----NSFW----";
+            }
             if (i.Tags.ContainsKey("type"))
             {
                 title = string.Format("{1} [{0}]", i.Tags["type"].ToUpper(), title);
