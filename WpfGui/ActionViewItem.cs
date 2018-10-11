@@ -104,6 +104,43 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                 OnPropertyChanged();
             }
         }
+		
+		public bool IsNsfw
+		{
+			get
+			{
+				if (Source.Tags.ContainsKey("nsfw"))
+				{
+					return Source.Tags["nsfw"].ToLower() == "true";
+				}
+				else
+				{
+					return false;
+				}
+			}
+		}
+
+        public DateTime? DoneDate
+        {
+            get => Source.DoneDate;
+            set
+            {
+                if (Source.DoneDate == value) return;
+                Source.DoneDate = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public DateTime? TickleDate
+        {
+            get => Source.TickleDate;
+            set
+            {
+                if (Source.TickleDate == value) return;
+                Source.TickleDate = value;
+                OnPropertyChanged();
+            }
+        }
 
         #endregion // Data Properties (Bindings)
 

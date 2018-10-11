@@ -97,13 +97,14 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         public void SaveCommandExecuted(object sender, RoutedEventArgs e)
         {
             _api.Save();
+            OnPropertyChanged("Items");
         }
 
         #endregion
 
         #region Properties
 
-        public List<string> Contexts => _api != null ? _api.GetContextNames().ToList() : new List<string>();
+        public List<string> Contexts => _api != null ? _api.GetContextNames("done", "someday").Union(new[] { "done", "someday" }).ToList() : new List<string>();
 
         public string SelectedContext
         {
@@ -142,13 +143,17 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         {
             get
             {
-                if (SelectedContext != null)
+                if (SelectedContext == null) return new List<ActionViewItem>();
+                switch (SelectedContext)
                 {
-                    _api.SearchSpecification = new ContextSearchSpecification(SelectedContext);
-                    return _api.SearchResults.Select(s => new ActionViewItem(s, _api)).OrderByDescending(i => i.Upvotes).ToList();
+                    case "done":
+                        return _api.DoneSearchResults.Select(s => new ActionViewItem(s, _api)).OrderByDescending(i => i.DoneDate).ToList();
+                    case "someday":
+                        return _api.SomedaySearchResults.Select(s => new ActionViewItem(s, _api)).OrderBy(i => i.TickleDate).ToList();
+                    default:
+                        _api.SearchSpecification = new ContextSearchSpecification(SelectedContext);
+                        return _api.SearchResults.Select(s => new ActionViewItem(s, _api)).OrderByDescending(i => i.Upvotes).ToList();
                 }
-
-                return new List<ActionViewItem>();
             }
         }
 
@@ -156,7 +161,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
 
         public List<string> RecentFileList
         {
-            get { return Settings.Default.RecentFiles ?? (Settings.Default.RecentFiles = new List<string>()); }
+            get => Settings.Default.RecentFiles ?? (Settings.Default.RecentFiles = new List<string>());
             set
             {
                 Settings.Default.RecentFiles = value;
