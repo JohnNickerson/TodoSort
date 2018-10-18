@@ -57,6 +57,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                 {
                     Api.Undo("inbox", Source);
                 }
+
                 OnPropertyChanged();
             }
         }
@@ -74,26 +75,20 @@ namespace AssimilationSoftware.TodoSort.WpfGui
 
         public string Url
         {
-            get
-            {
-                if (Source.Tags.ContainsKey("url"))
-                {
-                    return Source.Tags["url"];
-                }
-                else
-                {
-                    return string.Empty;
-                }
-            }
+            get { return Source.Tags.ContainsKey("url") ? Source.Tags["url"] : string.Empty; }
             set
             {
                 if (Source.Tags["url"] == value) return;
                 Source.Tags["url"] = value;
                 OnPropertyChanged();
+                OnPropertyChanged("UrlNotNull");
             }
         }
 
+        public bool UrlNotNull => !string.IsNullOrEmpty(Url);
+
         public ViewModel Api { get; set; }
+
         public int Upvotes
         {
             get => Source.Upvotes;
@@ -141,6 +136,10 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                 OnPropertyChanged();
             }
         }
+
+        public List<string> Notes => Source.Notes;
+
+        public Dictionary<string, string> Tags => Source.Tags;
 
         #endregion // Data Properties (Bindings)
 

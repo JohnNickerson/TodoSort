@@ -753,7 +753,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                             // Show a summary of numbers at each depth.
                             vm.SearchSpecification = new ContextSearchSpecification(c.Context);
                             var detailed = (from r in vm.SearchResults group r by r.RankDepth into g select new { Depth = g.Key, Count = g.Count() });
-                            foreach (var d in detailed)
+                            foreach (var d in detailed.OrderBy(r => r.Depth))
                             {
                                 format = string.Format("\t{{0}}\t{{1,{0}}} item{1}", maxnum, (d.Count == 1 ? "" : "s"));
                                 Console.WriteLine(format, d.Depth, d.Count);

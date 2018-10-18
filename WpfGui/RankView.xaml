@@ -1,0 +1,67 @@
+﻿<Window x:Class="AssimilationSoftware.TodoSort.WpfGui.RankView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:AssimilationSoftware.TodoSort.WpfGui"
+        mc:Ignorable="d" SizeToContent="WidthAndHeight"
+        Title="Rank Items" MinHeight="200" MinWidth="500">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+
+        <StackPanel Grid.Row="0" Grid.Column="0" Margin="5">
+            <TextBlock Text="{Binding Path=CurrentPair.Action1.Title}"/>
+            <ListBox ItemsSource="{Binding Path=CurrentPair.Action1.Notes}"/>
+            <ListBox ItemsSource="{Binding Path=CurrentPair.Action1.Tags}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="#"/>
+                            <TextBlock Text="{Binding Key}"/>
+                            <TextBlock Text=":"/>
+                            <TextBlock Text="{Binding Value}"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+            <Button Content="Vote" Margin="10" MaxWidth="80" Command="{Binding Vote1Command}"/>
+        </StackPanel>
+
+        <StackPanel Grid.Row="0" Grid.Column="1" Margin="5">
+            <TextBlock Text="{Binding Path=CurrentPair.Action2.Title}"/>
+            <ListBox ItemsSource="{Binding Path=CurrentPair.Action2.Notes}"/>
+            <ListBox ItemsSource="{Binding Path=CurrentPair.Action2.Tags}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="#"/>
+                            <TextBlock Text="{Binding Key}"/>
+                            <TextBlock Text=":"/>
+                            <TextBlock Text="{Binding Value}"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+            <Button Content="Vote" Margin="10" MaxWidth="80" Command="{Binding Vote2Command}"/>
+        </StackPanel>
+
+        <ProgressBar Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" MinHeight="20" Margin="5" Value="{Binding CurrentIndex}" Maximum="{Binding Path=RankPairs.Count}"/>
+
+        <Button Grid.Row="2" Grid.Column="0" Content="&lt;&lt;" Margin="10" MaxWidth="80" Command="{Binding BackCommand}"/>
+        <Button Grid.Row="2" Grid.Column="1" Content="&gt;&gt;" Margin="10" MaxWidth="80" Command="{Binding ForwardCommand}"/>
+
+        <StackPanel Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Content="OK" Margin="5" MinWidth="80" Command="{Binding OkCommand}"/>
+            <Button Content="Cancel" Margin="5" MinWidth="80" Command="{Binding CancelCommand}" IsCancel="True"/>
+        </StackPanel>
+    </Grid>
+</Window>

@@ -39,6 +39,9 @@
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Task.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="PimData, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -68,11 +71,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="ItemDisplay.xaml">
+    <Page Include="RankView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Window1.xaml">
+    <Page Include="TaskList.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -84,14 +87,16 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ActionItemEventArgs.cs" />
-    <Compile Include="ItemDisplay.xaml.cs">
-      <DependentUpon>ItemDisplay.xaml</DependentUpon>
-    </Compile>
     <Compile Include="MainViewModel.cs" />
     <Compile Include="Properties\Annotations.cs" />
+    <Compile Include="RankView.xaml.cs">
+      <DependentUpon>RankView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="RankViewModel.cs" />
     <Compile Include="RelayCommand.cs" />
-    <Compile Include="Window1.xaml.cs">
-      <DependentUpon>Window1.xaml</DependentUpon>
+    <Compile Include="ViewModelBase.cs" />
+    <Compile Include="TaskList.xaml.cs">
+      <DependentUpon>TaskList.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
@@ -128,7 +133,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="edit-delete-5.png" />
+    <Resource Include="Task.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -18,21 +18,23 @@ using Microsoft.Win32;
 
 namespace AssimilationSoftware.TodoSort.WpfGui
 {
-    public class MainViewModel : INotifyPropertyChanged
+    public class MainViewModel : ViewModelBase
     {
+        #region Fields
+
         private string _selectedContext;
         private string _fileName;
         private bool _hasUnsavedChanges;
+		private List<ActionViewItem> _currentItems;
         private IPimDataMapper<ActionItem> _mapper;
         private ITodoRepository _repo;
         private ViewModel _api;
-        public event PropertyChangedEventHandler PropertyChanged;
         private RelayCommand<string> _openRecentCommand;
+		private RelayCommand _rankCommand;
+		private RelayCommand _reloadCommand;
+		private RelayCommand _closeCommand;
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
+        #endregion
 
         public MainViewModel(string filename)
         {
@@ -61,9 +63,34 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             _repo = new Core.Data.TodoRepository(_mapper);
             _api = new Core.ViewModel(_mapper);
             OnPropertyChanged("Contexts");
+			_currentItems = null;
             OnPropertyChanged("Items");
             OnPropertyChanged("RecentFileList");
         }
+		
+		private void RankItems()
+		{
+			// Open up a ranking window.
+            var rv = new RankView();
+            var rvm = new RankViewModel(Items, rv, _api);
+		    rv.DataContext = rvm;
+		    var result = rv.ShowDialog();
+		    if (result.HasValue && result.Value)
+		    {
+                // Save the ranking.
+                _api.Save();
+		    }
+			_currentItems = null;
+		    OnPropertyChanged("Items");
+		}
+
+        private void ReloadFile()
+		{
+			if (!string.IsNullOrEmpty(FileName))
+			{
+				OpenFile(FileName);
+			}
+		}
 
         private void SaveSettings()
         {
@@ -97,6 +124,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         public void SaveCommandExecuted(object sender, RoutedEventArgs e)
         {
             _api.Save();
+			_currentItems = null;
             OnPropertyChanged("Items");
         }
 
@@ -113,6 +141,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             {
                 _selectedContext = value;
                 OnPropertyChanged();
+				_currentItems = null;
                 OnPropertyChanged("Items");
             }
         }
@@ -144,16 +173,23 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             get
             {
                 if (SelectedContext == null) return new List<ActionViewItem>();
+				if (_currentItems != null) return _currentItems;
                 switch (SelectedContext)
                 {
                     case "done":
-                        return _api.DoneSearchResults.Select(s => new ActionViewItem(s, _api)).OrderByDescending(i => i.DoneDate).ToList();
+                        _currentItems = _api.DoneSearchResults.Select(s => new ActionViewItem(s, _api)).OrderByDescending(i => i.DoneDate).ToList();
+                        break;
                     case "someday":
-                        return _api.SomedaySearchResults.Select(s => new ActionViewItem(s, _api)).OrderBy(i => i.TickleDate).ToList();
+                        _currentItems = _api.SomedaySearchResults.Select(s => new ActionViewItem(s, _api)).OrderBy(i => i.TickleDate).ToList();
+                        break;
                     default:
                         _api.SearchSpecification = new ContextSearchSpecification(SelectedContext);
-                        return _api.SearchResults.Select(s => new ActionViewItem(s, _api)).OrderByDescending(i => i.Upvotes).ToList();
+                        _currentItems = _api.SearchResults.Select(s => new ActionViewItem(s, _api)).OrderByDescending(i => i.Upvotes).ToList();
+                        break;
                 }
+				// TODO: Subscribe to property changed events to set HasUnsavedChanges.
+				// And unsubscribe when the collection is refreshed.
+				return _currentItems;
             }
         }
 
@@ -169,8 +205,13 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             }
         }
 
-        public RelayCommand<string> OpenRecentCommand =>
-            _openRecentCommand ?? (_openRecentCommand = new RelayCommand<string>(OpenFile));
+        public RelayCommand<string> OpenRecentCommand => _openRecentCommand ?? (_openRecentCommand = new RelayCommand<string>(OpenFile));
+			
+		public RelayCommand RankCommand => _rankCommand ?? (_rankCommand = new RelayCommand(RankItems));
+		
+		public RelayCommand ReloadCommand => _reloadCommand ?? (_reloadCommand = new RelayCommand(ReloadFile, () => !string.IsNullOrEmpty(FileName)));
+		
+		public RelayCommand CloseCommand => _closeCommand ?? (_closeCommand = new RelayCommand(() => Application.Current.Shutdown()));
 
         #endregion
     }
