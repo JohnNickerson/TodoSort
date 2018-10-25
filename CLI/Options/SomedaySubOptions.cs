@@ -14,6 +14,9 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
         [Option('i', "includedates", DefaultValue = false, HelpText = "Include items that have 'tickler' dates assigned.")]
         public bool IncludeTickle { get; set; }
 
+        [Option("nsfw", DefaultValue = false, HelpText = "Display actual titles for items tagged as Not Safe For Work.")]
+        public bool NSFW { get; set; }
+
         [Option('v', "verbose", DefaultValue = false, HelpText = "Show all details of items.")]
         public bool Verbose { get; set; }
     }
