@@ -13,13 +13,13 @@ namespace BetterUnitTests
         public void FindOnlyRealDuplicates()
         {
             // Arrange
-            var marp = new MockMapper();
+            var marp = new MockRepository();
             var vm = new ViewModel(marp);
 
-            marp.Save(new AssimilationSoftware.PimData.Model.ActionItem("inbox", "Not matching"));
-            marp.Save(new ActionItem("inbox", "also not a match"));
-            marp.Save(new ActionItem("inbox", "no chance"));
-            marp.Save(new ActionItem("inbox", "well, it's something"));
+            marp.Create(new ActionItem("inbox", "Not matching"));
+            marp.Create(new ActionItem("inbox", "also not a match"));
+            marp.Create(new ActionItem("inbox", "no chance"));
+            marp.Create(new ActionItem("inbox", "well, it's something"));
 
             // Act
             var d = vm.GetDuplicateTags("url");

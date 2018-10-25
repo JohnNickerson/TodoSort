@@ -21,7 +21,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
 
         #region Constructors
 
-        public ActionViewItem(ActionItem source, ViewModel api)
+        public ActionViewItem(ActionItem source, MainViewModel api)
         {
             Source = source;
             Api = api;
@@ -51,11 +51,11 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                 // Call the API to mark done.
                 if (value)
                 {
-                    Api.MarkDone(null, Source);
+                    Api.MarkDone(Source);
                 }
                 else
                 {
-                    Api.Undo("inbox", Source);
+                    Api.Undo(Source);
                 }
 
                 OnPropertyChanged();
@@ -87,7 +87,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
 
         public bool UrlNotNull => !string.IsNullOrEmpty(Url);
 
-        public ViewModel Api { get; set; }
+        public MainViewModel Api { get; set; }
 
         public int Upvotes
         {

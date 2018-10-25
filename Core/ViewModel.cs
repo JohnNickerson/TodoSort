@@ -1,5 +1,4 @@
-﻿using AssimilationSoftware.PimData.Interfaces;
-using AssimilationSoftware.PimData.Model;
+﻿using AssimilationSoftware.PimData.Model;
 using AssimilationSoftware.TodoSort.Core.Data;
 using AssimilationSoftware.TodoSort.Core.Search;
 using System;
@@ -12,20 +11,23 @@ namespace AssimilationSoftware.TodoSort.Core
     public class ViewModel : INotifyPropertyChanged
     {
         #region Fields
-        ITodoRepository _repository;
 
-        private bool showHeadOnly = true;
+        readonly ITodoRepository _repository;
+
+        private bool _showHeadOnly = true;
         string _statusMessage;
+		private bool _unsavedChanges;
 
         private ISearchSpecification<ActionItem> _todoSearchSpec;
         private ISearchSpecification<ActionItem> _somedaySearchSpec;
         private ISearchSpecification<ActionItem> _doneSearchSpec;
         #endregion
 
-        public ViewModel(IPimDataMapper<ActionItem> todo)
+        public ViewModel(ITodoRepository repo)
         {
-            _repository = new TodoRepository(todo);
+            _repository = repo;
             SearchSpecification = null;
+			_unsavedChanges = false;
         }
 
         #region Events
@@ -37,12 +39,11 @@ namespace AssimilationSoftware.TodoSort.Core
         /// <summary>
         /// Fires the PropertyChanged event with given arguments.
         /// </summary>
-        /// <param name="e"></param>
-        public void RaisePropertyChanged(params string[] propnames)
+        public void RaisePropertyChanged(params string[] propNames)
         {
             if (PropertyChanged != null)
             {
-                foreach (string prop in propnames)
+                foreach (string prop in propNames)
                 {
                     var e = new PropertyChangedEventArgs(prop);
                     PropertyChanged(this, e);
@@ -53,13 +54,7 @@ namespace AssimilationSoftware.TodoSort.Core
 
         #region Properties
 
-        public List<ActionItem> SomedayItems
-        {
-            get
-            {
-                return _repository.SomedayItems.ToList();
-            }
-        }
+        public List<ActionItem> SomedayItems => _repository.SomedayItems.ToList();
 
         public string SearchTerm
         {
@@ -87,13 +82,10 @@ namespace AssimilationSoftware.TodoSort.Core
 
         public bool ShowHeadOnly
         {
-            get
-            {
-                return showHeadOnly;
-            }
+            get => _showHeadOnly;
             set
             {
-                showHeadOnly = value;
+                _showHeadOnly = value;
                 RaisePropertyChanged("ShowHeadOnly", "SearchResults");
             }
         }
@@ -103,10 +95,7 @@ namespace AssimilationSoftware.TodoSort.Core
         /// </summary>
         public string StatusMessage
         {
-            get
-            {
-                return _statusMessage;
-            }
+            get => _statusMessage;
             set
             {
                 _statusMessage = value;
@@ -116,10 +105,7 @@ namespace AssimilationSoftware.TodoSort.Core
 
         public ISearchSpecification<ActionItem> SearchSpecification
         {
-            get
-            {
-                return _todoSearchSpec ?? new TrueSpecification<ActionItem>();
-            }
+            get => _todoSearchSpec ?? new TrueSpecification<ActionItem>();
             set
             {
                 // Always exclude "done" and "someday" contexts, now that we're working with just one list.
@@ -133,10 +119,7 @@ namespace AssimilationSoftware.TodoSort.Core
         /// </summary>
         public ISearchSpecification<ActionItem> SomedaySearchSpecification
         {
-            get
-            {
-                return _somedaySearchSpec ?? new TrueSpecification<ActionItem>();
-            }
+            get => _somedaySearchSpec ?? new TrueSpecification<ActionItem>();
             set
             {
                 _somedaySearchSpec = value;
@@ -160,10 +143,7 @@ namespace AssimilationSoftware.TodoSort.Core
         /// </summary>
         public ISearchSpecification<ActionItem> DoneSearchSpecification
         {
-            get
-            {
-                return _doneSearchSpec ?? new TrueSpecification<ActionItem>();
-            }
+            get => _doneSearchSpec ?? new TrueSpecification<ActionItem>();
             set
             {
                 _doneSearchSpec = value;
@@ -201,19 +181,26 @@ namespace AssimilationSoftware.TodoSort.Core
             return SearchResults.Where(a => a.Tags.ContainsKey(tag)).GroupBy(i => i.Tags[tag]).Where(g => g.Count() > 1).Select(g => g.Key).ToList();
         }
 
-        public List<ActionItem> DoneItems
-        {
-            get
-            {
-                return _repository.DoneItems.ToList();
-            }
-        }
+        public List<ActionItem> DoneItems => _repository.DoneItems.ToList();
+
+        public bool UnsavedChanges
+		{
+			get => _unsavedChanges;
+            set
+			{
+				if (_unsavedChanges == value) return;
+				_unsavedChanges = value;
+				RaisePropertyChanged("UnsavedChanges");
+			}
+		}
+
         #endregion
 
         #region Methods
-        public void Save(bool force_save = false)
+        public void Save(bool forceSave = false)
         {
             _repository.SaveChanges();
+			UnsavedChanges = false;
         }
 
         public void AddItem(ActionItem next)
@@ -224,12 +211,13 @@ namespace AssimilationSoftware.TodoSort.Core
                 next.DoneDate = DateTime.Today;
             }
             _repository.Create(next);
+			UnsavedChanges = true;
         }
 
         public void AddAllItems(string context, params ActionItem[] items)
         {
             int importedCount = 0;
-            foreach (ActionItem i in items)
+            foreach (var i in items)
             {
                 if (context != null)
                 {
@@ -239,22 +227,23 @@ namespace AssimilationSoftware.TodoSort.Core
                 importedCount++;
             }
             StatusMessage = string.Format("Imported {0} items.", importedCount);
+			UnsavedChanges = true;
         }
 
         /// <summary>
         /// Mark an item as done.
         /// </summary>
-        /// <param name="doneitem">The item to mark as done.</param>
-        public void MarkDone(DateTime? donedate, params ActionItem[] doneitems)
+        public void MarkDone(DateTime? doneDate, params ActionItem[] doneItems)
         {
-            foreach (ActionItem doneitem in doneitems)
+            foreach (ActionItem doneItem in doneItems)
             {
-                doneitem.DoneDate = donedate.HasValue ? donedate.Value : DateTime.Now;
-                doneitem.Context = "done";
-                ResetPriorityParents(doneitem); // Or else it will continue to hide its children by default.
-                _repository.Update(doneitem);
+                doneItem.DoneDate = doneDate ?? DateTime.Now;
+                doneItem.Context = "done";
+                ResetPriorityParents(doneItem); // Or else it will continue to hide its children by default.
+                _repository.Update(doneItem);
             }
             RaisePropertyChanged("SearchResults", "DoneSearchResults");
+			UnsavedChanges = true;
         }
 
         /// <summary>
@@ -263,10 +252,10 @@ namespace AssimilationSoftware.TodoSort.Core
         /// <param name="selected"></param>
         public void Defer(params ActionItem[] selected)
         {
-            Queue<ActionItem> to_defer = new Queue<ActionItem>(selected);
-            while (to_defer.Count > 0)
+            Queue<ActionItem> toDefer = new Queue<ActionItem>(selected);
+            while (toDefer.Count > 0)
             {
-                ActionItem i = to_defer.Dequeue();
+                ActionItem i = toDefer.Dequeue();
                 if (i.Context != "someday")
                 {
                     i.Tags["previous-context"] = i.Context;
@@ -278,32 +267,25 @@ namespace AssimilationSoftware.TodoSort.Core
                 // If this item was the project for another, defer that one too.
                 foreach (ActionItem c in _repository.GetProjectItems(i))
                 {
-                    to_defer.Enqueue(c);
+                    toDefer.Enqueue(c);
                 }
             }
             RaisePropertyChanged("SearchResults", "SomedaySearchResults");
+			UnsavedChanges = true;
         }
-        
+
         /// <summary>
         /// Moves an item from the Someday list to the main list.
         /// </summary>
-        /// <param name="actionItem"></param>
         public void Undefer(string context, params ActionItem[] selection)
         {
-            Queue<ActionItem> to_undefer = new Queue<ActionItem>(selection);
-            while (to_undefer.Count > 0)
+            Queue<ActionItem> toUndefer = new Queue<ActionItem>(selection);
+            while (toUndefer.Count > 0)
             {
-                ActionItem i = to_undefer.Dequeue();
+                ActionItem i = toUndefer.Dequeue();
                 if (context == "inbox" && i.Tags.ContainsKey("previous-context"))
                 {
-                    if (i.Tags["previous-context"] != i.Context)
-                    {
-                        i.Context = i.Tags["previous-context"];
-                    }
-                    else
-                    {
-                        i.Context = context;
-                    }
+                    i.Context = i.Tags["previous-context"] != i.Context ? i.Tags["previous-context"] : context;
                     i.Tags.Remove("previous-context");
                 }
                 else
@@ -312,11 +294,12 @@ namespace AssimilationSoftware.TodoSort.Core
                 }
                 i.TickleDate = null;
                 _repository.Update(i);
+				UnsavedChanges = true;
 
                 // If this item was the project for another, undefer that one, too.
-                foreach (ActionItem c in (from a in SomedayItems where a.Project == i select a))
+                foreach (var c in SomedayItems.Where(a => a.Project != null && a.Project.ID == i.ID))
                 {
-                    to_undefer.Enqueue(c);
+                    toUndefer.Enqueue(c);
                 }
             }
         }
@@ -324,13 +307,12 @@ namespace AssimilationSoftware.TodoSort.Core
         /// <summary>
         /// Moves an item from the Done list to the main list.
         /// </summary>
-        /// <param name="actionItem"></param>
         public void Undo(string context, params ActionItem[] selection)
         {
-            Queue<ActionItem> to_undo = new Queue<ActionItem>(selection);
-            while (to_undo.Count > 0)
+            Queue<ActionItem> toUndo = new Queue<ActionItem>(selection);
+            while (toUndo.Count > 0)
             {
-                ActionItem i = to_undo.Dequeue();
+                ActionItem i = toUndo.Dequeue();
                 if (context == "inbox" && i.Tags.ContainsKey("previous-context") && i.Tags["previous-context"] != "done")
                 {
                     i.Context = i.Tags["previous-context"];
@@ -342,6 +324,7 @@ namespace AssimilationSoftware.TodoSort.Core
                 }
                 i.DoneDate = null;
                 _repository.Update(i);
+				UnsavedChanges = true;
             }
         }
 
@@ -352,6 +335,7 @@ namespace AssimilationSoftware.TodoSort.Core
                 _repository.Delete(i);
             }
             RaisePropertyChanged("SearchResults");
+			UnsavedChanges = true;
         }
 
         public IEnumerable<string> GetContextNames(params string[] exclude)
@@ -369,17 +353,19 @@ namespace AssimilationSoftware.TodoSort.Core
                 {
                     i.RankParent = null;
                     _repository.Update(i);
+					UnsavedChanges = true;
                 }
             }
         }
 
-        public void SetTag(ActionItem selected, string tagname, string value)
+        public void SetTag(ActionItem selected, string tagName, string value)
         {
             if (selected != null)
             {
-                selected.Tags[tagname] = value;
+                selected.Tags[tagName] = value;
                 _repository.Update(selected);
-            }
+            	UnsavedChanges = true;
+			}
         }
 
         public void SetParent(ActionItem child, ActionItem parent)
@@ -392,30 +378,19 @@ namespace AssimilationSoftware.TodoSort.Core
                _repository.Update(parent);
             }
             _repository.Update(child);
+			UnsavedChanges = true;
         }
 
-        public string GetStringTag(ActionItem item, string tagname, string fallback = "")
-        {
-            if (!item.Tags.ContainsKey(tagname))
-            {
-                return fallback;
-            }
-            else
-            {
-                return item.Tags[tagname];
-            }
-        }
-
-        public void Balance(ActionItem[] items, int branchfactor, bool setNullParents = true)
+        public void Balance(ActionItem[] items, int branchFactor, bool setNullParents = true)
         {
             // Assume that the items have already been sorted.
             // In order, set parents.
-            for (int i = 0; i < items.Count(); i++)
+            for (int i = 0; i < items.Length; i++)
             {
-                var newdex = (int)Math.Floor((double)i / branchfactor) - 1;
-                if (newdex == -1)
+                var newIndex = (int)Math.Floor((double)i / branchFactor) - 1;
+                if (newIndex == -1)
                 {
-                    if (setNullParents || items.Intersect(GetAncestors(items[i])).Count() > 0)
+                    if (setNullParents || items.Intersect(GetAncestors(items[i])).Any())
                     {
                         // Only reset the parent if requested or if not doing so would cause a loop.
                         items[i].RankParent = null;
@@ -424,10 +399,11 @@ namespace AssimilationSoftware.TodoSort.Core
                 }
                 else
                 {
-                    items[i].RankParent = items[newdex];
+                    items[i].RankParent = items[newIndex];
                     _repository.Update(items[i]);
                 }
             }
+			UnsavedChanges = true;
         }
 
         private IEnumerable<ActionItem> GetAncestors(ActionItem actionItem)
@@ -447,36 +423,42 @@ namespace AssimilationSoftware.TodoSort.Core
         {
             child.Project = project;
             _repository.Update(child);
+			UnsavedChanges = true;
         }
 
-        public void Defer(ActionItem deferitem, DateTime tickleDate)
+        public void Defer(ActionItem deferItem, DateTime tickleDate)
         {
-            deferitem.TickleDate = tickleDate;
-            Defer(deferitem);
+            deferItem.TickleDate = tickleDate;
+            Defer(deferItem);
+			UnsavedChanges = true;
         }
 
-        public void SetContext(ActionItem item, string newcontext)
+        public void SetContext(ActionItem item, string newContext)
         {
-            item.Context = newcontext;
+            item.Context = newContext;
             _repository.Update(item);
+			UnsavedChanges = true;
         }
 
         public void AddNote(ActionItem item, string note)
         {
             item.Notes.Add(string.Format("{0} ({1:yyyy-MM-dd})", note, DateTime.Now));
             _repository.Update(item);
+			UnsavedChanges = true;
         }
 
-        public void Rename(ActionItem item, string retitle)
+        public void Rename(ActionItem item, string newTitle)
         {
-            item.Title = retitle;
+            item.Title = newTitle;
             _repository.Update(item);
-        }
+ 			UnsavedChanges = true;
+       }
 
-        public void RemoveTag(ActionItem item, string tagname)
+        public void RemoveTag(ActionItem item, string tagName)
         {
-            item.Tags.Remove(tagname);
+            item.Tags.Remove(tagName);
             _repository.Update(item);
+			UnsavedChanges = true;
         }
 
         public void Merge(ActionItem child, ActionItem target)
@@ -518,6 +500,7 @@ namespace AssimilationSoftware.TodoSort.Core
             target.Notes.Add(string.Format("Merged with '{0}' on {1:yyyy-MM-dd}", child.Title, DateTime.Now));
             _repository.Update(target);
             Delete(child);
+ 			UnsavedChanges = true;
         }
         #endregion
     }

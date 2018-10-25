@@ -12,13 +12,14 @@ namespace AssimilationSoftware.TodoSort.Core.Data
     {
         public TodoRepository(PimData.Interfaces.IPimDataMapper<ActionItem> mapper) : base(mapper)
         {
+			FindAll();
         }
 
         public IEnumerable<ActionItem> SomedayItems
         {
             get
             {
-                return FindAll().Where(i => i.Context == "someday");
+                return Items.Where(i => i.Context == "someday");
             }
         }
 
@@ -26,23 +27,23 @@ namespace AssimilationSoftware.TodoSort.Core.Data
         {
             get
             {
-                return FindAll().Where(i => i.Context == "done");
+                return Items.Where(i => i.Context == "done");
             }
         }
 
         public IEnumerable<ActionItem> GetChildren(ActionItem selected)
         {
-            return FindAll().Where(t => t.RankParent != null && t.RankParent.Equals(selected));
+            return Items.Where(t => t.RankParent != null && t.RankParent.Equals(selected));
         }
 
         public IEnumerable<string> GetContexts(params string[] exclude)
         {
-            return (from i in FindAll() select i.Context).Distinct().Except(exclude);
+            return (from i in Items select i.Context).Distinct().Except(exclude);
         }
 
         public IEnumerable<ActionItem> GetProjectItems(ActionItem i)
         {
-            return FindAll().Where(a => a.Project != null && a.Project.Equals(i));
+            return Items.Where(a => a.Project != null && a.Project.Equals(i));
         }
     }
 }

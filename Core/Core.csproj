@@ -43,6 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ActionItem_Extensions.cs" />
+    <Compile Include="Data\ActionItemSqliteMapper.cs" />
     <Compile Include="Data\ITodoRepository.cs" />
     <Compile Include="Data\TodoRepository.cs" />
     <Compile Include="Export\GraphVizExporter.cs" />

@@ -24,9 +24,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
 
         private string _selectedContext;
         private string _fileName;
-        private bool _hasUnsavedChanges;
 		private List<ActionViewItem> _currentItems;
-        private IPimDataMapper<ActionItem> _mapper;
         private ITodoRepository _repo;
         private ViewModel _api;
         private RelayCommand<string> _openRecentCommand;
@@ -59,9 +57,8 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             }
             SaveSettings();
 
-            _mapper = new ActionItemDiskMapper(FileName);
-            _repo = new Core.Data.TodoRepository(_mapper);
-            _api = new Core.ViewModel(_mapper);
+            _repo = new TodoRepository(new ActionItemDiskMapper(FileName));
+            _api = new ViewModel(_repo);
             OnPropertyChanged("Contexts");
 			_currentItems = null;
             OnPropertyChanged("Items");
@@ -128,6 +125,22 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             OnPropertyChanged("Items");
         }
 
+		public void MarkDone(ActionItem item, DateTime? doneDate = null)
+		{
+			_api.MarkDone(doneDate, item);
+		    _currentItems = null;
+			OnPropertyChanged("Items");
+			OnPropertyChanged("HasUnsavedChanges");
+		}
+		
+		public void Undo(ActionItem item, string context = "inbox")
+		{
+			_api.Undo(context, item);
+		    _currentItems = null;
+			OnPropertyChanged("Items");
+			OnPropertyChanged("HasUnsavedChanges");
+		}
+		
         #endregion
 
         #region Properties
@@ -159,13 +172,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
 
         public bool HasUnsavedChanges
         {
-            get => _hasUnsavedChanges;
-            set
-            {
-                _hasUnsavedChanges = value;
-                OnPropertyChanged();
-                OnPropertyChanged("WindowTitle");
-            }
+            get => _api?.UnsavedChanges ?? false;
         }
 
         public List<ActionViewItem> Items
@@ -177,23 +184,21 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                 switch (SelectedContext)
                 {
                     case "done":
-                        _currentItems = _api.DoneSearchResults.Select(s => new ActionViewItem(s, _api)).OrderByDescending(i => i.DoneDate).ToList();
+                        _currentItems = _api.DoneSearchResults.Select(s => new ActionViewItem(s, this)).OrderByDescending(i => i.DoneDate).ToList();
                         break;
                     case "someday":
-                        _currentItems = _api.SomedaySearchResults.Select(s => new ActionViewItem(s, _api)).OrderBy(i => i.TickleDate).ToList();
+                        _currentItems = _api.SomedaySearchResults.Select(s => new ActionViewItem(s, this)).OrderBy(i => i.TickleDate).ToList();
                         break;
                     default:
                         _api.SearchSpecification = new ContextSearchSpecification(SelectedContext);
-                        _currentItems = _api.SearchResults.Select(s => new ActionViewItem(s, _api)).OrderByDescending(i => i.Upvotes).ToList();
+                        _currentItems = _api.SearchResults.Select(s => new ActionViewItem(s, this)).OrderByDescending(i => i.Upvotes).ToList();
                         break;
                 }
-				// TODO: Subscribe to property changed events to set HasUnsavedChanges.
-				// And unsubscribe when the collection is refreshed.
 				return _currentItems;
             }
         }
 
-        public string WindowTitle => $"TodoSort {FileName} {(HasUnsavedChanges ? "*" : "")}";
+        public string WindowTitle => $"TodoSort - {FileName} {(HasUnsavedChanges ? "*" : "")}";
 
         public List<string> RecentFileList
         {

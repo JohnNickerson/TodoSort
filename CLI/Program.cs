@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using AssimilationSoftware.TodoSort.Core.Data;
 
 namespace AssimilationSoftware.TodoSort.CLI
 {
@@ -50,7 +51,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             var f = FolderSettings.LoadFrom(settingspath);
             ActionItemDiskMapper todomapper = new ActionItemDiskMapper(f.TodoPath);
 
-            ViewModel vm = new ViewModel(todomapper);
+            ViewModel vm = new ViewModel(new TodoRepository(todomapper));
 
             // Set universal options.
             if (argsubs is UniversalOptions)
@@ -91,7 +92,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                 case "advanced-search":
                     {
                         vm.SearchSpecification = ((AdvancedSearchOptions)argsubs).SearchSpecification;
-                        PrintItems("title", vm.SearchResults);
+                        PrintItems("title", vm.SearchResults, ((AdvancedSearchOptions)argsubs).NSFW);
                         break;
                     }
                 #endregion
@@ -124,14 +125,14 @@ namespace AssimilationSoftware.TodoSort.CLI
                         if (target != null)
                         {
                             // Before
-                            PrintTree(new List<ActionItem>(new[] { target }), true);
+                            PrintTree(new List<ActionItem>(new[] { target }), true, bumpOpts.NSFW);
                             var depth = target.RankDepth / 2;
                             while (target.RankDepth > depth && target.RankParent != null)
                             {
                                 vm.SetParent(target, target.RankParent.RankParent);
                             }
                             // After
-                            PrintTree(new List<ActionItem>(new[] { target }), true);
+                            PrintTree(new List<ActionItem>(new[] { target }), true, bumpOpts.NSFW);
                         }
                     }
                     break;
@@ -145,7 +146,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                         var vine = vm.SearchResults.OrderBy(i => i.GetIntTag("order", 0)).ToArray();
                         vm.Balance(vine, 1, false);
                         // Show the resulting chain.
-                        PrintTree(vm.SearchResults.ToList(), true);
+                        PrintTree(vm.SearchResults.ToList(), true, balopts.NSFW);
                         break;
                     }
                 #endregion
@@ -528,8 +529,8 @@ namespace AssimilationSoftware.TodoSort.CLI
                                 if (quitandsave) break;
                                 // get vote
                                 Console.WriteLine("{0}/{1} ({2}%) complete", x, items.Count(), 100 * x / items.Count());
-                                PrintItem(items.ElementAt(index[x]), 1);
-                                PrintItem(items.ElementAt(index[x + 1]), 2);
+                                PrintItem(items.ElementAt(index[x]), 1, rankOptions.NSFW);
+                                PrintItem(items.ElementAt(index[x + 1]), 2, rankOptions.NSFW);
                                 Console.Write("Which of these is more important? (q=quit) ");
                                 // assign parents based on vote
                                 switch (Console.ReadKey().KeyChar)
@@ -596,11 +597,11 @@ namespace AssimilationSoftware.TodoSort.CLI
                     }
                     else if (searchOptions.PrintTree)
                     {
-                        PrintTree(vm.SearchResults.ToList(), true);
+                        PrintTree(vm.SearchResults.ToList(), true, searchOptions.NSFW);
                     }
                     else
                     {
-                        PrintItems(searchOptions.SortTag, vm.SearchResults);
+                        PrintItems(searchOptions.SortTag, vm.SearchResults, searchOptions.NSFW);
                         if (!searchOptions.NoCount)
                         {
                             Console.WriteLine("{0} item(s) found.", vm.SearchResults.Count());
@@ -617,7 +618,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                         // Set the ViewModel property.
                         vm.DoneSearchSpecification = search.SearchSpecification;
                         // Report the results.
-                        PrintItems(search.SortTag ?? "done-date", vm.DoneSearchResults);
+                        PrintItems(search.SortTag ?? "done-date", vm.DoneSearchResults, search.NSFW);
                         if (!search.NoCount)
                         {
                             Console.WriteLine("{0} item(s) found.", vm.DoneSearchResults.Count());
@@ -634,7 +635,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                         // Set the ViewModel property.
                         vm.SomedaySearchSpecification = search.SearchSpecification;
                         // Report the results.
-                        PrintItems(search.SortTag ?? "tickle-date", vm.SomedaySearchResults);
+                        PrintItems(search.SortTag ?? "tickle-date", vm.SomedaySearchResults, search.NSFW);
                         if (!search.NoCount)
                         {
                             Console.WriteLine("{0} item(s) found.", vm.SomedaySearchResults.Count());
@@ -660,7 +661,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                             {
                                 vm.SetParent(child, parent);
                                 Console.WriteLine();
-                                PrintTree(new List<ActionItem> { { child }, { parent } }, false);
+                                PrintTree(new List<ActionItem> { { child }, { parent } }, false, setparentOptions.NSFW);
                             }
                             else
                             {
@@ -671,7 +672,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                                 {
                                     vm.SetParent(child, null);
                                     Console.WriteLine();
-                                    PrintTree(new List<ActionItem> { child }, false);
+                                    PrintTree(new List<ActionItem> { child }, false, setparentOptions.NSFW);
                                 }
                             }
                         }
@@ -712,7 +713,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                             Console.Clear();
                             for (int index = 0; index < somesub.PageSize && offset + index < someitems.Count(); index++)
                             {
-                                PrintItem(someitems.ElementAt(offset + index), index);
+                                PrintItem(someitems.ElementAt(offset + index), index, somesub.NSFW);
                             }
                             char choice = Console.ReadKey().KeyChar;
                             Console.WriteLine();
@@ -894,11 +895,11 @@ namespace AssimilationSoftware.TodoSort.CLI
             p.Start();
         }
 
-        private static void EditSomedayItem(ViewModel vm, ActionItem item)
+        private static void EditSomedayItem(ViewModel vm, ActionItem item, bool nsfw = false)
         {
             while(true)
             {
-                PrintItem(item, null);
+                PrintItem(item, null, nsfw);
                 // Write menu.
                 Console.WriteLine("1. Undefer (and go to next item)");
                 Console.WriteLine("2. Rename");
@@ -1040,7 +1041,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             return sortedlist;
         }
 
-        private static void PrintItems(string sorttag, IEnumerable<ActionItem> list)
+        private static void PrintItems(string sorttag, IEnumerable<ActionItem> list, bool nsfw = false)
         {
             string last_context = string.Empty;
             var sortedlist = ApplySort(sorttag, list);
@@ -1050,12 +1051,12 @@ namespace AssimilationSoftware.TodoSort.CLI
                 {
                     Console.WriteLine("@{0}", i.Context);
                 }
-                PrintItem(i, null);
+                PrintItem(i, null, nsfw);
                 last_context = i.Context;
             }
         }
 
-        private static void PrintTree(List<ActionItem> list, bool showAncestors)
+        private static void PrintTree(List<ActionItem> list, bool showAncestors, bool nsfw = false)
         {
             List<ActionItem> ancestors = new List<ActionItem>();
             ancestors.AddRange(list);
@@ -1076,7 +1077,7 @@ namespace AssimilationSoftware.TodoSort.CLI
 
             foreach (var r in roots)
             {
-                PrintTree(r, list, ancestors);
+                PrintTree(r, list, ancestors, nsfw);
                 Console.WriteLine();
                 Console.WriteLine();
             }
@@ -1089,7 +1090,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             public string PadLine;
         }
 
-        private static void PrintTree(ActionItem root, List<ActionItem> tree, List<ActionItem> ancestors)
+        private static void PrintTree(ActionItem root, List<ActionItem> tree, List<ActionItem> ancestors, bool nsfw = false)
         {
             var conwide = Console.WindowWidth;
             var stack = new Stack<PrintTreeItem>();
@@ -1120,7 +1121,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                 }
                 Console.Write(prefix);
                 string name = focus.Title.Substring(0, Math.Min(conwide - prefix.Length, focus.Title.Length));
-                if (focus.Tags.ContainsKey("nsfw") && focus.Tags["nsfw"].ToLower() == "true")
+                if (focus.Tags.ContainsKey("nsfw") && focus.Tags["nsfw"].ToLower() == "true" && !nsfw)
                 {
                     name = "----NSFW----";
                 }
@@ -1153,11 +1154,11 @@ namespace AssimilationSoftware.TodoSort.CLI
         /// <remarks>
         /// TODO: Refactor into a Console View class?
         /// </remarks>
-        private static void PrintItem(ActionItem i, int? index)
+        private static void PrintItem(ActionItem i, int? index, bool nsfw = false)
         {
             int wrapwidth = Console.WindowWidth - 1;
             string title = i.Title;
-            if (i.Tags.ContainsKey("nsfw") && i.Tags["nsfw"].ToLower() == "true")
+            if (i.Tags.ContainsKey("nsfw") && i.Tags["nsfw"].ToLower() == "true" && !nsfw)
             {
                 title = "----NSFW----";
             }
@@ -1250,7 +1251,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             Console.WriteLine(content);
         }
 
-		private static ActionItem Disambiguate(IEnumerable<ActionItem> todolist, bool autoAcceptOne = false)
+		private static ActionItem Disambiguate(IEnumerable<ActionItem> todolist, bool autoAcceptOne = false, bool nsfw = false)
 		{
 			ActionItem selected = null;
 
@@ -1264,13 +1265,13 @@ namespace AssimilationSoftware.TodoSort.CLI
                 // Print the items so we know what to narrow down.
                 for (int i = 0; i < todolist.Count(); i++)
                 {
-                    PrintItem(todolist.ElementAt(i), null);
+                    PrintItem(todolist.ElementAt(i), null, nsfw);
                 }
                 Console.WriteLine("Too many search matches. Try to be more specific. No action will be taken this time.");
 			}
             else if (todolist.Count() == 1 && autoAcceptOne)
             {
-                PrintItem(todolist.ElementAt(0), null);
+                PrintItem(todolist.ElementAt(0), null, nsfw);
                 Console.WriteLine("Auto-accepting...");
                 selected = todolist.ElementAt(0);
             }
@@ -1278,7 +1279,7 @@ namespace AssimilationSoftware.TodoSort.CLI
 			{
                 for (int i = 0; i < todolist.Count(); i++)
 				{
-                    PrintItem(todolist.ElementAt(i), i);
+                    PrintItem(todolist.ElementAt(i), i, nsfw);
 				}
 				char choice = Console.ReadKey().KeyChar;
                 // Write a blank line to prevent whatever comes next from printing right after this on the same line.

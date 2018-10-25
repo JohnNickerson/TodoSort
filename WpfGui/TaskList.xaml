@@ -19,11 +19,13 @@
                 <MenuItem Header="_Save" Click="SaveClick" />
 				<MenuItem Header="Reload" Command="{Binding ReloadCommand}" />
                 <MenuItem Header="Recent" IsEnabled="True" ItemsSource="{Binding Path=RecentFileList}">
-                    <MenuItem.ItemTemplate>
-                        <DataTemplate>
-                            <MenuItem Header="{Binding}" Command="{Binding Path=DataContext.OpenRecentCommand, RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="{Binding}"/>
-                        </DataTemplate>
-                    </MenuItem.ItemTemplate>
+					<MenuItem.ItemContainerStyle>
+						<Style TargetType="MenuItem">
+							<Setter Property="Header" Value="{Binding}"/>
+							<Setter Property="Command" Value="{Binding Path=DataContext.OpenRecentCommand, RelativeSource={RelativeSource AncestorType=Window}}"/>
+							<Setter Property="CommandParameter" Value="{Binding}"/>
+						</Style>
+					</MenuItem.ItemContainerStyle>
                 </MenuItem>
                 <MenuItem Header="E_xit" Command="{Binding CloseCommand}" />
             </MenuItem>
