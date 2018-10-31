@@ -8,6 +8,8 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using System.Collections.ObjectModel;
+
 namespace AssimilationSoftware.TodoSort.WpfGui.Properties {
     
     
@@ -49,9 +51,9 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        public global::System.Collections.Generic.List<System.String> RecentFiles {
+        public ObservableCollection<string> RecentFiles {
             get {
-                return ((global::System.Collections.Generic.List<System.String>)(this["RecentFiles"]));
+                return ((global::System.Collections.ObjectModel.ObservableCollection<System.String>)(this["RecentFiles"]));
             }
             set {
                 this["RecentFiles"] = value;

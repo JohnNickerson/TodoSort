@@ -1,21 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
+using System.Windows;
+using System.Windows.Input;
 using AssimilationSoftware.PimData.Model;
-using AssimilationSoftware.TodoSort.Core;
-using AssimilationSoftware.TodoSort.WpfGui.Annotations;
 
-namespace AssimilationSoftware.TodoSort.WpfGui
+namespace AssimilationSoftware.TodoSort.WpfGui.Model
 {
-    public class ActionViewItem : INotifyPropertyChanged
+    public class ActionViewItem : ViewModelBase
     {
         #region Fields
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        private RelayCommand _editCommand;
+        private RelayCommand _deferCommand;
 
         #endregion // Fields
 
@@ -141,24 +138,58 @@ namespace AssimilationSoftware.TodoSort.WpfGui
 
         public Dictionary<string, string> Tags => Source.Tags;
 
+        public string ToggleDeferTitle => Source.Context == "someday" ? "Undefer" : "Defer";
+
         #endregion // Data Properties (Bindings)
 
         #region Command Properties
 
+        public ICommand EditCommand
+        {
+            get { return _editCommand ?? (_editCommand = new RelayCommand(EditExecuted)); }
+        }
+
+        public ICommand ToggleDeferCommand => _deferCommand ?? (_deferCommand = new RelayCommand(DeferExecuted));
         #endregion // Command Properties
 
         #region Command Handlers
 
-        #endregion // Command Handlers
-
-        #region Private Helpers
-
-        [NotifyPropertyChangedInvocator]
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        private void EditExecuted()
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            // Show the Edit view.
+            var editWindow = new EditItemView();
+            var editVm = new EditViewModel(Api, this, editWindow);
+            editWindow.DataContext = editVm;
+            editWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            editWindow.Owner = Api.Window;
+            var result = editWindow.ShowDialog();
+            if (result.HasValue && result.Value)
+            {
+                // Update the source item.
+                Title = editVm.Title;
+                Source.Notes = editVm.Notes.Split('\n').ToList();
+                Source.Tags = editVm.Tags.ToDictionary(k => k.Tag, v => v.Value);
+                Source.Project = editVm.Project;
+                if (Source.Context != editVm.Context)
+                {
+                    Api.Move(Source, editVm.Context);
+                }
+                Api.Update(Source);
+            }
         }
 
-        #endregion // Private Helpers
+        private void DeferExecuted()
+        {
+            if (Source.Context == "someday")
+            {
+                Api.Undefer(Source);
+            }
+            else
+            {
+                Api.Defer(Source);
+            }
+        }
+
+        #endregion // Command Handlers
     }
 }

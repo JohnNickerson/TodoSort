@@ -1,20 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
+using System.Collections.ObjectModel;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Input;
-using AssimilationSoftware.PimData.Interfaces;
 using AssimilationSoftware.PimData.Mappers.Text;
 using AssimilationSoftware.PimData.Model;
 using AssimilationSoftware.TodoSort.Core;
 using AssimilationSoftware.TodoSort.Core.Data;
 using AssimilationSoftware.TodoSort.Core.Search;
+using AssimilationSoftware.TodoSort.WpfGui.Model;
 using AssimilationSoftware.TodoSort.WpfGui.Properties;
-using Microsoft.Win32;
 
 namespace AssimilationSoftware.TodoSort.WpfGui
 {
@@ -63,6 +58,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
 			_currentItems = null;
             OnPropertyChanged("Items");
             OnPropertyChanged("RecentFileList");
+            OnPropertyChanged("WindowTitle");
         }
 		
 		private void RankItems()
@@ -71,14 +67,10 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             var rv = new RankView();
             var rvm = new RankViewModel(Items, rv, _api);
 		    rv.DataContext = rvm;
-		    var result = rv.ShowDialog();
-		    if (result.HasValue && result.Value)
-		    {
-                // Save the ranking.
-                _api.Save();
-		    }
+		    rv.ShowDialog();
 			_currentItems = null;
 		    OnPropertyChanged("Items");
+            OnPropertyChanged("WindowTitle");
 		}
 
         private void ReloadFile()
@@ -123,24 +115,68 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             _api.Save();
 			_currentItems = null;
             OnPropertyChanged("Items");
+            OnPropertyChanged("HasUnsavedChanges");
+            OnPropertyChanged("WindowTitle");
         }
 
-		public void MarkDone(ActionItem item, DateTime? doneDate = null)
+        public void MarkDone(ActionItem item, DateTime? doneDate = null)
 		{
 			_api.MarkDone(doneDate, item);
 		    _currentItems = null;
 			OnPropertyChanged("Items");
 			OnPropertyChanged("HasUnsavedChanges");
+		    OnPropertyChanged("WindowTitle");
 		}
-		
-		public void Undo(ActionItem item, string context = "inbox")
+
+        public void Undo(ActionItem item, string context = "inbox")
 		{
 			_api.Undo(context, item);
 		    _currentItems = null;
 			OnPropertyChanged("Items");
 			OnPropertyChanged("HasUnsavedChanges");
+		    OnPropertyChanged("WindowTitle");
 		}
-		
+
+        private void CloseExecute()
+        {
+            Application.Current.Shutdown();
+        }
+
+        public void Update(ActionItem item)
+        {
+            _api.Update(item);
+            OnPropertyChanged("WindowTitle");
+            OnPropertyChanged("HasUnsavedChanges");
+        }
+
+        public void Move(ActionItem source, string newContext)
+        {
+            _api.SetContext(source, newContext);
+            _currentItems = null;
+            OnPropertyChanged("Items");
+            OnPropertyChanged("HasUnsavedChanges");
+            OnPropertyChanged("WindowTitle");
+        }
+
+        public void Defer(ActionItem item)
+        {
+            _api.Defer(item);
+            _currentItems = null;
+            OnPropertyChanged("Items");
+            OnPropertyChanged("HasUnsavedChanges");
+            OnPropertyChanged("WindowTitle");
+        }
+
+        public void Undefer(ActionItem item)
+        {
+            _api.Undefer("inbox", item);
+            _currentItems = null;
+            OnPropertyChanged("Items");
+            OnPropertyChanged("HasUnsavedChanges");
+            OnPropertyChanged("WindowTitle");
+            OnPropertyChanged("Contexts");
+        }
+
         #endregion
 
         #region Properties
@@ -200,9 +236,9 @@ namespace AssimilationSoftware.TodoSort.WpfGui
 
         public string WindowTitle => $"TodoSort - {FileName} {(HasUnsavedChanges ? "*" : "")}";
 
-        public List<string> RecentFileList
+        public ObservableCollection<string> RecentFileList
         {
-            get => Settings.Default.RecentFiles ?? (Settings.Default.RecentFiles = new List<string>());
+            get => Settings.Default.RecentFiles ?? (Settings.Default.RecentFiles = new ObservableCollection<string>());
             set
             {
                 Settings.Default.RecentFiles = value;
@@ -216,7 +252,9 @@ namespace AssimilationSoftware.TodoSort.WpfGui
 		
 		public RelayCommand ReloadCommand => _reloadCommand ?? (_reloadCommand = new RelayCommand(ReloadFile, () => !string.IsNullOrEmpty(FileName)));
 		
-		public RelayCommand CloseCommand => _closeCommand ?? (_closeCommand = new RelayCommand(() => Application.Current.Shutdown()));
+		public RelayCommand CloseCommand => _closeCommand ?? (_closeCommand = new RelayCommand(CloseExecute));
+
+        public List<ActionItem> Projects => _api != null ? _api.GetProjects() : new List<ActionItem>();
 
         #endregion
     }

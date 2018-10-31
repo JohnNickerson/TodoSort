@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using AssimilationSoftware.TodoSort.WpfGui.Model;
 
 namespace AssimilationSoftware.TodoSort.WpfGui
 {
@@ -63,13 +64,21 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         private void Vote1Execute()
         {
             CurrentPair.Vote = RankWinner.First;
-            CurrentIndex++;
+            if (CurrentIndex == RankPairs.Count - 1)
+            {
+                // TODO: Indicate end of ranking somehow?
+            }
+            else CurrentIndex++;
         }
 
         private void Vote2Execute()
         {
             CurrentPair.Vote = RankWinner.Second;
-            CurrentIndex++;
+            if (CurrentIndex == RankPairs.Count - 1)
+            {
+                // TODO: Indicate end of ranking somehow?
+            }
+            else CurrentIndex++;
         }
 
         private void OkExecute()
@@ -123,10 +132,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             }
         }
 
-        public ICommand OkCommand
-        {
-            get { return _okCommand ?? (_okCommand = new RelayCommand(OkExecute)); }
-        }
+        public ICommand OkCommand => _okCommand ?? (_okCommand = new RelayCommand(OkExecute));
 
         #endregion
 
@@ -139,7 +145,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             set
             {
                 if (_currentIndex == value) return;
-                if (_currentIndex == RankPairs.Count - 1) return;
+                if (value >= RankPairs.Count || value < 0) return;
                 _currentIndex = value;
                 OnPropertyChanged();
                 OnPropertyChanged("CurrentPair");

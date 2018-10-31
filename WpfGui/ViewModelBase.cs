@@ -5,12 +5,14 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using AssimilationSoftware.TodoSort.WpfGui.Annotations;
 
 namespace AssimilationSoftware.TodoSort.WpfGui
 {
     public class ViewModelBase : INotifyPropertyChanged
     {
+        public Window Window { get; set; }
         public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]

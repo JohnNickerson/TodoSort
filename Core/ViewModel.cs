@@ -241,6 +241,34 @@ namespace AssimilationSoftware.TodoSort.Core
                 doneItem.Context = "done";
                 ResetPriorityParents(doneItem); // Or else it will continue to hide its children by default.
                 _repository.Update(doneItem);
+                // Implicit Chains: If this item has an "order" tag, and is attached to a project or has a "series" tag, look for the next item.
+                if (doneItem.Tags.ContainsKey("order"))
+                {
+                    var restoreHead = _showHeadOnly;
+                    _showHeadOnly = false;
+                    if (doneItem.Tags.ContainsKey("series"))
+                    {
+                        SearchSpecification = new AndSpecification<ActionItem>(
+                            new TagValueSpecification("series", doneItem.Tags["series"]),
+                            new TagValueSpecification("order", (doneItem.GetIntTag("order", 0) + 1).ToString()));
+                        foreach (var next in SearchResults)
+                        {
+                            SetParent(next, null);
+                        }
+                    }
+                    else if (doneItem.Project != null)
+                    {
+                        SearchSpecification = new AndSpecification<ActionItem>(
+                            new ProjectChildrenSearchSpecification(doneItem.Project), 
+                            new TagValueSpecification("order", (doneItem.GetIntTag("order", 0) + 1).ToString()));
+                        foreach (var next in SearchResults)
+                        {
+                            SetParent(next, null);
+                        }
+                    }
+
+                    _showHeadOnly = restoreHead;
+                }
             }
             RaisePropertyChanged("SearchResults", "DoneSearchResults");
 			UnsavedChanges = true;
@@ -502,6 +530,17 @@ namespace AssimilationSoftware.TodoSort.Core
             Delete(child);
  			UnsavedChanges = true;
         }
+
+        public List<ActionItem> GetProjects()
+        {
+            return _repository.FindAll().Where(p => p.Context == "projects").ToList();
+        }
         #endregion
+
+        public void Update(ActionItem item)
+        {
+            _repository.Update(item);
+            UnsavedChanges = true;
+        }
     }
 }

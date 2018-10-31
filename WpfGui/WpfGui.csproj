@@ -71,6 +71,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="EditItemView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="RankView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -81,13 +85,18 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Compile Include="ActionViewItem.cs" />
+    <Compile Include="Model\ActionViewItem.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ActionItemEventArgs.cs" />
+    <Compile Include="EditItemView.xaml.cs">
+      <DependentUpon>EditItemView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="EditViewModel.cs" />
     <Compile Include="MainViewModel.cs" />
+    <Compile Include="Model\TagValueModel.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="RankView.xaml.cs">
       <DependentUpon>RankView.xaml</DependentUpon>

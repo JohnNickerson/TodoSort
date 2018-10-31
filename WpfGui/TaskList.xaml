@@ -3,7 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:w="clr-namespace:AssimilationSoftware.TodoSort.WpfGui"
 	Icon="Task.ico"
-    Title="{Binding WindowTitle}" MinHeight="300" MinWidth="300" SizeToContent="WidthAndHeight">
+    Title="{Binding WindowTitle}" MinHeight="300" MinWidth="300" SizeToContent="WidthAndHeight" Closing="TaskList_OnClosing">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -17,21 +17,21 @@
             <MenuItem Header="_File">
                 <MenuItem Header="_Open" Click="OpenClick" />
                 <MenuItem Header="_Save" Click="SaveClick" />
-				<MenuItem Header="Reload" Command="{Binding ReloadCommand}" />
+                <MenuItem Header="Reload" Command="{Binding ReloadCommand}" />
                 <MenuItem Header="Recent" IsEnabled="True" ItemsSource="{Binding Path=RecentFileList}">
-					<MenuItem.ItemContainerStyle>
-						<Style TargetType="MenuItem">
-							<Setter Property="Header" Value="{Binding}"/>
-							<Setter Property="Command" Value="{Binding Path=DataContext.OpenRecentCommand, RelativeSource={RelativeSource AncestorType=Window}}"/>
-							<Setter Property="CommandParameter" Value="{Binding}"/>
-						</Style>
-					</MenuItem.ItemContainerStyle>
+                    <MenuItem.ItemContainerStyle>
+                        <Style TargetType="MenuItem">
+                            <Setter Property="Header" Value="{Binding}"/>
+                            <Setter Property="Command" Value="{Binding Path=DataContext.OpenRecentCommand, RelativeSource={RelativeSource AncestorType=Window}}"/>
+                            <Setter Property="CommandParameter" Value="{Binding}"/>
+                        </Style>
+                    </MenuItem.ItemContainerStyle>
                 </MenuItem>
                 <MenuItem Header="E_xit" Command="{Binding CloseCommand}" />
             </MenuItem>
-			<MenuItem Header="_Edit">
-				<MenuItem Header="_Rank" Command="{Binding RankCommand}" IsEnabled="True" />
-			</MenuItem>
+            <MenuItem Header="_Edit">
+                <MenuItem Header="_Rank" Command="{Binding RankCommand}" IsEnabled="True" />
+            </MenuItem>
         </Menu>
 
         <ListBox Grid.Row="1" Grid.Column="0" Name="Contexts" ItemsSource="{Binding Path=Contexts}" SelectedItem="{Binding Path=SelectedContext}" MinWidth="85">
@@ -43,6 +43,12 @@
         </ListBox>
 
         <ListView Grid.Row="1" Grid.Column="1" Name="SearchResultsList" ItemsSource="{Binding Path=Items}">
+            <ListView.Resources>
+                <ContextMenu x:Key="ItemContextMenu">
+                    <MenuItem Header="Edit" Command="{Binding Path=EditCommand}"/>
+                    <MenuItem Header="{Binding ToggleDeferTitle}" Command="{Binding Path=ToggleDeferCommand}"/>
+                </ContextMenu>
+            </ListView.Resources>
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="">
@@ -55,7 +61,7 @@
                     <GridViewColumn Header="Title">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding Path=Title}"/>
+                                <TextBlock Text="{Binding Path=Title}" ContextMenu="{StaticResource ItemContextMenu}"/>
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
