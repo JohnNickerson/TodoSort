@@ -2,12 +2,9 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using AssimilationSoftware.PimData.Model;
-using AssimilationSoftware.TodoSort.Core.Search;
 using AssimilationSoftware.TodoSort.WpfGui.Model;
 
 namespace AssimilationSoftware.TodoSort.WpfGui
@@ -21,6 +18,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         private ObservableCollection<TagValueModel> _tags;
         private string _context;
         private ActionItem _project;
+        private DateTime? _tickleDate;
 
         private ICommand _okCommand;
         private ICommand _addTagCommand;
@@ -51,6 +49,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                 }
                 _context = item.Source.Context;
                 _project = item.Source.Project;
+                _tickleDate = item.Source.TickleDate;
             }
         }
 
@@ -75,7 +74,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
 
         public string Title
         {
-            get { return _title; }
+            get => _title;
             set
             {
                 if (_title == value) return;
@@ -86,7 +85,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
 
         public string Notes
         {
-            get { return _notes; }
+            get => _notes;
             set
             {
                 if (_notes == value) return;
@@ -97,7 +96,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
 
         public ObservableCollection<TagValueModel> Tags
         {
-            get { return _tags; }
+            get => _tags;
             set
             {
                 if (_tags.Equals(value)) return;
@@ -112,7 +111,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
 
         public string Context
         {
-            get { return _context; }
+            get => _context;
             set
             {
                 if (_context == value) return;
@@ -123,12 +122,13 @@ namespace AssimilationSoftware.TodoSort.WpfGui
 
         public ActionItem Project
         {
-            get { return _project; }
+            get => _project;
             set
             {
                 if (_project != null && _project.Equals(value)) return;
                 _project = value;
                 OnPropertyChanged();
+                OnPropertyChanged(nameof(HasProject));
             }
         }
 
@@ -145,6 +145,29 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         public ICommand OkCommand => _okCommand ?? (_okCommand = new RelayCommand(OkExecuted));
 
         public ICommand AddTagCommand => _addTagCommand ?? (_addTagCommand = new RelayCommand(AddTagExecuted));
+
+        public bool HasTickleDate
+        {
+            get => TickleDate != null;
+            set
+            {
+                if (!value) TickleDate = null;
+            }
+        }
+
+        public DateTime? TickleDate
+        {
+            get => _tickleDate;
+            set
+            {
+                if (_tickleDate == value) return;
+                _tickleDate = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(HasTickleDate));
+            }
+        }
+
+        public bool IsDeferred => Context == "someday";
 
         #endregion
     }

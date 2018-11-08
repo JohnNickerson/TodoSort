@@ -14,6 +14,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
@@ -78,7 +79,10 @@
         <CheckBox Grid.Row="4" Grid.Column="0" Content="Project" Margin="5" IsChecked="{Binding HasProject}"/>
         <ComboBox Grid.Row="4" Grid.Column="1" ItemsSource="{Binding AllProjects}" DisplayMemberPath="Title" SelectedItem="{Binding Project}" Margin="5"/>
 
-        <StackPanel Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right">
+        <CheckBox Grid.Row="5" Grid.Column="0" Content="Return date" Margin="5" IsChecked="{Binding HasTickleDate}" IsEnabled="{Binding IsDeferred}"/>
+        <DatePicker Grid.Row="5" Grid.Column="1" SelectedDate="{Binding TickleDate}" Margin="5" IsEnabled="{Binding IsDeferred}"/>
+
+        <StackPanel Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right">
             <Button Content="OK" Command="{Binding OkCommand}"/>
             <Button Content="Cancel" IsCancel="True"/>
         </StackPanel>

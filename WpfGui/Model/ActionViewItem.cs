@@ -140,6 +140,24 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
 
         public string ToggleDeferTitle => Source.Context == "someday" ? "Undefer" : "Defer";
 
+        public string ChainSummary
+        {
+            get
+            {
+                if (Source.Tags.ContainsKey("order"))
+                {
+                    if (Source.Project != null)
+                    {
+                        return $"{Source.Project.Title} - #{Source.Tags["order"]}";
+                    }
+
+                    return Source.Tags.ContainsKey("series") ? $"{Source.Tags["series"]} - #{Source.Tags["order"]}" : $"#{Source.Tags["order"]}, fix series info";
+                }
+
+                return null;
+            }
+        }
+
         #endregion // Data Properties (Bindings)
 
         #region Command Properties
@@ -170,6 +188,10 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
                 Source.Notes = editVm.Notes.Split('\n').ToList();
                 Source.Tags = editVm.Tags.ToDictionary(k => k.Tag, v => v.Value);
                 Source.Project = editVm.Project;
+                if (editVm.IsDeferred)
+                {
+                    Source.TickleDate = editVm.TickleDate;
+                }
                 if (Source.Context != editVm.Context)
                 {
                     Api.Move(Source, editVm.Context);

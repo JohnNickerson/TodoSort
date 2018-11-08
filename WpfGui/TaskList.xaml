@@ -61,7 +61,7 @@
                     <GridViewColumn Header="Title">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding Path=Title}" ContextMenu="{StaticResource ItemContextMenu}"/>
+                                <TextBlock Text="{Binding Path=Title}" ContextMenu="{StaticResource ItemContextMenu}" ToolTip="{Binding ChainSummary}"/>
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
