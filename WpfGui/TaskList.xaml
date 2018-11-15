@@ -30,14 +30,20 @@
                 <MenuItem Header="E_xit" Command="{Binding CloseCommand}" />
             </MenuItem>
             <MenuItem Header="_Edit">
-                <MenuItem Header="_Rank" Command="{Binding RankCommand}" IsEnabled="True" />
+                <MenuItem Header="_Add" Command="{Binding AddItemCommand}" IsEnabled="True"/>
+                <MenuItem Header="_Rank" Command="{Binding RankCommand}" />
             </MenuItem>
         </Menu>
 
         <ListBox Grid.Row="1" Grid.Column="0" Name="Contexts" ItemsSource="{Binding Path=Contexts}" SelectedItem="{Binding Path=SelectedContext}" MinWidth="85">
+            <ListBox.Resources>
+                <ContextMenu x:Key="MetaContextMenu">
+                    <MenuItem Header="Move All" Command="{Binding Path=MoveAllCommand}" IsEnabled="False"/>
+                </ContextMenu>
+            </ListBox.Resources>
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <TextBlock Text="{Binding}" MinWidth="150"/>
+                    <TextBlock Text="{Binding}" MinWidth="150" ContextMenu="{StaticResource MetaContextMenu}"/>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>

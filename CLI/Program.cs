@@ -453,7 +453,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                     {
                         vm.ShowHeadOnly = false;
                         vm.SearchSpecification = new ProjectChildrenSearchSpecification(projects[i]);
-                        if (vm.SearchResults.Count() == 0)
+                        if (!vm.SearchResults.Any())
                         {
                             // Add next actions for projects.
                             Console.WriteLine("What is the next action required on this project?");

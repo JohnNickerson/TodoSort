@@ -26,6 +26,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
 		private RelayCommand _rankCommand;
 		private RelayCommand _reloadCommand;
 		private RelayCommand _closeCommand;
+        private RelayCommand _addItemCommand;
 
         #endregion
 
@@ -54,6 +55,11 @@ namespace AssimilationSoftware.TodoSort.WpfGui
 
             _repo = new TodoRepository(new ActionItemDiskMapper(FileName));
             _api = new ViewModel(_repo);
+
+            // Process pending items for any to return to the main list.
+            _api.SomedaySearchSpecification = new TickleDateSearchSpecification(null, DateTime.Today);
+            _api.Undefer("inbox", _api.SomedaySearchResults.ToArray());
+
             OnPropertyChanged("Contexts");
 			_currentItems = null;
             OnPropertyChanged("Items");
@@ -123,9 +129,9 @@ namespace AssimilationSoftware.TodoSort.WpfGui
 		{
 			_api.MarkDone(doneDate, item);
 		    _currentItems = null;
-			OnPropertyChanged("Items");
-			OnPropertyChanged("HasUnsavedChanges");
-		    OnPropertyChanged("WindowTitle");
+			OnPropertyChanged(nameof(Items));
+			OnPropertyChanged(nameof(HasUnsavedChanges));
+		    OnPropertyChanged(nameof(WindowTitle));
 		}
 
         public void Undo(ActionItem item, string context = "inbox")
@@ -171,10 +177,39 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         {
             _api.Undefer("inbox", item);
             _currentItems = null;
-            OnPropertyChanged("Items");
-            OnPropertyChanged("HasUnsavedChanges");
-            OnPropertyChanged("WindowTitle");
-            OnPropertyChanged("Contexts");
+            OnPropertyChanged(nameof(Items));
+            OnPropertyChanged(nameof(HasUnsavedChanges));
+            OnPropertyChanged(nameof(WindowTitle));
+            OnPropertyChanged(nameof(Contexts));
+        }
+
+        private void AddExecuted()
+        {
+            // Show the Edit view.
+            var editWindow = new EditItemView();
+            var item = new ActionItem("inbox", null);
+            var editVm = new EditViewModel(this, new ActionViewItem(item, this), editWindow);
+            editWindow.DataContext = editVm;
+            editWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            editWindow.Owner = Window;
+            var result = editWindow.ShowDialog();
+            if (result.HasValue && result.Value)
+            {
+                // Update the source item.
+                item.Title = editVm.Title;
+                item.Notes = editVm.Notes.Split('\n').ToList();
+                item.Tags = editVm.Tags.ToDictionary(k => k.Tag, v => v.Value);
+                item.Project = editVm.Project;
+                item.Context = editVm.Context;
+                if (editVm.IsDeferred)
+                {
+                    item.TickleDate = editVm.TickleDate;
+                }
+                _api.AddItem(item);
+                _currentItems = null;
+                OnPropertyChanged(nameof(Items));
+                OnPropertyChanged(nameof(Contexts));
+            }
         }
 
         #endregion
@@ -223,6 +258,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                         _currentItems = _api.DoneSearchResults.Select(s => new ActionViewItem(s, this)).OrderByDescending(i => i.DoneDate).ToList();
                         break;
                     case "someday":
+                        _api.SomedaySearchSpecification = null;
                         _currentItems = _api.SomedaySearchResults.Select(s => new ActionViewItem(s, this)).OrderBy(i => i.TickleDate).ToList();
                         break;
                     default:
@@ -253,6 +289,8 @@ namespace AssimilationSoftware.TodoSort.WpfGui
 		public RelayCommand ReloadCommand => _reloadCommand ?? (_reloadCommand = new RelayCommand(ReloadFile, () => !string.IsNullOrEmpty(FileName)));
 		
 		public RelayCommand CloseCommand => _closeCommand ?? (_closeCommand = new RelayCommand(CloseExecute));
+
+        public RelayCommand AddItemCommand => _addItemCommand ?? (_addItemCommand = new RelayCommand(AddExecuted));
 
         public List<ActionItem> Projects => _api != null ? _api.GetProjects() : new List<ActionItem>();
 

@@ -251,7 +251,7 @@ namespace AssimilationSoftware.TodoSort.Core
                         SearchSpecification = new AndSpecification<ActionItem>(
                             new TagValueSpecification("series", doneItem.Tags["series"]),
                             new TagValueSpecification("order", (doneItem.GetIntTag("order", 0) + 1).ToString()));
-                        foreach (var next in SearchResults)
+                        foreach (var next in SearchResults.ToList())
                         {
                             SetParent(next, null);
                         }
@@ -261,7 +261,7 @@ namespace AssimilationSoftware.TodoSort.Core
                         SearchSpecification = new AndSpecification<ActionItem>(
                             new ProjectChildrenSearchSpecification(doneItem.Project), 
                             new TagValueSpecification("order", (doneItem.GetIntTag("order", 0) + 1).ToString()));
-                        foreach (var next in SearchResults)
+                        foreach (var next in SearchResults.ToList())
                         {
                             SetParent(next, null);
                         }
@@ -535,12 +535,12 @@ namespace AssimilationSoftware.TodoSort.Core
         {
             return _repository.FindAll().Where(p => p.Context == "projects").ToList();
         }
-        #endregion
 
         public void Update(ActionItem item)
         {
             _repository.Update(item);
             UnsavedChanges = true;
         }
+        #endregion
     }
 }

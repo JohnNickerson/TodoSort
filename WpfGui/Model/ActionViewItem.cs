@@ -96,21 +96,21 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
                 OnPropertyChanged();
             }
         }
-		
-		public bool IsNsfw
-		{
-			get
-			{
-				if (Source.Tags.ContainsKey("nsfw"))
-				{
-					return Source.Tags["nsfw"].ToLower() == "true";
-				}
-				else
-				{
-					return false;
-				}
-			}
-		}
+
+        public bool IsNsfw
+        {
+            get
+            {
+                if (Source.Tags.ContainsKey("nsfw"))
+                {
+                    return Source.Tags["nsfw"].ToLower() == "true";
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
 
         public DateTime? DoneDate
         {
@@ -185,7 +185,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
             {
                 // Update the source item.
                 Title = editVm.Title;
-                Source.Notes = editVm.Notes.Split('\n').ToList();
+                Source.Notes = new List<string>(new[] { editVm.Notes });
                 Source.Tags = editVm.Tags.ToDictionary(k => k.Tag, v => v.Value);
                 Source.Project = editVm.Project;
                 if (editVm.IsDeferred)

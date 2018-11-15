@@ -169,6 +169,8 @@ namespace AssimilationSoftware.TodoSort.WpfGui
 
         public bool IsDeferred => Context == "someday";
 
+        public bool IsNotDeferred => Context != "someday";
+
         #endregion
     }
 }

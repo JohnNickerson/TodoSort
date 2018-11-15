@@ -74,7 +74,7 @@
         </ListView>
 
         <TextBlock Grid.Row="3" Grid.Column="0" Text="Context"/>
-        <ComboBox Grid.Row="3" Grid.Column="1" ItemsSource="{Binding AllContexts}" SelectedItem="{Binding Context}" Margin="5"/>
+        <ComboBox Grid.Row="3" Grid.Column="1" ItemsSource="{Binding AllContexts}" SelectedItem="{Binding Context}" Margin="5" IsEnabled="{Binding IsNotDeferred}"/>
 
         <CheckBox Grid.Row="4" Grid.Column="0" Content="Project" Margin="5" IsChecked="{Binding HasProject}"/>
         <ComboBox Grid.Row="4" Grid.Column="1" ItemsSource="{Binding AllProjects}" DisplayMemberPath="Title" SelectedItem="{Binding Project}" Margin="5"/>
