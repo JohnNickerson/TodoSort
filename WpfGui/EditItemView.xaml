@@ -42,7 +42,7 @@
         <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Notes}" AcceptsReturn="True"/>
 
         <StackPanel Grid.Row="2" Grid.Column="0">
-        <TextBlock Text="Tags"/>
+            <TextBlock Text="Tags"/>
             <Button Content="Add" Command="{Binding AddTagCommand}"/>
         </StackPanel>
         <ListView Grid.Row="2" Grid.Column="1" Margin="5" ItemsSource="{Binding Tags}">
@@ -74,7 +74,10 @@
         </ListView>
 
         <TextBlock Grid.Row="3" Grid.Column="0" Text="Context"/>
-        <ComboBox Grid.Row="3" Grid.Column="1" ItemsSource="{Binding AllContexts}" SelectedItem="{Binding Context}" Margin="5" IsEnabled="{Binding IsNotDeferred}"/>
+        <UniformGrid Grid.Row="3" Grid.Column="1" Columns="2">
+            <ComboBox ItemsSource="{Binding AllContexts}" SelectedItem="{Binding Context}" Margin="5" IsEnabled="{Binding IsNotDeferred}"/>
+            <TextBox Text="{Binding Context}" Margin="5" IsEnabled="{Binding IsNotDeferred}"/>
+        </UniformGrid>
 
         <CheckBox Grid.Row="4" Grid.Column="0" Content="Project" Margin="5" IsChecked="{Binding HasProject}"/>
         <ComboBox Grid.Row="4" Grid.Column="1" ItemsSource="{Binding AllProjects}" DisplayMemberPath="Title" SelectedItem="{Binding Project}" Margin="5"/>

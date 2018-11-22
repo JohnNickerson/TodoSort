@@ -30,8 +30,12 @@
                 <MenuItem Header="E_xit" Command="{Binding CloseCommand}" />
             </MenuItem>
             <MenuItem Header="_Edit">
-                <MenuItem Header="_Add" Command="{Binding AddItemCommand}" IsEnabled="True"/>
+                <MenuItem Header="_Add" Command="{Binding AddItemCommand}"/>
                 <MenuItem Header="_Rank" Command="{Binding RankCommand}" />
+                <MenuItem Header="_Search" Command="{Binding SearchCommand}" IsEnabled="False"/>
+            </MenuItem>
+            <MenuItem Header="_Help">
+                <MenuItem Header="{Binding VersionNumber}"></MenuItem>
             </MenuItem>
         </Menu>
 
@@ -43,7 +47,7 @@
             </ListBox.Resources>
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <TextBlock Text="{Binding}" MinWidth="150" ContextMenu="{StaticResource MetaContextMenu}"/>
+                    <TextBlock Text="{Binding Title}" MinWidth="150" ContextMenu="{StaticResource MetaContextMenu}"/>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
@@ -77,6 +81,14 @@
                                 <TextBlock>
                                 <Hyperlink NavigateUri="{Binding Path=Url}" ToolTip="{Binding Path=Url}" RequestNavigate="OpenUrlClick" TargetName="TodoSort" IsEnabled="{Binding UrlNotNull}">Open</Hyperlink>
                                 </TextBlock>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn>
+                        <GridViewColumnHeader Content="{Binding Path=SelectedContext.DateColumnTitle}" Visibility="{Binding Path=SelectedContext.DateVisible}"/>
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding ItemDate, StringFormat={}{0:dd/MM/yyyy}}"/>
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>

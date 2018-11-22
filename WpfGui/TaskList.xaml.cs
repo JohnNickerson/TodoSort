@@ -64,7 +64,18 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             // Confirm close if the ViewModel says there are unsaved changes.
             if (vm.HasUnsavedChanges)
             {
-                e.Cancel = MessageBox.Show("You have unsaved changes. Quit without saving?", "Unsaved changes", MessageBoxButton.YesNo) != MessageBoxResult.Yes;
+                var result = MessageBox.Show("You have unsaved changes. Save and quit?", "Unsaved changes", MessageBoxButton.OKCancel);
+                switch (result)
+                {
+                    case MessageBoxResult.OK:
+                        // save.
+                        vm.SaveCommandExecuted(this, null);
+                        break;
+                    case MessageBoxResult.Cancel:
+                        e.Cancel = true;
+                        break;
+                }
+
             }
         }
     }

@@ -120,6 +120,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
                 if (Source.DoneDate == value) return;
                 Source.DoneDate = value;
                 OnPropertyChanged();
+                OnPropertyChanged(nameof(ItemDate));
             }
         }
 
@@ -131,8 +132,11 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
                 if (Source.TickleDate == value) return;
                 Source.TickleDate = value;
                 OnPropertyChanged();
+                OnPropertyChanged(nameof(ItemDate));
             }
         }
+
+        public DateTime? ItemDate => DoneDate ?? TickleDate;
 
         public List<string> Notes => Source.Notes;
 
@@ -162,10 +166,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
 
         #region Command Properties
 
-        public ICommand EditCommand
-        {
-            get { return _editCommand ?? (_editCommand = new RelayCommand(EditExecuted)); }
-        }
+        public ICommand EditCommand => _editCommand ?? (_editCommand = new RelayCommand(EditExecuted));
 
         public ICommand ToggleDeferCommand => _deferCommand ?? (_deferCommand = new RelayCommand(DeferExecuted));
         #endregion // Command Properties

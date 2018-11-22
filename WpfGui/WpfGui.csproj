@@ -96,6 +96,7 @@
     </Compile>
     <Compile Include="EditViewModel.cs" />
     <Compile Include="MainViewModel.cs" />
+    <Compile Include="Model\Context.cs" />
     <Compile Include="Model\TagValueModel.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="RankView.xaml.cs">

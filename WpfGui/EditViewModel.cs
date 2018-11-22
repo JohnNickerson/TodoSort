@@ -29,7 +29,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
 
         public EditViewModel(MainViewModel api, ActionViewItem item, Window window)
         {
-            AllContexts = api.Contexts.Except(new[] { "done", "someday" }).OrderBy(c => c).ToList();
+            AllContexts = api.Contexts.Where(c => c.Title != "done" && c.Title != "someday").Select(c => c.Title).OrderBy(c => c).ToList();
             AllProjects = api.Projects.OrderBy(p => p.Title).ToList();
             Window = window;
 

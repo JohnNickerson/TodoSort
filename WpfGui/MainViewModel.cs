@@ -17,15 +17,16 @@ namespace AssimilationSoftware.TodoSort.WpfGui
     {
         #region Fields
 
-        private string _selectedContext;
+        private Context _selectedContext;
+        private List<Context> _contexts;
         private string _fileName;
-		private List<ActionViewItem> _currentItems;
+        private List<ActionViewItem> _currentItems;
         private ITodoRepository _repo;
         private ViewModel _api;
         private RelayCommand<string> _openRecentCommand;
-		private RelayCommand _rankCommand;
-		private RelayCommand _reloadCommand;
-		private RelayCommand _closeCommand;
+        private RelayCommand _rankCommand;
+        private RelayCommand _reloadCommand;
+        private RelayCommand _closeCommand;
         private RelayCommand _addItemCommand;
 
         #endregion
@@ -60,32 +61,33 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             _api.SomedaySearchSpecification = new TickleDateSearchSpecification(null, DateTime.Today);
             _api.Undefer("inbox", _api.SomedaySearchResults.ToArray());
 
-            OnPropertyChanged("Contexts");
-			_currentItems = null;
-            OnPropertyChanged("Items");
-            OnPropertyChanged("RecentFileList");
-            OnPropertyChanged("WindowTitle");
+            _contexts = null;
+            OnPropertyChanged(nameof(Contexts));
+            _currentItems = null;
+            OnPropertyChanged(nameof(Items));
+            OnPropertyChanged(nameof(RecentFileList));
+            OnPropertyChanged(nameof(WindowTitle));
         }
-		
-		private void RankItems()
-		{
-			// Open up a ranking window.
+
+        private void RankItems()
+        {
+            // Open up a ranking window.
             var rv = new RankView();
             var rvm = new RankViewModel(Items, rv, _api);
-		    rv.DataContext = rvm;
-		    rv.ShowDialog();
-			_currentItems = null;
-		    OnPropertyChanged("Items");
-            OnPropertyChanged("WindowTitle");
-		}
+            rv.DataContext = rvm;
+            rv.ShowDialog();
+            _currentItems = null;
+            OnPropertyChanged(nameof(Items));
+            OnPropertyChanged(nameof(WindowTitle));
+        }
 
         private void ReloadFile()
-		{
-			if (!string.IsNullOrEmpty(FileName))
-			{
-				OpenFile(FileName);
-			}
-		}
+        {
+            if (!string.IsNullOrEmpty(FileName))
+            {
+                OpenFile(FileName);
+            }
+        }
 
         private void SaveSettings()
         {
@@ -119,58 +121,81 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         public void SaveCommandExecuted(object sender, RoutedEventArgs e)
         {
             _api.Save();
-			_currentItems = null;
-            OnPropertyChanged("Items");
-            OnPropertyChanged("HasUnsavedChanges");
-            OnPropertyChanged("WindowTitle");
+            _currentItems = null;
+            OnPropertyChanged(nameof(Items));
+            OnPropertyChanged(nameof(HasUnsavedChanges));
+            OnPropertyChanged(nameof(WindowTitle));
         }
 
         public void MarkDone(ActionItem item, DateTime? doneDate = null)
-		{
-			_api.MarkDone(doneDate, item);
-		    _currentItems = null;
-			OnPropertyChanged(nameof(Items));
-			OnPropertyChanged(nameof(HasUnsavedChanges));
-		    OnPropertyChanged(nameof(WindowTitle));
-		}
+        {
+            _api.MarkDone(doneDate, item);
+            _currentItems = null;
+            OnPropertyChanged(nameof(Items));
+            OnPropertyChanged(nameof(HasUnsavedChanges));
+            OnPropertyChanged(nameof(WindowTitle));
+        }
 
         public void Undo(ActionItem item, string context = "inbox")
-		{
-			_api.Undo(context, item);
-		    _currentItems = null;
-			OnPropertyChanged("Items");
-			OnPropertyChanged("HasUnsavedChanges");
-		    OnPropertyChanged("WindowTitle");
-		}
+        {
+            _api.Undo(context, item);
+            _currentItems = null;
+            OnPropertyChanged(nameof(Items));
+            OnPropertyChanged(nameof(HasUnsavedChanges));
+            OnPropertyChanged(nameof(WindowTitle));
+        }
 
         private void CloseExecute()
         {
-            Application.Current.Shutdown();
+            // Confirm close if unsaved changes.
+            if (HasUnsavedChanges)
+            {
+                var result = MessageBox.Show("You have unsaved changes. Save and quit?", "Unsaved changes", MessageBoxButton.OKCancel);
+                switch (result)
+                {
+                    case MessageBoxResult.OK:
+                        SaveCommandExecuted(this, null);
+                        Application.Current.Shutdown();
+                        break;
+                    case MessageBoxResult.Cancel:
+                        break;
+                }
+
+            }
+            else
+            {
+                // No unsaved changes. Just quit.
+                Application.Current.Shutdown();
+            }
         }
 
         public void Update(ActionItem item)
         {
             _api.Update(item);
-            OnPropertyChanged("WindowTitle");
-            OnPropertyChanged("HasUnsavedChanges");
+            OnPropertyChanged(nameof(WindowTitle));
+            OnPropertyChanged(nameof(HasUnsavedChanges));
         }
 
-        public void Move(ActionItem source, string newContext)
+        public void Move(ActionItem source, string newContext, bool disconnectChildren = true)
         {
             _api.SetContext(source, newContext);
+            if (disconnectChildren)
+            {
+                _api.ResetPriorityParents(source);
+            }
             _currentItems = null;
-            OnPropertyChanged("Items");
-            OnPropertyChanged("HasUnsavedChanges");
-            OnPropertyChanged("WindowTitle");
+            OnPropertyChanged(nameof(Items));
+            OnPropertyChanged(nameof(HasUnsavedChanges));
+            OnPropertyChanged(nameof(WindowTitle));
         }
 
         public void Defer(ActionItem item)
         {
             _api.Defer(item);
             _currentItems = null;
-            OnPropertyChanged("Items");
-            OnPropertyChanged("HasUnsavedChanges");
-            OnPropertyChanged("WindowTitle");
+            OnPropertyChanged(nameof(Items));
+            OnPropertyChanged(nameof(HasUnsavedChanges));
+            OnPropertyChanged(nameof(WindowTitle));
         }
 
         public void Undefer(ActionItem item)
@@ -208,6 +233,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                 _api.AddItem(item);
                 _currentItems = null;
                 OnPropertyChanged(nameof(Items));
+                _contexts = null;
                 OnPropertyChanged(nameof(Contexts));
             }
         }
@@ -216,17 +242,40 @@ namespace AssimilationSoftware.TodoSort.WpfGui
 
         #region Properties
 
-        public List<string> Contexts => _api != null ? _api.GetContextNames("done", "someday").Union(new[] { "done", "someday" }).ToList() : new List<string>();
+        public List<Context> Contexts
+        {
+            get
+            {
+                if (_api == null) return new List<Context>();
+                if (_contexts == null)
+                {
+                    _contexts = new List<Context>();
+                    foreach (var con in _api.GetContextNames("done", "someday").OrderBy(c => c))
+                    {
+                        _contexts.Add(new Context
+                        {
+                            Title = con,
+                            SearchSpecification = new ContextSearchSpecification(con),
+                            Window = Window,
+                            DateVisible = Visibility.Collapsed
+                        });
+                    }
+                    _contexts.Add(new Context { Title = "done", Window = Window, DateVisible = Visibility.Visible, DateColumnTitle = "Done Date" });
+                    _contexts.Add(new Context { Title = "someday", Window = Window, DateVisible = Visibility.Visible, DateColumnTitle = "Return Date" });
+                }
+                return _contexts;
+            }
+        }
 
-        public string SelectedContext
+        public Context SelectedContext
         {
             get => _selectedContext;
             set
             {
                 _selectedContext = value;
                 OnPropertyChanged();
-				_currentItems = null;
-                OnPropertyChanged("Items");
+                _currentItems = null;
+                OnPropertyChanged(nameof(Items));
             }
         }
 
@@ -237,36 +286,34 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             {
                 _fileName = value;
                 OnPropertyChanged();
-                OnPropertyChanged("WindowTitle");
+                OnPropertyChanged(nameof(WindowTitle));
             }
         }
 
-        public bool HasUnsavedChanges
-        {
-            get => _api?.UnsavedChanges ?? false;
-        }
+        public bool HasUnsavedChanges => _api?.UnsavedChanges ?? false;
 
         public List<ActionViewItem> Items
         {
             get
             {
                 if (SelectedContext == null) return new List<ActionViewItem>();
-				if (_currentItems != null) return _currentItems;
-                switch (SelectedContext)
+                if (_currentItems != null) return _currentItems;
+                switch (SelectedContext.Title)
                 {
                     case "done":
-                        _currentItems = _api.DoneSearchResults.Select(s => new ActionViewItem(s, this)).OrderByDescending(i => i.DoneDate).ToList();
+                        _api.DoneSearchSpecification = SelectedContext.SearchSpecification;
+                        _currentItems = _api.DoneSearchResults.Select(s => new ActionViewItem(s, this)).OrderByDescending(i => i.DoneDate).ThenBy(i => i.Title).ToList();
                         break;
                     case "someday":
-                        _api.SomedaySearchSpecification = null;
-                        _currentItems = _api.SomedaySearchResults.Select(s => new ActionViewItem(s, this)).OrderBy(i => i.TickleDate).ToList();
+                        _api.SomedaySearchSpecification = SelectedContext.SearchSpecification;
+                        _currentItems = _api.SomedaySearchResults.Select(s => new ActionViewItem(s, this)).OrderBy(i => i.TickleDate).ThenBy(i => i.Title).ToList();
                         break;
                     default:
-                        _api.SearchSpecification = new ContextSearchSpecification(SelectedContext);
-                        _currentItems = _api.SearchResults.Select(s => new ActionViewItem(s, this)).OrderByDescending(i => i.Upvotes).ToList();
+                        _api.SearchSpecification = SelectedContext.SearchSpecification;
+                        _currentItems = _api.SearchResults.Select(s => new ActionViewItem(s, this)).OrderByDescending(i => i.Upvotes).ThenBy(i => i.Title).ToList();
                         break;
                 }
-				return _currentItems;
+                return _currentItems;
             }
         }
 
@@ -283,16 +330,18 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         }
 
         public RelayCommand<string> OpenRecentCommand => _openRecentCommand ?? (_openRecentCommand = new RelayCommand<string>(OpenFile));
-			
-		public RelayCommand RankCommand => _rankCommand ?? (_rankCommand = new RelayCommand(RankItems));
-		
-		public RelayCommand ReloadCommand => _reloadCommand ?? (_reloadCommand = new RelayCommand(ReloadFile, () => !string.IsNullOrEmpty(FileName)));
-		
-		public RelayCommand CloseCommand => _closeCommand ?? (_closeCommand = new RelayCommand(CloseExecute));
+
+        public RelayCommand RankCommand => _rankCommand ?? (_rankCommand = new RelayCommand(RankItems));
+
+        public RelayCommand ReloadCommand => _reloadCommand ?? (_reloadCommand = new RelayCommand(ReloadFile, () => !string.IsNullOrEmpty(FileName)));
+
+        public RelayCommand CloseCommand => _closeCommand ?? (_closeCommand = new RelayCommand(CloseExecute));
 
         public RelayCommand AddItemCommand => _addItemCommand ?? (_addItemCommand = new RelayCommand(AddExecuted));
 
         public List<ActionItem> Projects => _api != null ? _api.GetProjects() : new List<ActionItem>();
+
+        public string VersionNumber => "Version " + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
 
         #endregion
     }
