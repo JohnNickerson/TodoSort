@@ -5,7 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
 using AssimilationSoftware.PimData.Model;
+using AssimilationSoftware.TodoSort.Core;
 using AssimilationSoftware.TodoSort.Core.Search;
 
 namespace AssimilationSoftware.TodoSort.WpfGui.Model
@@ -16,6 +18,13 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
         private ISearchSpecification<ActionItem> _searchSpecification;
         private string _dateColumnTitle;
         private Visibility _dateVisible;
+        private RelayCommand<Context> _moveAllCommand;
+
+        private void MoveAllExecuted(Context fromContext)
+        {
+            if (fromContext != null)
+                ParentVm.MoveAll(fromContext.Title, _title);
+        }
 
         public string DateColumnTitle
         {
@@ -60,5 +69,11 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
                 OnPropertyChanged();
             }
         }
+
+        public List<Context> AllOtherContexts { get; set; }
+
+        public MainViewModel ParentVm { get; set; }
+
+        public ICommand MoveAllCommand => _moveAllCommand ?? (_moveAllCommand = new RelayCommand<Context>(MoveAllExecuted));
     }
 }

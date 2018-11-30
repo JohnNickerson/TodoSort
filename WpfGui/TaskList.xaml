@@ -42,7 +42,15 @@
         <ListBox Grid.Row="1" Grid.Column="0" Name="Contexts" ItemsSource="{Binding Path=Contexts}" SelectedItem="{Binding Path=SelectedContext}" MinWidth="85">
             <ListBox.Resources>
                 <ContextMenu x:Key="MetaContextMenu">
-                    <MenuItem Header="Move All" Command="{Binding Path=MoveAllCommand}" IsEnabled="False"/>
+                    <MenuItem Header="Move All" Command="{Binding Path=MoveAllCommand}" IsEnabled="True" ItemsSource="{Binding AllOtherContexts}">
+                        <MenuItem.ItemContainerStyle>
+                            <Style TargetType="MenuItem">
+                                <Setter Property="Header" Value="{Binding Title}"/>
+                                <Setter Property="Command" Value="{Binding Path=MoveAllCommand}"/>
+                                <Setter Property="CommandParameter" Value="{Binding Path=DataContext, RelativeSource={RelativeSource AncestorType=MenuItem}}"/>
+                            </Style>
+                        </MenuItem.ItemContainerStyle>
+                    </MenuItem>
                 </ContextMenu>
             </ListBox.Resources>
             <ListBox.ItemTemplate>

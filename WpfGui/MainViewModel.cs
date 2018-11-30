@@ -183,6 +183,8 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             {
                 _api.ResetPriorityParents(source);
             }
+            _contexts = null;
+            OnPropertyChanged(nameof(Contexts));
             _currentItems = null;
             OnPropertyChanged(nameof(Items));
             OnPropertyChanged(nameof(HasUnsavedChanges));
@@ -238,6 +240,21 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             }
         }
 
+        public void MoveAll(string context, string newContext)
+        {
+            _api.SearchSpecification = new ContextSearchSpecification(context);
+            foreach (var item in _api.SearchResults)
+            {
+                _api.SetContext(item, newContext);
+            }
+            _contexts = null;
+            OnPropertyChanged(nameof(Contexts));
+            _currentItems = null;
+            OnPropertyChanged(nameof(Items));
+            OnPropertyChanged(nameof(HasUnsavedChanges));
+            OnPropertyChanged(nameof(WindowTitle));
+        }
+
         #endregion
 
         #region Properties
@@ -257,8 +274,16 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                             Title = con,
                             SearchSpecification = new ContextSearchSpecification(con),
                             Window = Window,
-                            DateVisible = Visibility.Collapsed
+                            DateVisible = Visibility.Collapsed,
+                            AllOtherContexts = new List<Context>(),
+                            ParentVm = this
                         });
+                    }
+
+                    foreach (var con in _contexts)
+                    {
+                        con.AllOtherContexts = new List<Context>(_contexts);
+                        con.AllOtherContexts.Remove(con);
                     }
                     _contexts.Add(new Context { Title = "done", Window = Window, DateVisible = Visibility.Visible, DateColumnTitle = "Done Date" });
                     _contexts.Add(new Context { Title = "someday", Window = Window, DateVisible = Visibility.Visible, DateColumnTitle = "Return Date" });

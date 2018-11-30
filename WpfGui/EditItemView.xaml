@@ -22,7 +22,7 @@
         </Grid.ColumnDefinitions>
         <Grid.Resources>
             <Style TargetType="TextBlock">
-                <Setter Property="Margin" Value="5"/>
+                <Setter Property="Margin" Value="3"/>
             </Style>
             <Style TargetType="Button">
                 <Setter Property="Margin" Value="5"/>
@@ -30,7 +30,7 @@
                 <Setter Property="MinWidth" Value="80"/>
             </Style>
             <Style TargetType="TextBox">
-                <Setter Property="Margin" Value="5"/>
+                <Setter Property="Margin" Value="3"/>
                 <Setter Property="MinWidth" Value="50"/>
             </Style>
         </Grid.Resources>
@@ -74,10 +74,7 @@
         </ListView>
 
         <TextBlock Grid.Row="3" Grid.Column="0" Text="Context"/>
-        <UniformGrid Grid.Row="3" Grid.Column="1" Columns="2">
-            <ComboBox ItemsSource="{Binding AllContexts}" SelectedItem="{Binding Context}" Margin="5" IsEnabled="{Binding IsNotDeferred}"/>
-            <TextBox Text="{Binding Context}" Margin="5" IsEnabled="{Binding IsNotDeferred}"/>
-        </UniformGrid>
+        <ComboBox Grid.Row="3" Grid.Column="1" ItemsSource="{Binding AllContexts}" Text="{Binding Context}" Margin="5" IsEnabled="{Binding IsNotDeferred}" IsEditable="True"/>
 
         <CheckBox Grid.Row="4" Grid.Column="0" Content="Project" Margin="5" IsChecked="{Binding HasProject}"/>
         <ComboBox Grid.Row="4" Grid.Column="1" ItemsSource="{Binding AllProjects}" DisplayMemberPath="Title" SelectedItem="{Binding Project}" Margin="5"/>
