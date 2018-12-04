@@ -65,6 +65,7 @@
                 <ContextMenu x:Key="ItemContextMenu">
                     <MenuItem Header="Edit" Command="{Binding Path=EditCommand}"/>
                     <MenuItem Header="{Binding ToggleDeferTitle}" Command="{Binding Path=ToggleDeferCommand}"/>
+                    <MenuItem Header="Delete" Command="{Binding Path=DeleteCommand}"/>
                 </ContextMenu>
             </ListView.Resources>
             <ListView.View>

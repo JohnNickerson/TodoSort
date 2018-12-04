@@ -61,12 +61,9 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             _api.SomedaySearchSpecification = new TickleDateSearchSpecification(null, DateTime.Today);
             _api.Undefer("inbox", _api.SomedaySearchResults.ToArray());
 
-            _contexts = null;
             OnPropertyChanged(nameof(Contexts));
-            _currentItems = null;
             OnPropertyChanged(nameof(Items));
             OnPropertyChanged(nameof(RecentFileList));
-            OnPropertyChanged(nameof(WindowTitle));
         }
 
         private void RankItems()
@@ -76,9 +73,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             var rvm = new RankViewModel(Items, rv, _api);
             rv.DataContext = rvm;
             rv.ShowDialog();
-            _currentItems = null;
             OnPropertyChanged(nameof(Items));
-            OnPropertyChanged(nameof(WindowTitle));
         }
 
         private void ReloadFile()
@@ -121,28 +116,19 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         public void SaveCommandExecuted(object sender, RoutedEventArgs e)
         {
             _api.Save();
-            _currentItems = null;
             OnPropertyChanged(nameof(Items));
-            OnPropertyChanged(nameof(HasUnsavedChanges));
-            OnPropertyChanged(nameof(WindowTitle));
         }
 
         public void MarkDone(ActionItem item, DateTime? doneDate = null)
         {
             _api.MarkDone(doneDate, item);
-            _currentItems = null;
             OnPropertyChanged(nameof(Items));
-            OnPropertyChanged(nameof(HasUnsavedChanges));
-            OnPropertyChanged(nameof(WindowTitle));
         }
 
         public void Undo(ActionItem item, string context = "inbox")
         {
             _api.Undo(context, item);
-            _currentItems = null;
             OnPropertyChanged(nameof(Items));
-            OnPropertyChanged(nameof(HasUnsavedChanges));
-            OnPropertyChanged(nameof(WindowTitle));
         }
 
         private void CloseExecute()
@@ -183,30 +169,20 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             {
                 _api.ResetPriorityParents(source);
             }
-            _contexts = null;
             OnPropertyChanged(nameof(Contexts));
-            _currentItems = null;
             OnPropertyChanged(nameof(Items));
-            OnPropertyChanged(nameof(HasUnsavedChanges));
-            OnPropertyChanged(nameof(WindowTitle));
         }
 
         public void Defer(ActionItem item)
         {
             _api.Defer(item);
-            _currentItems = null;
             OnPropertyChanged(nameof(Items));
-            OnPropertyChanged(nameof(HasUnsavedChanges));
-            OnPropertyChanged(nameof(WindowTitle));
         }
 
         public void Undefer(ActionItem item)
         {
             _api.Undefer("inbox", item);
-            _currentItems = null;
             OnPropertyChanged(nameof(Items));
-            OnPropertyChanged(nameof(HasUnsavedChanges));
-            OnPropertyChanged(nameof(WindowTitle));
             OnPropertyChanged(nameof(Contexts));
         }
 
@@ -233,9 +209,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                     item.TickleDate = editVm.TickleDate;
                 }
                 _api.AddItem(item);
-                _currentItems = null;
                 OnPropertyChanged(nameof(Items));
-                _contexts = null;
                 OnPropertyChanged(nameof(Contexts));
             }
         }
@@ -247,12 +221,37 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             {
                 _api.SetContext(item, newContext);
             }
-            _contexts = null;
             OnPropertyChanged(nameof(Contexts));
-            _currentItems = null;
             OnPropertyChanged(nameof(Items));
-            OnPropertyChanged(nameof(HasUnsavedChanges));
-            OnPropertyChanged(nameof(WindowTitle));
+        }
+
+        public void Delete(ActionItem source)
+        {
+            _api.ResetPriorityParents(source);
+            _api.Delete(source);
+            OnPropertyChanged(nameof(Items));
+        }
+
+        protected override void OnPropertyChanged(string propertyName = null)
+        {
+            // Cached properties.
+            if (propertyName == nameof(Items))
+            {
+                _currentItems = null;
+            }
+            else if (propertyName == nameof(Contexts))
+            {
+                _contexts = null;
+            }
+
+            base.OnPropertyChanged(propertyName);
+            
+            // Dependent properties.
+            if (propertyName == nameof(Items))
+            {
+                base.OnPropertyChanged(nameof(HasUnsavedChanges));
+                base.OnPropertyChanged(nameof(WindowTitle));
+            }
         }
 
         #endregion

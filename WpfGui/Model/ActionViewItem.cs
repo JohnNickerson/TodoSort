@@ -13,6 +13,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
 
         private RelayCommand _editCommand;
         private RelayCommand _deferCommand;
+        private RelayCommand _deleteCommand;
 
         #endregion // Fields
 
@@ -169,6 +170,8 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
         public ICommand EditCommand => _editCommand ?? (_editCommand = new RelayCommand(EditExecuted));
 
         public ICommand ToggleDeferCommand => _deferCommand ?? (_deferCommand = new RelayCommand(DeferExecuted));
+
+        public ICommand DeleteCommand => _deleteCommand ?? (_deleteCommand = new RelayCommand(DeleteExecuted));
         #endregion // Command Properties
 
         #region Command Handlers
@@ -186,7 +189,14 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
             {
                 // Update the source item.
                 Title = editVm.Title;
-                Source.Notes = new List<string>(new[] { editVm.Notes });
+                Source.Notes = new List<string>();
+                foreach (var line in editVm.Notes.Split('\n'))
+                {
+                    if (line.Trim().Length > 0)
+                    {
+                        Source.Notes.Add(line);
+                    }
+                }
                 Source.Tags = editVm.Tags.ToDictionary(k => k.Tag, v => v.Value);
                 Source.Project = editVm.Project;
                 if (editVm.IsDeferred)
@@ -213,6 +223,13 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
             }
         }
 
+        private void DeleteExecuted()
+        {
+            if (MessageBox.Show("Delete this item. Are you sure?", "Delete", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+            {
+                Api.Delete(Source);
+            }
+        }
         #endregion // Command Handlers
     }
 }
