@@ -15,10 +15,13 @@
         </Grid.ColumnDefinitions>
         <Menu Grid.Row="0" Background="{x:Null}" Grid.ColumnSpan="2">
             <MenuItem Header="_File">
+                <MenuItem Header="_New" IsEnabled="False"/>
                 <MenuItem Header="_Open" Click="OpenClick" />
                 <MenuItem Header="_Save" Click="SaveClick" />
+                <MenuItem Header="Save _As" IsEnabled="False"/>
                 <MenuItem Header="Reload" Command="{Binding ReloadCommand}" />
-                <MenuItem Header="Recent" IsEnabled="True" ItemsSource="{Binding Path=RecentFileList}">
+                <Separator/>
+                <MenuItem Header="Recent Files" IsEnabled="True" ItemsSource="{Binding Path=RecentFileList}">
                     <MenuItem.ItemContainerStyle>
                         <Style TargetType="MenuItem">
                             <Setter Property="Header" Value="{Binding}"/>
@@ -27,6 +30,7 @@
                         </Style>
                     </MenuItem.ItemContainerStyle>
                 </MenuItem>
+                <Separator/>
                 <MenuItem Header="E_xit" Command="{Binding CloseCommand}" />
             </MenuItem>
             <MenuItem Header="_Edit">
@@ -35,7 +39,7 @@
                 <MenuItem Header="_Search" Command="{Binding SearchCommand}" IsEnabled="False"/>
             </MenuItem>
             <MenuItem Header="_Help">
-                <MenuItem Header="{Binding VersionNumber}"></MenuItem>
+                <MenuItem Header="{Binding VersionNumber}"/>
             </MenuItem>
         </Menu>
 

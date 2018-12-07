@@ -105,7 +105,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                         if (balopts.BranchFactor > 0)
                         {
                             vm.SearchSpecification = balopts.SearchSpecification;
-                            var vine = vm.SearchResults.OrderBy(i => i.RankDepth).ThenByDescending(i => i.GetIntTag("upvotes", 0)).ToArray();
+                            var vine = vm.SearchResults.OrderBy(i => i.RankDepth).ThenByDescending(i => i.Upvotes).ToArray();
                             vm.Balance(vine, balopts.BranchFactor);
                         }
                         else
