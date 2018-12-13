@@ -42,12 +42,12 @@ namespace AssimilationSoftware.TodoSort.WpfGui
 
         private void OpenClick(object sender, RoutedEventArgs e)
         {
-            vm.OpenCommandExecuted(sender, e);
+            vm.OpenCommandExecuted();
         }
 
         private void SaveClick(object sender, RoutedEventArgs e)
         {
-            vm.SaveCommandExecuted(sender, e);
+            vm.SaveCommandExecuted();
         }
 
         private void OpenUrlClick(object sender, RequestNavigateEventArgs e)
@@ -69,13 +69,12 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                 {
                     case MessageBoxResult.OK:
                         // save.
-                        vm.SaveCommandExecuted(this, null);
+                        vm.SaveCommandExecuted();
                         break;
                     case MessageBoxResult.Cancel:
                         e.Cancel = true;
                         break;
                 }
-
             }
         }
     }

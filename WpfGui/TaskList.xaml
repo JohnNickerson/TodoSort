@@ -4,6 +4,10 @@
     xmlns:w="clr-namespace:AssimilationSoftware.TodoSort.WpfGui"
 	Icon="Task.ico"
     Title="{Binding WindowTitle}" MinHeight="300" MinWidth="300" SizeToContent="WidthAndHeight" Closing="TaskList_OnClosing">
+    <Window.InputBindings>
+        <KeyBinding Command="{Binding Path=OpenFileCommand}" Key="O" Modifiers="Ctrl" />
+        <KeyBinding Command="{Binding Path=SaveFileCommand}" Key="S" Modifiers="Ctrl" />
+    </Window.InputBindings>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -16,8 +20,8 @@
         <Menu Grid.Row="0" Background="{x:Null}" Grid.ColumnSpan="2">
             <MenuItem Header="_File">
                 <MenuItem Header="_New" IsEnabled="False"/>
-                <MenuItem Header="_Open" Click="OpenClick" />
-                <MenuItem Header="_Save" Click="SaveClick" />
+                <MenuItem Header="_Open" Click="OpenClick" InputGestureText="Ctrl+O" />
+                <MenuItem Header="_Save" Click="SaveClick" InputGestureText="Ctrl+S" />
                 <MenuItem Header="Save _As" IsEnabled="False"/>
                 <MenuItem Header="Reload" Command="{Binding ReloadCommand}" />
                 <Separator/>
@@ -31,7 +35,7 @@
                     </MenuItem.ItemContainerStyle>
                 </MenuItem>
                 <Separator/>
-                <MenuItem Header="E_xit" Command="{Binding CloseCommand}" />
+                <MenuItem Header="E_xit" Command="{Binding CloseCommand}" InputGestureText="Alt+F4" />
             </MenuItem>
             <MenuItem Header="_Edit">
                 <MenuItem Header="_Add" Command="{Binding AddItemCommand}"/>
@@ -68,7 +72,12 @@
             <ListView.Resources>
                 <ContextMenu x:Key="ItemContextMenu">
                     <MenuItem Header="Edit" Command="{Binding Path=EditCommand}"/>
+                    <MenuItem Header="Fix Title" Command="{Binding Path=FixTitleCommand}"/>
+                    <Separator/>
+                    <MenuItem Header="Defer 2 Weeks" Command="{Binding Path=ToggleDeferCommand}" CommandParameter="{Binding Path=ShortDeferDelay}" Visibility="{Binding Path=CanDefer}"/>
+                    <MenuItem Header="Defer 2 Months" Command="{Binding Path=ToggleDeferCommand}" CommandParameter="{Binding Path=LongDeferDelay}" Visibility="{Binding Path=CanDefer}"/>
                     <MenuItem Header="{Binding ToggleDeferTitle}" Command="{Binding Path=ToggleDeferCommand}"/>
+                    <Separator/>
                     <MenuItem Header="Delete" Command="{Binding Path=DeleteCommand}"/>
                 </ContextMenu>
             </ListView.Resources>

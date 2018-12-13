@@ -1,0 +1,29 @@
+2018-04-27: Build 0.9.10 released to Production
+	- "Retag" option added to "Rename" command.
+2018-07-13: Build 0.9.11 released to Production
+	- Export sorting support.
+2018-08-16: Build 0.9.12 released to Production
+	- Default import context.
+	- Force-save option.
+	- Bug: deduplication search returns every single item as the last set.
+2018-10-11: Build 1.0.0 released to Production
+	- Basic GUI
+2018-10-18: Build 1.0.1 released to Production
+	- Recent Files list in GUI.
+2018-10-25: Build 1.0.2 released to Production
+	- Save to update view
+	- Size window to contents
+	- Done and Someday views
+2018-11-01: Build 1.0.3 released to Production
+	- GUI improvements
+	- Ranking GUI
+2018-11-08: Build 1.0.4 released to Production
+	- Live list updates.
+2018-11-13: Build 1.0.5 released to Production
+	- Implicit chains.
+	- Item editing in GUI.
+	- Some GUI bug fixes.
+2018-11-15: Build 1.0.5.1 released to Production
+	- Hot fix for implicit chains (everything was losing ranking data).
+2018-11-30: Build 1.0.7 released to Production
+	- Add items via GUI.

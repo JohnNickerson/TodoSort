@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Input;
 using AssimilationSoftware.PimData.Model;
@@ -12,8 +14,9 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
         #region Fields
 
         private RelayCommand _editCommand;
-        private RelayCommand _deferCommand;
+        private RelayCommand<TimeSpan?> _deferCommand;
         private RelayCommand _deleteCommand;
+        private RelayCommand _fixTitleCommand;
 
         #endregion // Fields
 
@@ -30,10 +33,6 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
         #region Public Methods
 
         #endregion // Public Methods
-
-        #region Properties
-
-        #endregion // Properties
 
         #region Data Properties (Bindings)
 
@@ -163,15 +162,23 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
             }
         }
 
+        public Visibility CanDefer => Source.Context == "someday" ? Visibility.Collapsed : Visibility.Visible;
+
+        public TimeSpan ShortDeferDelay => new TimeSpan(14, 0, 0, 0);
+
+        public TimeSpan LongDeferDelay => new TimeSpan(60, 0, 0, 0);
+
         #endregion // Data Properties (Bindings)
 
         #region Command Properties
 
         public ICommand EditCommand => _editCommand ?? (_editCommand = new RelayCommand(EditExecuted));
 
-        public ICommand ToggleDeferCommand => _deferCommand ?? (_deferCommand = new RelayCommand(DeferExecuted));
+        public ICommand ToggleDeferCommand => _deferCommand ?? (_deferCommand = new RelayCommand<TimeSpan?>(DeferExecuted));
 
         public ICommand DeleteCommand => _deleteCommand ?? (_deleteCommand = new RelayCommand(DeleteExecuted));
+
+        public ICommand FixTitleCommand => _fixTitleCommand ?? (_fixTitleCommand = new RelayCommand(FixTitleExecuted));
         #endregion // Command Properties
 
         #region Command Handlers
@@ -211,7 +218,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
             }
         }
 
-        private void DeferExecuted()
+        private void DeferExecuted(TimeSpan? delay)
         {
             if (Source.Context == "someday")
             {
@@ -219,6 +226,10 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
             }
             else
             {
+                if (delay.HasValue)
+                {
+                    Source.TickleDate = DateTime.Today.Add(delay.Value);
+                }
                 Api.Defer(Source);
             }
         }
@@ -228,6 +239,25 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
             if (MessageBox.Show("Delete this item. Are you sure?", "Delete", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
             {
                 Api.Delete(Source);
+            }
+        }
+
+        private void FixTitleExecuted()
+        {
+            // 1. Try to get the title automatically.
+            try
+            {
+                var client = new WebClient();
+                // TODO: Also get the redirected URL, if any.
+                var source = client.DownloadString(Source.Tags["url"]);
+                var title = Regex.Match(source, @"\<title\b[^>]*\>\s*(?<Title>[\s\S]*?)\</title\>", RegexOptions.IgnoreCase).Groups["Title"].Value;
+                Title = title;
+                Api.Update(Source);
+            }
+            // 2. If we fail, open the URL and the edit window to fix manually.
+            catch
+            {
+                EditExecuted();
             }
         }
         #endregion // Command Handlers

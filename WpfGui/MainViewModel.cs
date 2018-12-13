@@ -28,6 +28,8 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         private RelayCommand _reloadCommand;
         private RelayCommand _closeCommand;
         private RelayCommand _addItemCommand;
+        private RelayCommand _openFileCommand;
+        private RelayCommand _saveFileCommand;
 
         #endregion
 
@@ -80,6 +82,15 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         {
             if (!string.IsNullOrEmpty(FileName))
             {
+                // TODO: Maybe rethink this one case. "Save before reloading" is just "save".
+                switch (ConfirmSaveCancel("You have unsaved changes. Save before reloading?"))
+                {
+                    case null:
+                        return;
+                    case true:
+                        _api.Save();
+                        break;
+                }
                 OpenFile(FileName);
             }
         }
@@ -89,15 +100,17 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             Settings.Default.Save();
         }
 
-        public void OpenUrlCommandExecuted(ActionItem item)
+        public void OpenCommandExecuted()
         {
-            System.Diagnostics.Process p = new System.Diagnostics.Process();
-            p.StartInfo.FileName = item.Tags["url"];
-            p.Start();
-        }
+            switch (ConfirmSaveCancel("You have unsaved changes. Save first before opening another file?"))
+            {
+                case null:
+                    return;
+                case true:
+                    _api.Save();
+                    break;
+            }
 
-        public void OpenCommandExecuted(object sender, RoutedEventArgs e)
-        {
             // Configure open file dialog box
             Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
             dlg.FileName = "Document"; // Default file name
@@ -106,14 +119,14 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             dlg.Title = "Todo file";
 
             // Show open file dialog box
-            bool? result = dlg.ShowDialog();
+            var result = dlg.ShowDialog();
             if (result == true)
             {
                 OpenFile(dlg.FileName);
             }
         }
 
-        public void SaveCommandExecuted(object sender, RoutedEventArgs e)
+        public void SaveCommandExecuted()
         {
             _api.Save();
             OnPropertyChanged(nameof(Items));
@@ -134,25 +147,15 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         private void CloseExecute()
         {
             // Confirm close if unsaved changes.
-            if (HasUnsavedChanges)
+            switch (ConfirmSaveCancel("You have unsaved changes. Save before quitting?"))
             {
-                var result = MessageBox.Show("You have unsaved changes. Save and quit?", "Unsaved changes", MessageBoxButton.OKCancel);
-                switch (result)
-                {
-                    case MessageBoxResult.OK:
-                        SaveCommandExecuted(this, null);
-                        Application.Current.Shutdown();
-                        break;
-                    case MessageBoxResult.Cancel:
-                        break;
-                }
-
+                case null:
+                    return;
+                case true:
+                    _api.Save();
+                    break;
             }
-            else
-            {
-                // No unsaved changes. Just quit.
-                Application.Current.Shutdown();
-            }
+            Application.Current.Shutdown();
         }
 
         public void Update(ActionItem item)
@@ -217,10 +220,12 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         public void MoveAll(string context, string newContext)
         {
             _api.SearchSpecification = new ContextSearchSpecification(context);
-            foreach (var item in _api.SearchResults)
+            _api.ShowHeadOnly = false;
+            foreach (var item in _api.SearchResults.ToList())
             {
                 _api.SetContext(item, newContext);
             }
+            _api.ShowHeadOnly = true;
             OnPropertyChanged(nameof(Contexts));
             OnPropertyChanged(nameof(Items));
         }
@@ -254,6 +259,35 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             }
         }
 
+        private bool? ConfirmSaveCancel(string message)
+        {
+            if (!HasUnsavedChanges) return false;
+            var result = MessageBox.Show(message, "Save changes?", MessageBoxButton.YesNoCancel);
+            switch (result)
+            {
+                case MessageBoxResult.Cancel:
+                    return null;
+                case MessageBoxResult.No:
+                    return false;
+                case MessageBoxResult.Yes:
+                    return true;
+                default:
+                    return null;
+            }
+        }
+
+        private void OpenRecentFile(string filename)
+        {
+            switch (ConfirmSaveCancel("You have unsaved changes. Save before opening this file?"))
+            {
+                case null:
+                    return;
+                case true:
+                    _api.Save();
+                    break;
+            }
+            OpenFile(filename);
+        }
         #endregion
 
         #region Properties
@@ -353,7 +387,15 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             }
         }
 
-        public RelayCommand<string> OpenRecentCommand => _openRecentCommand ?? (_openRecentCommand = new RelayCommand<string>(OpenFile));
+        public List<ActionItem> Projects => _api != null ? _api.GetProjects() : new List<ActionItem>();
+
+        public string VersionNumber => "Version " + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+
+        #endregion
+
+        #region Commands
+
+        public RelayCommand<string> OpenRecentCommand => _openRecentCommand ?? (_openRecentCommand = new RelayCommand<string>(OpenRecentFile));
 
         public RelayCommand RankCommand => _rankCommand ?? (_rankCommand = new RelayCommand(RankItems));
 
@@ -363,10 +405,9 @@ namespace AssimilationSoftware.TodoSort.WpfGui
 
         public RelayCommand AddItemCommand => _addItemCommand ?? (_addItemCommand = new RelayCommand(AddExecuted));
 
-        public List<ActionItem> Projects => _api != null ? _api.GetProjects() : new List<ActionItem>();
+        public RelayCommand OpenFileCommand => _openFileCommand ?? (_openFileCommand = new RelayCommand(OpenCommandExecuted));
 
-        public string VersionNumber => "Version " + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
-
+        public RelayCommand SaveFileCommand => _saveFileCommand ?? (_saveFileCommand = new RelayCommand(SaveCommandExecuted));
         #endregion
     }
 }
