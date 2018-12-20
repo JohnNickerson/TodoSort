@@ -377,7 +377,7 @@ namespace AssimilationSoftware.TodoSort.Core
             {
                 selected.RankParent = null;
                 _repository.Update(selected);
-                foreach (var i in _repository.GetChildren(selected))
+                foreach (var i in _repository.GetChildren(selected).ToArray())
                 {
                     i.RankParent = null;
                     _repository.Update(i);
@@ -513,7 +513,7 @@ namespace AssimilationSoftware.TodoSort.Core
                 }
             }
             // Set any child objects from second to first.
-            foreach (var c in _repository.GetChildren(child))
+            foreach (var c in _repository.GetChildren(child).ToArray())
             {
                 c.RankParent = target;
             }
