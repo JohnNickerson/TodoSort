@@ -25,51 +25,38 @@ namespace AssimilationSoftware.TodoSort.WpfGui
     /// </summary>
     public partial class TaskList : Window
     {
-        private MainViewModel vm;
+        private readonly MainViewModel _vm;
 
         public TaskList()
         {
             InitializeComponent();
-            string lastfile = null;
-            if (Settings.Default.RecentFiles != null && Settings.Default.RecentFiles.Count > 0)
+            // TODO: This goes in App.xaml.cs
+            var recentFile = Settings.Default.RecentFiles?.FirstOrDefault();
+            _vm = new MainViewModel(recentFile);
+            _vm.Window = this;
+            DataContext = _vm;
+        }
+
+        public void ResizeColumns()
+        {
+            foreach (var column in TaskGridView.Columns)
             {
-                lastfile = Settings.Default.RecentFiles[0];
-            }
-            vm = new MainViewModel(lastfile);
-            vm.Window = this;
-            DataContext = vm;
-        }
-
-        private void OpenClick(object sender, RoutedEventArgs e)
-        {
-            vm.OpenCommandExecuted();
-        }
-
-        private void SaveClick(object sender, RoutedEventArgs e)
-        {
-            vm.SaveCommandExecuted();
-        }
-
-        private void OpenUrlClick(object sender, RequestNavigateEventArgs e)
-        {
-            if (!string.IsNullOrEmpty(e.Uri.OriginalString))
-            {
-                Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
-                e.Handled = true;
+                if (double.IsNaN(column.Width)) column.Width = 1;
+                column.Width = double.NaN;
             }
         }
 
         private void TaskList_OnClosing(object sender, CancelEventArgs e)
         {
             // Confirm close if the ViewModel says there are unsaved changes.
-            if (vm.HasUnsavedChanges)
+            if (_vm.HasUnsavedChanges)
             {
                 var result = MessageBox.Show("You have unsaved changes. Save and quit?", "Unsaved changes", MessageBoxButton.OKCancel);
                 switch (result)
                 {
                     case MessageBoxResult.OK:
                         // save.
-                        vm.SaveCommandExecuted();
+                        _vm.SaveCommandExecuted();
                         break;
                     case MessageBoxResult.Cancel:
                         e.Cancel = true;

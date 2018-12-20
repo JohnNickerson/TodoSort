@@ -14,18 +14,23 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
 {
     public class Context : ViewModelBase
     {
+        #region Fields
         private string _title;
         private ISearchSpecification<ActionItem> _searchSpecification;
         private string _dateColumnTitle;
         private Visibility _dateVisible;
         private RelayCommand<Context> _moveAllCommand;
+        #endregion
 
+        #region Methods
         private void MoveAllExecuted(Context fromContext)
         {
             if (fromContext != null)
                 ParentVm.MoveAll(fromContext.Title, _title);
         }
+        #endregion
 
+        #region Properties
         public string DateColumnTitle
         {
             get => _dateColumnTitle;
@@ -73,7 +78,12 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
         public List<Context> AllOtherContexts { get; set; }
 
         public MainViewModel ParentVm { get; set; }
+        #endregion
+
+        #region Commands
 
         public ICommand MoveAllCommand => _moveAllCommand ?? (_moveAllCommand = new RelayCommand<Context>(MoveAllExecuted));
+
+        #endregion
     }
 }

@@ -1,8 +1,7 @@
 ﻿<Window x:Class="AssimilationSoftware.TodoSort.WpfGui.TaskList"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:w="clr-namespace:AssimilationSoftware.TodoSort.WpfGui"
-	Icon="Task.ico"
+        Icon="Task.ico"
     Title="{Binding WindowTitle}" MinHeight="300" MinWidth="300" SizeToContent="WidthAndHeight" Closing="TaskList_OnClosing">
     <Window.InputBindings>
         <KeyBinding Command="{Binding Path=OpenFileCommand}" Key="O" Modifiers="Ctrl" />
@@ -11,6 +10,7 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -20,8 +20,8 @@
         <Menu Grid.Row="0" Background="{x:Null}" Grid.ColumnSpan="2">
             <MenuItem Header="_File">
                 <MenuItem Header="_New" IsEnabled="False"/>
-                <MenuItem Header="_Open" Click="OpenClick" InputGestureText="Ctrl+O" />
-                <MenuItem Header="_Save" Click="SaveClick" InputGestureText="Ctrl+S" />
+                <MenuItem Header="_Open" Command="{Binding Path=OpenFileCommand}" InputGestureText="Ctrl+O" />
+                <MenuItem Header="_Save" Command="{Binding Path=SaveFileCommand}" InputGestureText="Ctrl+S" />
                 <MenuItem Header="Save _As" IsEnabled="False"/>
                 <MenuItem Header="Reload" Command="{Binding ReloadCommand}" />
                 <Separator/>
@@ -47,7 +47,7 @@
             </MenuItem>
         </Menu>
 
-        <ListBox Grid.Row="1" Grid.Column="0" Name="Contexts" ItemsSource="{Binding Path=Contexts}" SelectedItem="{Binding Path=SelectedContext}" MinWidth="85">
+        <ListBox Grid.Row="1" Grid.Column="0" Grid.RowSpan="2" Name="Contexts" ItemsSource="{Binding Path=Contexts}" SelectedItem="{Binding Path=SelectedContext}" MinWidth="85">
             <ListBox.Resources>
                 <ContextMenu x:Key="MetaContextMenu">
                     <MenuItem Header="Move All" Command="{Binding Path=MoveAllCommand}" IsEnabled="True" ItemsSource="{Binding AllOtherContexts}">
@@ -68,7 +68,20 @@
             </ListBox.ItemTemplate>
         </ListBox>
 
-        <ListView Grid.Row="1" Grid.Column="1" Name="SearchResultsList" ItemsSource="{Binding Path=Items}">
+        <Expander Grid.Row="1" Grid.Column="1" Header="Search">
+            <Expander.Resources>
+                <Style TargetType="Label">
+                    <Setter Property="HorizontalAlignment" Value="Right"/>
+                </Style>
+            </Expander.Resources>
+            <UniformGrid Columns="2">
+                <Label Content="Show Head Only"/>
+                <CheckBox IsChecked="{Binding ShowHeadOnly}" VerticalAlignment="Center"/>
+                <Label Content="Keyword"/>
+                <TextBox Text="{Binding SearchKeyword}" Margin="2"/>
+            </UniformGrid>
+        </Expander>
+        <ListView Grid.Row="2" Grid.Column="1" ItemsSource="{Binding Path=Items}">
             <ListView.Resources>
                 <ContextMenu x:Key="ItemContextMenu">
                     <MenuItem Header="Edit" Command="{Binding Path=EditCommand}"/>
@@ -82,7 +95,7 @@
                 </ContextMenu>
             </ListView.Resources>
             <ListView.View>
-                <GridView>
+                <GridView x:Name="TaskGridView">
                     <GridViewColumn Header="">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
@@ -101,7 +114,7 @@
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBlock>
-                                <Hyperlink NavigateUri="{Binding Path=Url}" ToolTip="{Binding Path=Url}" RequestNavigate="OpenUrlClick" TargetName="TodoSort" IsEnabled="{Binding UrlNotNull}">Open</Hyperlink>
+                                    <Hyperlink CommandParameter="{Binding Path=Url}" ToolTip="{Binding Path=Url}" Command="{Binding Path=OpenUrlCommand}" TargetName="TodoSort">Open</Hyperlink>
                                 </TextBlock>
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>

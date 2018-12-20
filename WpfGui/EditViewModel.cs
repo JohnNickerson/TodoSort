@@ -19,6 +19,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         private string _context;
         private ActionItem _project;
         private DateTime? _tickleDate;
+        private readonly string[] _excludeContexts = { "done", "someday", "Search" };
 
         private ICommand _okCommand;
         private ICommand _addTagCommand;
@@ -29,7 +30,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
 
         public EditViewModel(MainViewModel api, ActionViewItem item, Window window)
         {
-            AllContexts = api.Contexts.Where(c => c.Title != "done" && c.Title != "someday").Select(c => c.Title).OrderBy(c => c).ToList();
+            AllContexts = api.Contexts.Where(c => !_excludeContexts.Contains(c.Title)).Select(c => c.Title).OrderBy(c => c).ToList();
             AllProjects = api.Projects.OrderBy(p => p.Title).ToList();
             Window = window;
 

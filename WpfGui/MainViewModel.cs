@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Windows;
+using System.Windows.Input;
 using AssimilationSoftware.PimData.Mappers.Text;
 using AssimilationSoftware.PimData.Model;
 using AssimilationSoftware.TodoSort.Core;
@@ -18,6 +21,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         #region Fields
 
         private Context _selectedContext;
+        private Context _searchContext;
         private List<Context> _contexts;
         private string _fileName;
         private List<ActionViewItem> _currentItems;
@@ -30,9 +34,11 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         private RelayCommand _addItemCommand;
         private RelayCommand _openFileCommand;
         private RelayCommand _saveFileCommand;
+        private string _searchKeyword;
 
         #endregion
 
+        #region Constructors
         public MainViewModel(string filename)
         {
             if (filename != null)
@@ -40,6 +46,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                 OpenFile(filename);
             }
         }
+        #endregion
 
         #region Methods
 
@@ -237,10 +244,10 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             OnPropertyChanged(nameof(Items));
         }
 
-        protected override void OnPropertyChanged(string propertyName = null)
+        protected override void OnPropertyChanged([CallerMemberName]string propertyName = null)
         {
             // Cached properties.
-            if (propertyName == nameof(Items))
+            if (propertyName == nameof(Items) || propertyName == nameof(ShowHeadOnly))
             {
                 _currentItems = null;
             }
@@ -250,12 +257,24 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             }
 
             base.OnPropertyChanged(propertyName);
-            
+
             // Dependent properties.
             if (propertyName == nameof(Items))
             {
                 base.OnPropertyChanged(nameof(HasUnsavedChanges));
                 base.OnPropertyChanged(nameof(WindowTitle));
+            }
+
+            if (propertyName == nameof(ShowHeadOnly))
+            {
+                base.OnPropertyChanged(nameof(Items));
+            }
+
+            if (propertyName == nameof(SelectedContext))
+            {
+                // Reset column widths.
+                // TODO: Raise an event that the view can respond to, or depend on this event.
+                (Window as TaskList)?.ResizeColumns();
             }
         }
 
@@ -288,6 +307,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             }
             OpenFile(filename);
         }
+
         #endregion
 
         #region Properties
@@ -320,6 +340,12 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                     }
                     _contexts.Add(new Context { Title = "done", Window = Window, DateVisible = Visibility.Visible, DateColumnTitle = "Done Date" });
                     _contexts.Add(new Context { Title = "someday", Window = Window, DateVisible = Visibility.Visible, DateColumnTitle = "Return Date" });
+                    _searchContext = new Context
+                    {
+                        Title = "Search", Window = Window, DateVisible = Visibility.Collapsed,
+                        SearchSpecification = new FullTextSearchSpecification(SearchKeyword)
+                    };
+                    _contexts.Add(_searchContext);
                 }
                 return _contexts;
             }
@@ -375,7 +401,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             }
         }
 
-        public string WindowTitle => $"TodoSort - {FileName} {(HasUnsavedChanges ? "*" : "")}";
+        public string WindowTitle => $"{(HasUnsavedChanges ? "*" : "")}TodoSort - {FileName}";
 
         public ObservableCollection<string> RecentFileList
         {
@@ -390,6 +416,30 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         public List<ActionItem> Projects => _api != null ? _api.GetProjects() : new List<ActionItem>();
 
         public string VersionNumber => "Version " + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+
+        public bool ShowHeadOnly
+        {
+            get => _api?.ShowHeadOnly ?? true;
+            set
+            {
+                if (_api.ShowHeadOnly == value) return;
+                _api.ShowHeadOnly = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string SearchKeyword
+        {
+            get => _searchKeyword;
+            set
+            {
+                if (_searchKeyword == value) return;
+                _searchKeyword = value;
+                _searchContext.SearchSpecification = new FullTextSearchSpecification(SearchKeyword);
+                OnPropertyChanged();
+                SelectedContext = _searchContext;
+            }
+        }
 
         #endregion
 
@@ -408,6 +458,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         public RelayCommand OpenFileCommand => _openFileCommand ?? (_openFileCommand = new RelayCommand(OpenCommandExecuted));
 
         public RelayCommand SaveFileCommand => _saveFileCommand ?? (_saveFileCommand = new RelayCommand(SaveCommandExecuted));
+
         #endregion
     }
 }

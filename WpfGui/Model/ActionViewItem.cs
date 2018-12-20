@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
@@ -17,6 +18,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
         private RelayCommand<TimeSpan?> _deferCommand;
         private RelayCommand _deleteCommand;
         private RelayCommand _fixTitleCommand;
+        private RelayCommand<string> _openUrlCommand;
 
         #endregion // Fields
 
@@ -179,6 +181,8 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
         public ICommand DeleteCommand => _deleteCommand ?? (_deleteCommand = new RelayCommand(DeleteExecuted));
 
         public ICommand FixTitleCommand => _fixTitleCommand ?? (_fixTitleCommand = new RelayCommand(FixTitleExecuted));
+
+        public ICommand OpenUrlCommand => _openUrlCommand ?? (_openUrlCommand = new RelayCommand<string>(OpenUrlExecuted, s => !string.IsNullOrEmpty(s)));
         #endregion // Command Properties
 
         #region Command Handlers
@@ -259,6 +263,11 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
             {
                 EditExecuted();
             }
+        }
+
+        private void OpenUrlExecuted(string url)
+        {
+            Process.Start(new ProcessStartInfo(url));
         }
         #endregion // Command Handlers
     }

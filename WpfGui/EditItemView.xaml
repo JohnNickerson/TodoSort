@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AssimilationSoftware.TodoSort.WpfGui"
         mc:Ignorable="d"
-        Title="Edit Item" Height="450" Width="600" SizeToContent="WidthAndHeight">
+        Title="Edit Item" Height="450" MaxWidth="900" SizeToContent="WidthAndHeight">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -39,7 +39,7 @@
         <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Title}"/>
 
         <TextBlock Grid.Row="1" Grid.Column="0" Text="Notes"/>
-        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Notes}" AcceptsReturn="True"/>
+        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Notes}" AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto"/>
 
         <StackPanel Grid.Row="2" Grid.Column="0">
             <TextBlock Text="Tags"/>

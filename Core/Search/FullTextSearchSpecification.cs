@@ -13,7 +13,7 @@ namespace AssimilationSoftware.TodoSort.Core.Search
 
         public FullTextSearchSpecification(string search)
         {
-            _searchTerm = search.ToLower();
+            _searchTerm = search?.ToLower() ?? string.Empty;
         }
 
         public bool IsSatisfiedBy(ActionItem b)

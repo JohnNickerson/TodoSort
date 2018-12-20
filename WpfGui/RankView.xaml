@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AssimilationSoftware.TodoSort.WpfGui"
         mc:Ignorable="d" SizeToContent="WidthAndHeight"
-        Title="Rank Items" MinHeight="200" MinWidth="500">
+        Title="Rank Items" MinHeight="200" MinWidth="500" MaxWidth="2000">
     <Grid>
         <Grid.Resources>
             <Style TargetType="Button">
@@ -44,8 +44,7 @@
 
         <StackPanel Grid.Row="0" Grid.Column="1" Margin="5">
             <TextBlock Text="{Binding Path=CurrentPair.Action2.Title}"/>
-            <ListBox ItemsSource="{Binding Path=CurrentPair.Action2.Notes}" BorderBrush="Transparent">
-            </ListBox>
+            <ListBox ItemsSource="{Binding Path=CurrentPair.Action2.Notes}" BorderBrush="Transparent"/>
             <ListBox ItemsSource="{Binding Path=CurrentPair.Action2.Tags}" BorderBrush="Transparent">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
