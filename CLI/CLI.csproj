@@ -85,6 +85,7 @@
     <Compile Include="Options\DedupeOptions.cs" />
     <Compile Include="Options\DoneSearchSubOptions.cs" />
     <Compile Include="Options\DoneSubOptions.cs" />
+    <Compile Include="Options\FixTitlesOptions.cs" />
     <Compile Include="Options\MultiSearchSubOptions.cs" />
     <Compile Include="Options\DeferSubOptions.cs" />
     <Compile Include="Options\ExportSubOptions.cs" />

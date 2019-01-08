@@ -9,8 +9,11 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
+using System.Net;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using AssimilationSoftware.TodoSort.Core.Data;
 
 namespace AssimilationSoftware.TodoSort.CLI
@@ -39,7 +42,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                 InitSubOptions initty = (InitSubOptions)argsubs;
                 var initsettings = new FolderSettings();
                 initsettings.TodoPath = initty.TodoFile;
-                
+
                 // Save settings.
                 FolderSettings.SaveTo(settingspath, initsettings);
                 return;
@@ -287,6 +290,58 @@ namespace AssimilationSoftware.TodoSort.CLI
                     break;
                 #endregion
 
+                case "fix-titles":
+                    {
+                        var fixOptions = (FixTitlesOptions)argsubs;
+                        vm.SearchSpecification = fixOptions.SearchSpecification;
+                        var client = new WebClient();
+                        
+                        var totalCount = 0;
+                        decimal progress = 0;
+                        decimal progressTotal = vm.SearchResults.Count();
+                        foreach (var tem in vm.SearchResults.ToArray())
+                        {
+                            progress++;
+                            try
+                            {
+                                //// Get the redirected URL, if any.
+                                //// So far, this seems to fail.
+                                //var req = (HttpWebRequest) WebRequest.Create(tem.Tags["url"]);
+                                //req.Method = "HEAD";
+                                //req.AllowAutoRedirect = true;
+                                //var resp = (HttpWebResponse) req.GetResponse();
+                                //if (resp.StatusCode == HttpStatusCode.Redirect)
+                                //{
+                                //    tem.Notes.Add(string.Format("Redirected from '{0}'.", tem.Tags["url"]));
+                                //    tem.Tags["url"] = resp.ResponseUri.AbsoluteUri;
+                                //}
+
+                                var source = client.DownloadString(tem.Tags["url"]);
+                                var title = Regex.Match(source, @"\<title\b[^>]*\>\s*(?<Title>[\s\S]*?)\</title\>", RegexOptions.IgnoreCase).Groups["Title"].Value;
+                                if (title != tem.Title)
+                                {
+                                    Console.WriteLine("Renaming:\n\t{0}\n\t{1}", tem.Title, title);
+                                    totalCount++;
+                                    tem.Title = title;
+                                    if (!string.IsNullOrEmpty(fixOptions.MoveTo))
+                                    {
+                                        tem.Context = fixOptions.MoveTo;
+                                    }
+
+                                    vm.Update(tem);
+                                    Console.WriteLine("{0:0}% complete", 100m * progress / progressTotal);
+                                }
+                            }
+                            catch { }
+                        }
+
+                        if (totalCount > 0)
+                        {
+                            Console.WriteLine("{0} items updated.", totalCount);
+                        }
+                        break;
+                    }
+
                 #region Import
                 case "import":
                     {
@@ -477,7 +532,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                             Console.WriteLine();
                         }
                     }
-                    
+
                     break;
                 #endregion
 
@@ -486,12 +541,12 @@ namespace AssimilationSoftware.TodoSort.CLI
                     // Delete items below a specified depth.
                     var pruneOptions = (MultiSearchSubOptions)argsubs;
                     vm.SearchSpecification = pruneOptions.SearchSpecification;
-					Console.WriteLine("About to defer {0} items. Continue [Y/N]?", vm.SearchResults.Count());
-					var k = Console.ReadKey();
-					if (k.KeyChar.ToString().ToLower() == "y")
-					{
-						vm.Defer(vm.SearchResults.ToArray());
-					}
+                    Console.WriteLine("About to defer {0} items. Continue [Y/N]?", vm.SearchResults.Count());
+                    var k = Console.ReadKey();
+                    if (k.KeyChar.ToString().ToLower() == "y")
+                    {
+                        vm.Defer(vm.SearchResults.ToArray());
+                    }
                     break;
                 #endregion
 
@@ -556,7 +611,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                                             case 'n':
                                                 // Quit without saving.
                                                 return;
-                                            // Default. No action. Just return to ranking.
+                                                // Default. No action. Just return to ranking.
                                         }
                                         break;
                                 }
@@ -862,7 +917,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                         Console.WriteLine(((AssemblyCopyrightAttribute)Assembly.GetExecutingAssembly().GetCustomAttribute(typeof(AssemblyCopyrightAttribute))).Copyright);
                     }
                     break;
-                #endregion
+                    #endregion
             }
 
             #region Tidy up
@@ -876,7 +931,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                 PrintItem(selected, null);
             }
 
-			// Rewrite the files
+            // Rewrite the files
             vm.Save(force_save);
         }
 
@@ -897,7 +952,7 @@ namespace AssimilationSoftware.TodoSort.CLI
 
         private static void EditSomedayItem(ViewModel vm, ActionItem item, bool nsfw = false)
         {
-            while(true)
+            while (true)
             {
                 PrintItem(item, null, nsfw);
                 // Write menu.
@@ -1026,10 +1081,10 @@ namespace AssimilationSoftware.TodoSort.CLI
             {
                 sortedlist = sortedlist.ThenBy(i => i.TickleDate ?? DateTime.Now);
             }
-			else if (sorttag == "upvotes")
-			{
-				sortedlist = sortedlist.ThenBy(i => i.Upvotes);
-			}
+            else if (sorttag == "upvotes")
+            {
+                sortedlist = sortedlist.ThenBy(i => i.Upvotes);
+            }
             else if (sorttag == "title" || string.IsNullOrEmpty(sorttag))
             {
                 sortedlist = sortedlist.ThenBy(i => i.Title);
@@ -1251,40 +1306,40 @@ namespace AssimilationSoftware.TodoSort.CLI
             Console.WriteLine(content);
         }
 
-		private static ActionItem Disambiguate(IEnumerable<ActionItem> todolist, bool autoAcceptOne = false, bool nsfw = false)
-		{
-			ActionItem selected = null;
+        private static ActionItem Disambiguate(IEnumerable<ActionItem> todolist, bool autoAcceptOne = false, bool nsfw = false)
+        {
+            ActionItem selected = null;
 
             // Disambiguate or verify search results.
             if (todolist.Count() == 0)
-			{
-				Console.WriteLine("No search matches. No action will be taken.");
-			}
+            {
+                Console.WriteLine("No search matches. No action will be taken.");
+            }
             else if (todolist.Count() > 9)
-			{
+            {
                 // Print the items so we know what to narrow down.
                 for (int i = 0; i < todolist.Count(); i++)
                 {
                     PrintItem(todolist.ElementAt(i), null, nsfw);
                 }
                 Console.WriteLine("Too many search matches. Try to be more specific. No action will be taken this time.");
-			}
+            }
             else if (todolist.Count() == 1 && autoAcceptOne)
             {
                 PrintItem(todolist.ElementAt(0), null, nsfw);
                 Console.WriteLine("Auto-accepting...");
                 selected = todolist.ElementAt(0);
             }
-			else
-			{
+            else
+            {
                 for (int i = 0; i < todolist.Count(); i++)
-				{
+                {
                     PrintItem(todolist.ElementAt(i), i, nsfw);
-				}
-				char choice = Console.ReadKey().KeyChar;
+                }
+                char choice = Console.ReadKey().KeyChar;
                 // Write a blank line to prevent whatever comes next from printing right after this on the same line.
                 Console.WriteLine();
-				int dex;
+                int dex;
                 if (Int32.TryParse(choice.ToString(), out dex))
                 {
                     if (todolist.Count() > dex)
@@ -1292,8 +1347,8 @@ namespace AssimilationSoftware.TodoSort.CLI
                         selected = todolist.ElementAt(dex);
                     }
                 }
-			}
-			return selected;
-		}
+            }
+            return selected;
+        }
     }
 }

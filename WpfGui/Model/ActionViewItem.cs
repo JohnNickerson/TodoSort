@@ -261,6 +261,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
             // 2. If we fail, open the URL and the edit window to fix manually.
             catch
             {
+                OpenUrlExecuted(Source.Tags["url"]);
                 EditExecuted();
             }
         }

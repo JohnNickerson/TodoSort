@@ -47,6 +47,9 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
         [VerbOption("export", HelpText = "Save a formatted copy of a list to file.")]
         public ExportSubOptions ExportVerb { get; set; }
 
+        [VerbOption("fix-titles", HelpText = "Attempts to repair titles for items based on their URL tag.")]
+        public FixTitlesOptions FixTitlesVerb { get; set; }
+
         [VerbOption("import", HelpText = "Imports items from an external source.")]
         public ImportSubOptions ImportVerb { get; set; }
 
