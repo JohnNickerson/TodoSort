@@ -5,7 +5,19 @@ rem C:\Program Files (x86)\Microsoft Visual Studio 10.0\Common7\IDE
 rem C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE
 rem devenv /useenv /build "Release" "AcomProfileManager.sln"
 
-md C:\Users\John\Dropbox\Toolkit\TodoSort\Integration\GUI
-move /y CLI\bin\Release\*.* C:\Users\John\Dropbox\Toolkit\TodoSort\Integration
-move /y WpfGui\bin\Release\*.* C:\Users\John\Dropbox\Toolkit\TodoSort\Integration\GUI
+Rem TodoSort deploy script for integration.
+Rem Assumes Release build has already been done.
+
+rem 1. Ensure target directories exist.
+md %DROPBOX%\Toolkit\TodoSort\Integration\GUI
+
+rem 2. Empty out target directories.
+del "%DROPBOX%\Toolkit\TodoSort\Integration\GUI\*.*"
+del "%DROPBOX%\Toolkit\TodoSort\Integration\*.*"
+
+rem 3. Move Release binaries to target directories.
+move /y CLI\bin\Release\*.* %DROPBOX%\Toolkit\TodoSort\Integration
+move /y WpfGui\bin\Release\*.* %DROPBOX%\Toolkit\TodoSort\Integration\GUI
+
+rem 4. Pause to show success or failure.
 Pause

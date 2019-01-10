@@ -34,6 +34,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         private RelayCommand _addItemCommand;
         private RelayCommand _openFileCommand;
         private RelayCommand _saveFileCommand;
+        private RelayCommand _applySearchCommand;
         private string _searchKeyword;
 
         #endregion
@@ -308,6 +309,12 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             OpenFile(filename);
         }
 
+        private void ApplySearchExecuted()
+        {
+            _searchContext.SearchSpecification = new FullTextSearchSpecification(SearchKeyword);
+            SelectedContext = _searchContext;
+        }
+
         #endregion
 
         #region Properties
@@ -394,6 +401,8 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                         break;
                     default:
                         _api.SearchSpecification = SelectedContext.SearchSpecification;
+                        // Todo: Apply user-specified sorting options.
+                        // eg if (Sort == SortField.Title) { _currentItems.OrderBy(i => i.Title); }
                         _currentItems = _api.SearchResults.Select(s => new ActionViewItem(s, this)).OrderByDescending(i => i.Upvotes).ThenBy(i => i.Title).ToList();
                         break;
                 }
@@ -435,9 +444,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             {
                 if (_searchKeyword == value) return;
                 _searchKeyword = value;
-                _searchContext.SearchSpecification = new FullTextSearchSpecification(SearchKeyword);
                 OnPropertyChanged();
-                SelectedContext = _searchContext;
             }
         }
 
@@ -458,6 +465,8 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         public RelayCommand OpenFileCommand => _openFileCommand ?? (_openFileCommand = new RelayCommand(OpenCommandExecuted));
 
         public RelayCommand SaveFileCommand => _saveFileCommand ?? (_saveFileCommand = new RelayCommand(SaveCommandExecuted));
+
+        public RelayCommand ApplySearchCommand => _applySearchCommand ?? (_applySearchCommand = new RelayCommand(ApplySearchExecuted));
 
         #endregion
     }

@@ -79,6 +79,8 @@
                 <CheckBox IsChecked="{Binding ShowHeadOnly}" VerticalAlignment="Center"/>
                 <Label Content="Keyword"/>
                 <TextBox Text="{Binding SearchKeyword}" Margin="2"/>
+                <Border/>
+                <Button Content="Go" Margin="3" MaxWidth="50" Command="{Binding ApplySearchCommand}"/>
             </UniformGrid>
         </Expander>
         <ListView Grid.Row="2" Grid.Column="1" ItemsSource="{Binding Path=Items}">
