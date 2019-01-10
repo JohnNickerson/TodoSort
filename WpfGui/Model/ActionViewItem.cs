@@ -36,7 +36,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
 
         #endregion // Public Methods
 
-        #region Data Properties (Bindings)
+        #region Properties
 
         public ActionItem Source { get; set; }
 
@@ -170,7 +170,9 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
 
         public TimeSpan LongDeferDelay => new TimeSpan(60, 0, 0, 0);
 
-        #endregion // Data Properties (Bindings)
+        public bool IsInChain => Tags.ContainsKey("order") && (Tags.ContainsKey("series") || Source.Project != null);
+
+        #endregion
 
         #region Command Properties
 
@@ -183,6 +185,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
         public ICommand FixTitleCommand => _fixTitleCommand ?? (_fixTitleCommand = new RelayCommand(FixTitleExecuted));
 
         public ICommand OpenUrlCommand => _openUrlCommand ?? (_openUrlCommand = new RelayCommand<string>(OpenUrlExecuted, s => !string.IsNullOrEmpty(s)));
+
         #endregion // Command Properties
 
         #region Command Handlers

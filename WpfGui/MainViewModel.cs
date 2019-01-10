@@ -67,13 +67,44 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             _repo = new TodoRepository(new ActionItemDiskMapper(FileName));
             _api = new ViewModel(_repo);
 
-            // Process pending items for any to return to the main list.
-            _api.SomedaySearchSpecification = new TickleDateSearchSpecification(null, DateTime.Today);
-            _api.Undefer("inbox", _api.SomedaySearchResults.ToArray());
+            Cleanup();
 
             OnPropertyChanged(nameof(Contexts));
             OnPropertyChanged(nameof(Items));
             OnPropertyChanged(nameof(RecentFileList));
+        }
+
+        private void Cleanup()
+        {
+            // Process pending items for any to return to the main list.
+            _api.SomedaySearchSpecification = new TickleDateSearchSpecification(null, DateTime.Today);
+            _api.Undefer("inbox", _api.SomedaySearchResults.ToArray());
+
+            // Check for out-of-order chain items.
+            foreach (var headItem in Items.ToArray())
+            {
+                if (headItem.IsInChain)
+                {
+                    var chainItems = _repo.FindAll().Where(i => i.Context == headItem.Source.Context &&
+                        i.Tags.ContainsKey("order") && i.GetIntTag("order", 0) < headItem.Source.GetIntTag("order", 0));
+                    if (headItem.Source.Project != null)
+                    {
+                        chainItems = chainItems.Where(i => i.Project != null && i.Project.Equals(headItem.Source.Project));
+                    }
+                    else
+                    {
+                        chainItems = chainItems.Where(i =>
+                            i.Tags.ContainsKey("series") && i.Tags["series"] == headItem.Tags["series"]);
+                    }
+
+                    var first = chainItems.OrderBy(i => i.GetIntTag("order", 0)).FirstOrDefault();
+                    if (first != null)
+                    {
+                        _api.SetParent(first, null);
+                        _api.SetParent(headItem.Source, first);
+                    }
+                }
+            }
         }
 
         private void RankItems()
@@ -349,7 +380,9 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                     _contexts.Add(new Context { Title = "someday", Window = Window, DateVisible = Visibility.Visible, DateColumnTitle = "Return Date" });
                     _searchContext = new Context
                     {
-                        Title = "Search", Window = Window, DateVisible = Visibility.Collapsed,
+                        Title = "Search",
+                        Window = Window,
+                        DateVisible = Visibility.Collapsed,
                         SearchSpecification = new FullTextSearchSpecification(SearchKeyword)
                     };
                     _contexts.Add(_searchContext);
