@@ -36,6 +36,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         private RelayCommand _saveFileCommand;
         private RelayCommand _applySearchCommand;
         private string _searchKeyword;
+        private string _searchMissingTagName;
 
         #endregion
 
@@ -342,7 +343,17 @@ namespace AssimilationSoftware.TodoSort.WpfGui
 
         private void ApplySearchExecuted()
         {
-            _searchContext.SearchSpecification = new FullTextSearchSpecification(SearchKeyword);
+            var specs = new List<ISearchSpecification<ActionItem>>();
+            if (!string.IsNullOrEmpty(SearchKeyword))
+            {
+                specs.Add(new FullTextSearchSpecification(SearchKeyword));
+            }
+
+            if (!string.IsNullOrEmpty(SearchMissingTagName))
+            {
+                specs.Add(new NotSpecification<ActionItem>(new TagValueSpecification(SearchMissingTagName, null)));
+            }
+            _searchContext.SearchSpecification = new AndSpecification<ActionItem>(specs.ToArray());
             SelectedContext = _searchContext;
         }
 
@@ -477,6 +488,17 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             {
                 if (_searchKeyword == value) return;
                 _searchKeyword = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string SearchMissingTagName
+        {
+            get => _searchMissingTagName;
+            set
+            {
+                if (_searchMissingTagName == value) return;
+                _searchMissingTagName = value;
                 OnPropertyChanged();
             }
         }
