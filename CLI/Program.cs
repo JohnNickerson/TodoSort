@@ -1178,7 +1178,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                 string name = focus.Title.Substring(0, Math.Min(conwide - prefix.Length, focus.Title.Length));
                 if (focus.Tags.ContainsKey("nsfw") && focus.Tags["nsfw"].ToLower() == "true" && !nsfw)
                 {
-                    name = "----NSFW----";
+                    name = "(nsfw) " + Rot13.Transform(name);
                 }
                 if (tree != null && tree.Contains(focus))
                 {
@@ -1215,7 +1215,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             string title = i.Title;
             if (i.Tags.ContainsKey("nsfw") && i.Tags["nsfw"].ToLower() == "true" && !nsfw)
             {
-                title = "----NSFW----";
+                title = "(nsfw) " + Rot13.Transform(title);
             }
             if (i.Tags.ContainsKey("type"))
             {

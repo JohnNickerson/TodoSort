@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
-using System.Windows.Input;
 using AssimilationSoftware.PimData.Mappers.Text;
 using AssimilationSoftware.PimData.Model;
 using AssimilationSoftware.TodoSort.Core;
@@ -77,6 +75,15 @@ namespace AssimilationSoftware.TodoSort.WpfGui
 
         private void Cleanup()
         {
+            foreach (var i in _repo.FindAll())
+            {
+                if (string.IsNullOrEmpty(i.Context))
+                {
+                    i.Context = "inbox";
+                    _api.Update(i);
+                }
+            }
+
             // Process pending items for any to return to the main list.
             _api.SomedaySearchSpecification = new TickleDateSearchSpecification(null, DateTime.Today);
             _api.Undefer("inbox", _api.SomedaySearchResults.ToArray());
@@ -152,11 +159,13 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             }
 
             // Configure open file dialog box
-            Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
-            dlg.FileName = "Document"; // Default file name
-            dlg.DefaultExt = ".txt"; // Default file extension
-            dlg.Filter = "Text documents (.txt)|*.txt"; // Filter files by extension
-            dlg.Title = "Todo file";
+            Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog
+            {
+                FileName = "Document",
+                DefaultExt = ".txt",
+                Filter = "Text documents (.txt)|*.txt",
+                Title = "Todo file"
+            };
 
             // Show open file dialog box
             var result = dlg.ShowDialog();

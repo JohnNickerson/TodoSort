@@ -22,7 +22,7 @@ namespace AssimilationSoftware.TodoSort.Core.Export
                 var line = n.Title;
                 if (n.Tags.ContainsKey("nsfw") && n.Tags["nsfw"].ToLower() == "true")
                 {
-                    line = "----NSFW----";
+                    line = "(nsfw) " + Rot13.Transform(line);
                 }
                 result.Append("<input type=\"checkbox\">");
                 if (n.Tags.ContainsKey("url"))
