@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
+using System.Windows.Input;
 using AssimilationSoftware.PimData.Mappers.Text;
 using AssimilationSoftware.PimData.Model;
 using AssimilationSoftware.TodoSort.Core;
@@ -33,6 +34,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         private RelayCommand _openFileCommand;
         private RelayCommand _saveFileCommand;
         private RelayCommand _applySearchCommand;
+        private RelayCommand _cleanupCommand;
         private string _searchKeyword;
         private string _searchMissingTagName;
 
@@ -66,7 +68,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             _repo = new TodoRepository(new ActionItemDiskMapper(FileName));
             _api = new ViewModel(_repo);
 
-            Cleanup();
+            //Cleanup();
 
             OnPropertyChanged(nameof(Contexts));
             OnPropertyChanged(nameof(Items));
@@ -531,6 +533,8 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         public RelayCommand SaveFileCommand => _saveFileCommand ?? (_saveFileCommand = new RelayCommand(SaveCommandExecuted));
 
         public RelayCommand ApplySearchCommand => _applySearchCommand ?? (_applySearchCommand = new RelayCommand(ApplySearchExecuted));
+
+        public ICommand CleanupCommand => _cleanupCommand ?? (_cleanupCommand = new RelayCommand(Cleanup));
 
         #endregion
     }

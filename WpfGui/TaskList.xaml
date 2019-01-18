@@ -40,7 +40,7 @@
             <MenuItem Header="_Edit">
                 <MenuItem Header="_Add" Command="{Binding AddItemCommand}"/>
                 <MenuItem Header="_Rank" Command="{Binding RankCommand}" />
-                <MenuItem Header="_Search" Command="{Binding SearchCommand}" IsEnabled="False"/>
+                <MenuItem Header="_Clean up" Command="{Binding CleanupCommand}" ToolTip="Assign missing contexts, undefer due someday items, fix chains, etc."/>
             </MenuItem>
             <MenuItem Header="_Help">
                 <MenuItem Header="{Binding VersionNumber}"/>
