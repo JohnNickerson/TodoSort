@@ -3,6 +3,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     StartupUri="TaskList.xaml">
     <Application.Resources>
-         
+        <FontFamily x:Key="Rot13Sans">pack://application:,,,/Resources/#Rot13 DejaVu Sans</FontFamily>
     </Application.Resources>
 </Application>

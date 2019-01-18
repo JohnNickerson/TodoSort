@@ -6,6 +6,7 @@
     <Window.InputBindings>
         <KeyBinding Command="{Binding Path=OpenFileCommand}" Key="O" Modifiers="Ctrl" />
         <KeyBinding Command="{Binding Path=SaveFileCommand}" Key="S" Modifiers="Ctrl" />
+        <KeyBinding Command="{Binding Path=MaskTextCommand}" Key="M" Modifiers="Ctrl" />
     </Window.InputBindings>
     <Grid>
         <Grid.RowDefinitions>
@@ -41,6 +42,9 @@
                 <MenuItem Header="_Add" Command="{Binding AddItemCommand}"/>
                 <MenuItem Header="_Rank" Command="{Binding RankCommand}" />
                 <MenuItem Header="_Clean up" Command="{Binding CleanupCommand}" ToolTip="Assign missing contexts, undefer due someday items, fix chains, etc."/>
+            </MenuItem>
+            <MenuItem Header="_Options">
+                <MenuItem Header="_Mask NSFW items" Command="{Binding MaskTextCommand}" IsChecked="{Binding Path=Masked}" InputGestureText="Ctrl+M"/>
             </MenuItem>
             <MenuItem Header="_Help">
                 <MenuItem Header="{Binding VersionNumber}"/>
@@ -97,6 +101,17 @@
                     <Separator/>
                     <MenuItem Header="Delete" Command="{Binding Path=DeleteCommand}"/>
                 </ContextMenu>
+                <Style TargetType="TextBlock" x:Key="MaskBox">
+                    <Style.Triggers>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition  Binding="{Binding Path=DataContext.Masked, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" Value="True"/>
+                                <Condition Binding="{Binding Path=IsNsfw}" Value="True"/>
+                            </MultiDataTrigger.Conditions>
+                            <Setter Property="FontFamily" Value="{StaticResource Rot13Sans}" />
+                        </MultiDataTrigger>
+                    </Style.Triggers>
+                </Style>
             </ListView.Resources>
             <ListView.View>
                 <GridView x:Name="TaskGridView">
@@ -110,7 +125,7 @@
                     <GridViewColumn Header="Title">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding Path=Title}" ContextMenu="{StaticResource ItemContextMenu}" ToolTip="{Binding ChainSummary}"/>
+                                <TextBlock Text="{Binding Path=Title}" ContextMenu="{StaticResource ItemContextMenu}" ToolTip="{Binding ChainSummary}" Style="{StaticResource MaskBox}"/>
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>

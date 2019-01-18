@@ -24,8 +24,11 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         private List<Context> _contexts;
         private string _fileName;
         private List<ActionViewItem> _currentItems;
+        private bool _masked;
+
         private ITodoRepository _repo;
         private ViewModel _api;
+
         private RelayCommand<string> _openRecentCommand;
         private RelayCommand _rankCommand;
         private RelayCommand _reloadCommand;
@@ -35,6 +38,8 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         private RelayCommand _saveFileCommand;
         private RelayCommand _applySearchCommand;
         private RelayCommand _cleanupCommand;
+        private RelayCommand _maskTextCommand;
+
         private string _searchKeyword;
         private string _searchMissingTagName;
 
@@ -514,6 +519,17 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             }
         }
 
+        public bool Masked
+        {
+            get => _masked;
+            set
+            {
+                if (_masked == value) return;
+                _masked = value;
+                OnPropertyChanged();
+            }
+        }
+
         #endregion
 
         #region Commands
@@ -535,6 +551,8 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         public RelayCommand ApplySearchCommand => _applySearchCommand ?? (_applySearchCommand = new RelayCommand(ApplySearchExecuted));
 
         public ICommand CleanupCommand => _cleanupCommand ?? (_cleanupCommand = new RelayCommand(Cleanup));
+
+        public ICommand MaskTextCommand => _maskTextCommand ?? (_maskTextCommand = new RelayCommand(() => Masked = !Masked));
 
         #endregion
     }
