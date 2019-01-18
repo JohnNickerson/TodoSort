@@ -112,6 +112,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                             i.Tags.ContainsKey("series") && i.Tags["series"] == headItem.Tags["series"]);
                     }
 
+                    // Get the earliest item from the chain.
                     var first = chainItems.OrderBy(i => i.GetIntTag("order", 0)).FirstOrDefault();
                     if (first != null)
                     {
@@ -120,6 +121,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                     }
                 }
             }
+            OnPropertyChanged(nameof(Items));
         }
 
         private void RankItems()

@@ -107,10 +107,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
                 {
                     return Source.Tags["nsfw"].ToLower() == "true";
                 }
-                else
-                {
-                    return false;
-                }
+                return false;
             }
         }
 
