@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
+using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Input;
@@ -32,9 +33,20 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
 
         #endregion // Constructors
 
-        #region Public Methods
+        #region Methods
 
-        #endregion // Public Methods
+        protected override void OnPropertyChanged([CallerMemberName]string propertyName = null)
+        {
+            base.OnPropertyChanged(propertyName);
+
+            // Dependent properties.
+            if (propertyName == nameof(IsDone))
+            {
+                Api.CheckForContext(this.Source.Context);
+            }
+        }
+
+        #endregion // Methods
 
         #region Properties
 
@@ -169,6 +181,30 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
 
         public bool IsInChain => Tags.ContainsKey("order") && (Tags.ContainsKey("series") || Source.Project != null);
 
+        public string TypeIcon
+        {
+            get
+            {
+                if (Source.Tags.ContainsKey("type"))
+                {
+                    switch (Source.Tags["type"])
+                    {
+                        case "movie":
+                            return "Resources/Movie-32.png";
+                        case "book":
+                            return "Resources/Book-32.png";
+                        case "game":
+                            return "Resources/Game-Boy-black-48.png";
+                        case "tv":
+                            return "Resources/TV-256.png";
+                        default:
+                            return "";
+                    }
+                }
+
+                return "";
+            }
+        }
         #endregion
 
         #region Command Properties

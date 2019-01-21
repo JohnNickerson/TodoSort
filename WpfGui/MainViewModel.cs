@@ -386,6 +386,8 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                 if (_api == null) return new List<Context>();
                 if (_contexts == null)
                 {
+                    // Preserve selected context.
+                    var saveContext = SelectedContext;
                     _contexts = new List<Context>();
                     foreach (var con in _api.GetContextNames("done", "someday").OrderBy(c => c))
                     {
@@ -415,6 +417,11 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                         SearchSpecification = new FullTextSearchSpecification(SearchKeyword)
                     };
                     _contexts.Add(_searchContext);
+                    if (saveContext != null)
+                    {
+                        // Can't just set to the saved one, because it's been reconstructed.
+                        SelectedContext = _contexts.FirstOrDefault(c => c.Title == saveContext.Title);
+                    }
                 }
                 return _contexts;
             }
@@ -557,5 +564,14 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         public ICommand MaskTextCommand => _maskTextCommand ?? (_maskTextCommand = new RelayCommand(() => Masked = !Masked));
 
         #endregion
+
+        public void CheckForContext(string context)
+        {
+            if (_contexts.All(c => c.Title != context))
+            {
+                // Context not found. Refresh.
+                OnPropertyChanged(nameof(Contexts));
+            }
+        }
     }
 }
