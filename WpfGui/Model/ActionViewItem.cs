@@ -153,7 +153,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
 
         public Dictionary<string, string> Tags => Source.Tags;
 
-        public string ToggleDeferTitle => Source.Context == "someday" ? "Undefer" : "Defer";
+        public string ToggleDeferTitle => Source.Context == "someday" ? "Undefer" : "Defer Indefinitely";
 
         public string ChainSummary
         {

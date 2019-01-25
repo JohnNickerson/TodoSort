@@ -172,7 +172,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             {
                 FileName = "Document",
                 DefaultExt = ".txt",
-                Filter = "Text documents (.txt)|*.txt",
+                Filter = "Text documents (.txt)|*.txt|All documents (*.*)|*.*",
                 Title = "Todo file"
             };
 

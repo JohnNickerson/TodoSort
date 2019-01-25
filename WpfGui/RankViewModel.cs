@@ -66,7 +66,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             CurrentPair.Vote = RankWinner.First;
             if (CurrentIndex == RankPairs.Count - 1)
             {
-                // TODO: Indicate end of ranking somehow?
+                OkExecute();
             }
             else CurrentIndex++;
         }
@@ -76,7 +76,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             CurrentPair.Vote = RankWinner.Second;
             if (CurrentIndex == RankPairs.Count - 1)
             {
-                // TODO: Indicate end of ranking somehow?
+                OkExecute();
             }
             else CurrentIndex++;
         }
