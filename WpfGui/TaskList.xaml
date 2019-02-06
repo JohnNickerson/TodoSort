@@ -7,6 +7,7 @@
         <KeyBinding Command="{Binding Path=OpenFileCommand}" Key="O" Modifiers="Ctrl" />
         <KeyBinding Command="{Binding Path=SaveFileCommand}" Key="S" Modifiers="Ctrl" />
         <KeyBinding Command="{Binding Path=MaskTextCommand}" Key="M" Modifiers="Ctrl" />
+        <KeyBinding Command="{Binding Path=ToggleHeadCommand}" Key="H" Modifiers="Control"/>
     </Window.InputBindings>
     <Grid>
         <Grid.RowDefinitions>
@@ -45,6 +46,7 @@
             </MenuItem>
             <MenuItem Header="_Options">
                 <MenuItem Header="_Mask NSFW items" Command="{Binding MaskTextCommand}" IsChecked="{Binding Path=Masked}" InputGestureText="Ctrl+M"/>
+                <MenuItem Header="Show _head only" IsChecked="{Binding ShowHeadOnly}" Command="{Binding ToggleHeadCommand}" InputGestureText="Ctrl+H" />
             </MenuItem>
             <MenuItem Header="_Help">
                 <MenuItem Header="{Binding VersionNumber}"/>
@@ -79,8 +81,6 @@
                 </Style>
             </Expander.Resources>
             <UniformGrid Columns="2">
-                <Label Content="Show Head Only"/>
-                <CheckBox IsChecked="{Binding ShowHeadOnly}" VerticalAlignment="Center"/>
                 <Label Content="Keyword"/>
                 <TextBox Text="{Binding SearchKeyword}" Margin="2"/>
                 <Label Content="Missing tag"/>

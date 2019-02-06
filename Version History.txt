@@ -27,3 +27,10 @@
 	- Hot fix for implicit chains (everything was losing ranking data).
 2018-11-30: Build 1.0.7 released to Production
 	- Add items via GUI.
+2019-01-24: Build 1.1.3 released to Production
+	- Title fixing and search improvements.
+2019-01-31: Build 1.1.3 released to Production
+	- Manually-triggered cleanup
+	- Chain re-heading
+	- Search for missing tags
+	- Mask NSFW item titles.

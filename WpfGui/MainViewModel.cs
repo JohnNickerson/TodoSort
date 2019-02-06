@@ -39,6 +39,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         private RelayCommand _applySearchCommand;
         private RelayCommand _cleanupCommand;
         private RelayCommand _maskTextCommand;
+        private RelayCommand _toggleHeadCommand;
 
         private string _searchKeyword;
         private string _searchMissingTagName;
@@ -563,6 +564,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
 
         public ICommand MaskTextCommand => _maskTextCommand ?? (_maskTextCommand = new RelayCommand(() => Masked = !Masked));
 
+        public ICommand ToggleHeadCommand => _toggleHeadCommand ?? (_toggleHeadCommand = new RelayCommand(()=> ShowHeadOnly = !ShowHeadOnly));
         #endregion
 
         public void CheckForContext(string context)
