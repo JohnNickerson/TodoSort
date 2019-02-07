@@ -95,6 +95,8 @@
                     <MenuItem Header="Edit" Command="{Binding Path=EditCommand}"/>
                     <MenuItem Header="Fix Title" Command="{Binding Path=FixTitleCommand}"/>
                     <Separator/>
+                    <MenuItem Header="Bump" Command="{Binding Path=BumpCommand}"/>
+                    <Separator/>
                     <MenuItem Header="Defer 2 Weeks" Command="{Binding Path=ToggleDeferCommand}" CommandParameter="{Binding Path=ShortDeferDelay}" Visibility="{Binding Path=CanDefer}"/>
                     <MenuItem Header="Defer 2 Months" Command="{Binding Path=ToggleDeferCommand}" CommandParameter="{Binding Path=LongDeferDelay}" Visibility="{Binding Path=CanDefer}"/>
                     <MenuItem Header="{Binding ToggleDeferTitle}" Command="{Binding Path=ToggleDeferCommand}"/>

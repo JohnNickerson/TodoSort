@@ -34,3 +34,6 @@
 	- Chain re-heading
 	- Search for missing tags
 	- Mask NSFW item titles.
+2019-02-07: Build 1.1.5 released to Production
+	- Preserve context selection when moving items, marking done or undone.
+	- Update item list when performing cleanup.

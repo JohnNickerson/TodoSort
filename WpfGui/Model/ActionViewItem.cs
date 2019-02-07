@@ -20,6 +20,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
         private RelayCommand _deleteCommand;
         private RelayCommand _fixTitleCommand;
         private RelayCommand<string> _openUrlCommand;
+        private RelayCommand _bumpCommand;
 
         #endregion // Fields
 
@@ -219,6 +220,8 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
 
         public ICommand OpenUrlCommand => _openUrlCommand ?? (_openUrlCommand = new RelayCommand<string>(OpenUrlExecuted, s => !string.IsNullOrEmpty(s)));
 
+        public ICommand BumpCommand => _bumpCommand ?? (_bumpCommand = new RelayCommand(BumpExecuted, () => this.Source.RankDepth > 0));
+
         #endregion // Command Properties
 
         #region Command Handlers
@@ -305,6 +308,25 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
         private void OpenUrlExecuted(string url)
         {
             Process.Start(new ProcessStartInfo(url));
+        }
+
+        private void BumpExecuted()
+        {
+            var targetParentDepth = (Source.RankDepth / 2) - 1;
+            if (targetParentDepth < 0)
+            {
+                Source.RankParent = null;
+            }
+            else
+            {
+                var newParent = Source.RankParent;
+                while (newParent != null && newParent.RankDepth > targetParentDepth && newParent.RankParent != null)
+                {
+                    newParent = newParent.RankParent;
+                }
+                Source.RankParent = newParent;
+            }
+            Api.Update(Source);
         }
         #endregion // Command Handlers
     }
