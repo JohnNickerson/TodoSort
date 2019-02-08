@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Runtime.CompilerServices;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Input;
@@ -156,21 +157,37 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
 
         public string ToggleDeferTitle => Source.Context == "someday" ? "Undefer" : "Defer Indefinitely";
 
-        public string ChainSummary
+        public string ToolTip
         {
             get
             {
-                if (Source.Tags.ContainsKey("order"))
+                var toolTip = new StringBuilder();
+                toolTip.AppendLine(Title + (Tags.ContainsKey("type") ? $" [{Tags["type"].ToUpper()}]" : string.Empty));
+                foreach (var note in Notes)
                 {
-                    if (Source.Project != null)
-                    {
-                        return $"{Source.Project.Title} - #{Source.Tags["order"]}";
-                    }
-
-                    return Source.Tags.ContainsKey("series") ? $"{Source.Tags["series"]} - #{Source.Tags["order"]}" : $"#{Source.Tags["order"]}, fix series info";
+                    toolTip.AppendLine(note);
                 }
 
-                return null;
+                foreach (var tag in Tags)
+                {
+                    toolTip.AppendLine(string.Format("#{0}:{1}", tag.Key, tag.Value));
+                }
+
+                if (Upvotes > 0)
+                {
+                    toolTip.AppendLine(string.Format("#upvotes:{0}", Upvotes));
+                }
+
+                toolTip.AppendLine(string.Format("#depth:{0}", Source.RankDepth));
+
+                toolTip.AppendLine(string.Format("#ID:{0}", Source.ID));
+                if (Source.Project != null)
+                {
+                    toolTip.AppendLine(string.Format("#project:{0} - {1}", Source.Project.ID,
+                        Source.Project.Title));
+                }
+
+                return toolTip.ToString().TrimEnd();
             }
         }
 
@@ -288,20 +305,46 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
         private void FixTitleExecuted()
         {
             // 1. Try to get the title automatically.
+            var success = false;
             try
             {
                 var client = new WebClient();
                 // TODO: Also get the redirected URL, if any.
                 var source = client.DownloadString(Source.Tags["url"]);
                 var title = Regex.Match(source, @"\<title\b[^>]*\>\s*(?<Title>[\s\S]*?)\</title\>", RegexOptions.IgnoreCase).Groups["Title"].Value;
-                Title = title;
-                Api.Update(Source);
+                if (ValidateTitle(title))
+                {
+                    Title = title;
+                    Api.Update(Source);
+                    success = true;
+                }
             }
-            // 2. If we fail, open the URL and the edit window to fix manually.
             catch
             {
-                OpenUrlExecuted(Source.Tags["url"]);
-                EditExecuted();
+                success = false;
+            }
+
+            if (success) return;
+            // 2. If we fail, open the URL and the edit window to fix manually.
+            OpenUrlExecuted(Source.Tags["url"]);
+            EditExecuted();
+        }
+
+        /// <summary>
+        /// Checks for a few common failures of URL page titles.
+        /// </summary>
+        /// <param name="title"></param>
+        /// <returns></returns>
+        private bool ValidateTitle(string title)
+        {
+            if (string.IsNullOrWhiteSpace(title)) return false;
+            switch (title.ToLower())
+            {
+                case "update your browser | facebook":
+                case "youtube":
+                    return false;
+                default:
+                    return true;
             }
         }
 
@@ -327,6 +370,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
                 Source.RankParent = newParent;
             }
             Api.Update(Source);
+            OnPropertyChanged(nameof(ToolTip));
         }
         #endregion // Command Handlers
     }

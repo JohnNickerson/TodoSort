@@ -127,7 +127,7 @@
                     <GridViewColumn Header="Title">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding Path=Title}" ContextMenu="{StaticResource ItemContextMenu}" ToolTip="{Binding ChainSummary}" Style="{StaticResource MaskBox}"/>
+                                <TextBlock Text="{Binding Path=Title}" ContextMenu="{StaticResource ItemContextMenu}" ToolTip="{Binding ToolTip}" Style="{StaticResource MaskBox}"/>
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
