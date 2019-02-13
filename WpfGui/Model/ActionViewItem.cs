@@ -276,6 +276,12 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
                 }
                 Api.Update(Source);
             }
+            OnPropertyChanged(nameof(Title));
+            OnPropertyChanged(nameof(Url));
+            OnPropertyChanged(nameof(UrlNotNull));
+            OnPropertyChanged(nameof(IsNsfw));
+            OnPropertyChanged(nameof(ItemDate));
+            OnPropertyChanged(nameof(ToolTip));
         }
 
         private void DeferExecuted(TimeSpan? delay)

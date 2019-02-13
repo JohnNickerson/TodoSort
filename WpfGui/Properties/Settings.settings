@@ -11,5 +11,8 @@
     <Setting Name="RecentFiles" Type="System.Collections.ObjectModel.ObservableCollection&lt;System.String&gt;" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
+    <Setting Name="MaskNsfwItems" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

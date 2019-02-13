@@ -24,7 +24,6 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         private List<Context> _contexts;
         private string _fileName;
         private List<ActionViewItem> _currentItems;
-        private bool _masked;
 
         private ITodoRepository _repo;
         private ViewModel _api;
@@ -531,11 +530,12 @@ namespace AssimilationSoftware.TodoSort.WpfGui
 
         public bool Masked
         {
-            get => _masked;
+            get => Settings.Default.MaskNsfwItems;
             set
             {
-                if (_masked == value) return;
-                _masked = value;
+                if (Settings.Default.MaskNsfwItems == value) return;
+                Settings.Default.MaskNsfwItems = value;
+                Settings.Default.Save();
                 OnPropertyChanged();
             }
         }
