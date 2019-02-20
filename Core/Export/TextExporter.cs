@@ -1,4 +1,4 @@
-﻿using AssimilationSoftware.PimData.Mappers.Text;
+﻿using AssimilationSoftware.Maroon.Mappers.Text;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +11,7 @@ namespace AssimilationSoftware.TodoSort.Core.Export
     {
         public string Filename { get; set; }
 
-        public void Export(List<PimData.Model.ActionItem> items)
+        public void Export(List<Maroon.Model.ActionItem> items)
         {
             var m = new ActionItemDiskMapper(Filename);
             m.SaveAll(items);

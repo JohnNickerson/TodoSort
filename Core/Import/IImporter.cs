@@ -8,6 +8,6 @@ namespace AssimilationSoftware.TodoSort.Core.Import
 {
     public interface IImporter
     {
-        PimData.Model.ActionItem[] GetAllItems();
+        Maroon.Model.ActionItem[] GetAllItems();
     }
 }

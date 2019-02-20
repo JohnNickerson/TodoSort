@@ -1,5 +1,5 @@
-﻿using AssimilationSoftware.PimData.Interfaces;
-using AssimilationSoftware.PimData.Model;
+﻿using AssimilationSoftware.Maroon.Interfaces;
+using AssimilationSoftware.Maroon.Model;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -21,9 +21,9 @@ namespace AssimilationSoftware.TodoSort.Core.Export
             {
                 var line = n.Title.Replace("\"", "");
                 result.AppendLine(string.Format("    ID{0} [label=\"{1}\"];", n.ID.ToString().Replace("-", ""), line.Replace("\"", "")));
-                if (n.RankParent != null)
+                if (n.Parent != null)
                 {
-                    result.AppendLine(string.Format("    ID{0} -> ID{1};", n.RankParent.ID.ToString().Replace("-", ""), n.ID.ToString().Replace("-", "")));
+                    result.AppendLine(string.Format("    ID{0} -> ID{1};", n.Parent.ID.ToString().Replace("-", ""), n.ID.ToString().Replace("-", "")));
                 }
                 else
                 {

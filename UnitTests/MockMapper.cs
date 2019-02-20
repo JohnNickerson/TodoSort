@@ -1,5 +1,5 @@
-﻿using AssimilationSoftware.PimData.Interfaces;
-using AssimilationSoftware.PimData.Model;
+﻿using AssimilationSoftware.Maroon.Interfaces;
+using AssimilationSoftware.Maroon.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace AssimilationSoftware.TodoSort.UnitTests
 {
-    internal class MockMapper : IPimDataMapper<ActionItem>
+    internal class MockMapper : IMapper<ActionItem>
     {
         private List<ActionItem> _items = new List<ActionItem>();
 

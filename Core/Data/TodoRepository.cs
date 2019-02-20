@@ -1,5 +1,5 @@
-﻿using AssimilationSoftware.PimData.Model;
-using AssimilationSoftware.PimData.Repositories;
+﻿using AssimilationSoftware.Maroon.Model;
+using AssimilationSoftware.Maroon.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace AssimilationSoftware.TodoSort.Core.Data
 {
-    public class TodoRepository : DiskRepository<ActionItem>, ITodoRepository
+    public class TodoRepository : MergeDiskRepository<ActionItem>, ITodoRepository
     {
-        public TodoRepository(PimData.Interfaces.IPimDataMapper<ActionItem> mapper) : base(mapper)
+        public TodoRepository(Maroon.Interfaces.IMapper<ActionItem> mapper, string path) : base(mapper, path)
         {
 			FindAll();
         }
@@ -33,7 +33,7 @@ namespace AssimilationSoftware.TodoSort.Core.Data
 
         public IEnumerable<ActionItem> GetChildren(ActionItem selected)
         {
-            return Items.Where(t => t.RankParent != null && t.RankParent.Equals(selected));
+            return Items.Where(t => t.Parent != null && t.Parent.Equals(selected));
         }
 
         public IEnumerable<string> GetContexts(params string[] exclude)

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using AssimilationSoftware.PimData.Model;
+using AssimilationSoftware.Maroon.Model;
 using AssimilationSoftware.TodoSort.Core.Data;
 
 namespace BetterUnitTests
@@ -63,7 +63,7 @@ namespace BetterUnitTests
 
         public IEnumerable<ActionItem> GetChildren(ActionItem i)
         {
-            return _items.Values.Where(p => p.RankParent != null && p.RankParent.ID == i.ID);
+            return _items.Values.Where(p => p.Parent != null && p.Parent.ID == i.ID);
         }
     }
 }

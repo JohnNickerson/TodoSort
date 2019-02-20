@@ -1,5 +1,5 @@
-﻿using AssimilationSoftware.PimData.Mappers.Text;
-using AssimilationSoftware.PimData.Model;
+﻿using AssimilationSoftware.Maroon.Mappers.Text;
+using AssimilationSoftware.Maroon.Model;
 using AssimilationSoftware.TodoSort.CLI.Options;
 using AssimilationSoftware.TodoSort.Core;
 using AssimilationSoftware.TodoSort.Core.Export;
@@ -54,7 +54,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             var f = FolderSettings.LoadFrom(settingspath);
             ActionItemDiskMapper todomapper = new ActionItemDiskMapper(f.TodoPath);
 
-            ViewModel vm = new ViewModel(new TodoRepository(todomapper));
+            ViewModel vm = new ViewModel(new TodoRepository(todomapper, Path.GetDirectoryName(f.TodoPath)));
 
             // Set universal options.
             if (argsubs is UniversalOptions)
@@ -78,7 +78,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                 case "add":
                     // Add a new item.
                     var a = (AddSubOptions)argsubs;
-                    selected = new ActionItem(a.Context, a.ActionTitle);
+                    selected = new ActionItem { Context = a.Context, Title = a.ActionTitle };
                     if (!string.IsNullOrWhiteSpace(a.Note))
                     {
                         selected.Notes.Add(a.Note);
@@ -130,9 +130,9 @@ namespace AssimilationSoftware.TodoSort.CLI
                             // Before
                             PrintTree(new List<ActionItem>(new[] { target }), true, bumpOpts.NSFW);
                             var depth = target.RankDepth / 2;
-                            while (target.RankDepth > depth && target.RankParent != null)
+                            while (target.RankDepth > depth && target.Parent != null)
                             {
-                                vm.SetParent(target, target.RankParent.RankParent);
+                                vm.SetParent(target, target.Parent.Parent);
                             }
                             // After
                             PrintTree(new List<ActionItem>(new[] { target }), true, bumpOpts.NSFW);
@@ -525,7 +525,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                             }
                             else
                             {
-                                var next = new ActionItem(newcontext, nextaction);
+                                var next = new ActionItem { Context = newcontext, Title = nextaction };
                                 next.Project = first;
                                 vm.AddItem(next);
                             }
@@ -1120,15 +1120,15 @@ namespace AssimilationSoftware.TodoSort.CLI
                 // Fill out the results.
                 for (int i = 0; i < ancestors.Count; i++)
                 {
-                    if (ancestors[i].RankParent != null && !ancestors.Contains(ancestors[i].RankParent))
+                    if (ancestors[i].Parent != null && !ancestors.Contains(ancestors[i].Parent))
                     {
-                        ancestors.Add(ancestors[i].RankParent);
+                        ancestors.Add(ancestors[i].Parent);
                     }
                 }
             }
 
             // Find the roots.
-            var roots = ancestors.Where(t => t.RankParent == null || !ancestors.Contains(t.RankParent));
+            var roots = ancestors.Where(t => t.Parent == null || !ancestors.Contains(t.Parent));
 
             foreach (var r in roots)
             {
@@ -1155,7 +1155,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                 var node = stack.Pop();
                 int indent = node.Depth;
                 ActionItem focus = node.Item;
-                var children = ancestors.Where(i => i.RankParent == focus);
+                var children = ancestors.Where(i => i.Parent == focus);
                 var prefix = new StringBuilder();
                 var padline = new StringBuilder();
                 for (int i = 0; i < indent; i++)

@@ -1,5 +1,5 @@
-using AssimilationSoftware.PimData.Mappers.Text;
-using AssimilationSoftware.PimData.Model;
+using AssimilationSoftware.Maroon.Mappers.Text;
+using AssimilationSoftware.Maroon.Model;
 using System.Linq;
 
 namespace AssimilationSoftware.TodoSort.Core.Import

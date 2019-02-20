@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
-using AssimilationSoftware.PimData.Mappers.Text;
-using AssimilationSoftware.PimData.Model;
+using AssimilationSoftware.Maroon.Mappers.Text;
+using AssimilationSoftware.Maroon.Model;
 using AssimilationSoftware.TodoSort.Core;
 using AssimilationSoftware.TodoSort.Core.Data;
 using AssimilationSoftware.TodoSort.Core.Search;
@@ -70,7 +71,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             }
             SaveSettings();
 
-            _repo = new TodoRepository(new ActionItemDiskMapper(FileName));
+            _repo = new TodoRepository(new ActionItemDiskMapper(FileName), Path.GetDirectoryName(FileName));
             _api = new ViewModel(_repo);
 
             //Cleanup();
@@ -121,6 +122,9 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                     }
                 }
             }
+
+            ((TodoRepository)_repo).CommitChanges();
+
             OnPropertyChanged(nameof(Items));
         }
 
@@ -251,7 +255,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         {
             // Show the Edit view.
             var editWindow = new EditItemView();
-            var item = new ActionItem("inbox", null);
+            var item = new ActionItem { Context = "inbox" };
             var editVm = new EditViewModel(this, new ActionViewItem(item, this), editWindow);
             editWindow.DataContext = editVm;
             editWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;

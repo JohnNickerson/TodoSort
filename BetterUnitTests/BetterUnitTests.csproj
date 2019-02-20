@@ -17,8 +17,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="PimData">
-      <HintPath>..\Library\PimData.dll</HintPath>
+    <Reference Include="Maroon">
+      <HintPath>..\Library\Maroon.dll</HintPath>
     </Reference>
   </ItemGroup>
 

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using AssimilationSoftware.TodoSort.Core.Search;
-using AssimilationSoftware.PimData.Model;
+using AssimilationSoftware.Maroon.Model;
 
 namespace AssimilationSoftware.TodoSort.CLI
 {

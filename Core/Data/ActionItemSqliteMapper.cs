@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using AssimilationSoftware.PimData.Interfaces;
-using AssimilationSoftware.PimData.Model;
+using AssimilationSoftware.Maroon.Interfaces;
+using AssimilationSoftware.Maroon.Model;
 
 namespace AssimilationSoftware.TodoSort.Core.Data
 {
-    public class ActionItemSqliteMapper : IPimDataMapper<ActionItem>
+    public class ActionItemSqliteMapper : IMapper<ActionItem>
     {
         public ActionItem Load(Guid id)
         {

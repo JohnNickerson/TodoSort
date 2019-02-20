@@ -1,4 +1,4 @@
-﻿using AssimilationSoftware.PimData.Model;
+﻿using AssimilationSoftware.Maroon.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,7 +23,7 @@ namespace AssimilationSoftware.TodoSort.Core.Search
 
         public bool IsSatisfiedBy(ActionItem b)
         {
-            return b.RankParent != null && b.RankParent.ID.ToString().ToLower().StartsWith(_parentId);
+            return b.Parent != null && b.Parent.ID.ToString().ToLower().StartsWith(_parentId);
         }
     }
 }

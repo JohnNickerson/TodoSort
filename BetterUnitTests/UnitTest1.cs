@@ -1,4 +1,4 @@
-using AssimilationSoftware.PimData.Model;
+using AssimilationSoftware.Maroon.Model;
 using AssimilationSoftware.TodoSort.Core;
 using AssimilationSoftware.TodoSort.UnitTests;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -16,10 +16,10 @@ namespace BetterUnitTests
             var marp = new MockRepository();
             var vm = new ViewModel(marp);
 
-            marp.Create(new ActionItem("inbox", "Not matching"));
-            marp.Create(new ActionItem("inbox", "also not a match"));
-            marp.Create(new ActionItem("inbox", "no chance"));
-            marp.Create(new ActionItem("inbox", "well, it's something"));
+            marp.Create(new ActionItem { Context = "inbox", Title = "Not matching" });
+            marp.Create(new ActionItem { Context = "inbox", Title = "also not a match" });
+            marp.Create(new ActionItem { Context = "inbox", Title = "no chance" });
+            marp.Create(new ActionItem { Context = "inbox", Title = "well, it's something" });
 
             // Act
             var d = vm.GetDuplicateTags("url");

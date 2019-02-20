@@ -8,7 +8,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Input;
-using AssimilationSoftware.PimData.Model;
+using AssimilationSoftware.Maroon.Model;
 
 namespace AssimilationSoftware.TodoSort.WpfGui.Model
 {
@@ -42,7 +42,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
             base.OnPropertyChanged(propertyName);
 
             // Dependent properties.
-            if (propertyName == nameof(IsDone))
+            if (propertyName == nameof(Done))
             {
                 Api.CheckForContext(this.Source.Context);
             }
@@ -54,13 +54,13 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
 
         public ActionItem Source { get; set; }
 
-        public bool IsDone
+        public bool Done
         {
-            get => Source.IsDone;
+            get => Source.DoneDate.HasValue;
             set
             {
-                if (Source.IsDone == value) return;
-                Source.IsDone = value;
+                if (Source.DoneDate.HasValue == value) return;
+                Source.DoneDate = value ? DateTime.Now : (DateTime?)null;
                 // Call the API to mark done.
                 if (value)
                 {
@@ -364,16 +364,16 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
             var targetParentDepth = (Source.RankDepth / 2) - 1;
             if (targetParentDepth < 0)
             {
-                Source.RankParent = null;
+                Source.Parent = null;
             }
             else
             {
-                var newParent = Source.RankParent;
-                while (newParent != null && newParent.RankDepth > targetParentDepth && newParent.RankParent != null)
+                var newParent = Source.Parent;
+                while (newParent != null && newParent.RankDepth > targetParentDepth && newParent.Parent != null)
                 {
-                    newParent = newParent.RankParent;
+                    newParent = newParent.Parent;
                 }
-                Source.RankParent = newParent;
+                Source.Parent = newParent;
             }
             Api.Update(Source);
             OnPropertyChanged(nameof(ToolTip));

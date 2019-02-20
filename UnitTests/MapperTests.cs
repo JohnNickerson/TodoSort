@@ -1,6 +1,6 @@
-﻿using AssimilationSoftware.PimData.Mappers;
-using AssimilationSoftware.PimData.Mappers.Text;
-using AssimilationSoftware.PimData.Model;
+﻿using AssimilationSoftware.Maroon.Mappers;
+using AssimilationSoftware.Maroon.Mappers.Text;
+using AssimilationSoftware.Maroon.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +16,7 @@ namespace UnitTests
         public void Test_For_Colon_in_Tag()
         {
             // Create a test action item.
-            ActionItem i = new ActionItem("testing", "A test with tag values containing colons (:)");
+            ActionItem i = new ActionItem { Context = "testing", Title = "A test with tag values containing colons (:)" };
             i.Tags.Add("url", "http://user:pass@www.google.com/");
 
             // Serialise to disk.

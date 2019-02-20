@@ -7,6 +7,6 @@ namespace AssimilationSoftware.TodoSort.WpfGui
 {
     public class ActionItemEventArgs
     {
-        public PimData.Model.ActionItem Item;
+        public Maroon.Model.ActionItem Item;
     }
 }

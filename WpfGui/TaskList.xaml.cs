@@ -12,9 +12,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using AssimilationSoftware.PimData;
-using AssimilationSoftware.PimData.Mappers;
-using AssimilationSoftware.PimData.Model;
+using AssimilationSoftware.Maroon;
+using AssimilationSoftware.Maroon.Mappers;
+using AssimilationSoftware.Maroon.Model;
 using AssimilationSoftware.TodoSort.Core;
 using AssimilationSoftware.TodoSort.WpfGui.Properties;
 

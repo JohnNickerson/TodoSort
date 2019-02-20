@@ -1,4 +1,4 @@
-﻿using AssimilationSoftware.PimData.Model;
+﻿using AssimilationSoftware.Maroon.Model;
 using AssimilationSoftware.TodoSort.Core.Data;
 using AssimilationSoftware.TodoSort.Core.Search;
 using System;
@@ -71,11 +71,11 @@ namespace AssimilationSoftware.TodoSort.Core
             {
                 if (ShowHeadOnly)
                 {
-                    return _repository.FindAll().Where(i => SearchSpecification.And(new DepthRangeSearchSpecification(0, 0)).IsSatisfiedBy(i));
+                    return _repository.Items.Where(i => SearchSpecification.And(new DepthRangeSearchSpecification(0, 0)).IsSatisfiedBy(i));
                 }
                 else
                 {
-                    return _repository.FindAll().Where(i => SearchSpecification.IsSatisfiedBy(i));
+                    return _repository.Items.Where(i => SearchSpecification.IsSatisfiedBy(i));
                 }
             }
         }
@@ -375,11 +375,11 @@ namespace AssimilationSoftware.TodoSort.Core
         {
             foreach (var selected in items)
             {
-                selected.RankParent = null;
+                selected.Parent = null;
                 _repository.Update(selected);
                 foreach (var i in _repository.GetChildren(selected).ToArray())
                 {
-                    i.RankParent = null;
+                    i.Parent = null;
                     _repository.Update(i);
 					UnsavedChanges = true;
                 }
@@ -398,7 +398,7 @@ namespace AssimilationSoftware.TodoSort.Core
 
         public void SetParent(ActionItem child, ActionItem parent)
         {
-            child.RankParent = parent;
+            child.Parent = parent;
             // Increment the "upvotes" counter.
             if (parent != null)
             {
@@ -421,13 +421,13 @@ namespace AssimilationSoftware.TodoSort.Core
                     if (setNullParents || items.Intersect(GetAncestors(items[i])).Any())
                     {
                         // Only reset the parent if requested or if not doing so would cause a loop.
-                        items[i].RankParent = null;
+                        items[i].Parent = null;
                         _repository.Update(items[i]);
                     }
                 }
                 else
                 {
-                    items[i].RankParent = items[newIndex];
+                    items[i].Parent = items[newIndex];
                     _repository.Update(items[i]);
                 }
             }
@@ -440,7 +440,7 @@ namespace AssimilationSoftware.TodoSort.Core
             {
                 actionItem
             };
-            for (var b = actionItem.RankParent; b != null && !a.Contains(b); b = b.RankParent)
+            for (var b = actionItem.Parent; b != null && !a.Contains(b); b = b.Parent)
             {
                 a.Add(b);
             }
@@ -515,7 +515,7 @@ namespace AssimilationSoftware.TodoSort.Core
             // Set any child objects from second to first.
             foreach (var c in _repository.GetChildren(child).ToArray())
             {
-                c.RankParent = target;
+                c.Parent = target;
             }
             if (child.Project != null && target.Project == null)
             {
@@ -533,7 +533,7 @@ namespace AssimilationSoftware.TodoSort.Core
 
         public List<ActionItem> GetProjects()
         {
-            return _repository.FindAll().Where(p => p.Context == "projects").ToList();
+            return _repository.Items.Where(p => p.Context == "projects").ToList();
         }
 
         public void Update(ActionItem item)
