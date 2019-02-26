@@ -295,7 +295,10 @@ namespace AssimilationSoftware.TodoSort.Core
                 // If this item was the project for another, defer that one too.
                 foreach (ActionItem c in _repository.GetProjectItems(i))
                 {
-                    toDefer.Enqueue(c);
+                    if (c.Context != "done")
+                    {
+                        toDefer.Enqueue(c);
+                    }
                 }
             }
             RaisePropertyChanged("SearchResults", "SomedaySearchResults");

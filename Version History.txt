@@ -37,3 +37,7 @@
 2019-02-07: Build 1.1.5 released to Production
 	- Preserve context selection when moving items, marking done or undone.
 	- Update item list when performing cleanup.
+2019-02-21: Build 1.1.6 released to Production
+	- Show Head Only option moved to Options menu with keyboard shortcut.
+	- Close ranking window automatically when finished.
+	- Open any file type.

@@ -52,9 +52,10 @@ namespace AssimilationSoftware.TodoSort.CLI
                 // Ask for initialisation? Just use defaults.
             }
             var f = FolderSettings.LoadFrom(settingspath);
-            ActionItemDiskMapper todomapper = new ActionItemDiskMapper(f.TodoPath);
+            var todomapper = new ActionItemDiskMapper(f.TodoPath);
+            var repo = new TodoRepository(todomapper, Path.GetDirectoryName(f.TodoPath));
 
-            ViewModel vm = new ViewModel(new TodoRepository(todomapper, Path.GetDirectoryName(f.TodoPath)));
+            ViewModel vm = new ViewModel(repo);
 
             // Set universal options.
             if (argsubs is UniversalOptions)
@@ -154,6 +155,27 @@ namespace AssimilationSoftware.TodoSort.CLI
                     }
                 #endregion
 
+                #region Commit
+                case "commit":
+                    {
+                        var conflicts = repo.FindConflicts();
+                        foreach (var conflictSet in conflicts)
+                        {
+                            // TODO: Present conflicts for resolution.
+                            int i = 0;
+                            foreach (var edit in conflictSet)
+                            {
+                                PrintItem(edit, i);
+                                i++;
+                            }
+                            // Present options: Delete, Update (one particular version), Revert.
+                        }
+                        repo.CommitChanges();
+                        Console.WriteLine("Pending changes committed.");
+                    }
+                    break;
+                #endregion
+
                 #region Dedupe
                 case "dedupe":
                     {
@@ -228,7 +250,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                     // Find a matching item to delete.
                     vm.SearchSpecification = ((SingleSearchSubOptions)argsubs).SearchSpecification;
                     selected = Disambiguate(vm.SearchResults, !string.IsNullOrEmpty(((SingleSearchSubOptions)argsubs).ItemId));
-                    vm.Delete(selected);
+                    if (selected != null) vm.Delete(selected);
                     break;
                 #endregion
 
@@ -295,7 +317,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                         var fixOptions = (FixTitlesOptions)argsubs;
                         vm.SearchSpecification = fixOptions.SearchSpecification;
                         var client = new WebClient();
-                        
+
                         var totalCount = 0;
                         decimal progress = 0;
                         decimal progressTotal = vm.SearchResults.Count();
@@ -1246,16 +1268,16 @@ namespace AssimilationSoftware.TodoSort.CLI
             {
                 if (i.Notes.Count > 0)
                 {
-                    for (int x = 0; x < i.Notes.Count; x++)
+                    foreach (var n in i.Notes)
                     {
-                        WrapOutput("        - ", i.Notes[x], wrapwidth);
+                        WrapOutput("        - ", n, wrapwidth);
                     }
                 }
                 if (i.Tags.Count > 0)
                 {
                     foreach (var k in i.Tags)
                     {
-                        WrapOutput(string.Format("        #{0}:", k.Key), k.Value, wrapwidth);
+                        WrapOutput($"        #{k.Key}:", k.Value, wrapwidth);
                     }
                 }
                 if (i.Upvotes > 0)
