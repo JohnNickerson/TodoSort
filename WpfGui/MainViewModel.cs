@@ -43,6 +43,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
 
         private string _searchKeyword;
         private string _searchMissingTagName;
+        private ActionViewItem _selectedItem;
 
         #endregion
 
@@ -440,6 +441,17 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                 OnPropertyChanged();
                 _currentItems = null;
                 OnPropertyChanged(nameof(Items));
+            }
+        }
+
+        public ActionViewItem SelectedItem
+        {
+            get => _selectedItem;
+            set
+            {
+                if (_selectedItem == value) return;
+                _selectedItem = value;
+                OnPropertyChanged();
             }
         }
 

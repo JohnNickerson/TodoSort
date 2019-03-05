@@ -90,7 +90,7 @@
                 <Button Content="Go" Margin="3" MaxWidth="50" Command="{Binding ApplySearchCommand}"/>
             </UniformGrid>
         </Expander>
-        <ListView Grid.Row="2" Grid.Column="1" ItemsSource="{Binding Path=Items}">
+        <ListView Grid.Row="2" Grid.Column="1" ItemsSource="{Binding Path=Items}" SelectedItem="{Binding Path=SelectedItem}" MouseDoubleClick="OnMouseDoubleClick">
             <ListView.Resources>
                 <ContextMenu x:Key="ItemContextMenu">
                     <MenuItem Header="Edit" Command="{Binding Path=EditCommand}"/>

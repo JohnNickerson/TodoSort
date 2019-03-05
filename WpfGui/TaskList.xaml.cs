@@ -64,5 +64,10 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                 }
             }
         }
+
+        private void OnMouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            _vm.SelectedItem.EditCommand.Execute(_vm.SelectedItem);
+        }
     }
 }
