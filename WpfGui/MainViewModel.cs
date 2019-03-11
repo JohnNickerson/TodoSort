@@ -256,7 +256,10 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         {
             // Show the Edit view.
             var editWindow = new EditItemView();
-            var item = new ActionItem { Context = "inbox" };
+            var item = new ActionItem
+            {
+                Context = SelectedContext?.Title ?? "inbox"
+            };
             var editVm = new EditViewModel(this, new ActionViewItem(item, this), editWindow);
             editWindow.DataContext = editVm;
             editWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
