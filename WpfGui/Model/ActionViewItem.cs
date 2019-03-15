@@ -77,7 +77,29 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
 
         public string Title
         {
-            get => Source.Title;
+            get
+            {
+                if (Source.Tags != null && Source.Tags.ContainsKey("type"))
+                {
+                    switch (Source.Tags["type"])
+                    {
+                        case "movie":
+                            return "🎬 " + Source.Title;
+                        case "book":
+                            return "🕮 " + Source.Title;
+                        case "tv":
+                            return "📺 " + Source.Title;
+                        case "game":
+                            return "🎮 " + Source.Title;
+                        default:
+                            return Source.Title;
+                    }
+                }
+                else
+                {
+                    return Source.Title;
+                }
+            }
             set
             {
                 if (Source.Title == value) return;

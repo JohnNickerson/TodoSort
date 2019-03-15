@@ -8,6 +8,7 @@
         <KeyBinding Command="{Binding Path=SaveFileCommand}" Key="S" Modifiers="Ctrl" />
         <KeyBinding Command="{Binding Path=MaskTextCommand}" Key="M" Modifiers="Ctrl" />
         <KeyBinding Command="{Binding Path=ToggleHeadCommand}" Key="H" Modifiers="Control"/>
+        <KeyBinding Command="{Binding Path=SearchCommand}" Key="F3"/>
     </Window.InputBindings>
     <Grid>
         <Grid.RowDefinitions>
@@ -75,17 +76,20 @@
             </ListBox.ItemTemplate>
         </ListBox>
 
-        <Expander Grid.Row="1" Grid.Column="1" Header="Search">
+        <Expander Grid.Row="1" Grid.Column="1" Header="Search" IsExpanded="{Binding SearchExpanded}">
             <Expander.Resources>
                 <Style TargetType="Label">
                     <Setter Property="HorizontalAlignment" Value="Right"/>
                 </Style>
+                <Style TargetType="TextBox">
+                    <Setter Property="Margin" Value="2"/>
+                </Style>
             </Expander.Resources>
             <UniformGrid Columns="2">
                 <Label Content="Keyword"/>
-                <TextBox Text="{Binding SearchKeyword}" Margin="2"/>
+                <TextBox Text="{Binding SearchKeyword}" x:Name="KeywordSearchBox"/>
                 <Label Content="Missing tag"/>
-                <TextBox Text="{Binding SearchMissingTagName}" Margin="2"/>
+                <TextBox Text="{Binding SearchMissingTagName}"/>
                 <Border/>
                 <Button Content="Go" Margin="3" MaxWidth="50" Command="{Binding ApplySearchCommand}"/>
             </UniformGrid>

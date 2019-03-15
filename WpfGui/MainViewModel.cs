@@ -40,10 +40,12 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         private RelayCommand _cleanupCommand;
         private RelayCommand _maskTextCommand;
         private RelayCommand _toggleHeadCommand;
+        private RelayCommand _searchCommand;
 
         private string _searchKeyword;
         private string _searchMissingTagName;
         private ActionViewItem _selectedItem;
+        private bool _searchExpanded;
 
         #endregion
 
@@ -383,6 +385,15 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             SelectedContext = _searchContext;
         }
 
+        private void SearchExecuted()
+        {
+            SearchExpanded = !SearchExpanded;
+            if (SearchExpanded)
+            {
+                (Window as TaskList)?.KeywordSearchBox.Focus();
+            }
+        }
+
         #endregion
 
         #region Properties
@@ -547,6 +558,17 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             }
         }
 
+        public bool SearchExpanded
+        {
+            get => _searchExpanded;
+            set
+            {
+                if (_searchExpanded == value) return;
+                _searchExpanded = value;
+                OnPropertyChanged();
+            }
+        }
+
         public bool Masked
         {
             get => Settings.Default.MaskNsfwItems;
@@ -584,6 +606,8 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         public ICommand MaskTextCommand => _maskTextCommand ?? (_maskTextCommand = new RelayCommand(() => Masked = !Masked));
 
         public ICommand ToggleHeadCommand => _toggleHeadCommand ?? (_toggleHeadCommand = new RelayCommand(()=> ShowHeadOnly = !ShowHeadOnly));
+
+        public ICommand SearchCommand => _searchCommand ?? (_searchCommand = new RelayCommand(SearchExecuted));
         #endregion
 
         public void CheckForContext(string context)
