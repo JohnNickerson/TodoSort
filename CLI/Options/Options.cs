@@ -26,6 +26,9 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
         [VerbOption("chain", HelpText = "Reorders a set of items into a chain by their 'order' attribute")]
         public BalanceOptions ChainVerb { get; set; }
 
+        [VerbOption("commit", HelpText = "Commits pending changes to the main data file")]
+        public CommitOptions CommitVerb { get; set; }
+
         [VerbOption("dedupe", HelpText = "Searches for duplicates and offers to merge them")]
         public DedupeOptions DedupeVerb { get; set; }
 

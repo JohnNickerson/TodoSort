@@ -82,6 +82,7 @@
     <Compile Include="Options\AddSubOptions.cs" />
     <Compile Include="Options\AdvancedSearchOptions.cs" />
     <Compile Include="Options\BalanceOptions.cs" />
+    <Compile Include="Options\CommitOptions.cs" />
     <Compile Include="Options\DedupeOptions.cs" />
     <Compile Include="Options\DoneSearchSubOptions.cs" />
     <Compile Include="Options\DoneSubOptions.cs" />

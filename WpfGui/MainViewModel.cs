@@ -143,17 +143,10 @@ namespace AssimilationSoftware.TodoSort.WpfGui
 
         private void ReloadFile()
         {
-            if (!string.IsNullOrEmpty(FileName))
+            if (string.IsNullOrEmpty(FileName)) return;
+            var result = MessageBox.Show("You have unsaved changes in memory. Abandon these changes and reload the file?", "Save changes?", MessageBoxButton.YesNoCancel);
+            if (result == MessageBoxResult.Yes)
             {
-                // TODO: Maybe rethink this one case. "Save before reloading" is just "save".
-                switch (ConfirmSaveCancel("You have unsaved changes. Save before reloading?"))
-                {
-                    case null:
-                        return;
-                    case true:
-                        _api.Save();
-                        break;
-                }
                 OpenFile(FileName);
             }
         }

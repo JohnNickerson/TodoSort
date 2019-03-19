@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Assimilation Software")]
 [assembly: AssemblyProduct("TodoSort")]
-[assembly: AssemblyCopyright("Copyright © Assimilation Software 2018")]
+[assembly: AssemblyCopyright("Copyright Assimilation Software ©  2019")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

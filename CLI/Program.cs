@@ -161,17 +161,45 @@ namespace AssimilationSoftware.TodoSort.CLI
                         var conflicts = repo.FindConflicts();
                         foreach (var conflictSet in conflicts)
                         {
-                            // TODO: Present conflicts for resolution.
-                            int i = 0;
-                            foreach (var edit in conflictSet)
+                            // Present conflicts for resolution.
+                            var i = 0;
+                            Guid itemId = Guid.Empty;
+                            Console.WriteLine("Updates:");
+                            foreach (var edit in conflictSet.Updates)
                             {
                                 PrintItem(edit, i);
+                                itemId = edit.ID;
+                                i++;
+                            }
+                            Console.WriteLine("Deletes:");
+                            foreach (var edit in conflictSet.Deletes)
+                            {
+                                PrintItem(edit, i);
+                                itemId = edit.ID;
                                 i++;
                             }
                             // Present options: Delete, Update (one particular version), Revert.
+                            Console.WriteLine("Options:");
+                            Console.WriteLine("R: Revert all pending changes to this record");
+                            Console.WriteLine("D: Delete this item, including any pending changes");
+                            Console.WriteLine("[number]: Accept a specific revision above");
+                            var optKey = Console.ReadKey();
+                            switch (optKey.KeyChar.ToString().ToLower())
+                            {
+                                case "r":
+                                    repo.Revert(itemId);
+                                    break;
+                                case "d":
+                                    repo.ResolveByDelete(itemId);
+                                    break;
+
+                            }
+
+                            Console.WriteLine(Environment.NewLine);
                         }
                         repo.CommitChanges();
                         Console.WriteLine("Pending changes committed.");
+                        repo.SaveChanges();
                     }
                     break;
                 #endregion
