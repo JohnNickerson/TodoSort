@@ -47,3 +47,8 @@
 	- Bump items via GUI.
 	- Save NSFW masking option.
 	- Open link updates after edit.
+2019-03-21: Build 1.1.8 released to Production
+	- Double-click to edit. 
+	- Display item count. 
+	- Maroon back-end (v0.1.2.1)
+	- Fix for done items deferring with projects.
