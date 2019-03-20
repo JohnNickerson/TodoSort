@@ -84,6 +84,16 @@ namespace AssimilationSoftware.TodoSort.WpfGui
 
         private void Cleanup()
         {
+            // Confirm first.
+            switch (ConfirmSaveCancel("You have unsaved changes. This operation will discard them. Save first?"))
+            {
+                case null:
+                    return;
+                case true:
+                    _api.Save();
+                    break;
+            }
+
             foreach (var i in _repo.FindAll())
             {
                 if (string.IsNullOrEmpty(i.Context))

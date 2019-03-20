@@ -41,9 +41,10 @@
 	- Show Head Only option moved to Options menu with keyboard shortcut.
 	- Close ranking window automatically when finished.
 	- Open any file type.
-2019-02-28: Build 1.1.7 released to Production
+2019-02-28: Build 1.1.8.1 released to Production
 	- Validation for title fixing from GUI.
 	- Full item details in tooltip.
 	- Bump items via GUI.
 	- Save NSFW masking option.
 	- Open link updates after edit.
+	- Patched to fix Cleanup command discarding in-memory changes.
