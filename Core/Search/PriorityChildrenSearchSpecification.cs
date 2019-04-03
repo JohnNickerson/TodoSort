@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AssimilationSoftware.Maroon.Interfaces;
 
 namespace AssimilationSoftware.TodoSort.Core.Search
 {
@@ -23,7 +24,7 @@ namespace AssimilationSoftware.TodoSort.Core.Search
 
         public bool IsSatisfiedBy(ActionItem b)
         {
-            return b.Parent != null && b.Parent.ID.ToString().ToLower().StartsWith(_parentId);
+            return b.ParentId != null && b.ParentId.ToString().ToLower().StartsWith(_parentId);
         }
     }
 }

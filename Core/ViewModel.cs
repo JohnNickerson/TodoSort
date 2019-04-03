@@ -71,7 +71,7 @@ namespace AssimilationSoftware.TodoSort.Core
             {
                 if (ShowHeadOnly)
                 {
-                    return _repository.Items.Where(i => SearchSpecification.And(new DepthRangeSearchSpecification(0, 0)).IsSatisfiedBy(i));
+                    return _repository.Items.Where(i => SearchSpecification.And(new DepthRangeSearchSpecification(0, 0, _repository)).IsSatisfiedBy(i));
                 }
                 else
                 {
@@ -256,10 +256,10 @@ namespace AssimilationSoftware.TodoSort.Core
                             SetParent(next, null);
                         }
                     }
-                    else if (doneItem.Project != null)
+                    else if (doneItem.ProjectId != null)
                     {
                         SearchSpecification = new AndSpecification<ActionItem>(
-                            new ProjectChildrenSearchSpecification(doneItem.Project), 
+                            new ProjectChildrenSearchSpecification(doneItem.ProjectId.ToString()), 
                             new TagValueSpecification("order", (doneItem.GetIntTag("order", 0) + 1).ToString()));
                         foreach (var next in SearchResults.ToList())
                         {
@@ -328,7 +328,7 @@ namespace AssimilationSoftware.TodoSort.Core
 				UnsavedChanges = true;
 
                 // If this item was the project for another, undefer that one, too.
-                foreach (var c in SomedayItems.Where(a => a.Project != null && a.Project.ID == i.ID))
+                foreach (var c in SomedayItems.Where(a => a.ProjectId != null && a.ProjectId == i.ID))
                 {
                     toUndefer.Enqueue(c);
                 }
@@ -378,11 +378,11 @@ namespace AssimilationSoftware.TodoSort.Core
         {
             foreach (var selected in items)
             {
-                selected.Parent = null;
+                selected.ParentId = null;
                 _repository.Update(selected);
                 foreach (var i in _repository.GetChildren(selected).ToArray())
                 {
-                    i.Parent = null;
+                    i.ParentId = null;
                     _repository.Update(i);
 					UnsavedChanges = true;
                 }
@@ -401,7 +401,7 @@ namespace AssimilationSoftware.TodoSort.Core
 
         public void SetParent(ActionItem child, ActionItem parent)
         {
-            child.Parent = parent;
+            child.ParentId = parent.ID;
             // Increment the "upvotes" counter.
             if (parent != null)
             {
@@ -424,13 +424,13 @@ namespace AssimilationSoftware.TodoSort.Core
                     if (setNullParents || items.Intersect(GetAncestors(items[i])).Any())
                     {
                         // Only reset the parent if requested or if not doing so would cause a loop.
-                        items[i].Parent = null;
+                        items[i].ParentId = null;
                         _repository.Update(items[i]);
                     }
                 }
                 else
                 {
-                    items[i].Parent = items[newIndex];
+                    items[i].ParentId = items[newIndex].ID;
                     _repository.Update(items[i]);
                 }
             }
@@ -443,16 +443,20 @@ namespace AssimilationSoftware.TodoSort.Core
             {
                 actionItem
             };
-            for (var b = actionItem.Parent; b != null && !a.Contains(b); b = b.Parent)
+            if (actionItem.ParentId == null) return a;
+            for (var b = actionItem.GetParent(_repository);
+                b != null && !a.Contains(b);
+                b = b.GetParent(_repository))
             {
                 a.Add(b);
             }
+
             return a;
         }
 
         public void SetProject(ActionItem child, ActionItem project)
         {
-            child.Project = project;
+            child.ProjectId = project.ID;
             _repository.Update(child);
 			UnsavedChanges = true;
         }
@@ -518,11 +522,11 @@ namespace AssimilationSoftware.TodoSort.Core
             // Set any child objects from second to first.
             foreach (var c in _repository.GetChildren(child).ToArray())
             {
-                c.Parent = target;
+                c.ParentId = target.ID;
             }
-            if (child.Project != null && target.Project == null)
+            if (child.ProjectId != null && target.ProjectId == null)
             {
-                target.Project = child.Project;
+                target.ProjectId = child.ProjectId;
             }
             if (child.TickleDate != null && target.TickleDate == null)
             {

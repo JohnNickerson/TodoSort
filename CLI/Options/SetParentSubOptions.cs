@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using AssimilationSoftware.TodoSort.Core.Data;
 
 namespace AssimilationSoftware.TodoSort.CLI.Options
 {
@@ -16,27 +17,27 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
         [Option('g', "target", HelpText = "A search term to find the parent item. Defaults to same as 'search' option.")]
         public string ParentSearchTerm { get; set; }
 
-        public ISearchSpecification<ActionItem> ChildSearchSpecification
+        public ISearchSpecification<ActionItem> GetChildSearchSpecification(ITodoRepository repo)
         {
-            get
+            
             {
                 ISearchSpecification<ActionItem> spec = new FullTextSearchSpecification(ChildSearchTerm);
                 if (ShowAllItems)
                 {
-                    spec = spec.And(new DepthRangeSearchSpecification(-1, int.MaxValue));
+                    spec = spec.And(new DepthRangeSearchSpecification(-1, int.MaxValue, repo));
                 }
                 return spec;
             }
         }
 
-        public ISearchSpecification<ActionItem> ParentSearchSpecification
+        public ISearchSpecification<ActionItem> GetParentSearchSpecification(ITodoRepository repo)
         {
-            get
+            
             {
                 ISearchSpecification<ActionItem> spec = new FullTextSearchSpecification(ParentSearchTerm ?? ChildSearchTerm);
                 if (ShowAllItems)
                 {
-                    spec = spec.And(new DepthRangeSearchSpecification(0, int.MaxValue));
+                    spec = spec.And(new DepthRangeSearchSpecification(0, int.MaxValue, repo));
                 }
                 return spec;
             }

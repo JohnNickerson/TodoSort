@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AssimilationSoftware.TodoSort.Core.Data;
 
 namespace AssimilationSoftware.TodoSort.CLI.Options
 {
@@ -17,21 +18,20 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
         [Option("maxdate", HelpText = "The maximum tickle date to look for.")]
         public DateTime? ToTickleDate { get; set; }
 
-        public override ISearchSpecification<ActionItem> SearchSpecification
+        public override ISearchSpecification<ActionItem> GetSearchSpecification(ITodoRepository repo)
         {
-            get
             {
                 if (FromTickleDate.HasValue)
                 {
                     if (ToTickleDate.HasValue)
                     {
-                        return base.SearchSpecification
+                        return base.GetSearchSpecification(repo)
                             .And(new TickleDateLessThanSpecification(ToTickleDate))
                             .And(new TickleDateGreaterThanSpecification(FromTickleDate));
                     }
                     else
                     {
-                        return base.SearchSpecification
+                        return base.GetSearchSpecification(repo)
                             .And(new TickleDateGreaterThanSpecification(FromTickleDate));
                     }
                 }
@@ -39,12 +39,12 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
                 {
                     if (ToTickleDate.HasValue)
                     {
-                        return base.SearchSpecification
+                        return base.GetSearchSpecification(repo)
                             .And(new TickleDateLessThanSpecification(ToTickleDate));
                     }
                     else
                     {
-                        return base.SearchSpecification;
+                        return base.GetSearchSpecification(repo);
                     }
                 }
             }

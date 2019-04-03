@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AssimilationSoftware.TodoSort.Core.Data;
 
 namespace AssimilationSoftware.TodoSort.CLI.Options
 {
@@ -91,43 +92,47 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
             }
         }
 
-        public virtual ISearchSpecification<ActionItem> SearchSpecification
+        public virtual ISearchSpecification<ActionItem> GetSearchSpecification(ITodoRepository repo)
         {
-            get
+            ISearchSpecification<ActionItem> result = new TagValueSpecification(TagName, TagValue)
+                .And(new DepthRangeSearchSpecification(MinDepth, MaxDepth, repo));
+            if (!string.IsNullOrEmpty(Context))
             {
-                ISearchSpecification<ActionItem> result = new TagValueSpecification(TagName, TagValue)
-                    .And(new DepthRangeSearchSpecification(MinDepth, MaxDepth));
-                if (!string.IsNullOrEmpty(Context))
-                {
-                    result = result.And(new ContextSearchSpecification(Context));
-                }
-                if (!string.IsNullOrEmpty(Title))
-                {
-                    result = result.And(new PartialPropertyValueSpecification<string>(i => i.Title, Title));
-                }
-                if (!string.IsNullOrEmpty(Note))
-                {
-                    result = result.And(new NoteSearchSpecification(Note));
-                }
-                if (!string.IsNullOrEmpty(ID))
-                {
-                    // TODO: PartialIdSearchSpecification to handle GUIDs better.
-                    result = result.And(new IdSearchSpecification(ID));
-                }
-                if (!string.IsNullOrEmpty(ProjectID))
-                {
-                    result = result.And(new ProjectChildrenSearchSpecification(ProjectID));
-                }
-                if (!string.IsNullOrEmpty(PriorityParentID))
-                {
-                    result = result.And(new PriorityChildrenSearchSpecification(PriorityParentID));
-                }
-                if (!string.IsNullOrEmpty(Keyword))
-                {
-                    result = result.And(new FullTextSearchSpecification(Keyword));
-                }
-                return result;
+                result = result.And(new ContextSearchSpecification(Context));
             }
+
+            if (!string.IsNullOrEmpty(Title))
+            {
+                result = result.And(new PartialPropertyValueSpecification<string>(i => i.Title, Title));
+            }
+
+            if (!string.IsNullOrEmpty(Note))
+            {
+                result = result.And(new NoteSearchSpecification(Note));
+            }
+
+            if (!string.IsNullOrEmpty(ID))
+            {
+                // TODO: PartialIdSearchSpecification to handle GUIDs better.
+                result = result.And(new IdSearchSpecification(ID));
+            }
+
+            if (!string.IsNullOrEmpty(ProjectID))
+            {
+                result = result.And(new ProjectChildrenSearchSpecification(ProjectID));
+            }
+
+            if (!string.IsNullOrEmpty(PriorityParentID))
+            {
+                result = result.And(new PriorityChildrenSearchSpecification(PriorityParentID));
+            }
+
+            if (!string.IsNullOrEmpty(Keyword))
+            {
+                result = result.And(new FullTextSearchSpecification(Keyword));
+            }
+
+            return result;
         }
 
         [Option("tree", HelpText = "Display results in a tree format.")]

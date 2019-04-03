@@ -49,7 +49,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                     });
                 }
                 _context = item.Source.Context;
-                _project = item.Source.Project;
+                _project = item.Source.GetProject(api.Repository);
                 _tickleDate = item.Source.TickleDate;
             }
         }
@@ -121,6 +121,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             }
         }
 
+        // TODO: Consider changing to ProjectId
         public ActionItem Project
         {
             get => _project;

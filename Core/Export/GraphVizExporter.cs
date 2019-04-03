@@ -21,9 +21,9 @@ namespace AssimilationSoftware.TodoSort.Core.Export
             {
                 var line = n.Title.Replace("\"", "");
                 result.AppendLine(string.Format("    ID{0} [label=\"{1}\"];", n.ID.ToString().Replace("-", ""), line.Replace("\"", "")));
-                if (n.Parent != null)
+                if (n.ParentId != null)
                 {
-                    result.AppendLine(string.Format("    ID{0} -> ID{1};", n.Parent.ID.ToString().Replace("-", ""), n.ID.ToString().Replace("-", "")));
+                    result.AppendLine(string.Format("    ID{0} -> ID{1};", n.ParentId.ToString().Replace("-", ""), n.ID.ToString().Replace("-", "")));
                 }
                 else
                 {

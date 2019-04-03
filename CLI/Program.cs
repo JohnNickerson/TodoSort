@@ -96,7 +96,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                 case "advanced-search":
                     {
                         vm.SearchSpecification = ((AdvancedSearchOptions)argsubs).SearchSpecification;
-                        PrintItems("title", vm.SearchResults, ((AdvancedSearchOptions)argsubs).NSFW);
+                        PrintItems("title", vm.SearchResults, repo, ((AdvancedSearchOptions)argsubs).NSFW);
                         break;
                     }
                 #endregion
@@ -108,8 +108,8 @@ namespace AssimilationSoftware.TodoSort.CLI
                         // Validate the branching factor: must be greater than zero.
                         if (balopts.BranchFactor > 0)
                         {
-                            vm.SearchSpecification = balopts.SearchSpecification;
-                            var vine = vm.SearchResults.OrderBy(i => i.RankDepth).ThenByDescending(i => i.Upvotes).ToArray();
+                            vm.SearchSpecification = balopts.GetSearchSpecification(repo);
+                            var vine = vm.SearchResults.OrderBy(i => i.GetRankDepth(repo)).ThenByDescending(i => i.Upvotes).ToArray();
                             vm.Balance(vine, balopts.BranchFactor);
                         }
                         else
@@ -125,18 +125,18 @@ namespace AssimilationSoftware.TodoSort.CLI
                     {
                         var bumpOpts = (SingleSearchSubOptions)argsubs;
                         vm.SearchSpecification = bumpOpts.SearchSpecification;
-                        var target = Disambiguate(vm.SearchResults, !string.IsNullOrEmpty(bumpOpts.ItemId));
+                        var target = Disambiguate(vm.SearchResults, repo, !string.IsNullOrEmpty(bumpOpts.ItemId));
                         if (target != null)
                         {
                             // Before
-                            PrintTree(new List<ActionItem>(new[] { target }), true, bumpOpts.NSFW);
-                            var depth = target.RankDepth / 2;
-                            while (target.RankDepth > depth && target.Parent != null)
+                            PrintTree(new List<ActionItem>(new[] { target }), true, repo, bumpOpts.NSFW);
+                            var depth = target.GetRankDepth(repo) / 2;
+                            while (target.GetRankDepth(repo) > depth && target.ParentId != null)
                             {
-                                vm.SetParent(target, target.Parent.Parent);
+                                vm.SetParent(target, target.GetParent(repo).GetParent(repo));
                             }
                             // After
-                            PrintTree(new List<ActionItem>(new[] { target }), true, bumpOpts.NSFW);
+                            PrintTree(new List<ActionItem>(new[] { target }), true, repo, bumpOpts.NSFW);
                         }
                     }
                     break;
@@ -146,11 +146,11 @@ namespace AssimilationSoftware.TodoSort.CLI
                 case "chain":
                     {
                         var balopts = (BalanceOptions)argsubs;
-                        vm.SearchSpecification = balopts.SearchSpecification;
+                        vm.SearchSpecification = balopts.GetSearchSpecification(repo);
                         var vine = vm.SearchResults.OrderBy(i => i.GetIntTag("order", 0)).ToArray();
                         vm.Balance(vine, 1, false);
                         // Show the resulting chain.
-                        PrintTree(vm.SearchResults.ToList(), true, balopts.NSFW);
+                        PrintTree(vm.SearchResults.ToList(), true, repo, balopts.NSFW);
                         break;
                     }
                 #endregion
@@ -167,14 +167,14 @@ namespace AssimilationSoftware.TodoSort.CLI
                             Console.WriteLine("Updates:");
                             foreach (var edit in conflictSet.Updates)
                             {
-                                PrintItem(edit, i);
+                                PrintItem(edit, i, repo);
                                 itemId = edit.ID;
                                 i++;
                             }
                             Console.WriteLine("Deletes:");
                             foreach (var edit in conflictSet.Deletes)
                             {
-                                PrintItem(edit, i);
+                                PrintItem(edit, i, repo);
                                 itemId = edit.ID;
                                 i++;
                             }
@@ -217,7 +217,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                             // Get user input
                             Console.WriteLine();
                             Console.WriteLine("Select one item to merge all others into (i = ignore):");
-                            var master = Disambiguate(vm.SearchResults);
+                            var master = Disambiguate(vm.SearchResults, repo);
                             if (master != null)
                             {
                                 // Merge all into master.
@@ -237,7 +237,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                                 // Get user input.
                                 Console.WriteLine();
                                 Console.WriteLine("Select one item to merge all others into (i = ignore):");
-                                var master = Disambiguate(vm.SearchResults);
+                                var master = Disambiguate(vm.SearchResults, repo);
                                 if (master != null)
                                 {
                                     // Merge into master.
@@ -258,7 +258,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                     // Move the item and its sub-items to the "someday" file.
                     DeferSubOptions deferopts = ((DeferSubOptions)argsubs);
                     vm.SearchSpecification = deferopts.SearchSpecification;
-                    selected = Disambiguate(vm.SearchResults, !string.IsNullOrEmpty(deferopts.ItemId));
+                    selected = Disambiguate(vm.SearchResults, repo, !string.IsNullOrEmpty(deferopts.ItemId));
                     if (selected != null)
                     {
                         if (deferopts.TickleDate.HasValue)
@@ -277,7 +277,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                 case "delete":
                     // Find a matching item to delete.
                     vm.SearchSpecification = ((SingleSearchSubOptions)argsubs).SearchSpecification;
-                    selected = Disambiguate(vm.SearchResults, !string.IsNullOrEmpty(((SingleSearchSubOptions)argsubs).ItemId));
+                    selected = Disambiguate(vm.SearchResults, repo, !string.IsNullOrEmpty(((SingleSearchSubOptions)argsubs).ItemId));
                     if (selected != null) vm.Delete(selected);
                     break;
                 #endregion
@@ -288,7 +288,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                         // If there is a next action, create a new item and add it to the correct context.
                         var doneopts = (DoneSubOptions)argsubs;
                         vm.SearchSpecification = doneopts.SearchSpecification;
-                        selected = Disambiguate(vm.SearchResults, !string.IsNullOrEmpty(doneopts.ItemId));
+                        selected = Disambiguate(vm.SearchResults, repo, !string.IsNullOrEmpty(doneopts.ItemId));
                         if (selected != null)
                         {
                             vm.MarkDone(doneopts.DoneDate, selected);
@@ -327,7 +327,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                     }
                     if (exporter != null)
                     {
-                        vm.SearchSpecification = exportOptions.SearchSpecification;
+                        vm.SearchSpecification = exportOptions.GetSearchSpecification(repo);
                         if (string.IsNullOrEmpty(exportOptions.SortTag))
                         {
                             exporter.Export(vm.SearchResults.ToList());
@@ -343,7 +343,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                 case "fix-titles":
                     {
                         var fixOptions = (FixTitlesOptions)argsubs;
-                        vm.SearchSpecification = fixOptions.SearchSpecification;
+                        vm.SearchSpecification = fixOptions.GetSearchSpecification(repo);
                         var client = new WebClient();
 
                         var totalCount = 0;
@@ -416,12 +416,12 @@ namespace AssimilationSoftware.TodoSort.CLI
                     var mergeOptions = (MergeSubOptions)argsubs;
                     Console.WriteLine("Confirm child item:");
                     vm.SearchTerm = mergeOptions.ChildSearchTerm ?? mergeOptions.TargetSearchTerm;
-                    var mergevictim = Disambiguate(vm.SearchResults);
+                    var mergevictim = Disambiguate(vm.SearchResults, repo);
                     if (mergevictim != null)
                     {
                         Console.WriteLine("Confirm item to merge into:");
                         vm.SearchTerm = mergeOptions.TargetSearchTerm;
-                        var combined = Disambiguate(vm.SearchResults.Where(x => x.ID != mergevictim.ID));
+                        var combined = Disambiguate(vm.SearchResults.Where(x => x.ID != mergevictim.ID), repo);
                         if (mergevictim != null && combined != null)
                         {
                             vm.Merge(mergevictim, combined);
@@ -436,7 +436,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                     {
                         var moveOptions = (MoveSubOptions)argsubs;
                         vm.SearchSpecification = moveOptions.SearchSpecification;
-                        selected = Disambiguate(vm.SearchResults, !string.IsNullOrEmpty(moveOptions.ItemId));
+                        selected = Disambiguate(vm.SearchResults, repo, !string.IsNullOrEmpty(moveOptions.ItemId));
                         if (selected != null)
                         {
                             vm.SetContext(selected, moveOptions.NewContext);
@@ -454,7 +454,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                     {
                         var moveAllOptions = (MoveAllSubOptions)argsubs;
                         vm.ShowHeadOnly = false; // Make sure we move all items in the context, not just the head.
-                        vm.SearchSpecification = moveAllOptions.SearchSpecification;
+                        vm.SearchSpecification = moveAllOptions.GetSearchSpecification(repo);
                         var items = vm.SearchResults.ToList();
                         int counter = 0;
                         while (items.Count > 0)
@@ -473,7 +473,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                     // Add a note to a task.
                     NoteSubOptions noteOptions = (NoteSubOptions)argsubs;
                     vm.SearchSpecification = noteOptions.SearchSpecification;
-                    selected = Disambiguate(vm.SearchResults, !string.IsNullOrEmpty(noteOptions.ItemId));
+                    selected = Disambiguate(vm.SearchResults, repo, !string.IsNullOrEmpty(noteOptions.ItemId));
                     if (selected != null)
                     {
                         // Force verbose mode to display all notes and tags.
@@ -488,7 +488,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                     // Read a tag and pass it through to the "start" argverb. Intended for URLs and file names.
                     OpenTagSubOptions opentagOptions = (OpenTagSubOptions)argsubs;
                     vm.SearchSpecification = opentagOptions.SearchSpecification;
-                    selected = Disambiguate(vm.SearchResults, !string.IsNullOrEmpty(opentagOptions.ItemId));
+                    selected = Disambiguate(vm.SearchResults, repo, !string.IsNullOrEmpty(opentagOptions.ItemId));
                     if (selected != null)
                     {
                         if (selected.Tags.ContainsKey(opentagOptions.Tag))
@@ -543,7 +543,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                         // Assign the @inbox items to contexts.
                         Console.WriteLine("To which context should this item go?");
                         ActionItem first = inbox[i];
-                        PrintItem(first, null);
+                        PrintItem(first, null, repo);
                         Console.WriteLine();
                         PrintContexts(vm);
                         string newcontext = Console.ReadLine();
@@ -563,7 +563,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                             // Add next actions for projects.
                             Console.WriteLine("What is the next action required on this project?");
                             ActionItem first = projects[i];
-                            PrintItem(first, null);
+                            PrintItem(first, null, repo);
                             string nextaction = Console.ReadLine();
                             Console.WriteLine("...and to what context does it belong?");
                             PrintContexts(vm);
@@ -576,7 +576,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                             else
                             {
                                 var next = new ActionItem { Context = newcontext, Title = nextaction };
-                                next.Project = first;
+                                next.ProjectId = first.ID;
                                 vm.AddItem(next);
                             }
                             Console.WriteLine();
@@ -590,7 +590,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                 case "defer-all":
                     // Delete items below a specified depth.
                     var pruneOptions = (MultiSearchSubOptions)argsubs;
-                    vm.SearchSpecification = pruneOptions.SearchSpecification;
+                    vm.SearchSpecification = pruneOptions.GetSearchSpecification(repo);
                     Console.WriteLine("About to defer {0} items. Continue [Y/N]?", vm.SearchResults.Count());
                     var k = Console.ReadKey();
                     if (k.KeyChar.ToString().ToLower() == "y")
@@ -611,7 +611,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                         {
                             if (quitandsave) break;
                             // select all items without rank parents
-                            vm.SearchSpecification = new ContextSearchSpecification(con).And(rankOptions.SearchSpecification);
+                            vm.SearchSpecification = new ContextSearchSpecification(con).And(rankOptions.GetSearchSpecification(repo));
                             var items = vm.SearchResults.ToArray();
                             var index = new List<int>();
                             for (int dex = 0; dex < items.Count(); dex++) index.Add(dex);
@@ -634,8 +634,8 @@ namespace AssimilationSoftware.TodoSort.CLI
                                 if (quitandsave) break;
                                 // get vote
                                 Console.WriteLine("{0}/{1} ({2}%) complete", x, items.Count(), 100 * x / items.Count());
-                                PrintItem(items.ElementAt(index[x]), 1, rankOptions.NSFW);
-                                PrintItem(items.ElementAt(index[x + 1]), 2, rankOptions.NSFW);
+                                PrintItem(items.ElementAt(index[x]), 1, repo, rankOptions.NSFW);
+                                PrintItem(items.ElementAt(index[x + 1]), 2, repo, rankOptions.NSFW);
                                 Console.Write("Which of these is more important? (q=quit) ");
                                 // assign parents based on vote
                                 switch (Console.ReadKey().KeyChar)
@@ -678,7 +678,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                     // Rename an item.
                     RenameSubOptions renameOptions = (RenameSubOptions)argsubs;
                     vm.SearchSpecification = renameOptions.SearchSpecification;
-                    selected = Disambiguate(vm.SearchResults, !string.IsNullOrEmpty(renameOptions.ItemId));
+                    selected = Disambiguate(vm.SearchResults, repo, !string.IsNullOrEmpty(renameOptions.ItemId));
                     if (selected != null)
                     {
                         vm.Rename(selected, renameOptions.NewTitle);
@@ -695,18 +695,18 @@ namespace AssimilationSoftware.TodoSort.CLI
                 case "search":
                     // Search for matching items.
                     var searchOptions = ((MultiSearchSubOptions)argsubs);
-                    vm.SearchSpecification = searchOptions.SearchSpecification;
+                    vm.SearchSpecification = searchOptions.GetSearchSpecification(repo);
                     if (vm.SearchResults.Count() == 0)
                     {
                         Console.WriteLine("No results found.");
                     }
                     else if (searchOptions.PrintTree)
                     {
-                        PrintTree(vm.SearchResults.ToList(), true, searchOptions.NSFW);
+                        PrintTree(vm.SearchResults.ToList(), true, repo, searchOptions.NSFW);
                     }
                     else
                     {
-                        PrintItems(searchOptions.SortTag, vm.SearchResults, searchOptions.NSFW);
+                        PrintItems(searchOptions.SortTag, vm.SearchResults, repo, searchOptions.NSFW);
                         if (!searchOptions.NoCount)
                         {
                             Console.WriteLine("{0} item(s) found.", vm.SearchResults.Count());
@@ -721,9 +721,9 @@ namespace AssimilationSoftware.TodoSort.CLI
                         // Construct a search specification.
                         var search = ((DoneSearchSubOptions)argsubs);
                         // Set the ViewModel property.
-                        vm.DoneSearchSpecification = search.SearchSpecification;
+                        vm.DoneSearchSpecification = search.GetSearchSpecification(repo);
                         // Report the results.
-                        PrintItems(search.SortTag ?? "done-date", vm.DoneSearchResults, search.NSFW);
+                        PrintItems(search.SortTag ?? "done-date", vm.DoneSearchResults, repo, search.NSFW);
                         if (!search.NoCount)
                         {
                             Console.WriteLine("{0} item(s) found.", vm.DoneSearchResults.Count());
@@ -738,9 +738,9 @@ namespace AssimilationSoftware.TodoSort.CLI
                         // Construct a search specification.
                         var search = ((SomedaySearchSubOptions)argsubs);
                         // Set the ViewModel property.
-                        vm.SomedaySearchSpecification = search.SearchSpecification;
+                        vm.SomedaySearchSpecification = search.GetSearchSpecification(repo);
                         // Report the results.
-                        PrintItems(search.SortTag ?? "tickle-date", vm.SomedaySearchResults, search.NSFW);
+                        PrintItems(search.SortTag ?? "tickle-date", vm.SomedaySearchResults, repo, search.NSFW);
                         if (!search.NoCount)
                         {
                             Console.WriteLine("{0} item(s) found.", vm.SomedaySearchResults.Count());
@@ -754,19 +754,19 @@ namespace AssimilationSoftware.TodoSort.CLI
                     {
                         SetParentSubOptions setparentOptions = (SetParentSubOptions)argsubs;
                         Console.WriteLine("Confirm child item:");
-                        vm.SearchSpecification = setparentOptions.ChildSearchSpecification;
-                        var child = Disambiguate(vm.SearchResults);
+                        vm.SearchSpecification = setparentOptions.GetChildSearchSpecification(repo);
+                        var child = Disambiguate(vm.SearchResults, repo);
                         Console.WriteLine("Confirm parent item:");
-                        vm.SearchSpecification = setparentOptions.ParentSearchSpecification;
+                        vm.SearchSpecification = setparentOptions.GetParentSearchSpecification(repo);
                         if (child != null)
                         {
                             // TODO: Allow null parent.
-                            var parent = Disambiguate(vm.SearchResults.Where(x => x.ID != child.ID));
+                            var parent = Disambiguate(vm.SearchResults.Where(x => x.ID != child.ID), repo);
                             if (parent != null)
                             {
                                 vm.SetParent(child, parent);
                                 Console.WriteLine();
-                                PrintTree(new List<ActionItem> { { child }, { parent } }, false, setparentOptions.NSFW);
+                                PrintTree(new List<ActionItem> { { child }, { parent } }, false, repo, setparentOptions.NSFW);
                             }
                             else
                             {
@@ -777,7 +777,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                                 {
                                     vm.SetParent(child, null);
                                     Console.WriteLine();
-                                    PrintTree(new List<ActionItem> { child }, false, setparentOptions.NSFW);
+                                    PrintTree(new List<ActionItem> { child }, false, repo, setparentOptions.NSFW);
                                 }
                             }
                         }
@@ -791,10 +791,10 @@ namespace AssimilationSoftware.TodoSort.CLI
                         SetProjectSubOptions commandOptions = (SetProjectSubOptions)argsubs;
                         Console.WriteLine("Confirm child item:");
                         vm.SearchTerm = commandOptions.ChildSearchTerm;
-                        var child = Disambiguate(vm.SearchResults);
+                        var child = Disambiguate(vm.SearchResults, repo);
                         Console.WriteLine("Confirm project:");
                         vm.SearchTerm = commandOptions.ProjectSearchTerm ?? commandOptions.ChildSearchTerm;
-                        var project = Disambiguate(vm.SearchResults);
+                        var project = Disambiguate(vm.SearchResults, repo);
                         if (child != null && project != null)
                         {
                             vm.SetProject(child, project);
@@ -818,7 +818,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                             Console.Clear();
                             for (int index = 0; index < somesub.PageSize && offset + index < someitems.Count(); index++)
                             {
-                                PrintItem(someitems.ElementAt(offset + index), index, somesub.NSFW);
+                                PrintItem(someitems.ElementAt(offset + index), index, repo, somesub.NSFW);
                             }
                             char choice = Console.ReadKey().KeyChar;
                             Console.WriteLine();
@@ -829,7 +829,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                             }
                             if (undefer != null)
                             {
-                                EditSomedayItem(vm, undefer);
+                                EditSomedayItem(vm, undefer, repo);
                                 undefer = null;
                             }
                         }
@@ -858,7 +858,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                         {
                             // Show a summary of numbers at each depth.
                             vm.SearchSpecification = new ContextSearchSpecification(c.Context);
-                            var detailed = (from r in vm.SearchResults group r by r.RankDepth into g select new { Depth = g.Key, Count = g.Count() });
+                            var detailed = (from r in vm.SearchResults group r by r.GetRankDepth(repo) into g select new { Depth = g.Key, Count = g.Count() });
                             foreach (var d in detailed.OrderBy(r => r.Depth))
                             {
                                 format = string.Format("\t{{0}}\t{{1,{0}}} item{1}", maxnum, (d.Count == 1 ? "" : "s"));
@@ -876,7 +876,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                     // Search for a matching item.
                     var tagOptions = (SingleSearchSubOptions)argsubs;
                     vm.SearchSpecification = tagOptions.SearchSpecification;
-                    selected = Disambiguate(vm.SearchResults, !string.IsNullOrEmpty(tagOptions.ItemId));
+                    selected = Disambiguate(vm.SearchResults, repo, !string.IsNullOrEmpty(tagOptions.ItemId));
                     if (selected != null)
                     {
                         TagItem(vm, selected);
@@ -911,7 +911,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                     {
                         var undeferOptions = (SingleSearchSubOptions)argsubs;
                         vm.SomedaySearchSpecification = undeferOptions.SearchSpecification;
-                        selected = Disambiguate(vm.SomedaySearchResults, !string.IsNullOrEmpty(undeferOptions.ItemId));
+                        selected = Disambiguate(vm.SomedaySearchResults, repo, !string.IsNullOrEmpty(undeferOptions.ItemId));
                         if (selected != null)
                         {
                             vm.Undefer("inbox", selected);
@@ -925,7 +925,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                     {
                         var undoOptions = (UndoSubOptions)argsubs;
                         vm.DoneSearchSpecification = undoOptions.SearchSpecification;
-                        selected = Disambiguate(vm.DoneSearchResults, !string.IsNullOrEmpty(undoOptions.ItemId));
+                        selected = Disambiguate(vm.DoneSearchResults, repo, !string.IsNullOrEmpty(undoOptions.ItemId));
                         if (selected != null)
                         {
                             vm.Undo(undoOptions.NewContext, selected);
@@ -938,7 +938,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                 case "unrank":
                     var unrankOptions = (SingleSearchSubOptions)argsubs;
                     vm.SearchSpecification = unrankOptions.SearchSpecification;
-                    selected = Disambiguate(vm.SearchResults, !string.IsNullOrEmpty(unrankOptions.ItemId));
+                    selected = Disambiguate(vm.SearchResults, repo, !string.IsNullOrEmpty(unrankOptions.ItemId));
                     if (selected != null)
                     {
                         vm.ResetPriorityParents(selected);
@@ -950,7 +950,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                 case "unrank-all":
                     {
                         var unrankAllOptions = (MultiSearchSubOptions)argsubs;
-                        vm.SearchSpecification = unrankAllOptions.SearchSpecification;
+                        vm.SearchSpecification = unrankAllOptions.GetSearchSpecification(repo);
                         Console.WriteLine("About to delete all ranking data for {0} items. Continue [Y/N]?", vm.SearchResults.Count());
                         if (Console.ReadKey().KeyChar.ToString().ToLower() == "y")
                         {
@@ -978,7 +978,7 @@ namespace AssimilationSoftware.TodoSort.CLI
 
             if (selected != null)
             {
-                PrintItem(selected, null);
+                PrintItem(selected, null, repo);
             }
 
             // Rewrite the files
@@ -1000,11 +1000,11 @@ namespace AssimilationSoftware.TodoSort.CLI
             p.Start();
         }
 
-        private static void EditSomedayItem(ViewModel vm, ActionItem item, bool nsfw = false)
+        private static void EditSomedayItem(ViewModel vm, ActionItem item, ITodoRepository repo, bool nsfw = false)
         {
             while (true)
             {
-                PrintItem(item, null, nsfw);
+                PrintItem(item, null, repo, nsfw);
                 // Write menu.
                 Console.WriteLine("1. Undefer (and go to next item)");
                 Console.WriteLine("2. Rename");
@@ -1146,7 +1146,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             return sortedlist;
         }
 
-        private static void PrintItems(string sorttag, IEnumerable<ActionItem> list, bool nsfw = false)
+        private static void PrintItems(string sorttag, IEnumerable<ActionItem> list, ITodoRepository repo, bool nsfw = false)
         {
             string last_context = string.Empty;
             var sortedlist = ApplySort(sorttag, list);
@@ -1156,12 +1156,12 @@ namespace AssimilationSoftware.TodoSort.CLI
                 {
                     Console.WriteLine("@{0}", i.Context);
                 }
-                PrintItem(i, null, nsfw);
+                PrintItem(i, null, repo, nsfw);
                 last_context = i.Context;
             }
         }
 
-        private static void PrintTree(List<ActionItem> list, bool showAncestors, bool nsfw = false)
+        private static void PrintTree(List<ActionItem> list, bool showAncestors, ITodoRepository repo, bool nsfw = false)
         {
             List<ActionItem> ancestors = new List<ActionItem>();
             ancestors.AddRange(list);
@@ -1170,15 +1170,15 @@ namespace AssimilationSoftware.TodoSort.CLI
                 // Fill out the results.
                 for (int i = 0; i < ancestors.Count; i++)
                 {
-                    if (ancestors[i].Parent != null && !ancestors.Contains(ancestors[i].Parent))
+                    if (ancestors[i].ParentId != null && !ancestors.Contains(ancestors[i].GetParent(repo)))
                     {
-                        ancestors.Add(ancestors[i].Parent);
+                        ancestors.Add(ancestors[i].GetParent(repo));
                     }
                 }
             }
 
             // Find the roots.
-            var roots = ancestors.Where(t => t.Parent == null || !ancestors.Contains(t.Parent));
+            var roots = ancestors.Where(t => t.ParentId == null || !ancestors.Contains(t.GetParent(repo)));
 
             foreach (var r in roots)
             {
@@ -1205,7 +1205,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                 var node = stack.Pop();
                 int indent = node.Depth;
                 ActionItem focus = node.Item;
-                var children = ancestors.Where(i => i.Parent == focus);
+                var children = ancestors.Where(i => i.ParentId == focus.ID);
                 var prefix = new StringBuilder();
                 var padline = new StringBuilder();
                 for (int i = 0; i < indent; i++)
@@ -1259,7 +1259,7 @@ namespace AssimilationSoftware.TodoSort.CLI
         /// <remarks>
         /// TODO: Refactor into a Console View class?
         /// </remarks>
-        private static void PrintItem(ActionItem i, int? index, bool nsfw = false)
+        private static void PrintItem(ActionItem i, int? index, ITodoRepository repo, bool nsfw = false)
         {
             int wrapwidth = Console.WindowWidth - 1;
             string title = i.Title;
@@ -1321,9 +1321,9 @@ namespace AssimilationSoftware.TodoSort.CLI
                     WrapOutput("        #tickle-date:", i.TickleDate.Value.ToString("yyyy-MM-dd"), wrapwidth);
                 }
                 WrapOutput("        #ID:", i.ID.ToString(), wrapwidth);
-                if (i.Project != null)
+                if (i.ProjectId != null)
                 {
-                    WrapOutput("        #project:", string.Format("{0} - {1}", i.Project.ID, i.Project.Title), wrapwidth);
+                    WrapOutput("        #project:", string.Format("{0} - {1}", i.ProjectId, i.GetProject(repo)), wrapwidth);
                 }
                 // TODO: Any other special tags?
             }
@@ -1356,7 +1356,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             Console.WriteLine(content);
         }
 
-        private static ActionItem Disambiguate(IEnumerable<ActionItem> todolist, bool autoAcceptOne = false, bool nsfw = false)
+        private static ActionItem Disambiguate(IEnumerable<ActionItem> todolist, ITodoRepository repo, bool autoAcceptOne = false, bool nsfw = false)
         {
             ActionItem selected = null;
 
@@ -1370,13 +1370,13 @@ namespace AssimilationSoftware.TodoSort.CLI
                 // Print the items so we know what to narrow down.
                 for (int i = 0; i < todolist.Count(); i++)
                 {
-                    PrintItem(todolist.ElementAt(i), null, nsfw);
+                    PrintItem(todolist.ElementAt(i), null, repo, nsfw);
                 }
                 Console.WriteLine("Too many search matches. Try to be more specific. No action will be taken this time.");
             }
             else if (todolist.Count() == 1 && autoAcceptOne)
             {
-                PrintItem(todolist.ElementAt(0), null, nsfw);
+                PrintItem(todolist.ElementAt(0), null, repo, nsfw);
                 Console.WriteLine("Auto-accepting...");
                 selected = todolist.ElementAt(0);
             }
@@ -1384,7 +1384,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             {
                 for (int i = 0; i < todolist.Count(); i++)
                 {
-                    PrintItem(todolist.ElementAt(i), i, nsfw);
+                    PrintItem(todolist.ElementAt(i), i, repo, nsfw);
                 }
                 char choice = Console.ReadKey().KeyChar;
                 // Write a blank line to prevent whatever comes next from printing right after this on the same line.

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
+using AssimilationSoftware.Maroon.Interfaces;
 using AssimilationSoftware.Maroon.Mappers.Text;
 using AssimilationSoftware.Maroon.Model;
 using AssimilationSoftware.TodoSort.Core;
@@ -117,9 +118,9 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                 {
                     var chainItems = _repo.FindAll().Where(i => i.Context == headItem.Source.Context &&
                         i.Tags.ContainsKey("order") && i.GetIntTag("order", 0) < headItem.Source.GetIntTag("order", 0));
-                    if (headItem.Source.Project != null)
+                    if (headItem.Source.ProjectId != null)
                     {
-                        chainItems = chainItems.Where(i => i.Project != null && i.Project.Equals(headItem.Source.Project));
+                        chainItems = chainItems.Where(i => i.ProjectId != null && i.ProjectId.Equals(headItem.Source.ProjectId));
                     }
                     else
                     {
@@ -277,7 +278,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                 item.Title = editVm.Title;
                 item.Notes = editVm.Notes.Split('\n').ToList();
                 item.Tags = editVm.Tags.ToDictionary(k => k.Tag, v => v.Value);
-                item.Project = editVm.Project;
+                item.ProjectId = editVm.Project.ID;
                 item.Context = editVm.Context;
                 if (editVm.IsDeferred)
                 {
@@ -612,6 +613,9 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         public ICommand ToggleHeadCommand => _toggleHeadCommand ?? (_toggleHeadCommand = new RelayCommand(()=> ShowHeadOnly = !ShowHeadOnly));
 
         public ICommand SearchCommand => _searchCommand ?? (_searchCommand = new RelayCommand(SearchExecuted));
+
+        public IRepository<ActionItem> Repository => _repo;
+
         #endregion
 
         public void CheckForContext(string context)

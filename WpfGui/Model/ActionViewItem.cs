@@ -9,6 +9,7 @@ using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Input;
 using AssimilationSoftware.Maroon.Model;
+using AssimilationSoftware.TodoSort.Core.Data;
 
 namespace AssimilationSoftware.TodoSort.WpfGui.Model
 {
@@ -200,13 +201,13 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
                     toolTip.AppendLine(string.Format("#upvotes:{0}", Upvotes));
                 }
 
-                toolTip.AppendLine(string.Format("#depth:{0}", Source.RankDepth));
+                toolTip.AppendLine(string.Format("#depth:{0}", Source.GetRankDepth(Api.Repository)));
 
                 toolTip.AppendLine(string.Format("#ID:{0}", Source.ID));
-                if (Source.Project != null)
+                if (Source.ProjectId != null)
                 {
-                    toolTip.AppendLine(string.Format("#project:{0} - {1}", Source.Project.ID,
-                        Source.Project.Title));
+                    toolTip.AppendLine(string.Format("#project:{0} - {1}", Source.ProjectId,
+                        Source.GetProject(Api.Repository).Title));
                 }
 
                 return toolTip.ToString().TrimEnd();
@@ -219,7 +220,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
 
         public TimeSpan LongDeferDelay => new TimeSpan(60, 0, 0, 0);
 
-        public bool IsInChain => Tags.ContainsKey("order") && (Tags.ContainsKey("series") || Source.Project != null);
+        public bool IsInChain => Tags.ContainsKey("order") && (Tags.ContainsKey("series") || Source.ProjectId != null);
 
         public string TypeIcon
         {
@@ -259,7 +260,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
 
         public ICommand OpenUrlCommand => _openUrlCommand ?? (_openUrlCommand = new RelayCommand<string>(OpenUrlExecuted, s => !string.IsNullOrEmpty(s)));
 
-        public ICommand BumpCommand => _bumpCommand ?? (_bumpCommand = new RelayCommand(BumpExecuted, () => this.Source.RankDepth > 0));
+        public ICommand BumpCommand => _bumpCommand ?? (_bumpCommand = new RelayCommand(BumpExecuted, () => this.Source.GetRankDepth(Api.Repository) > 0));
 
         #endregion // Command Properties
 
@@ -287,7 +288,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
                     }
                 }
                 Source.Tags = editVm.Tags.ToDictionary(k => k.Tag, v => v.Value);
-                Source.Project = editVm.Project;
+                Source.ProjectId = editVm.Project.ID;
                 if (editVm.IsDeferred)
                 {
                     Source.TickleDate = editVm.TickleDate;
@@ -383,19 +384,19 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
 
         private void BumpExecuted()
         {
-            var targetParentDepth = (Source.RankDepth / 2) - 1;
+            var targetParentDepth = (Source.GetRankDepth(Api.Repository) / 2) - 1;
             if (targetParentDepth < 0)
             {
-                Source.Parent = null;
+                Source.ParentId = null;
             }
             else
             {
-                var newParent = Source.Parent;
-                while (newParent != null && newParent.RankDepth > targetParentDepth && newParent.Parent != null)
+                var newParent = Source.GetParent(Api.Repository);
+                while (newParent != null && newParent.GetRankDepth(Api.Repository) > targetParentDepth && newParent.ParentId != null)
                 {
-                    newParent = newParent.Parent;
+                    newParent = newParent.GetParent(Api.Repository);
                 }
-                Source.Parent = newParent;
+                Source.ParentId = newParent.ID;
             }
             Api.Update(Source);
             OnPropertyChanged(nameof(ToolTip));

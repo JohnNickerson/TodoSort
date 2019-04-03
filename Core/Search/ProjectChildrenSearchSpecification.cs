@@ -23,7 +23,7 @@ namespace AssimilationSoftware.TodoSort.Core.Search
 
         public bool IsSatisfiedBy(ActionItem b)
         {
-            return b.Project != null && b.Project.ID.ToString().ToLower().StartsWith(_projectId);
+            return b.ProjectId != null && b.ProjectId.ToString().ToLower().StartsWith(_projectId);
         }
     }
 }

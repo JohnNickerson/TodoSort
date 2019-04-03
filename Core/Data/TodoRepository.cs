@@ -33,7 +33,7 @@ namespace AssimilationSoftware.TodoSort.Core.Data
 
         public IEnumerable<ActionItem> GetChildren(ActionItem selected)
         {
-            return Items.Where(t => t.Parent != null && t.Parent.Equals(selected));
+            return Items.Where(t => t.ParentId != null && t.ParentId.Equals(selected.ID));
         }
 
         public IEnumerable<string> GetContexts(params string[] exclude)
@@ -43,7 +43,7 @@ namespace AssimilationSoftware.TodoSort.Core.Data
 
         public IEnumerable<ActionItem> GetProjectItems(ActionItem i)
         {
-            return Items.Where(a => a.Project != null && a.Project.Equals(i));
+            return Items.Where(a => a.ProjectId != null && a.ProjectId.Equals(i.ID));
         }
     }
 }

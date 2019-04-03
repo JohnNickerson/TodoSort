@@ -53,7 +53,7 @@ namespace BetterUnitTests
         public IEnumerable<ActionItem> DoneItems => _items.Values.Where(i => i.Context == "done");
         public IEnumerable<ActionItem> GetProjectItems(ActionItem i)
         {
-            return  _items.Values.Where(p => p.Project != null && p.Project.ID == i.ID);
+            return  _items.Values.Where(p => p.ProjectId != null && p.ProjectId == i.ID);
         }
 
         public IEnumerable<string> GetContexts(params string[] exclude)
@@ -63,7 +63,7 @@ namespace BetterUnitTests
 
         public IEnumerable<ActionItem> GetChildren(ActionItem i)
         {
-            return _items.Values.Where(p => p.Parent != null && p.Parent.ID == i.ID);
+            return _items.Values.Where(p => p.ParentId != null && p.ParentId == i.ID);
         }
     }
 }
