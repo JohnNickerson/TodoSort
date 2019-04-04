@@ -94,8 +94,20 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
 
         public virtual ISearchSpecification<ActionItem> GetSearchSpecification(ITodoRepository repo)
         {
-            ISearchSpecification<ActionItem> result = new TagValueSpecification(TagName, TagValue)
-                .And(new DepthRangeSearchSpecification(MinDepth, MaxDepth, repo));
+            ISearchSpecification<ActionItem> result = new TagValueSpecification(TagName, TagValue);
+
+            if (MaxDepth == 0)
+            {
+                result = result.And(new HeadOnlySearchSpecification());
+            }
+            else if (MaxDepth == Int32.MaxValue)
+            {
+                // No restriction. DepthRangeSearchSpecification is very slow.
+            }
+            else
+            {
+                result = result.And(new DepthRangeSearchSpecification(MinDepth, MaxDepth, repo));
+            }
             if (!string.IsNullOrEmpty(Context))
             {
                 result = result.And(new ContextSearchSpecification(Context));

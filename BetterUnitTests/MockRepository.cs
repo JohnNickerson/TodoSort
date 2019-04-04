@@ -65,5 +65,17 @@ namespace BetterUnitTests
         {
             return _items.Values.Where(p => p.ParentId != null && p.ParentId == i.ID);
         }
+
+        public int GetRankDepth(ActionItem i)
+        {
+            if (!i.ParentId.HasValue)
+            {
+                return 0;
+            }
+            else
+            {
+                return GetRankDepth(Find(i.ParentId.Value)) + 1;
+            }
+        }
     }
 }

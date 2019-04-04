@@ -56,6 +56,7 @@
     <Compile Include="Rot13.cs" />
     <Compile Include="Search\AndSpecification.cs" />
     <Compile Include="Search\ContextSearchSpecification.cs" />
+    <Compile Include="Search\HeadOnlySearchSpecification.cs" />
     <Compile Include="Search\PriorityChildrenSearchSpecification.cs" />
     <Compile Include="Search\DepthRangeSearchSpecification.cs" />
     <Compile Include="Search\DoneDateGreaterThanSpecification.cs" />

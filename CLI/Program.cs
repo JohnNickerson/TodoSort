@@ -109,7 +109,8 @@ namespace AssimilationSoftware.TodoSort.CLI
                         if (balopts.BranchFactor > 0)
                         {
                             vm.SearchSpecification = balopts.GetSearchSpecification(repo);
-                            var vine = vm.SearchResults.OrderBy(i => i.GetRankDepth(repo)).ThenByDescending(i => i.Upvotes).ToArray();
+                            var depths = vm.GetDepthsView();
+                            var vine = vm.SearchResults.OrderBy(i => depths[i.ID]).ThenByDescending(i => i.Upvotes).ToArray();
                             vm.Balance(vine, balopts.BranchFactor);
                         }
                         else
@@ -197,8 +198,8 @@ namespace AssimilationSoftware.TodoSort.CLI
 
                             Console.WriteLine(Environment.NewLine);
                         }
-                        repo.CommitChanges();
-                        Console.WriteLine("Pending changes committed.");
+                        var commitCount = repo.CommitChanges();
+                        Console.WriteLine($"{commitCount} pending changes committed.");
                         repo.SaveChanges();
                     }
                     break;
@@ -843,6 +844,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                     vm.SearchSpecification = new TrueSpecification<ActionItem>();
                     var summarydata = (from i in vm.SearchResults group i by i.Context into c select new { Context = c.Key, Count = c.Count() });
 
+                    // TODO: Cuneiform table display.
                     int maxwidth = (summarydata.Count() > 0 ? (from r in summarydata select r.Context.Length).Max() : 0);
                     var maxnum = Math.Ceiling(Math.Log10((summarydata.Count() > 0 ? (from c in summarydata select c.Count).Max() : 0)));
                     int total = 0;
@@ -858,11 +860,25 @@ namespace AssimilationSoftware.TodoSort.CLI
                         {
                             // Show a summary of numbers at each depth.
                             vm.SearchSpecification = new ContextSearchSpecification(c.Context);
-                            var detailed = (from r in vm.SearchResults group r by r.GetRankDepth(repo) into g select new { Depth = g.Key, Count = g.Count() });
-                            foreach (var d in detailed.OrderBy(r => r.Depth))
+                            var depths = vm.GetDepthsView();
+
+                            var detailed = new Dictionary<int, int>();
+                            foreach (var i in vm.SearchResults)
                             {
-                                format = string.Format("\t{{0}}\t{{1,{0}}} item{1}", maxnum, (d.Count == 1 ? "" : "s"));
-                                Console.WriteLine(format, d.Depth, d.Count);
+                                var deep = depths[i.ID];
+                                if (detailed.ContainsKey(deep))
+                                {
+                                    detailed[deep]++;
+                                }
+                                else
+                                {
+                                    detailed[deep] = 1;
+                                }
+                            }
+                            foreach (var d in detailed.OrderBy(r => r.Key))
+                            {
+                                format = $"\t{{0}}\t{{1,{maxnum}}} item{(d.Value == 1 ? "" : "s")}";
+                                Console.WriteLine(format, d.Key, d.Value);
                             }
                             Console.WriteLine();
                         }

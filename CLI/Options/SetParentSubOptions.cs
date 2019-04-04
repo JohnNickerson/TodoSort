@@ -19,28 +19,24 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
 
         public ISearchSpecification<ActionItem> GetChildSearchSpecification(ITodoRepository repo)
         {
-            
+            ISearchSpecification<ActionItem> spec = new FullTextSearchSpecification(ChildSearchTerm);
+            if (!ShowAllItems)
             {
-                ISearchSpecification<ActionItem> spec = new FullTextSearchSpecification(ChildSearchTerm);
-                if (ShowAllItems)
-                {
-                    spec = spec.And(new DepthRangeSearchSpecification(-1, int.MaxValue, repo));
-                }
-                return spec;
+                spec = spec.And(new HeadOnlySearchSpecification());
             }
+
+            return spec;
         }
 
         public ISearchSpecification<ActionItem> GetParentSearchSpecification(ITodoRepository repo)
         {
-            
+            ISearchSpecification<ActionItem> spec = new FullTextSearchSpecification(ParentSearchTerm ?? ChildSearchTerm);
+            if (!ShowAllItems)
             {
-                ISearchSpecification<ActionItem> spec = new FullTextSearchSpecification(ParentSearchTerm ?? ChildSearchTerm);
-                if (ShowAllItems)
-                {
-                    spec = spec.And(new DepthRangeSearchSpecification(0, int.MaxValue, repo));
-                }
-                return spec;
+                spec = spec.And(new HeadOnlySearchSpecification());
             }
+
+            return spec;
         }
     }
 }
