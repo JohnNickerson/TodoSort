@@ -36,7 +36,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
 
             if (item != null)
             {
-                _title = item.Title;
+                _title = item.Source.Title;
                 _notes = string.Join(Environment.NewLine, item.Notes);
                 _tags = new ObservableCollection<TagValueModel>();
                 foreach (var itemTag in item.Tags)

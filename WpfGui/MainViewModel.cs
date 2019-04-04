@@ -39,6 +39,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         private RelayCommand _saveFileCommand;
         private RelayCommand _applySearchCommand;
         private RelayCommand _cleanupCommand;
+        private RelayCommand _commitCommand;
         private RelayCommand _maskTextCommand;
         private RelayCommand _toggleHeadCommand;
         private RelayCommand _searchCommand;
@@ -78,7 +79,16 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             _repo = new TodoRepository(new ActionItemDiskMapper(FileName), Path.GetDirectoryName(FileName));
             _api = new ViewModel(_repo);
 
-            //Cleanup();
+            if (_api.SomedayItems.Any(s => s.TickleDate <= DateTime.Today))
+            {
+                // Confirm.
+                if (MessageBox.Show(
+                        "There are deferred items ready to return to the main lists. Do you want to process them now?",
+                        "Auto-undefer", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                {
+                    Cleanup();
+                }
+            }
 
             OnPropertyChanged(nameof(Contexts));
             OnPropertyChanged(nameof(Items));
@@ -138,9 +148,12 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                 }
             }
 
-            ((TodoRepository)_repo).CommitChanges();
-
             OnPropertyChanged(nameof(Items));
+        }
+
+        private void CommitChanges()
+        {
+            ((TodoRepository)_repo).CommitChanges();
         }
 
         private void RankItems()
@@ -608,9 +621,11 @@ namespace AssimilationSoftware.TodoSort.WpfGui
 
         public ICommand CleanupCommand => _cleanupCommand ?? (_cleanupCommand = new RelayCommand(Cleanup));
 
+        public ICommand CommitCommand => _commitCommand ?? (_commitCommand = new RelayCommand(CommitChanges));
+
         public ICommand MaskTextCommand => _maskTextCommand ?? (_maskTextCommand = new RelayCommand(() => Masked = !Masked));
 
-        public ICommand ToggleHeadCommand => _toggleHeadCommand ?? (_toggleHeadCommand = new RelayCommand(()=> ShowHeadOnly = !ShowHeadOnly));
+        public ICommand ToggleHeadCommand => _toggleHeadCommand ?? (_toggleHeadCommand = new RelayCommand(() => ShowHeadOnly = !ShowHeadOnly));
 
         public ICommand SearchCommand => _searchCommand ?? (_searchCommand = new RelayCommand(SearchExecuted));
 

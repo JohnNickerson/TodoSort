@@ -841,6 +841,10 @@ namespace AssimilationSoftware.TodoSort.CLI
                 #region Summary
                 case "summary":
                     var summaryArgs = (UniversalOptions)argsubs;
+                    if (summaryArgs.Verbose && !summaryArgs.ShowAllItems)
+                    {
+                        vm.ShowHeadOnly = false;
+                    }
                     vm.SearchSpecification = new TrueSpecification<ActionItem>();
                     var summarydata = (from i in vm.SearchResults group i by i.Context into c select new { Context = c.Key, Count = c.Count() });
 

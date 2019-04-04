@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AssimilationSoftware.TodoSort.WpfGui"
         mc:Ignorable="d"
-        Title="Edit Item" Height="450" MaxWidth="900" SizeToContent="WidthAndHeight">
+        Title="Edit Item" Height="450" MaxWidth="900" SizeToContent="WidthAndHeight"
+        FocusManager.FocusedElement="{Binding ElementName=TitleBox}">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -36,7 +37,7 @@
         </Grid.Resources>
 
         <TextBlock Grid.Row="0" Grid.Column="0" Text="Title"/>
-        <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Title}"/>
+        <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Title}" x:Name="TitleBox"/>
 
         <TextBlock Grid.Row="1" Grid.Column="0" Text="Notes"/>
         <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Notes}" AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto"/>

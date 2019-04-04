@@ -288,7 +288,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
                     }
                 }
                 Source.Tags = editVm.Tags.ToDictionary(k => k.Tag, v => v.Value);
-                Source.ProjectId = editVm.Project.ID;
+                Source.ProjectId = editVm.Project?.ID;
                 if (editVm.IsDeferred)
                 {
                     Source.TickleDate = editVm.TickleDate;
