@@ -291,7 +291,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                 item.Title = editVm.Title;
                 item.Notes = editVm.Notes.Split('\n').ToList();
                 item.Tags = editVm.Tags.ToDictionary(k => k.Tag, v => v.Value);
-                item.ProjectId = editVm.Project.ID;
+                item.ProjectId = editVm.Project?.ID;
                 item.Context = editVm.Context;
                 if (editVm.IsDeferred)
                 {
