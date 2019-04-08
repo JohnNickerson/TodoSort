@@ -210,6 +210,11 @@ namespace AssimilationSoftware.TodoSort.Core
             {
                 next.DoneDate = DateTime.Today;
             }
+
+            if (next.ID == Guid.Empty)
+            {
+                next.ID = Guid.NewGuid();
+            }
             _repository.Create(next);
             UnsavedChanges = true;
         }
