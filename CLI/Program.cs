@@ -164,19 +164,16 @@ namespace AssimilationSoftware.TodoSort.CLI
                         {
                             // Present conflicts for resolution.
                             var i = 0;
-                            Guid itemId = Guid.Empty;
                             Console.WriteLine("Updates:");
                             foreach (var edit in conflictSet.Updates)
                             {
                                 PrintItem(edit, i, repo);
-                                itemId = edit.ID;
                                 i++;
                             }
                             Console.WriteLine("Deletes:");
                             foreach (var edit in conflictSet.Deletes)
                             {
                                 PrintItem(edit, i, repo);
-                                itemId = edit.ID;
                                 i++;
                             }
                             // Present options: Delete, Update (one particular version), Revert.
@@ -188,12 +185,25 @@ namespace AssimilationSoftware.TodoSort.CLI
                             switch (optKey.KeyChar.ToString().ToLower())
                             {
                                 case "r":
-                                    repo.Revert(itemId);
+                                    repo.Revert(conflictSet.Id);
                                     break;
                                 case "d":
-                                    repo.ResolveByDelete(itemId);
+                                    repo.ResolveByDelete(conflictSet.Id);
                                     break;
-
+                                default:
+                                    if (char.IsDigit(optKey.KeyChar))
+                                    {
+                                        var index = int.Parse(optKey.KeyChar.ToString());
+                                        if (index < conflictSet.Updates.Count)
+                                        {
+                                            repo.ResolveConflict(conflictSet.Updates[index]);
+                                        }
+                                        else if (index <= i)
+                                        {
+                                            repo.ResolveByDelete(conflictSet.Id);
+                                        }
+                                    }
+                                    break;
                             }
 
                             Console.WriteLine(Environment.NewLine);
@@ -867,22 +877,34 @@ namespace AssimilationSoftware.TodoSort.CLI
                             var depths = vm.GetDepthsView();
 
                             var detailed = new Dictionary<int, int>();
+                            var unknownCount = 0;
                             foreach (var i in vm.SearchResults)
                             {
-                                var deep = depths[i.ID];
-                                if (detailed.ContainsKey(deep))
+                                if (depths.ContainsKey(i.ID))
                                 {
-                                    detailed[deep]++;
+                                    var deep = depths[i.ID];
+                                    if (detailed.ContainsKey(deep))
+                                    {
+                                        detailed[deep]++;
+                                    }
+                                    else
+                                    {
+                                        detailed[deep] = 1;
+                                    }
                                 }
                                 else
                                 {
-                                    detailed[deep] = 1;
+                                    unknownCount++;
                                 }
                             }
                             foreach (var d in detailed.OrderBy(r => r.Key))
                             {
                                 format = $"\t{{0}}\t{{1,{maxnum}}} item{(d.Value == 1 ? "" : "s")}";
                                 Console.WriteLine(format, d.Key, d.Value);
+                            }
+                            if (unknownCount > 0)
+                            {
+                                Console.WriteLine(format, "-", unknownCount);
                             }
                             Console.WriteLine();
                         }
