@@ -153,7 +153,15 @@ namespace AssimilationSoftware.TodoSort.WpfGui
 
         private void CommitChanges()
         {
-            ((TodoRepository)_repo).CommitChanges();
+            var committed = _repo.CommitChanges();
+            if (committed == 0)
+            {
+                MessageBox.Show("Could not commit changes. Possible conflicts.", "Failed to commit");
+            }
+            else
+            {
+                MessageBox.Show($"{committed} change(s) committed.", "Success");
+            }
         }
 
         private void RankItems()

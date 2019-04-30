@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace AssimilationSoftware.TodoSort.Core.Data
 {
-    public interface ITodoRepository : IRepository<ActionItem>
+    public interface ITodoRepository : IMergeRepository<ActionItem>
     {
         IEnumerable<ActionItem> SomedayItems { get; }
         IEnumerable<ActionItem> DoneItems { get; }

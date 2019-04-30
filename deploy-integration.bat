@@ -8,16 +8,9 @@ rem devenv /useenv /build "Release" "AcomProfileManager.sln"
 Rem TodoSort deploy script for integration.
 Rem Assumes Release build has already been done.
 
-rem 1. Ensure target directories exist.
-md %DROPBOX%\Toolkit\TodoSort\Integration\GUI
+rem 1. Copy all in one.
+robocopy "%DROPBOX%\Projects\Code\TodoSort\CLI\bin\Release" "%DROPBOX%\Toolkit\TodoSort\Integration" /e /purge /v
+robocopy "%DROPBOX%\Projects\Code\TodoSort\WpfGui\bin\Release" "%DROPBOX%\Toolkit\TodoSort\Integration\GUI" /e /purge /v
 
-rem 2. Empty out target directories.
-del "%DROPBOX%\Toolkit\TodoSort\Integration\GUI\*.*"
-del "%DROPBOX%\Toolkit\TodoSort\Integration\*.*"
-
-rem 3. Move Release binaries to target directories.
-move /y CLI\bin\Release\*.* %DROPBOX%\Toolkit\TodoSort\Integration
-move /y WpfGui\bin\Release\*.* %DROPBOX%\Toolkit\TodoSort\Integration\GUI
-
-rem 4. Pause to show success or failure.
+rem 2. Pause to show success or failure.
 Pause

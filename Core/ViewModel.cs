@@ -612,32 +612,6 @@ namespace AssimilationSoftware.TodoSort.Core
             return depths;
         }
 
-        private bool IsCircular(Dictionary<Guid, Guid?> parents, Guid child)
-        {
-            if (parents[child] == null) return false;
-            var ancestors = new HashSet<Guid>();
-            var current = parents[child];
-            while (!ancestors.Contains(child) && current != null && !ancestors.Contains(current.Value) && parents.ContainsKey(current.Value))
-            {
-                ancestors.Add(current.Value);
-                current = parents[current.Value];
-            }
-
-            return ancestors.Contains(child);
-
-            var slowHead = child;
-            var fastHead = parents[child];
-            while (parents.ContainsKey(slowHead) && parents[slowHead] != null && parents.ContainsKey(fastHead.Value) && parents[fastHead.Value] != null && parents.ContainsKey(parents[fastHead.Value].Value) && parents[parents[fastHead.Value].Value] != null)
-            {
-                if (slowHead == fastHead)
-                {
-                    return true;
-                }
-                slowHead = parents[slowHead].Value;
-                fastHead = parents[parents[fastHead.Value].Value];
-            }
-            return false;
-        }
         #endregion
     }
 }

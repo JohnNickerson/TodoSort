@@ -77,5 +77,35 @@ namespace BetterUnitTests
                 return GetRankDepth(Find(i.ParentId.Value)) + 1;
             }
         }
+
+        public int CommitChanges()
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<PendingChange<ActionItem>> FindConflicts()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ResolveConflict(ActionItem item)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ResolveByDelete(Guid id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Revert(Guid id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<PendingChange<ActionItem>> GetPendingChanges()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
