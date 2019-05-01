@@ -385,8 +385,11 @@ namespace AssimilationSoftware.TodoSort.Core
         {
             foreach (var selected in items)
             {
-                selected.ParentId = null;
-                _repository.Update(selected);
+                if (selected.ParentId != null)
+                {
+                    selected.ParentId = null;
+                    _repository.Update(selected);
+                }
                 foreach (var i in _repository.GetChildren(selected).ToArray())
                 {
                     i.ParentId = null;

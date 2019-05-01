@@ -82,7 +82,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
             {
                 if (Source.Tags != null && Source.Tags.ContainsKey("type"))
                 {
-                    switch (Source.Tags["type"])
+                    switch (Source.Tags["type"].ToLower())
                     {
                         case "movie":
                             return "🎬 " + Source.Title;
@@ -92,6 +92,8 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
                             return "📺 " + Source.Title;
                         case "game":
                             return "🎮 " + Source.Title;
+                        case "video":
+                            return "▶️ " + Source.Title;
                         default:
                             return Source.Title;
                     }

@@ -170,12 +170,6 @@ namespace AssimilationSoftware.TodoSort.CLI
                                 PrintItem(edit, i, repo);
                                 i++;
                             }
-                            Console.WriteLine("Deletes:");
-                            foreach (var edit in conflictSet.Deletes)
-                            {
-                                PrintItem(edit, i, repo);
-                                i++;
-                            }
                             // Present options: Delete, Update (one particular version), Revert.
                             Console.WriteLine("Options:");
                             Console.WriteLine("R: Revert all pending changes to this record");
@@ -197,10 +191,6 @@ namespace AssimilationSoftware.TodoSort.CLI
                                         if (index < conflictSet.Updates.Count)
                                         {
                                             repo.ResolveConflict(conflictSet.Updates[index]);
-                                        }
-                                        else if (index <= i)
-                                        {
-                                            repo.ResolveByDelete(conflictSet.Id);
                                         }
                                     }
                                     break;
@@ -542,6 +532,17 @@ namespace AssimilationSoftware.TodoSort.CLI
 
                 #region Process
                 case "process":
+                    // Assign revision IDs where none are found.
+                    repo.FindAll();
+                    foreach (var item in repo.Items)
+                    {
+                        if (item.RevisionGuid == Guid.Empty)
+                        {
+                            item.RevisionGuid = Guid.NewGuid();
+                        }
+                    }
+                    repo.SaveChanges();
+
                     // Go over the @someday items and look for tickle dates.
                     forceSave = (argsubs as ProcessOptions).Force;
                     vm.SomedaySearchSpecification = new TickleDateSearchSpecification(null, DateTime.Today);
@@ -1321,6 +1322,10 @@ namespace AssimilationSoftware.TodoSort.CLI
             {
                 title = string.Format("[{0:yyyy-MM-dd}] {1}", i.TickleDate.Value, title);
             }
+            if (i.IsDeleted)
+            {
+                title = $"[DELETED] {title}";
+            }
 
             if (index.HasValue)
             {
@@ -1365,7 +1370,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                 WrapOutput("        #ID:", i.ID.ToString(), wrapwidth);
                 if (i.ProjectId != null)
                 {
-                    WrapOutput("        #project:", string.Format("{0} - {1}", i.ProjectId, i.GetProject(repo)), wrapwidth);
+                    WrapOutput("        #project:", string.Format("{0} - {1}", i.ProjectId, i.GetProject(repo).Title), wrapwidth);
                 }
                 // TODO: Any other special tags?
             }
