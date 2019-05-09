@@ -23,8 +23,8 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
         [VerbOption("bump", HelpText = "Halves the depth of an item, as a way of increasing its priority")]
         public SingleSearchSubOptions BumpVerb { get; set; }
 
-        [VerbOption("chain", HelpText = "Reorders a set of items into a chain by their 'order' attribute")]
-        public BalanceOptions ChainVerb { get; set; }
+        [VerbOption("check-chain", HelpText = "Checks an implicit chain for missing and excluded items")]
+        public MultiSearchSubOptions ChainVerb { get; set; }
 
         [VerbOption("commit", HelpText = "Commits pending changes to the main data file")]
         public CommitOptions CommitVerb { get; set; }

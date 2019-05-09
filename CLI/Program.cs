@@ -143,15 +143,46 @@ namespace AssimilationSoftware.TodoSort.CLI
                     break;
                 #endregion
 
-                #region Chain
-                case "chain":
+                #region Check Chain
+                case "check-chain":
                     {
-                        var balopts = (BalanceOptions)argsubs;
-                        vm.SearchSpecification = balopts.GetSearchSpecification(repo);
-                        var vine = vm.SearchResults.OrderBy(i => i.GetIntTag("order", 0)).ToArray();
-                        vm.Balance(vine, 1, false);
-                        // Show the resulting chain.
-                        PrintTree(vm.SearchResults.ToList(), true, repo, balopts.NSFW);
+                        // Check implicit chain integrity.
+                        var chainOptions = (MultiSearchSubOptions)argsubs;
+                        vm.SearchSpecification = chainOptions.GetSearchSpecification(repo);
+                        // 1. Make sure there is at least one item.
+                        if (vm.SearchResults.Count() == 0)
+                        {
+                            Console.WriteLine("No items found in the chain.");
+                        }
+                        else
+                        {
+                            // 2. Make sure there are no gaps.
+                            int min = vm.SearchResults.Min(i => i.GetIntTag("order", Int32.MaxValue));
+                            int max = vm.SearchResults.Max(i => i.GetIntTag("order", Int32.MinValue));
+                            for (var i = min; i <= max; i++)
+                            {
+                                var count = vm.SearchResults.Count(j => j.GetIntTag("order", 0) == i);
+                                if (count == 0)
+                                {
+                                    Console.WriteLine($"Item missing at index {i}");
+                                }
+                                else if (count > 1)
+                                {
+                                    Console.WriteLine($"Too many items with index {i}");
+                                }
+                            }
+
+                            if (min == max)
+                            {
+                                Console.WriteLine("Only one item in chain.");
+                            }
+                            // 3. Find and add items that might belong in the chain.
+                            foreach (var excluded in vm.SearchResults.Where(i => !i.Tags.ContainsKey("order")))
+                            {
+                                Console.WriteLine("Item potentially excluded:");
+                                PrintItem(excluded, null, repo, chainOptions.NSFW);
+                            }
+                        }
                         break;
                     }
                 #endregion
