@@ -59,7 +59,7 @@
         <ListBox Grid.Row="1" Grid.Column="0" Grid.RowSpan="2" Name="Contexts" ItemsSource="{Binding Path=Contexts}" SelectedItem="{Binding Path=SelectedContext}" MinWidth="85">
             <ListBox.Resources>
                 <ContextMenu x:Key="MetaContextMenu">
-                    <MenuItem Header="Move All" Command="{Binding Path=MoveAllCommand}" IsEnabled="True" ItemsSource="{Binding AllOtherContexts}">
+                    <MenuItem Header="Move All" IsEnabled="True" ItemsSource="{Binding AllOtherContexts}">
                         <MenuItem.ItemContainerStyle>
                             <Style TargetType="MenuItem">
                                 <Setter Property="Header" Value="{Binding Title}"/>
@@ -102,6 +102,16 @@
                     <MenuItem Header="Fix Title" Command="{Binding Path=FixTitleCommand}"/>
                     <Separator/>
                     <MenuItem Header="Bump" Command="{Binding Path=BumpCommand}"/>
+                    <Separator/>
+                    <MenuItem Header="Move to" ItemsSource="{Binding Api.SelectedContext.AllOtherContexts}">
+                        <MenuItem.ItemContainerStyle>
+                            <Style TargetType="MenuItem">
+                                <Setter Property="Header" Value="{Binding Title}"/>
+                                <Setter Property="Command" Value="{Binding Path=DataContext.MoveToContextCommand, RelativeSource={RelativeSource AncestorType=MenuItem}}"/>
+                                <Setter Property="CommandParameter" Value="{Binding}"/>
+                            </Style>
+                        </MenuItem.ItemContainerStyle>
+                    </MenuItem>
                     <Separator/>
                     <MenuItem Header="Defer 2 Weeks" Command="{Binding Path=ToggleDeferCommand}" CommandParameter="{Binding Path=ShortDeferDelay}" Visibility="{Binding Path=CanDefer}"/>
                     <MenuItem Header="Defer 2 Months" Command="{Binding Path=ToggleDeferCommand}" CommandParameter="{Binding Path=LongDeferDelay}" Visibility="{Binding Path=CanDefer}"/>

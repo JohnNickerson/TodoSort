@@ -23,6 +23,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
         private RelayCommand _fixTitleCommand;
         private RelayCommand<string> _openUrlCommand;
         private RelayCommand _bumpCommand;
+        private RelayCommand<Context> _moveToContextCommand;
 
         #endregion // Fields
 
@@ -264,6 +265,8 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
 
         public ICommand BumpCommand => _bumpCommand ?? (_bumpCommand = new RelayCommand(BumpExecuted, () => this.Source.GetRankDepth(Api.Repository) > 0));
 
+        public ICommand MoveToContextCommand => _moveToContextCommand ?? (_moveToContextCommand = new RelayCommand<Context>(MoveToContextExecuted));
+
         #endregion // Command Properties
 
         #region Command Handlers
@@ -402,6 +405,12 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
             }
             Api.Update(Source);
             OnPropertyChanged(nameof(ToolTip));
+        }
+
+        private void MoveToContextExecuted(Context toContext)
+        {
+            if (toContext != null)
+                Api.Move(Source, toContext.Title, true);
         }
         #endregion // Command Handlers
     }
