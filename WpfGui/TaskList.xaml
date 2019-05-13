@@ -23,7 +23,7 @@
         </Grid.ColumnDefinitions>
         <Menu Grid.Row="0" Background="{x:Null}" Grid.ColumnSpan="2">
             <MenuItem Header="_File">
-                <MenuItem Header="_New" IsEnabled="False"/>
+                <MenuItem Header="_New" Command="{Binding Path=NewFileCommand}"/>
                 <MenuItem Header="_Open" Command="{Binding Path=OpenFileCommand}" InputGestureText="Ctrl+O" />
                 <MenuItem Header="_Save" Command="{Binding Path=SaveFileCommand}" InputGestureText="Ctrl+S" />
                 <MenuItem Header="Save _As" IsEnabled="False"/>

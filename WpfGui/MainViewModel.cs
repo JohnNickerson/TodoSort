@@ -43,6 +43,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         private RelayCommand _maskTextCommand;
         private RelayCommand _toggleHeadCommand;
         private RelayCommand _searchCommand;
+        private RelayCommand _newFileCommand;
 
         private string _searchKeyword;
         private string _searchMissingTagName;
@@ -213,6 +214,39 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             var result = dlg.ShowDialog();
             if (result == true)
             {
+                OpenFile(dlg.FileName);
+            }
+        }
+
+        public void NewFileExecuted()
+        {
+            switch (ConfirmSaveCancel("You have unsaved changes. Save first before creating a new file?"))
+            {
+                case null:
+                    return;
+                case true:
+                    _api.Save();
+                    break;
+            }
+
+            // Configure open file dialog box
+            Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog
+            {
+                FileName = "Document",
+                DefaultExt = ".txt",
+                Filter = "Text documents (.txt)|*.txt|All documents (*.*)|*.*",
+                Title = "Todo file",
+                CheckFileExists = false
+            };
+
+            // Show open file dialog box
+            var result = dlg.ShowDialog();
+            if (result == true)
+            {
+                if (File.Exists(dlg.FileName))
+                {
+                    // Replace the file?
+                }
                 OpenFile(dlg.FileName);
             }
         }
@@ -420,6 +454,15 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             }
         }
 
+        public void CheckForContext(string context)
+        {
+            if (_contexts.All(c => c.Title != context))
+            {
+                // Context not found. Refresh.
+                OnPropertyChanged(nameof(Contexts));
+            }
+        }
+
         #endregion
 
         #region Properties
@@ -607,6 +650,8 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             }
         }
 
+        public IRepository<ActionItem> Repository => _repo;
+
         #endregion
 
         #region Commands
@@ -637,17 +682,8 @@ namespace AssimilationSoftware.TodoSort.WpfGui
 
         public ICommand SearchCommand => _searchCommand ?? (_searchCommand = new RelayCommand(SearchExecuted));
 
-        public IRepository<ActionItem> Repository => _repo;
+        public ICommand NewFileCommand => _newFileCommand ?? (_newFileCommand = new RelayCommand(NewFileExecuted));
 
         #endregion
-
-        public void CheckForContext(string context)
-        {
-            if (_contexts.All(c => c.Title != context))
-            {
-                // Context not found. Refresh.
-                OnPropertyChanged(nameof(Contexts));
-            }
-        }
     }
 }
