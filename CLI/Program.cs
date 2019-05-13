@@ -24,9 +24,9 @@ namespace AssimilationSoftware.TodoSort.CLI
 
         static void Main(string[] args)
         {
-            string argverb = string.Empty;
+            var argverb = string.Empty;
             object argsubs = null;
-            string settingspath = Path.Combine(Directory.GetCurrentDirectory(), ".todosort");
+            var settingspath = Path.Combine(Directory.GetCurrentDirectory(), ".todosort");
             var options = new Options.Options();
             if (!CommandLine.Parser.Default.ParseArguments(args, options,
                 (verb, subOptions) =>
@@ -39,7 +39,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             }
             else if (argverb == "init")
             {
-                InitSubOptions initty = (InitSubOptions)argsubs;
+                var initty = (InitSubOptions)argsubs;
                 var initsettings = new FolderSettings();
                 initsettings.TodoPath = initty.TodoFile;
 
@@ -55,7 +55,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             var todomapper = new ActionItemDiskMapper(f.TodoPath);
             var repo = new TodoRepository(todomapper, Path.GetDirectoryName(f.TodoPath));
 
-            ViewModel vm = new ViewModel(repo);
+            var vm = new ViewModel(repo);
 
             // Set universal options.
             if (argsubs is UniversalOptions)
@@ -150,15 +150,15 @@ namespace AssimilationSoftware.TodoSort.CLI
                         var chainOptions = (MultiSearchSubOptions)argsubs;
                         vm.SearchSpecification = chainOptions.GetSearchSpecification(repo);
                         // 1. Make sure there is at least one item.
-                        if (vm.SearchResults.Count() == 0)
+                        if (!vm.SearchResults.Any())
                         {
                             Console.WriteLine("No items found in the chain.");
                         }
                         else
                         {
                             // 2. Make sure there are no gaps.
-                            int min = vm.SearchResults.Min(i => i.GetIntTag("order", Int32.MaxValue));
-                            int max = vm.SearchResults.Max(i => i.GetIntTag("order", Int32.MinValue));
+                            var min = vm.SearchResults.Min(i => i.GetIntTag("order", Int32.MaxValue));
+                            var max = vm.SearchResults.Max(i => i.GetIntTag("order", Int32.MinValue));
                             for (var i = min; i <= max; i++)
                             {
                                 var count = vm.SearchResults.Count(j => j.GetIntTag("order", 0) == i);
@@ -177,7 +177,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                                 Console.WriteLine("Only one item in chain.");
                             }
                             // 3. Find and add items that might belong in the chain.
-                            foreach (var excluded in vm.SearchResults.Where(i => !i.Tags.ContainsKey("order")))
+                            foreach (var excluded in vm.SearchResults.Where(i => !i.Tags.ContainsKey("order") || (!i.Tags.ContainsKey("series") && !i.ProjectId.HasValue)))
                             {
                                 Console.WriteLine("Item potentially excluded:");
                                 PrintItem(excluded, null, repo, chainOptions.NSFW);
@@ -288,7 +288,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                 #region Defer
                 case "defer":
                     // Move the item and its sub-items to the "someday" file.
-                    DeferSubOptions deferopts = ((DeferSubOptions)argsubs);
+                    var deferopts = ((DeferSubOptions)argsubs);
                     vm.SearchSpecification = deferopts.SearchSpecification;
                     selected = Disambiguate(vm.SearchResults, repo, !string.IsNullOrEmpty(deferopts.ItemId));
                     if (selected != null)
@@ -428,7 +428,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                 case "import":
                     {
                         IImporter importer = null;
-                        ImportSubOptions importOptions = (ImportSubOptions)argsubs;
+                        var importOptions = (ImportSubOptions)argsubs;
                         switch (importOptions.Format)
                         {
                             case "todosort":
@@ -488,7 +488,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                         vm.ShowHeadOnly = false; // Make sure we move all items in the context, not just the head.
                         vm.SearchSpecification = moveAllOptions.GetSearchSpecification(repo);
                         var items = vm.SearchResults.ToList();
-                        int counter = 0;
+                        var counter = 0;
                         while (items.Count > 0)
                         {
                             vm.SetContext(items[0], moveAllOptions.NewContext);
@@ -503,7 +503,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                 #region Note
                 case "note":
                     // Add a note to a task.
-                    NoteSubOptions noteOptions = (NoteSubOptions)argsubs;
+                    var noteOptions = (NoteSubOptions)argsubs;
                     vm.SearchSpecification = noteOptions.SearchSpecification;
                     selected = Disambiguate(vm.SearchResults, repo, !string.IsNullOrEmpty(noteOptions.ItemId));
                     if (selected != null)
@@ -518,14 +518,14 @@ namespace AssimilationSoftware.TodoSort.CLI
                 #region Open Tag
                 case "open-tag":
                     // Read a tag and pass it through to the "start" argverb. Intended for URLs and file names.
-                    OpenTagSubOptions opentagOptions = (OpenTagSubOptions)argsubs;
+                    var opentagOptions = (OpenTagSubOptions)argsubs;
                     vm.SearchSpecification = opentagOptions.SearchSpecification;
                     selected = Disambiguate(vm.SearchResults, repo, !string.IsNullOrEmpty(opentagOptions.ItemId));
                     if (selected != null)
                     {
                         if (selected.Tags.ContainsKey(opentagOptions.Tag))
                         {
-                            string tagvalue = selected.Tags[opentagOptions.Tag];
+                            var tagvalue = selected.Tags[opentagOptions.Tag];
                             if (opentagOptions.Copy)
                             {
                                 //System.Windows.Forms.Clipboard.SetText(tagvalue);
@@ -581,15 +581,15 @@ namespace AssimilationSoftware.TodoSort.CLI
 
                     vm.SearchSpecification = new ContextSearchSpecification("inbox");
                     var inbox = vm.SearchResults.ToList();
-                    for (int i = 0; i < inbox.Count; i++)
+                    for (var i = 0; i < inbox.Count; i++)
                     {
                         // Assign the @inbox items to contexts.
                         Console.WriteLine("To which context should this item go?");
-                        ActionItem first = inbox[i];
+                        var first = inbox[i];
                         PrintItem(first, null, repo);
                         Console.WriteLine();
                         PrintContexts(vm);
-                        string newcontext = Console.ReadLine();
+                        var newcontext = Console.ReadLine();
                         vm.SetContext(first, newcontext);
                         Console.WriteLine();
                     }
@@ -597,7 +597,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                     // Need to find projects for which there is no next action.
                     vm.SearchSpecification = new ContextSearchSpecification("projects");
                     var projects = vm.SearchResults.ToList();
-                    for (int i = 0; i < projects.Count; i++)
+                    for (var i = 0; i < projects.Count; i++)
                     {
                         vm.ShowHeadOnly = false;
                         vm.SearchSpecification = new ProjectChildrenSearchSpecification(projects[i]);
@@ -605,12 +605,12 @@ namespace AssimilationSoftware.TodoSort.CLI
                         {
                             // Add next actions for projects.
                             Console.WriteLine("What is the next action required on this project?");
-                            ActionItem first = projects[i];
+                            var first = projects[i];
                             PrintItem(first, null, repo);
-                            string nextaction = Console.ReadLine();
+                            var nextaction = Console.ReadLine();
                             Console.WriteLine("...and to what context does it belong?");
                             PrintContexts(vm);
-                            string newcontext = Console.ReadLine();
+                            var newcontext = Console.ReadLine();
                             if (nextaction == newcontext)
                             {
                                 // Wrote something like "someday"/"someday". Assume it is a new context.
@@ -648,22 +648,22 @@ namespace AssimilationSoftware.TodoSort.CLI
                     {
                         var rankOptions = (MultiSearchSubOptions)argsubs;
                         // for each context..
-                        bool quitandsave = false;
+                        var quitandsave = false;
                         vm.ShowHeadOnly = true;
-                        foreach (string con in vm.GetContextNames("inbox", "done"))
+                        foreach (var con in vm.GetContextNames("inbox", "done"))
                         {
                             if (quitandsave) break;
                             // select all items without rank parents
                             vm.SearchSpecification = new ContextSearchSpecification(con).And(rankOptions.GetSearchSpecification(repo));
                             var items = vm.SearchResults.ToArray();
                             var index = new List<int>();
-                            for (int dex = 0; dex < items.Count(); dex++) index.Add(dex);
+                            for (var dex = 0; dex < items.Count(); dex++) index.Add(dex);
                             // randomise an index list
                             var rand = new Random();
-                            for (int dex = 0; dex < index.Count; dex++)
+                            for (var dex = 0; dex < index.Count; dex++)
                             {
-                                int r = rand.Next(index.Count);
-                                int b = index[dex];
+                                var r = rand.Next(index.Count);
+                                var b = index[dex];
                                 index[dex] = index[r];
                                 index[r] = b;
                             }
@@ -672,7 +672,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                             {
                                 Console.WriteLine(string.Format("{1}{1}@{0}", con, Environment.NewLine));
                             }
-                            for (int x = 0; x < items.Count() - 1; x += 2)
+                            for (var x = 0; x < items.Count() - 1; x += 2)
                             {
                                 if (quitandsave) break;
                                 // get vote
@@ -719,7 +719,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                 #region Rename
                 case "rename":
                     // Rename an item.
-                    RenameSubOptions renameOptions = (RenameSubOptions)argsubs;
+                    var renameOptions = (RenameSubOptions)argsubs;
                     vm.SearchSpecification = renameOptions.SearchSpecification;
                     selected = Disambiguate(vm.SearchResults, repo, !string.IsNullOrEmpty(renameOptions.ItemId));
                     if (selected != null)
@@ -795,7 +795,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                 #region Set Parent
                 case "set-parent":
                     {
-                        SetParentSubOptions setparentOptions = (SetParentSubOptions)argsubs;
+                        var setparentOptions = (SetParentSubOptions)argsubs;
                         Console.WriteLine("Confirm child item:");
                         vm.SearchSpecification = setparentOptions.GetChildSearchSpecification(repo);
                         var child = Disambiguate(vm.SearchResults, repo);
@@ -831,7 +831,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                 #region Set Project
                 case "set-project":
                     {
-                        SetProjectSubOptions commandOptions = (SetProjectSubOptions)argsubs;
+                        var commandOptions = (SetProjectSubOptions)argsubs;
                         Console.WriteLine("Confirm child item:");
                         vm.SearchTerm = commandOptions.ChildSearchTerm;
                         var child = Disambiguate(vm.SearchResults, repo);
@@ -849,21 +849,21 @@ namespace AssimilationSoftware.TodoSort.CLI
                 #region Someday
                 case "someday":
                     {
-                        SomedaySubOptions somesub = (SomedaySubOptions)argsubs;
+                        var somesub = (SomedaySubOptions)argsubs;
                         verbose = somesub.Verbose;
                         // Display the whole Someday file, [somesub.PageSize] items at a time, and either delete or do one per listing.
                         ActionItem undefer = null;
                         if (somesub.PageSize <= 0) somesub.PageSize = 1;
                         if (somesub.PageSize > 10) somesub.PageSize = 10;
                         var someitems = (from s in vm.SomedayItems where !s.TickleDate.HasValue || somesub.IncludeTickle select s);
-                        for (int offset = 0; offset <= someitems.Count(); offset += somesub.PageSize)
+                        for (var offset = 0; offset <= someitems.Count(); offset += somesub.PageSize)
                         {
                             Console.Clear();
-                            for (int index = 0; index < somesub.PageSize && offset + index < someitems.Count(); index++)
+                            for (var index = 0; index < somesub.PageSize && offset + index < someitems.Count(); index++)
                             {
                                 PrintItem(someitems.ElementAt(offset + index), index, repo, somesub.NSFW);
                             }
-                            char choice = Console.ReadKey().KeyChar;
+                            var choice = Console.ReadKey().KeyChar;
                             Console.WriteLine();
                             int dex;
                             if (Int32.TryParse(choice.ToString(), out dex))
@@ -891,15 +891,15 @@ namespace AssimilationSoftware.TodoSort.CLI
                     var summarydata = (from i in vm.SearchResults group i by i.Context into c select new { Context = c.Key, Count = c.Count() });
 
                     // TODO: Cuneiform table display.
-                    int maxwidth = (summarydata.Count() > 0 ? (from r in summarydata select r.Context.Length).Max() : 0);
+                    var maxwidth = (summarydata.Count() > 0 ? (from r in summarydata select r.Context.Length).Max() : 0);
                     var maxnum = Math.Ceiling(Math.Log10((summarydata.Count() > 0 ? (from c in summarydata select c.Count).Max() : 0)));
-                    int total = 0;
+                    var total = 0;
                     foreach (var c in summarydata)
                     {
                         total += c.Count;
 
                         // @context         n item(s)
-                        string format = string.Format("@{{0}}\t{{1,{0}}} item{1}", maxnum, (c.Count == 1 ? "" : "s"));
+                        var format = string.Format("@{{0}}\t{{1,{0}}} item{1}", maxnum, (c.Count == 1 ? "" : "s"));
                         Console.WriteLine(format, c.Context.PadRight(maxwidth), c.Count);
 
                         if (summaryArgs.Verbose)
@@ -1069,7 +1069,7 @@ namespace AssimilationSoftware.TodoSort.CLI
 
         private static void OpenItemTag(string tagvalue)
         {
-            System.Diagnostics.Process p = new System.Diagnostics.Process();
+            var p = new System.Diagnostics.Process();
             p.StartInfo.FileName = tagvalue;
             p.Start();
         }
@@ -1100,7 +1100,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                             Console.WriteLine("To which context should this item go?");
                             // List contexts.
                             PrintContexts(vm);
-                            string newcontext = Console.ReadLine();
+                            var newcontext = Console.ReadLine();
                             vm.Undefer(newcontext, item);
                         }
                         return;
@@ -1222,9 +1222,9 @@ namespace AssimilationSoftware.TodoSort.CLI
 
         private static void PrintItems(string sorttag, IEnumerable<ActionItem> list, ITodoRepository repo, bool nsfw = false)
         {
-            string last_context = string.Empty;
+            var last_context = string.Empty;
             var sortedlist = ApplySort(sorttag, list);
-            foreach (ActionItem i in sortedlist)
+            foreach (var i in sortedlist)
             {
                 if (i.Context != last_context)
                 {
@@ -1237,12 +1237,12 @@ namespace AssimilationSoftware.TodoSort.CLI
 
         private static void PrintTree(List<ActionItem> list, bool showAncestors, ITodoRepository repo, bool nsfw = false)
         {
-            List<ActionItem> ancestors = new List<ActionItem>();
+            var ancestors = new List<ActionItem>();
             ancestors.AddRange(list);
             if (showAncestors)
             {
                 // Fill out the results.
-                for (int i = 0; i < ancestors.Count; i++)
+                for (var i = 0; i < ancestors.Count; i++)
                 {
                     if (ancestors[i].ParentId != null && !ancestors.Contains(ancestors[i].GetParent(repo)))
                     {
@@ -1277,12 +1277,12 @@ namespace AssimilationSoftware.TodoSort.CLI
             while (stack.Count > 0)
             {
                 var node = stack.Pop();
-                int indent = node.Depth;
-                ActionItem focus = node.Item;
+                var indent = node.Depth;
+                var focus = node.Item;
                 var children = ancestors.Where(i => i.ParentId == focus.ID);
                 var prefix = new StringBuilder();
                 var padline = new StringBuilder();
-                for (int i = 0; i < indent; i++)
+                for (var i = 0; i < indent; i++)
                 {
                     if (i < indent - 1)
                     {
@@ -1299,7 +1299,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                     Console.WriteLine(node.PadLine);
                 }
                 Console.Write(prefix);
-                string name = focus.Title.Substring(0, Math.Min(conwide - prefix.Length, focus.Title.Length));
+                var name = focus.Title.Substring(0, Math.Min(conwide - prefix.Length, focus.Title.Length));
                 if (focus.Tags.ContainsKey("nsfw") && focus.Tags["nsfw"].ToLower() == "true" && !nsfw)
                 {
                     name = "(nsfw) " + Rot13.Transform(name);
@@ -1319,7 +1319,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                     Console.WriteLine();
                 }
 
-                for (int j = 0; j < children.Count(); j++)
+                for (var j = 0; j < children.Count(); j++)
                 {
                     stack.Push(new PrintTreeItem { Item = children.ElementAt(j), PadLine = padline.ToString().Trim() + (j == 0 ? "" : "\\"), Depth = node.Depth + (j == 0 ? 0 : 1) });
                 }
@@ -1335,8 +1335,8 @@ namespace AssimilationSoftware.TodoSort.CLI
         /// </remarks>
         private static void PrintItem(ActionItem i, int? index, ITodoRepository repo, bool nsfw = false)
         {
-            int wrapwidth = Console.WindowWidth - 1;
-            string title = i.Title;
+            var wrapwidth = Console.WindowWidth - 1;
+            var title = i.Title;
             if (i.Tags.ContainsKey("nsfw") && i.Tags["nsfw"].ToLower() == "true" && !nsfw)
             {
                 title = "(nsfw) " + Rot13.Transform(title);
@@ -1360,7 +1360,7 @@ namespace AssimilationSoftware.TodoSort.CLI
 
             if (index.HasValue)
             {
-                StringBuilder prefix = new StringBuilder();
+                var prefix = new StringBuilder();
                 prefix.Append(index);
                 prefix.Append(':');
                 prefix.Append(' ', Math.Max(4 - prefix.Length, 0));
@@ -1411,12 +1411,12 @@ namespace AssimilationSoftware.TodoSort.CLI
         {
             var printwidth = width - indent.Length;
             var breaks = " \t-/=&+_";
-            StringBuilder line = new StringBuilder();
+            var line = new StringBuilder();
             line.Append(indent);
             while (content.Length > printwidth)
             {
-                int snip = Math.Min(printwidth, content.Length);
-                for (int i = snip; i > 0; i--)
+                var snip = Math.Min(printwidth, content.Length);
+                for (var i = snip; i > 0; i--)
                 {
                     if (breaks.Contains(content[i]))
                     {
@@ -1446,7 +1446,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             else if (todolist.Count() > 9)
             {
                 // Print the items so we know what to narrow down.
-                for (int i = 0; i < todolist.Count(); i++)
+                for (var i = 0; i < todolist.Count(); i++)
                 {
                     PrintItem(todolist.ElementAt(i), null, repo, nsfw);
                 }
@@ -1460,11 +1460,11 @@ namespace AssimilationSoftware.TodoSort.CLI
             }
             else
             {
-                for (int i = 0; i < todolist.Count(); i++)
+                for (var i = 0; i < todolist.Count(); i++)
                 {
                     PrintItem(todolist.ElementAt(i), i, repo, nsfw);
                 }
-                char choice = Console.ReadKey().KeyChar;
+                var choice = Console.ReadKey().KeyChar;
                 // Write a blank line to prevent whatever comes next from printing right after this on the same line.
                 Console.WriteLine();
                 int dex;
