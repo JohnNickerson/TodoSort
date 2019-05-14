@@ -253,25 +253,39 @@ namespace AssimilationSoftware.TodoSort.Core
                 {
                     var restoreHead = _showHeadOnly;
                     _showHeadOnly = false;
+                    var inChain = false;
                     if (doneItem.Tags.ContainsKey("series"))
                     {
                         SearchSpecification = new AndSpecification<ActionItem>(
                             new TagValueSpecification("series", doneItem.Tags["series"]),
                             new TagValueSpecification("order", (doneItem.GetIntTag("order", 0) + 1).ToString()));
-                        foreach (var next in SearchResults.ToList())
-                        {
-                            SetParent(next, null);
-                        }
+                        inChain = true;
                     }
                     else if (doneItem.ProjectId != null)
                     {
                         SearchSpecification = new AndSpecification<ActionItem>(
                             new ProjectChildrenSearchSpecification(doneItem.ProjectId.ToString()),
                             new TagValueSpecification("order", (doneItem.GetIntTag("order", 0) + 1).ToString()));
-                        foreach (var next in SearchResults.ToList())
+                        inChain = true;
+                    }
+                    if (inChain)
+                    {
+                        if (SearchResults.Any())
                         {
-                            SetParent(next, null);
+                            foreach (var next in SearchResults.ToList())
+                            {
+                                SetParent(next, null);
+                            }
                         }
+                        else
+                        {
+                            // No next item found. Issue a warning.
+                            StatusMessage = "No next item found in chain.";
+                        }
+                    }
+                    else
+                    {
+                        StatusMessage = string.Empty;
                     }
 
                     _showHeadOnly = restoreHead;

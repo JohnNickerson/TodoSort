@@ -157,11 +157,11 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             var committed = _repo.CommitChanges();
             if (committed == 0)
             {
-                MessageBox.Show("Could not commit changes. Possible conflicts.", "Failed to commit");
+                _api.StatusMessage = "Could not commit changes. Possible conflicts.";
             }
             else
             {
-                MessageBox.Show($"{committed} change(s) committed.", "Success");
+                _api.StatusMessage = $"{committed} change(s) committed.";
             }
         }
 
@@ -290,7 +290,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             OnPropertyChanged(nameof(HasUnsavedChanges));
         }
 
-        public void Move(ActionItem source, string newContext, bool disconnectChildren = true)
+ite        public void Move(ActionItem source, string newContext, bool disconnectChildren = true)
         {
             _api.SetContext(source, newContext);
             if (disconnectChildren)
@@ -651,6 +651,8 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         }
 
         public IRepository<ActionItem> Repository => _repo;
+
+        public ViewModel Api => _api;
 
         #endregion
 
