@@ -290,7 +290,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             OnPropertyChanged(nameof(HasUnsavedChanges));
         }
 
-ite        public void Move(ActionItem source, string newContext, bool disconnectChildren = true)
+        public void Move(ActionItem source, string newContext, bool disconnectChildren = true)
         {
             _api.SetContext(source, newContext);
             if (disconnectChildren)
