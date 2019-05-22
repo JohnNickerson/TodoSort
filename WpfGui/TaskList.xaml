@@ -91,6 +91,8 @@
                 <TextBox Text="{Binding SearchKeyword}" x:Name="KeywordSearchBox"/>
                 <Label Content="Missing tag"/>
                 <TextBox Text="{Binding SearchMissingTagName}"/>
+                <Label Content="Project"/>
+                <ComboBox ItemsSource="{Binding Projects}" DisplayMemberPath="Title" SelectedItem="{Binding SearchProject}" Margin="5"/>
                 <Border/>
                 <Button Content="Go" Margin="3" MaxWidth="50" Command="{Binding ApplySearchCommand}"/>
             </UniformGrid>

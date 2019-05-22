@@ -49,6 +49,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         private string _searchMissingTagName;
         private ActionViewItem _selectedItem;
         private bool _searchExpanded;
+        private ActionItem _searchProject;
 
         #endregion
 
@@ -94,6 +95,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             OnPropertyChanged(nameof(Contexts));
             OnPropertyChanged(nameof(Items));
             OnPropertyChanged(nameof(RecentFileList));
+            OnPropertyChanged(nameof(Projects));
         }
 
         private void Cleanup()
@@ -441,6 +443,11 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             {
                 specs.Add(new NotSpecification<ActionItem>(new TagValueSpecification(SearchMissingTagName, null)));
             }
+
+            if (SearchProject != null)
+            {
+                specs.Add(new ProjectChildrenSearchSpecification(SearchProject));
+            }
             _searchContext.SearchSpecification = new AndSpecification<ActionItem>(specs.ToArray());
             SelectedContext = _searchContext;
         }
@@ -590,7 +597,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             }
         }
 
-        public List<ActionItem> Projects => _api != null ? _api.GetProjects() : new List<ActionItem>();
+        public List<ActionItem> Projects => _api != null ? _api.GetProjects().Union(new List<ActionItem> { null }).ToList() : new List<ActionItem> { null };
 
         public string VersionNumber => "Version " + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
 
@@ -623,6 +630,17 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             {
                 if (_searchMissingTagName == value) return;
                 _searchMissingTagName = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public ActionItem SearchProject
+        {
+            get => _searchProject;
+            set
+            {
+                if (Equals(_searchProject, value)) return;
+                _searchProject = value;
                 OnPropertyChanged();
             }
         }
