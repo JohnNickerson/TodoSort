@@ -8,9 +8,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("UnitTests")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Uniting Church")]
-[assembly: AssemblyProduct("UnitTests")]
-[assembly: AssemblyCopyright("Copyright © Uniting Church 2014")]
+[assembly: AssemblyCompany("Assimilation Software")]
+[assembly: AssemblyProduct("TodoSort")]
+[assembly: AssemblyCopyright("Copyright Assimilation Software ©  2019")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

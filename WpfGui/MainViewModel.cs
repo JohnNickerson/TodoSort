@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics.Eventing.Reader;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -22,7 +23,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         #region Fields
 
         private Context _selectedContext;
-        private Context _searchContext;
+        private Context _searchResultsContext;
         private List<Context> _contexts;
         private string _fileName;
         private List<ActionViewItem> _currentItems;
@@ -448,8 +449,13 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             {
                 specs.Add(new ProjectChildrenSearchSpecification(SearchProject));
             }
-            _searchContext.SearchSpecification = new AndSpecification<ActionItem>(specs.ToArray());
-            SelectedContext = _searchContext;
+
+            if (SearchContext != null)
+            {
+                specs.Add(new ContextSearchSpecification(SearchContext.Title));
+            }
+            _searchResultsContext.SearchSpecification = new AndSpecification<ActionItem>(specs.ToArray());
+            SelectedContext = _searchResultsContext;
         }
 
         private void SearchExecuted()
@@ -504,14 +510,14 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                     }
                     _contexts.Add(new Context { Title = "done", Window = Window, DateVisible = Visibility.Visible, DateColumnTitle = "Done Date" });
                     _contexts.Add(new Context { Title = "someday", Window = Window, DateVisible = Visibility.Visible, DateColumnTitle = "Return Date" });
-                    _searchContext = new Context
+                    _searchResultsContext = new Context
                     {
                         Title = "Search",
                         Window = Window,
                         DateVisible = Visibility.Collapsed,
                         SearchSpecification = new FullTextSearchSpecification(SearchKeyword)
                     };
-                    _contexts.Add(_searchContext);
+                    _contexts.Add(_searchResultsContext);
                     if (saveContext != null)
                     {
                         // Can't just set to the saved one, because it's been reconstructed.
@@ -573,6 +579,23 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                     case "someday":
                         _api.SomedaySearchSpecification = SelectedContext.SearchSpecification;
                         _currentItems = _api.SomedaySearchResults.Select(s => new ActionViewItem(s, this)).OrderBy(i => i.TickleDate).ThenBy(i => i.Title).ToList();
+                        break;
+                    case "Search":
+                        if (SearchContext != null && SearchContext.Title == "done")
+                        {
+                            _api.DoneSearchSpecification = SelectedContext.SearchSpecification;
+                            _currentItems = _api.DoneSearchResults.Select(s => new ActionViewItem(s, this)).OrderByDescending(i => i.DoneDate).ThenBy(i => i.Title).ToList();
+                        }
+                        else if (SearchContext != null && SearchContext.Title == "someday")
+                        {
+                            _api.SomedaySearchSpecification = SelectedContext.SearchSpecification;
+                            _currentItems = _api.SomedaySearchResults.Select(s => new ActionViewItem(s, this)).OrderBy(i => i.TickleDate).ThenBy(i => i.Title).ToList();
+                        }
+                        else
+                        {
+                            _api.SearchSpecification = SelectedContext.SearchSpecification;
+                            _currentItems = _api.SearchResults.Select(s => new ActionViewItem(s, this)).OrderByDescending(i => i.Upvotes).ThenBy(i => i.Title).ToList();
+                        }
                         break;
                     default:
                         _api.SearchSpecification = SelectedContext.SearchSpecification;
@@ -671,6 +694,8 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         public IRepository<ActionItem> Repository => _repo;
 
         public ViewModel Api => _api;
+
+        public Context SearchContext { get; set; }
 
         #endregion
 

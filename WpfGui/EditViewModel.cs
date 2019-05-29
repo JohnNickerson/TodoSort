@@ -31,7 +31,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         public EditViewModel(MainViewModel api, ActionViewItem item, Window window)
         {
             AllContexts = api.Contexts.Where(c => !_excludeContexts.Contains(c.Title)).Select(c => c.Title).OrderBy(c => c).ToList();
-            AllProjects = api.Projects.OrderBy(p => p.Title).ToList();
+            AllProjects = api.Projects.Where(p => p != null).OrderBy(p => p.Title).ToList();
             Window = window;
 
             if (item != null)
