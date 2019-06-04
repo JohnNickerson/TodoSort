@@ -7,6 +7,7 @@ using AssimilationSoftware.TodoSort.Core.Import;
 using AssimilationSoftware.TodoSort.Core.Search;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
@@ -24,6 +25,9 @@ namespace AssimilationSoftware.TodoSort.CLI
 
         static void Main(string[] args)
         {
+#if DEBUG
+            Debug.Listeners.Add(new ConsoleTraceListener());
+#endif
             var argverb = string.Empty;
             object argsubs = null;
             var settingspath = Path.Combine(Directory.GetCurrentDirectory(), ".todosort");
@@ -376,7 +380,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                     {
                         var fixOptions = (FixTitlesOptions)argsubs;
                         vm.SearchSpecification = fixOptions.GetSearchSpecification(repo);
-                        var client = new WebClient();
+                        var client = new WebClient(); // new RedirectWebClient();
 
                         var totalCount = 0;
                         decimal progress = 0;
@@ -386,19 +390,14 @@ namespace AssimilationSoftware.TodoSort.CLI
                             progress++;
                             try
                             {
+                                var source = client.DownloadString(tem.Tags["url"]);
                                 //// Get the redirected URL, if any.
-                                //// So far, this seems to fail.
-                                //var req = (HttpWebRequest) WebRequest.Create(tem.Tags["url"]);
-                                //req.Method = "HEAD";
-                                //req.AllowAutoRedirect = true;
-                                //var resp = (HttpWebResponse) req.GetResponse();
-                                //if (resp.StatusCode == HttpStatusCode.Redirect)
+                                //Debug.WriteLine(client.ResponseUri.OriginalString);
+                                //if (client.ResponseUri?.OriginalString != tem.Tags["url"])
                                 //{
-                                //    tem.Notes.Add(string.Format("Redirected from '{0}'.", tem.Tags["url"]));
-                                //    tem.Tags["url"] = resp.ResponseUri.AbsoluteUri;
+                                //    source = client.DownloadString(client.ResponseUri);
                                 //}
 
-                                var source = client.DownloadString(tem.Tags["url"]);
                                 var title = Regex.Match(source, @"\<title\b[^>]*\>\s*(?<Title>[\s\S]*?)\</title\>", RegexOptions.IgnoreCase).Groups["Title"].Value;
                                 if (title != tem.Title)
                                 {
@@ -414,7 +413,10 @@ namespace AssimilationSoftware.TodoSort.CLI
                                     Console.WriteLine("{0:0}% complete", 100m * progress / progressTotal);
                                 }
                             }
-                            catch { }
+                            catch (Exception e)
+                            {
+                                Debug.WriteLine(e.Message);
+                            }
                         }
 
                         if (totalCount > 0)
@@ -1403,6 +1405,8 @@ namespace AssimilationSoftware.TodoSort.CLI
                 {
                     WrapOutput("        #project:", string.Format("{0} - {1}", i.ProjectId, i.GetProject(repo).Title), wrapwidth);
                 }
+                WrapOutput("        #context:", i.Context, wrapwidth);
+                WrapOutput("        #last-modified:", i.LastModified.ToString("yyyy-MM-dd"), wrapwidth);
                 // TODO: Any other special tags?
             }
         }

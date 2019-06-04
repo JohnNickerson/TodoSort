@@ -271,7 +271,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
 
         #region Command Handlers
 
-        private void EditExecuted()
+        public void EditExecuted()
         {
             // Show the Edit view.
             var editWindow = new EditItemView();
@@ -300,9 +300,13 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
                 }
                 if (Source.Context != editVm.Context)
                 {
-                    Api.Move(Source, editVm.Context);
+                    Source.Context = editVm.Context;
+                    Api.Api.ResetPriorityParents(Source);
                 }
-                Api.Update(Source);
+                else
+                {
+                    Api.Update(Source);
+                }
             }
             OnPropertyChanged(nameof(Title));
             OnPropertyChanged(nameof(Url));
@@ -310,6 +314,8 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
             OnPropertyChanged(nameof(IsNsfw));
             OnPropertyChanged(nameof(ItemDate));
             OnPropertyChanged(nameof(ToolTip));
+            OnPropertyChanged(nameof(Notes));
+            OnPropertyChanged(nameof(Tags));
         }
 
         private void DeferExecuted(TimeSpan? delay)

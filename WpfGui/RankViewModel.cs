@@ -148,7 +148,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                 if (value >= RankPairs.Count || value < 0) return;
                 _currentIndex = value;
                 OnPropertyChanged();
-                OnPropertyChanged("CurrentPair");
+                OnPropertyChanged(nameof(CurrentPair));
             }
         }
 

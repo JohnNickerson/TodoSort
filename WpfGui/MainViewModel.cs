@@ -157,14 +157,30 @@ namespace AssimilationSoftware.TodoSort.WpfGui
 
         private void CommitChanges()
         {
-            var committed = _repo.CommitChanges();
-            if (committed == 0)
+            var pendingChanges = _repo.GetPendingChanges();
+            if (pendingChanges.Count == 0)
             {
-                _api.StatusMessage = "Could not commit changes. Possible conflicts.";
+                _api.StatusMessage = "No changes pending.";
+            }
+            else if (pendingChanges.Any(p => p.IsConflict))
+            {
+                _api.StatusMessage = "Could not commit changes. Conflicting edits detected.";
             }
             else
             {
-                _api.StatusMessage = $"{committed} change(s) committed.";
+                var committed = _repo.CommitChanges();
+                switch (committed)
+                {
+                    case 0:
+                        _api.StatusMessage = "Could not commit changes. Possible conflicts.";
+                        break;
+                    case 1:
+                        _api.StatusMessage = $"{committed} change committed.";
+                        break;
+                    default:
+                        _api.StatusMessage = $"{committed} changes committed.";
+                        break;
+                }
             }
         }
 
