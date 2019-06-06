@@ -146,7 +146,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                     var first = chainItems.OrderBy(i => i.GetIntTag("order", 0)).FirstOrDefault();
                     if (first != null)
                     {
-                        _api.SetParent(first, null);
+                        first.ParentId = null;
                         _api.SetParent(headItem.Source, first);
                     }
                 }

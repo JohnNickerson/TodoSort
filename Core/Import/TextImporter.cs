@@ -11,7 +11,14 @@ namespace AssimilationSoftware.TodoSort.Core.Import
         public ActionItem[] GetAllItems()
         {
             var m = new ActionItemDiskMapper(Filename).LoadAll();
-			foreach (var i in m.Where(a => string.IsNullOrEmpty(a.Context)))
+            foreach (var h in m)
+            {
+                if (string.IsNullOrEmpty(h.ImportHash))
+                {
+                    h.ImportHash = h.GenerateHash();
+                }
+            }
+            foreach (var i in m.Where(a => string.IsNullOrEmpty(a.Context)))
 			{
 				i.Context = "inbox";
 			}

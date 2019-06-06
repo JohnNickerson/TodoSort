@@ -439,7 +439,9 @@ namespace AssimilationSoftware.TodoSort.CLI
                         }
                         if (importer != null)
                         {
-                            vm.AddAllItems(importOptions.Context, importer.GetAllItems());
+                            // Get everything from the source file.
+                            // Exclude anything already seen, according to its import hash field.
+                            vm.AddAllItems(importOptions.Context, true, importer.GetAllItems());
                         }
                     }
                     break;

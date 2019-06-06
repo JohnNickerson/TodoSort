@@ -221,19 +221,26 @@ namespace AssimilationSoftware.TodoSort.Core
             UnsavedChanges = true;
         }
 
-        public void AddAllItems(string context, params ActionItem[] items)
+        public void AddAllItems(string context, bool checkHashes, params ActionItem[] items)
         {
             int importedCount = 0;
+            var existingHashes = new HashSet<string>();
+            if (checkHashes)
+            {
+                existingHashes = new HashSet<string>(_repository.Items.Where(i => !string.IsNullOrEmpty(i.ImportHash)).Select(i => i.ImportHash));
+            }
             foreach (var i in items)
             {
+                if (checkHashes && existingHashes.Contains(i.ImportHash)) continue;
                 if (context != null)
                 {
                     i.Context = context;
                 }
+
                 AddItem(i);
                 importedCount++;
             }
-            StatusMessage = string.Format("Imported {0} items.", importedCount);
+            StatusMessage = $"Imported {importedCount} items.";
             UnsavedChanges = true;
         }
 
