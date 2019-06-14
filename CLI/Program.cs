@@ -436,12 +436,16 @@ namespace AssimilationSoftware.TodoSort.CLI
                             case "todosort":
                                 importer = new TextImporter { Filename = importOptions.Filename };
                                 break;
+                            default:
+                                Console.WriteLine($"Unknown import format: {importOptions.Format}");
+                                break;
                         }
                         if (importer != null)
                         {
                             // Get everything from the source file.
                             // Exclude anything already seen, according to its import hash field.
                             vm.AddAllItems(importOptions.Context, true, importer.GetAllItems());
+                            Console.WriteLine(vm.StatusMessage);
                         }
                     }
                     break;

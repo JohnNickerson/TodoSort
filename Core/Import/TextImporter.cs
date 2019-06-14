@@ -1,3 +1,4 @@
+using System;
 using AssimilationSoftware.Maroon.Mappers.Text;
 using AssimilationSoftware.Maroon.Model;
 using System.Linq;
@@ -16,6 +17,7 @@ namespace AssimilationSoftware.TodoSort.Core.Import
                 if (string.IsNullOrEmpty(h.ImportHash))
                 {
                     h.ImportHash = h.GenerateHash();
+                    h.LastModified = DateTime.Now;
                 }
             }
             foreach (var i in m.Where(a => string.IsNullOrEmpty(a.Context)))
