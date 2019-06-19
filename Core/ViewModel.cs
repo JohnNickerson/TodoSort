@@ -101,7 +101,7 @@ namespace AssimilationSoftware.TodoSort.Core
             set
             {
                 _statusMessage = value;
-                RaisePropertyChanged("StatusMessage");
+                RaisePropertyChanged(nameof(StatusMessage));
             }
         }
 

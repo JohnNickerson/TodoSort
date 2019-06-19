@@ -68,3 +68,6 @@
 	- Move individual items to other contexts in GUI.
 	- Implemented File -> New.
 	- Patched to Maroon 0.2.0.3 for commit performance.
+2019-06-20: Build 1.3.2
+	- Search by project and context. 
+	- Fix for editing deferred items.
