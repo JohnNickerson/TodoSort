@@ -51,6 +51,9 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         private ActionViewItem _selectedItem;
         private bool _searchExpanded;
         private ActionItem _searchProject;
+        private bool _sortByUpvotes = true;
+        private bool _sortByTitle;
+        private bool _sortByOrder;
 
         #endregion
 
@@ -416,6 +419,12 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                 // TODO: Raise an event that the view can respond to, or depend on this event.
                 (Window as TaskList)?.ResizeColumns();
             }
+
+            if (propertyName == nameof(SortByUpvotes) || propertyName == nameof(SortByOrder) ||
+                propertyName == nameof(SortByTitle))
+            {
+                OnPropertyChanged(nameof(Items));
+            }
         }
 
         private bool? ConfirmSaveCancel(string message)
@@ -610,14 +619,37 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                         else
                         {
                             _api.SearchSpecification = SelectedContext.SearchSpecification;
-                            _currentItems = _api.SearchResults.Select(s => new ActionViewItem(s, this)).OrderByDescending(i => i.Upvotes).ThenBy(i => i.Title).ToList();
+                            var selectedItems = _api.SearchResults.Select(s => new ActionViewItem(s, this));
+                            if (SortByUpvotes)
+                            {
+                                _currentItems = selectedItems.OrderByDescending(i => i.Upvotes).ThenBy(i => i.Title).ToList();
+                            }
+                            else if (SortByTitle)
+                            {
+                                _currentItems = selectedItems.OrderBy(i => i.Title).ToList();
+                            }
+                            else if (SortByOrder)
+                            {
+                                _currentItems = selectedItems.OrderBy(a => a.Tags.ContainsKey("order") ? a.Tags["order"] : "0", new SemiNumericComparer()).ToList();
+                            }
                         }
                         break;
                     default:
                         _api.SearchSpecification = SelectedContext.SearchSpecification;
-                        // Todo: Apply user-specified sorting options.
-                        // eg if (Sort == SortField.Title) { _currentItems.OrderBy(i => i.Title); }
-                        _currentItems = _api.SearchResults.Select(s => new ActionViewItem(s, this)).OrderByDescending(i => i.Upvotes).ThenBy(i => i.Title).ToList();
+                        // Apply user-specified sorting options.
+                        var defaultItems = _api.SearchResults.Select(s => new ActionViewItem(s, this));
+                        if (SortByUpvotes)
+                        {
+                            _currentItems = defaultItems.OrderByDescending(i => i.Upvotes).ThenBy(i => i.Title).ToList();
+                        }
+                        else if (SortByTitle)
+                        {
+                            _currentItems = defaultItems.OrderBy(i => i.Title).ToList();
+                        }
+                        else if (SortByOrder)
+                        {
+                            _currentItems = defaultItems.OrderBy(a => a.Tags.ContainsKey("order") ? a.Tags["order"] : "0", new SemiNumericComparer()).ToList();
+                        }
                         break;
                 }
                 return _currentItems;
@@ -712,6 +744,54 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         public ViewModel Api => _api;
 
         public Context SearchContext { get; set; }
+
+        public bool SortByUpvotes
+        {
+            get => _sortByUpvotes;
+            set
+            {
+                if (_sortByUpvotes == value) return;
+                _sortByUpvotes = value;
+                if (value)
+                {
+                    SortByTitle = false;
+                    SortByOrder = false;
+                }
+                OnPropertyChanged(nameof(SortByUpvotes));
+            }
+        }
+
+        public bool SortByTitle
+        {
+            get => _sortByTitle;
+            set
+            {
+                if (_sortByTitle == value) return;
+                _sortByTitle = value;
+                if (value)
+                {
+                    SortByUpvotes = false;
+                    SortByOrder = false;
+                }
+                OnPropertyChanged(nameof(SortByTitle));
+            }
+        }
+
+        public bool SortByOrder
+        {
+            get => _sortByOrder;
+            set
+            {
+                if (_sortByOrder == value) return;
+                _sortByOrder = value;
+                if (value)
+                {
+                    SortByTitle = false;
+                    SortByUpvotes = false;
+                }
+                OnPropertyChanged(nameof(SortByOrder));
+            }
+        }
 
         #endregion
 

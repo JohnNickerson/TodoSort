@@ -50,6 +50,11 @@
             <MenuItem Header="_Options">
                 <MenuItem Header="_Mask NSFW items" Command="{Binding MaskTextCommand}" IsChecked="{Binding Path=Masked}" InputGestureText="Ctrl+M"/>
                 <MenuItem Header="Show _head only" IsChecked="{Binding ShowHeadOnly}" Command="{Binding ToggleHeadCommand}" InputGestureText="Ctrl+H" />
+                <MenuItem Header="Sort by...">
+                    <MenuItem Header="Upvotes" IsChecked="{Binding SortByUpvotes}" IsCheckable="True"/>
+                    <MenuItem Header="Title" IsChecked="{Binding SortByTitle}" IsCheckable="True"/>
+                    <MenuItem Header="Order tag" IsChecked="{Binding SortByOrder}" IsCheckable="True"/>
+                </MenuItem>
             </MenuItem>
             <MenuItem Header="_Help">
                 <MenuItem Header="{Binding VersionNumber}"/>
