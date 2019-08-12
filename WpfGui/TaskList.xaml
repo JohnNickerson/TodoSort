@@ -112,7 +112,7 @@
                     <Separator/>
                     <MenuItem Header="Bump" Command="{Binding Path=BumpCommand}"/>
                     <Separator/>
-                    <MenuItem Header="Move to" ItemsSource="{Binding Api.SelectedContext.AllOtherContexts}">
+                    <MenuItem Header="Move to" ItemsSource="{Binding Api.SelectedContext.AllOtherContexts}" IsEnabled="{Binding Api.SelectedContext.CanMoveFrom}">
                         <MenuItem.ItemContainerStyle>
                             <Style TargetType="MenuItem">
                                 <Setter Property="Header" Value="{Binding Title}"/>

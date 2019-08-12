@@ -540,7 +540,8 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                         Title = "Search",
                         Window = Window,
                         DateVisible = Visibility.Collapsed,
-                        SearchSpecification = new FullTextSearchSpecification(SearchKeyword)
+                        SearchSpecification = new FullTextSearchSpecification(SearchKeyword),
+                        CanMoveFrom = false
                     };
                     _contexts.Add(_searchResultsContext);
                     if (saveContext != null)
@@ -668,7 +669,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             }
         }
 
-        public List<ActionItem> Projects => _api != null ? _api.GetProjects().Union(new List<ActionItem> { null }).ToList() : new List<ActionItem> { null };
+        public List<ActionItem> Projects => _api != null ? _api.GetProjects().Union(new List<ActionItem> { null }).OrderBy(p => p?.Title).ToList() : new List<ActionItem> { null };
 
         public string VersionNumber => "Version " + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
 

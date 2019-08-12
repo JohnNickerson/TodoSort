@@ -78,6 +78,8 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
         public List<Context> AllOtherContexts { get; set; }
 
         public MainViewModel ParentVm { get; set; }
+
+        public bool CanMoveFrom { get; set; } = true;
         #endregion
 
         #region Commands
