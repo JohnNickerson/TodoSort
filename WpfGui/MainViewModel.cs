@@ -27,6 +27,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         private List<Context> _contexts;
         private string _fileName;
         private List<ActionViewItem> _currentItems;
+        private const int CommitLimit = 256;
 
         private ITodoRepository _repo;
         private ViewModel _api;
@@ -183,6 +184,20 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                     default:
                         _api.StatusMessage = $"{committed} changes committed.";
                         break;
+                }
+            }
+        }
+
+        public void CheckForCommit()
+        {
+            var pendingCount = _repo.GetPendingChanges().Count;
+            if (pendingCount > CommitLimit)
+            {
+                var response = MessageBox.Show($"{pendingCount} changes are pending. Commit now?", "Commit Changes",
+                    MessageBoxButton.YesNo);
+                if (response == MessageBoxResult.Yes)
+                {
+                    CommitChanges();
                 }
             }
         }

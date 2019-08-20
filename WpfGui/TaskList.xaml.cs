@@ -69,5 +69,10 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         {
             _vm.SelectedItem?.EditCommand.Execute(_vm.SelectedItem);
         }
+
+        private void MainWindow_OnGotFocus(object sender, EventArgs eventArgs)
+        {
+            ((MainViewModel)DataContext).CheckForCommit();
+        }
     }
 }
