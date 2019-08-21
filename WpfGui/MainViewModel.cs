@@ -48,7 +48,8 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         private RelayCommand _newFileCommand;
 
         private string _searchKeyword;
-        private string _searchMissingTagName;
+        private string _searchTagName;
+        private string _searchTagValue;
         private ActionViewItem _selectedItem;
         private bool _searchExpanded;
         private ActionItem _searchProject;
@@ -480,9 +481,9 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                 specs.Add(new FullTextSearchSpecification(SearchKeyword));
             }
 
-            if (!string.IsNullOrEmpty(SearchMissingTagName))
+            if (!string.IsNullOrEmpty(SearchTagName) || !string.IsNullOrWhiteSpace(SearchTagValue))
             {
-                specs.Add(new NotSpecification<ActionItem>(new TagValueSpecification(SearchMissingTagName, null)));
+                specs.Add(new TagValueSpecification(SearchTagName, SearchTagValue));
             }
 
             if (SearchProject != null)
@@ -710,13 +711,24 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             }
         }
 
-        public string SearchMissingTagName
+        public string SearchTagName
         {
-            get => _searchMissingTagName;
+            get => _searchTagName;
             set
             {
-                if (_searchMissingTagName == value) return;
-                _searchMissingTagName = value;
+                if (_searchTagName == value) return;
+                _searchTagName = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string SearchTagValue
+        {
+            get => _searchTagValue;
+            set
+            {
+                if (_searchTagValue == value) return;
+                _searchTagValue = value;
                 OnPropertyChanged();
             }
         }

@@ -91,18 +91,34 @@
                     <Setter Property="Margin" Value="2"/>
                 </Style>
             </Expander.Resources>
-            <UniformGrid Columns="2">
-                <Label Content="Keyword"/>
-                <TextBox Text="{Binding SearchKeyword}" x:Name="KeywordSearchBox"/>
-                <Label Content="Missing tag"/>
-                <TextBox Text="{Binding SearchMissingTagName}"/>
-                <Label Content="Project"/>
-                <ComboBox ItemsSource="{Binding Projects}" DisplayMemberPath="Title" SelectedItem="{Binding SearchProject}" Margin="5"/>
-                <Label Content="Context"/>
-                <ComboBox ItemsSource="{Binding Contexts}" DisplayMemberPath="Title" SelectedItem="{Binding SearchContext}" Margin="5"/>
-                <Border/>
-                <Button Content="Go" Margin="3" MaxWidth="50" Command="{Binding ApplySearchCommand}"/>
-            </UniformGrid>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Label Grid.Row="0" Grid.Column="0" Content="Keyword"/>
+                <TextBox Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Text="{Binding SearchKeyword}" x:Name="KeywordSearchBox"/>
+
+                <Label Grid.Row="1" Grid.Column="0" Content="Tag/Value"/>
+                <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding SearchTagName}"/>
+                <TextBox Grid.Row="1" Grid.Column="2" Text="{Binding SearchTagValue}"/>
+
+                <Label Grid.Row="2" Grid.Column="0" Content="Project"/>
+                <ComboBox Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" ItemsSource="{Binding Projects}" DisplayMemberPath="Title" SelectedItem="{Binding SearchProject}" Margin="5"/>
+
+                <Label Grid.Row="3" Grid.Column="0" Content="Context"/>
+                <ComboBox Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" ItemsSource="{Binding Contexts}" DisplayMemberPath="Title" SelectedItem="{Binding SearchContext}" Margin="5"/>
+
+                <Button Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2" Content="Go" Margin="3" MaxWidth="50" Command="{Binding ApplySearchCommand}"/>
+            </Grid>
         </Expander>
         <ListView Grid.Row="2" Grid.Column="1" ItemsSource="{Binding Path=Items}" SelectedItem="{Binding Path=SelectedItem}" MouseDoubleClick="OnMouseDoubleClick">
             <ListView.Resources>
