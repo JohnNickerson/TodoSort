@@ -191,7 +191,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
 
         public void CheckForCommit()
         {
-            var pendingCount = _repo.GetPendingChanges().Count;
+            var pendingCount = _repo?.GetPendingChanges().Count;
             if (pendingCount > CommitLimit)
             {
                 var response = MessageBox.Show($"{pendingCount} changes are pending. Commit now?", "Commit Changes",
@@ -486,7 +486,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                 specs.Add(new TagValueSpecification(SearchTagName, SearchTagValue));
             }
 
-            if (SearchProject != null)
+            if (SearchProject?.Title != "(none)")
             {
                 specs.Add(new ProjectChildrenSearchSpecification(SearchProject));
             }
@@ -685,7 +685,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             }
         }
 
-        public List<ActionItem> Projects => _api != null ? _api.GetProjects().Union(new List<ActionItem> { null }).OrderBy(p => p?.Title).ToList() : new List<ActionItem> { null };
+        public List<ActionItem> Projects => _api != null ? _api.GetProjects().Union(new List<ActionItem> { new ActionItem { Title = "(none)" } }).OrderBy(p => p?.Title).ToList() : new List<ActionItem> { null };
 
         public string VersionNumber => "Version " + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
 
