@@ -191,7 +191,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
 
         public void CheckForCommit()
         {
-            var pendingCount = _repo.GetPendingChanges().Count;
+            var pendingCount = _repo?.GetPendingChanges().Count;
             if (pendingCount > CommitLimit)
             {
                 var response = MessageBox.Show($"{pendingCount} changes are pending. Commit now?", "Commit Changes",
