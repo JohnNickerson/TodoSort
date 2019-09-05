@@ -13,7 +13,7 @@ namespace AssimilationSoftware.TodoSort.Core.Search
 
         public ProjectChildrenSearchSpecification(ActionItem project)
         {
-            _projectId = project.ID.ToString().ToLower();
+            _projectId = project?.ID.ToString().ToLower();
         }
 
         public ProjectChildrenSearchSpecification(string id)

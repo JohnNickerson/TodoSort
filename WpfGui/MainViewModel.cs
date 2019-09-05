@@ -56,6 +56,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         private bool _sortByUpvotes = true;
         private bool _sortByTitle;
         private bool _sortByOrder;
+        private Context _searchContext;
 
         #endregion
 
@@ -491,9 +492,9 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                 specs.Add(new ProjectChildrenSearchSpecification(SearchProject));
             }
 
-            if (SearchContext != null)
+            if (SearchContext?.Title != "(none)")
             {
-                specs.Add(new ContextSearchSpecification(SearchContext.Title));
+                specs.Add(new ContextSearchSpecification(SearchContext?.Title));
             }
             _searchResultsContext.SearchSpecification = new AndSpecification<ActionItem>(specs.ToArray());
             SelectedContext = _searchResultsContext;
@@ -687,6 +688,8 @@ namespace AssimilationSoftware.TodoSort.WpfGui
 
         public List<ActionItem> Projects => _api != null ? _api.GetProjects().Union(new List<ActionItem> { new ActionItem { Title = "(none)" } }).OrderBy(p => p?.Title).ToList() : new List<ActionItem> { null };
 
+        public List<Context> SearchContexts => Contexts.Where(c => c.Title != "Search").Union(new List<Context> {new Context {Title = "(none)"}}).OrderBy(c => c?.Title).ToList();
+
         public string VersionNumber => "Version " + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
 
         public bool ShowHeadOnly
@@ -771,7 +774,16 @@ namespace AssimilationSoftware.TodoSort.WpfGui
 
         public ViewModel Api => _api;
 
-        public Context SearchContext { get; set; }
+        public Context SearchContext
+        {
+            get => _searchContext;
+            set
+            {
+                if (_searchContext == value) return;
+                _searchContext = value;
+                OnPropertyChanged();
+            }
+        }
 
         public bool SortByUpvotes
         {
