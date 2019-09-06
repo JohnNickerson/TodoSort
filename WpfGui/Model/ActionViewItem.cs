@@ -25,6 +25,12 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
         private RelayCommand _bumpCommand;
         private RelayCommand<Context> _moveToContextCommand;
 
+        static readonly Dictionary<string,string> TextReplacements = new Dictionary<string, string>
+        {
+            { "Ã©", "é" }
+            // TODO: Add any text replacements here for title fixes.
+        };
+
         #endregion // Fields
 
         #region Constructors
@@ -352,9 +358,9 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
                 // TODO: Also get the redirected URL, if any.
                 var source = client.DownloadString(Source.Tags["url"]);
                 var title = Regex.Match(source, @"\<title\b[^>]*\>\s*(?<Title>[\s\S]*?)\</title\>", RegexOptions.IgnoreCase).Groups["Title"].Value;
-                if (ValidateTitle(title))
+                if (ValidateTitle(title) && Title != title)
                 {
-                    Title = title;
+                    Title = RestoreUnicode(title);
                     Api.Update(Source);
                     success = true;
                 }
@@ -368,6 +374,17 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
             // 2. If we fail, open the URL and the edit window to fix manually.
             OpenUrlExecuted(Source.Tags["url"]);
             EditExecuted();
+        }
+
+        private string RestoreUnicode(string title)
+        {
+            var result = title;
+            foreach (var replace in TextReplacements.Keys)
+            {
+                result = result.Replace(replace, TextReplacements[replace]);
+            }
+
+            return result;
         }
 
         /// <summary>
