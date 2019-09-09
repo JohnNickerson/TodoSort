@@ -27,7 +27,12 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
 
         static readonly Dictionary<string,string> TextReplacements = new Dictionary<string, string>
         {
-            { "Ã©", "é" }
+            { "&quot;", "\"" },
+            { "&amp;", "&" },
+            { "&#39;", "'" },
+            { "Ã©", "é" },
+            { "â€”", "-" },
+            { "â€™", "'" }
             // TODO: Add any text replacements here for title fixes.
         };
 
