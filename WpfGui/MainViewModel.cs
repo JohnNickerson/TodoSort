@@ -57,6 +57,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         private bool _sortByTitle;
         private bool _sortByOrder;
         private Context _searchContext;
+        private decimal? _lastPendingCount;
 
         #endregion
 
@@ -193,7 +194,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         public void CheckForCommit()
         {
             var pendingCount = _repo?.GetPendingChanges().Count;
-            if (pendingCount > CommitLimit)
+            if (pendingCount > CommitLimit && _lastPendingCount != pendingCount)
             {
                 var response = MessageBox.Show($"{pendingCount} changes are pending. Commit now?", "Commit Changes",
                     MessageBoxButton.YesNo);
@@ -202,6 +203,8 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                     CommitChanges();
                 }
             }
+
+            _lastPendingCount = pendingCount;
         }
 
         private void RankItems()
