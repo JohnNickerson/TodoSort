@@ -81,3 +81,5 @@
 	- Disable "Move To" in search results. 
 	- Sort projects by title in search list. 
 	- Patched to fix null reference in "time to commit" check.
+2019-09-18: Build 1.3.5.2
+	- Patched to fix interaction error in prompt to commit with conflicts.
