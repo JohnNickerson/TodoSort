@@ -490,14 +490,14 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                 specs.Add(new TagValueSpecification(SearchTagName, SearchTagValue));
             }
 
-            if (SearchProject?.Title != "(none)")
+            if (SearchProject != null && SearchProject.Title != "(none)")
             {
                 specs.Add(new ProjectChildrenSearchSpecification(SearchProject));
             }
 
-            if (SearchContext?.Title != "(none)")
+            if (SearchContext != null && SearchContext.Title != "(none)")
             {
-                specs.Add(new ContextSearchSpecification(SearchContext?.Title));
+                specs.Add(new ContextSearchSpecification(SearchContext.Title));
             }
             _searchResultsContext.SearchSpecification = new AndSpecification<ActionItem>(specs.ToArray());
             // _searchResultsContext.ShowHeadOnly = false;
