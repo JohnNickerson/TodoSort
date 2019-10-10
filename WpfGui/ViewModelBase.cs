@@ -13,6 +13,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
     public class ViewModelBase : INotifyPropertyChanged
     {
         public Window Window { get; set; }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]

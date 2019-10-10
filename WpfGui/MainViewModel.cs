@@ -500,6 +500,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                 specs.Add(new ContextSearchSpecification(SearchContext?.Title));
             }
             _searchResultsContext.SearchSpecification = new AndSpecification<ActionItem>(specs.ToArray());
+            // _searchResultsContext.ShowHeadOnly = false;
             SelectedContext = _searchResultsContext;
         }
 
@@ -508,7 +509,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             SearchExpanded = !SearchExpanded;
             if (SearchExpanded)
             {
-                (Window as TaskList)?.KeywordSearchBox.Focus();
+                (Window as TaskList)?.FocusKeywordSearchBox();
             }
         }
 
