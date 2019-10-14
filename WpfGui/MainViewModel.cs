@@ -445,6 +445,11 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             {
                 OnPropertyChanged(nameof(Items));
             }
+
+            if (propertyName == nameof(Contexts))
+            {
+                OnPropertyChanged(nameof(SearchContexts));
+            }
         }
 
         private bool? ConfirmSaveCancel(string message)
