@@ -363,9 +363,10 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
                 // TODO: Also get the redirected URL, if any.
                 var source = client.DownloadString(Source.Tags["url"]);
                 var title = Regex.Match(source, @"\<title\b[^>]*\>\s*(?<Title>[\s\S]*?)\</title\>", RegexOptions.IgnoreCase).Groups["Title"].Value;
+                title = RestoreUnicode(title);
                 if (ValidateTitle(title) && Title != title)
                 {
-                    Title = RestoreUnicode(title);
+                    Title = title;
                     Api.Update(Source);
                     success = true;
                 }
