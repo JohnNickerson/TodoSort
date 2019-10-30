@@ -434,7 +434,14 @@ namespace AssimilationSoftware.TodoSort.CLI
                         switch (importOptions.Format)
                         {
                             case "todosort":
-                                importer = new TextImporter { Filename = importOptions.Filename };
+                                if (Directory.Exists(importOptions.Filename))
+                                {
+                                    importer = new TextFolderImporter {Folder = importOptions.Filename};
+                                }
+                                else
+                                {
+                                    importer = new TextImporter { Filename = importOptions.Filename };
+                                }
                                 break;
                             default:
                                 Console.WriteLine($"Unknown import format: {importOptions.Format}");

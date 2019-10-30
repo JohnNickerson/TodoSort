@@ -51,6 +51,7 @@
     <Compile Include="Export\TemplateExporter.cs" />
     <Compile Include="Export\TextExporter.cs" />
     <Compile Include="Import\IImporter.cs" />
+    <Compile Include="Import\TextFolderImporter.cs" />
     <Compile Include="Import\TextImporter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rot13.cs" />
