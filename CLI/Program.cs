@@ -436,12 +436,15 @@ namespace AssimilationSoftware.TodoSort.CLI
                             case "todosort":
                                 if (Directory.Exists(importOptions.Filename))
                                 {
-                                    importer = new TextFolderImporter {Folder = importOptions.Filename};
+                                    importer = new TextFolderImporter { Folder = importOptions.Filename };
                                 }
                                 else
                                 {
                                     importer = new TextImporter { Filename = importOptions.Filename };
                                 }
+                                break;
+                            case "pocket":
+                                importer = new PocketImporter { Filename = importOptions.Filename };
                                 break;
                             default:
                                 Console.WriteLine($"Unknown import format: {importOptions.Format}");
