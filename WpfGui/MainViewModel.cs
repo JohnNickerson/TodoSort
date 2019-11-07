@@ -183,11 +183,15 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                         break;
                     case 1:
                         _api.StatusMessage = $"{committed} change committed.";
+                        _api.UnsavedChanges = false;
                         break;
                     default:
                         _api.StatusMessage = $"{committed} changes committed.";
+                        _api.UnsavedChanges = false;
                         break;
                 }
+                OnPropertyChanged(nameof(HasUnsavedChanges));
+                OnPropertyChanged(nameof(WindowTitle));
             }
         }
 
