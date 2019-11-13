@@ -105,7 +105,7 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 <Label Grid.Row="0" Grid.Column="0" Content="Keyword"/>
-                <TextBox Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Text="{Binding SearchKeyword}" Name="KeywordSearchBox"/>
+                <TextBox Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Text="{Binding SearchKeyword}" Name="KeywordSearchBox" IsVisibleChanged="SearchVisibleChanged"/>
 
                 <Label Grid.Row="1" Grid.Column="0" Content="Tag/Value"/>
                 <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding SearchTagName}"/>

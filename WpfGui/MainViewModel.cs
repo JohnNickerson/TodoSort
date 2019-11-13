@@ -516,10 +516,6 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         private void SearchExecuted()
         {
             SearchExpanded = !SearchExpanded;
-            if (SearchExpanded)
-            {
-                (Window as TaskList)?.FocusKeywordSearchBox();
-            }
         }
 
         public void CheckForContext(string context)

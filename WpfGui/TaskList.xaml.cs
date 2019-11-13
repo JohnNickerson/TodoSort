@@ -76,7 +76,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             ((MainViewModel)DataContext).CheckForCommit();
         }
 
-        public void FocusKeywordSearchBox()
+        private void SearchVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             KeywordSearchBox.Focus();
         }
