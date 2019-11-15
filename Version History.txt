@@ -87,3 +87,7 @@
 	- Added text replacements in GUI for title fixing. 
 	- Fixed inability to remove Context and Project from search conditions. 
 	- Fixed commit prompt count calculation.
+2019-11-14: Build 1.3.7.1
+	- Updated title fixing to process HTML/Unicode elements before validating. 
+	- Import all text files from a folder. 
+	- Import from Pocket html export file.
