@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using AssimilationSoftware.Maroon.Mappers.Text;
 using AssimilationSoftware.Maroon.Model;
 using System.Linq;
@@ -26,5 +27,7 @@ namespace AssimilationSoftware.TodoSort.Core.Import
 			}
             return m.ToArray();
         }
+
+        public bool IsValid => File.Exists(Filename);
     }
 }

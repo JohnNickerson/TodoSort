@@ -35,6 +35,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         private RelayCommand<string> _openRecentCommand;
         private RelayCommand _rankCommand;
         private RelayCommand _reloadCommand;
+        private RelayCommand _importCommand;
         private RelayCommand _closeCommand;
         private RelayCommand _addItemCommand;
         private RelayCommand _openFileCommand;
@@ -229,6 +230,15 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             {
                 OpenFile(FileName);
             }
+        }
+
+        private void ImportExecuted()
+        {
+            var importView = new ImportView();
+            var importVm = new ImportViewModel(_api, importView);
+            importView.DataContext = importVm;
+            importView.ShowDialog();
+            OnPropertyChanged(nameof(Contexts));
         }
 
         private void SaveSettings()
@@ -851,6 +861,8 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         public RelayCommand RankCommand => _rankCommand ?? (_rankCommand = new RelayCommand(RankItems));
 
         public RelayCommand ReloadCommand => _reloadCommand ?? (_reloadCommand = new RelayCommand(ReloadFile, () => !string.IsNullOrEmpty(FileName)));
+
+        public RelayCommand ImportCommand => _importCommand ?? (_importCommand = new RelayCommand(ImportExecuted, () => !string.IsNullOrEmpty(FileName)));
 
         public RelayCommand CloseCommand => _closeCommand ?? (_closeCommand = new RelayCommand(CloseExecute));
 

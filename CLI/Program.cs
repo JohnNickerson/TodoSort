@@ -376,6 +376,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                     break;
                 #endregion
 
+                #region Fix Titles
                 case "fix-titles":
                     {
                         var fixOptions = (FixTitlesOptions)argsubs;
@@ -425,6 +426,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                         }
                         break;
                     }
+                #endregion
 
                 #region Import
                 case "import":

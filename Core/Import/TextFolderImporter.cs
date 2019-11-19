@@ -45,5 +45,7 @@ namespace AssimilationSoftware.TodoSort.Core.Import
         }
 
         public string Folder { get; set; }
+
+        public bool IsValid => Directory.Exists(Folder);
     }
 }

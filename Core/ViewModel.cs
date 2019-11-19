@@ -232,7 +232,7 @@ namespace AssimilationSoftware.TodoSort.Core
             foreach (var i in items)
             {
                 if (checkHashes && existingHashes.Contains(i.ImportHash)) continue;
-                if (context != null)
+                if (!string.IsNullOrEmpty(context))
                 {
                     i.Context = context;
                 }

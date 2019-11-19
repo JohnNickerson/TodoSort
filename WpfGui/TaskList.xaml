@@ -29,6 +29,7 @@
                 <MenuItem Header="Save _As" IsEnabled="False"/>
                 <MenuItem Header="_Commit" Command="{Binding Path=CommitCommand}" ToolTip="Commits any pending changes to main storage."/>
                 <MenuItem Header="Reload" Command="{Binding ReloadCommand}" />
+                <MenuItem Header="Import" Command="{Binding ImportCommand}"/>
                 <Separator/>
                 <MenuItem Header="Recent Files" IsEnabled="True" ItemsSource="{Binding Path=RecentFileList}">
                     <MenuItem.ItemContainerStyle>

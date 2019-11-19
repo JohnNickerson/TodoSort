@@ -59,5 +59,7 @@ namespace AssimilationSoftware.TodoSort.Core.Import
 
             return result.ToArray();
         }
+
+        public bool IsValid => File.Exists(Filename);
     }
 }
