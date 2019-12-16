@@ -11,6 +11,7 @@ Rem Assumes Release build has already been done.
 rem 1. Copy all in one.
 robocopy "%DROPBOX%\Projects\Code\TodoSort\CLI\bin\Release" "%DROPBOX%\Toolkit\TodoSort\Integration" /e /purge /v
 robocopy "%DROPBOX%\Projects\Code\TodoSort\WpfGui\bin\Release" "%DROPBOX%\Toolkit\TodoSort\Integration\GUI" /e /purge /v
+dir /s/b "%DROPBOX%\Toolkit\TodoSort\Integration"
 
 rem 2. Pause to show success or failure.
 Pause

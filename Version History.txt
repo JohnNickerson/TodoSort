@@ -91,3 +91,7 @@
 	- Updated title fixing to process HTML/Unicode elements before validating. 
 	- Import all text files from a folder. 
 	- Import from Pocket html export file.
+2019-12-12: Build 1.3.8
+	- Fixed unsaved changes indicator when committing. 
+	- Set keyword search box focus properly. 
+	- Added GUI import features.

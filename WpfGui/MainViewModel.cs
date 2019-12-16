@@ -520,6 +520,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             }
             _searchResultsContext.SearchSpecification = new AndSpecification<ActionItem>(specs.ToArray());
             // _searchResultsContext.ShowHeadOnly = false;
+            ShowHeadOnly = false;
             SelectedContext = _searchResultsContext;
         }
 
@@ -595,6 +596,11 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             get => _selectedContext;
             set
             {
+                // First, if we are currently in the Search context, and we're moving away from it, enable ShowHeadOnly.
+                if (_selectedContext == _searchResultsContext && value != _searchResultsContext)
+                {
+                    ShowHeadOnly = true;
+                }
                 _selectedContext = value;
                 OnPropertyChanged();
                 _currentItems = null;
