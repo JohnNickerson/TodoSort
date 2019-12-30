@@ -23,6 +23,8 @@ namespace AssimilationSoftware.TodoSort.Core
         private ISearchSpecification<ActionItem> _todoSearchSpec;
         private ISearchSpecification<ActionItem> _somedaySearchSpec;
         private ISearchSpecification<ActionItem> _doneSearchSpec;
+        private int _progressPercent;
+
         #endregion
 
         public ViewModel(ITodoRepository repo)
@@ -193,6 +195,17 @@ namespace AssimilationSoftware.TodoSort.Core
                 if (_unsavedChanges == value) return;
                 _unsavedChanges = value;
                 RaisePropertyChanged("UnsavedChanges");
+            }
+        }
+
+        public int ProgressPercent
+        {
+            get => _progressPercent;
+            set
+            {
+                if (_progressPercent == value) return;
+                _progressPercent = value;
+                RaisePropertyChanged(nameof(ProgressPercent));
             }
         }
 
@@ -463,6 +476,12 @@ namespace AssimilationSoftware.TodoSort.Core
                 {
                     items[i].ParentId = items[newIndex].ID;
                     _repository.Update(items[i]);
+                }
+
+                // Report progress every 5%.
+                if (i % (items.Length / 20) == 0)
+                {
+                    ProgressPercent = i * 100 / items.Length;
                 }
             }
             UnsavedChanges = true;

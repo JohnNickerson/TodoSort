@@ -7,6 +7,7 @@ using AssimilationSoftware.TodoSort.Core.Import;
 using AssimilationSoftware.TodoSort.Core.Search;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -109,6 +110,11 @@ namespace AssimilationSoftware.TodoSort.CLI
                 case "balance":
                     {
                         var balopts = (BalanceOptions)argsubs;
+                        if (balopts.Verbose)
+                        {
+                            // Show progress percentage if in verbose mode.
+                            vm.PropertyChanged += VmOnPropertyChanged;
+                        }
                         // Validate the branching factor: must be greater than zero.
                         if (balopts.BranchFactor > 0)
                         {
@@ -1077,6 +1083,14 @@ namespace AssimilationSoftware.TodoSort.CLI
 
             // Rewrite the files
             vm.Save(forceSave);
+        }
+
+        private static void VmOnPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(ViewModel.ProgressPercent))
+            {
+                Console.WriteLine($"{((ViewModel)sender).ProgressPercent}%");
+            }
         }
 
         private static void PrintContexts(ViewModel vm)
