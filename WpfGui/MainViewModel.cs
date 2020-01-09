@@ -496,7 +496,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             OpenFile(filename);
         }
 
-        private void ApplySearchExecuted()
+        public void ApplySearchExecuted()
         {
             var specs = new List<ISearchSpecification<ActionItem>>();
             if (!string.IsNullOrEmpty(SearchKeyword))

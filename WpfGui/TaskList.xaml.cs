@@ -80,5 +80,13 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         {
             KeywordSearchBox.Focus();
         }
+
+        private void KeywordSearchBox_OnKeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.Key == System.Windows.Input.Key.Enter)
+            {
+                ((MainViewModel) DataContext).ApplySearchExecuted();
+            }
+        }
     }
 }
