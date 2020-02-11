@@ -63,21 +63,48 @@ namespace AssimilationSoftware.TodoSort.WpfGui
 
         private void BrowseExecuted()
         {
-
-            // Configure open file dialog box
-            Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog
+            if (FileType == ImportFileType.TodoSortFolder)
             {
-                FileName = "Document",
-                DefaultExt = ".txt",
-                Filter = "Text documents (.txt)|*.txt|Pocket Exports (.html)|*.html|All documents (*.*)|*.*",
-                Title = "Todo file"
-            };
-
-            // Show open file dialog box
-            var result = dlg.ShowDialog();
-            if (result == true)
+                // Open a folder browse dialogue box.
+                var fdlg = new System.Windows.Forms.FolderBrowserDialog();
+                fdlg.SelectedPath = Filename ?? Directory.GetCurrentDirectory();
+                fdlg.ShowNewFolderButton = true;
+                fdlg.Description = "Import items source";
+                var answer = fdlg.ShowDialog();
+                if (answer == System.Windows.Forms.DialogResult.OK)
+                {
+                    Filename = fdlg.SelectedPath;
+                }
+            }
+            else
             {
-                Filename = dlg.FileName;
+                // Configure open file dialog box
+                Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog
+                {
+                    FileName = "Document",
+                    DefaultExt = "txt",
+                    Filter = "Text documents (.txt)|*.txt|Pocket Exports (.html)|*.html|All documents (*.*)|*.*",
+                    Title = "Todo file"
+                };
+                switch (FileType)
+                {
+                    case ImportFileType.Pocket:
+                        dlg.FilterIndex = 2;
+                        break;
+                    case ImportFileType.TodoSort:
+                        dlg.FilterIndex = 1;
+                        break;
+                    default:
+                        dlg.FilterIndex = 3;
+                        break;
+                }
+
+                // Show open file dialog box
+                var result = dlg.ShowDialog();
+                if (result == true)
+                {
+                    Filename = dlg.FileName;
+                }
             }
         }
 

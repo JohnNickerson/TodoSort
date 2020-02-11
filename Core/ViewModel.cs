@@ -249,6 +249,10 @@ namespace AssimilationSoftware.TodoSort.Core
                 {
                     i.Context = context;
                 }
+                else if (string.IsNullOrEmpty(i.Context))
+                {
+                    i.Context = "import";
+                }
 
                 AddItem(i);
                 importedCount++;

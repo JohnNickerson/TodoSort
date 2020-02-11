@@ -95,3 +95,8 @@
 	- Fixed unsaved changes indicator when committing. 
 	- Set keyword search box focus properly. 
 	- Added GUI import features.
+2020-01-16: Build 1.3.9
+	- Show deep results automatically in Search.
+2020-02-06: Build 1.3.10
+	- Search from the keyword box by pressing "Enter".
+	- Removed obsolete "someday" and "done" arguments from CLI "init" command.
