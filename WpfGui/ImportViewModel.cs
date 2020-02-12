@@ -31,6 +31,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         {
             _vm = vm;
             _view = view;
+            _targetContext = "import";
         }
 
         [NotifyPropertyChangedInvocator]
