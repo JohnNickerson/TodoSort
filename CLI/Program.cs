@@ -255,6 +255,14 @@ namespace AssimilationSoftware.TodoSort.CLI
                         {
                             // Search by title
                             vm.SearchSpecification = new ExactPropertyValueSpecification<ActionItem, string>(i => i.Title, duptit);
+                            // Quick hack: If we have two items with the same title but different type tags, skip them.
+                            if (vm.SearchResults.Count() == 2 &&
+                                vm.SearchResults.All(i => i.Tags.ContainsKey("type")) &&
+                                vm.SearchResults.ElementAt(0).Tags["type"] !=
+                                vm.SearchResults.ElementAt(1).Tags["type"])
+                            {
+                                continue;
+                            }
                             // Present options for merging
                             // Get user input
                             Console.WriteLine();
