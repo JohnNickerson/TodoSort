@@ -414,6 +414,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                                 //}
 
                                 var title = Regex.Match(source, @"\<title\b[^>]*\>\s*(?<Title>[\s\S]*?)\</title\>", RegexOptions.IgnoreCase).Groups["Title"].Value;
+                                title = WebUtility.HtmlDecode(title);
                                 if (title != tem.Title)
                                 {
                                     Console.WriteLine("Renaming:\n\t{0}\n\t{1}", tem.Title, title);

@@ -25,17 +25,6 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
         private RelayCommand _bumpCommand;
         private RelayCommand<Context> _moveToContextCommand;
 
-        static readonly Dictionary<string,string> TextReplacements = new Dictionary<string, string>
-        {
-            { "&quot;", "\"" },
-            { "&amp;", "&" },
-            { "&#39;", "'" },
-            { "Ã©", "é" },
-            { "â€”", "-" },
-            { "â€™", "'" }
-            // TODO: Add any text replacements here for title fixes.
-        };
-
         #endregion // Fields
 
         #region Constructors
@@ -384,13 +373,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
 
         private string RestoreUnicode(string title)
         {
-            var result = title;
-            foreach (var replace in TextReplacements.Keys)
-            {
-                result = result.Replace(replace, TextReplacements[replace]);
-            }
-
-            return result;
+            return WebUtility.HtmlDecode(title);
         }
 
         /// <summary>
