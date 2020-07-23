@@ -60,6 +60,8 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         private bool _sortByOrder;
         private Context _searchContext;
         private decimal? _lastPendingCount;
+        private bool _isSearchContextSelected;
+        private bool _isSearchProjectSelected;
 
         #endregion
 
@@ -510,12 +512,12 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                 specs.Add(new TagValueSpecification(SearchTagName, SearchTagValue));
             }
 
-            if (SearchProject != null && SearchProject.Title != "(none)")
+            if (SearchProject != null && IsSearchProjectSelected)
             {
                 specs.Add(new ProjectChildrenSearchSpecification(SearchProject));
             }
 
-            if (SearchContext != null && SearchContext.Title != "(none)")
+            if (SearchContext != null && IsSearchContextSelected)
             {
                 specs.Add(new ContextSearchSpecification(SearchContext.Title));
             }
@@ -703,7 +705,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                             var selectedItems = _api.SearchResults.Select(s => new ActionViewItem(s, this));
                             if (SortByUpvotes)
                             {
-                                _currentItems = selectedItems.OrderByDescending(i => i.Upvotes).ThenBy(i => i.Title).ToList();
+                                _currentItems = selectedItems.OrderByDescending(i => i.UpVotes).ThenBy(i => i.Title).ToList();
                             }
                             else if (SortByTitle)
                             {
@@ -721,7 +723,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                         var defaultItems = _api.SearchResults.Select(s => new ActionViewItem(s, this));
                         if (SortByUpvotes)
                         {
-                            _currentItems = defaultItems.OrderByDescending(i => i.Upvotes).ThenBy(i => i.Title).ToList();
+                            _currentItems = defaultItems.OrderByDescending(i => i.UpVotes).ThenBy(i => i.Title).ToList();
                         }
                         else if (SortByTitle)
                         {
@@ -749,9 +751,9 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             }
         }
 
-        public List<ActionItem> Projects => _api != null ? _api.GetProjects().Union(new List<ActionItem> { new ActionItem { Title = "(none)" } }).OrderBy(p => p?.Title).ToList() : new List<ActionItem> { null };
+        public List<ActionItem> Projects => _api != null ? _api.GetProjects().OrderBy(p => p?.Title).ToList() : new List<ActionItem> { null };
 
-        public List<Context> SearchContexts => Contexts.Where(c => c.Title != "Search").Union(new List<Context> {new Context {Title = "(none)"}}).OrderBy(c => c?.Title).ToList();
+        public List<Context> SearchContexts => Contexts.Where(c => c.Title != "Search").OrderBy(c => c?.Title).ToList();
 
         public string VersionNumber => "Version " + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
 
@@ -806,6 +808,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             {
                 if (Equals(_searchProject, value)) return;
                 _searchProject = value;
+                if (value != null) IsSearchProjectSelected = true;
                 OnPropertyChanged();
             }
         }
@@ -844,6 +847,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             {
                 if (_searchContext == value) return;
                 _searchContext = value;
+                if (value != null) IsSearchContextSelected = true;
                 OnPropertyChanged();
             }
         }
@@ -893,6 +897,30 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                     SortByUpvotes = false;
                 }
                 OnPropertyChanged(nameof(SortByOrder));
+            }
+        }
+
+        public bool IsSearchProjectSelected
+        {
+            get => _isSearchProjectSelected;
+            set
+            {
+                if (_isSearchProjectSelected == value) return;
+                _isSearchProjectSelected = value;
+                if (!value) SearchProject = null;
+                OnPropertyChanged();
+            }
+        }
+
+        public bool IsSearchContextSelected
+        {
+            get => _isSearchContextSelected;
+            set
+            {
+                if (_isSearchContextSelected == value) return;
+                _isSearchContextSelected = value;
+                if (!value) SearchContext = null;
+                OnPropertyChanged();
             }
         }
 

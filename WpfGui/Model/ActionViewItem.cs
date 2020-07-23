@@ -9,7 +9,6 @@ using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Input;
 using AssimilationSoftware.Maroon.Model;
-using AssimilationSoftware.TodoSort.Core.Data;
 
 namespace AssimilationSoftware.TodoSort.WpfGui.Model
 {
@@ -54,7 +53,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
 
         #region Properties
 
-        public ActionItem Source { get; set; }
+        public ActionItem Source { get; private set; }
 
         public bool Done
         {
@@ -114,21 +113,21 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
 
         public string Url
         {
-            get { return Source.Tags.ContainsKey("url") ? Source.Tags["url"] : string.Empty; }
+            get => Source.Tags.ContainsKey("url") ? Source.Tags["url"] : string.Empty;
             set
             {
                 if (Source.Tags["url"] == value) return;
                 Source.Tags["url"] = value;
                 OnPropertyChanged();
-                OnPropertyChanged("UrlNotNull");
+                OnPropertyChanged(nameof(UrlNotNull));
             }
         }
 
         public bool UrlNotNull => !string.IsNullOrEmpty(Url);
 
-        public MainViewModel Api { get; set; }
+        private MainViewModel Api { get; }
 
-        public int Upvotes
+        public int UpVotes
         {
             get => Source.Upvotes;
             set
@@ -139,17 +138,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
             }
         }
 
-        public bool IsNsfw
-        {
-            get
-            {
-                if (Source.Tags.ContainsKey("nsfw"))
-                {
-                    return Source.Tags["nsfw"].ToLower() == "true";
-                }
-                return false;
-            }
-        }
+        public bool IsNsfw => Source.Tags.ContainsKey("nsfw");
 
         public DateTime? DoneDate
         {
@@ -196,21 +185,20 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
 
                 foreach (var tag in Tags)
                 {
-                    toolTip.AppendLine(string.Format("#{0}:{1}", tag.Key, tag.Value));
+                    toolTip.AppendLine($"#{tag.Key}:{tag.Value}");
                 }
 
-                if (Upvotes > 0)
+                if (UpVotes > 0)
                 {
-                    toolTip.AppendLine(string.Format("#upvotes:{0}", Upvotes));
+                    toolTip.AppendLine($"#upvotes:{UpVotes}");
                 }
 
-                toolTip.AppendLine(string.Format("#depth:{0}", Source.GetRankDepth(Api.Repository)));
+                toolTip.AppendLine($"#depth:{Source.GetRankDepth(Api.Repository)}");
 
-                toolTip.AppendLine(string.Format("#ID:{0}", Source.ID));
+                toolTip.AppendLine($"#ID:{Source.ID}");
                 if (Source.ProjectId != null)
                 {
-                    toolTip.AppendLine(string.Format("#project:{0} - {1}", Source.ProjectId,
-                        Source.GetProject(Api.Repository).Title));
+                    toolTip.AppendLine($"#project:{Source.ProjectId} - {Source.GetProject(Api.Repository).Title}");
                 }
 
                 return toolTip.ToString().TrimEnd();
@@ -413,7 +401,8 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
                 {
                     newParent = newParent.GetParent(Api.Repository);
                 }
-                Source.ParentId = newParent.ID;
+
+                if (newParent != null) Source.ParentId = newParent.ID;
             }
             Api.Update(Source);
             OnPropertyChanged(nameof(ToolTip));
@@ -422,7 +411,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
         private void MoveToContextExecuted(Context toContext)
         {
             if (toContext != null)
-                Api.Move(Source, toContext.Title, true);
+                Api.Move(Source, toContext.Title);
         }
         #endregion // Command Handlers
     }

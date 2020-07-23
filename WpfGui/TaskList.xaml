@@ -112,10 +112,10 @@
                 <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding SearchTagName}"/>
                 <TextBox Grid.Row="1" Grid.Column="2" Text="{Binding SearchTagValue}"/>
 
-                <Label Grid.Row="2" Grid.Column="0" Content="Project"/>
+                <CheckBox Grid.Row="2" Grid.Column="0" Content="Project" VerticalAlignment="Center" IsChecked="{Binding Path=IsSearchProjectSelected}"/>
                 <ComboBox Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" ItemsSource="{Binding Projects}" DisplayMemberPath="Title" SelectedItem="{Binding SearchProject}" Margin="5"/>
 
-                <Label Grid.Row="3" Grid.Column="0" Content="Context"/>
+                <CheckBox Grid.Row="3" Grid.Column="0" Content="Context" VerticalAlignment="Center" IsChecked="{Binding Path=IsSearchContextSelected}"/>
                 <ComboBox Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" ItemsSource="{Binding SearchContexts}" DisplayMemberPath="Title" SelectedItem="{Binding SearchContext}" Margin="5"/>
 
                 <Button Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2" Content="Go" Margin="3" MaxWidth="50" Command="{Binding ApplySearchCommand}"/>
