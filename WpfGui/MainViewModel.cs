@@ -225,8 +225,8 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         private void ReloadFile()
         {
             if (string.IsNullOrEmpty(FileName)) return;
-            var result = MessageBox.Show("You have unsaved changes in memory. Abandon these changes and reload the file?", "Save changes?", MessageBoxButton.YesNoCancel);
-            if (result == MessageBoxResult.Yes)
+            var result = HasUnsavedChanges ? MessageBox.Show("You have unsaved changes in memory. Abandon these changes and reload the file?", "Abandon changes?", MessageBoxButton.YesNoCancel) : MessageBoxResult.None;
+            if (!HasUnsavedChanges || result == MessageBoxResult.Yes)
             {
                 OpenFile(FileName);
             }
