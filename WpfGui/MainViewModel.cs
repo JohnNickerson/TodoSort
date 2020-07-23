@@ -26,6 +26,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         private Context _searchResultsContext;
         private List<Context> _contexts;
         private string _fileName;
+        private FileInfo _lastOpenedFile;
         private List<ActionViewItem> _currentItems;
         private const int CommitLimit = 256;
 
@@ -538,6 +539,42 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             }
         }
 
+        public void CheckForUpdatedFile()
+        {
+            // If current file in memory is different to current file on disk, offer to reload.
+            if (_lastOpenedFile != null)
+            {
+                var fileOnDisk = new FileInfo(_lastOpenedFile.FullName);
+                if (_lastOpenedFile.LastWriteTime != fileOnDisk.LastWriteTime)
+                {
+                    // Confirm.
+                    var doOpen = false;
+                    if (HasUnsavedChanges)
+                    {
+                        doOpen = MessageBox.Show(
+                            "The file on disk has been modified and you have unsaved changes in memory. Abandon changes and reload the file from disk?",
+                            "Abandon changes?", MessageBoxButton.YesNo) == MessageBoxResult.Yes;
+                    }
+                    else
+                    {
+                        doOpen = MessageBox.Show(
+                            "The file on disk has been modified. Do you want to load the updated file from disk?",
+                            "Load updated file?", MessageBoxButton.YesNo) == MessageBoxResult.Yes;
+                    }
+                    // Open.
+                    if (doOpen)
+                    {
+                        OpenFile(_lastOpenedFile.FullName);
+                    }
+                    else
+                    {
+                        // If we're not opening this version of the file on disk, we need to make sure we don't ask again.
+                        _lastOpenedFile = fileOnDisk;
+                    }
+                }
+            }
+        }
+
         #endregion
 
         #region Properties
@@ -625,6 +662,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             set
             {
                 _fileName = value;
+                _lastOpenedFile = new FileInfo(value);
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(WindowTitle));
             }

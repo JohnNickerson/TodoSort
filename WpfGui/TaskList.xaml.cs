@@ -73,6 +73,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
 
         private void MainWindow_OnGotFocus(object sender, EventArgs eventArgs)
         {
+            ((MainViewModel) DataContext).CheckForUpdatedFile();
             ((MainViewModel)DataContext).CheckForCommit();
         }
 
