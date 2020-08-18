@@ -237,6 +237,11 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
                 return "";
             }
         }
+
+        public List<Context> AllOtherContexts => Api.SelectedContext.AllOtherContexts;
+
+        public bool CanMoveFrom => Api.SelectedContext.CanMoveFrom;
+
         #endregion
 
         #region Command Properties
