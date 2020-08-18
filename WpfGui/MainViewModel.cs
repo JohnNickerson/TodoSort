@@ -194,6 +194,8 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                         _api.UnsavedChanges = false;
                         break;
                 }
+                // Refresh the last opened file info, so that the updated file check doesn't trigger right now.
+                _lastOpenedFile = new FileInfo(_lastOpenedFile.FullName);
                 OnPropertyChanged(nameof(HasUnsavedChanges));
                 OnPropertyChanged(nameof(WindowTitle));
             }
