@@ -6,6 +6,10 @@
         xmlns:local="clr-namespace:AssimilationSoftware.TodoSort.WpfGui"
         mc:Ignorable="d" SizeToContent="WidthAndHeight"
         Title="Rank Items" MinHeight="200" MinWidth="500" MaxWidth="2000">
+    <Window.InputBindings>
+        <KeyBinding Command="{Binding Path=Vote1Command}" Key="D1" Modifiers="Control"/>
+        <KeyBinding Command="{Binding Path=Vote2Command}" Key="D2" Modifiers="Control"/>
+    </Window.InputBindings>
     <Grid>
         <Grid.Resources>
             <Style TargetType="Button">
@@ -43,7 +47,7 @@
             </ListBox>
         </StackPanel>
         <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Center">
-            <Button Content="Vote" Margin="10" Command="{Binding Vote1Command}"/>
+            <Button Content="Vote" Margin="10" Command="{Binding Vote1Command}" ToolTip="Ctrl+1"/>
             <Button Content="Edit" Margin="10" Command="{Binding Path=CurrentPair.Action1.EditCommand}"></Button>
         </StackPanel>
 
@@ -64,7 +68,7 @@
             </ListBox>
         </StackPanel>
         <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center">
-            <Button Content="Vote" Margin="10" Command="{Binding Vote2Command}"/>
+            <Button Content="Vote" Margin="10" Command="{Binding Vote2Command}" ToolTip="Ctrl+2"/>
             <Button Content="Edit" Margin="10" Command="{Binding Path=CurrentPair.Action2.EditCommand}"></Button>
         </StackPanel>
 

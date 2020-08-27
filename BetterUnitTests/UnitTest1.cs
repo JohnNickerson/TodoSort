@@ -48,7 +48,7 @@ namespace BetterUnitTests
             }
 
             var mapper = new ActionItemDiskMapper(baseFile);
-            var repo = new TodoRepository(mapper, ".");
+            var repo = new TodoRepository(mapper, ".", Environment.MachineName);
             var item = new ActionItem
             {
                 ID = Guid.NewGuid(),

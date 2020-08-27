@@ -108,3 +108,8 @@
 	- Ignore duplicate matches if they have different type values.
 2020-06-25: Build 1.3.13.0
 	- Changed title-fixing code to use HTML Decode.
+2020-08-18: Build 1.3.14.1
+	- Fixed empty "Move To" context menu.
+	- Fixed "Commit" command asking to reload the file.
+2020-08-20: Build 1.3.15.0
+	- Title fix updated to reject blank titles.

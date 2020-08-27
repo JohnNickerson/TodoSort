@@ -20,6 +20,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
         private RelayCommand<TimeSpan?> _deferCommand;
         private RelayCommand _deleteCommand;
         private RelayCommand _fixTitleCommand;
+        private RelayCommand _copyUrlCommand;
         private RelayCommand<string> _openUrlCommand;
         private RelayCommand _bumpCommand;
         private RelayCommand<Context> _moveToContextCommand;
@@ -252,7 +253,9 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
 
         public ICommand DeleteCommand => _deleteCommand ?? (_deleteCommand = new RelayCommand(DeleteExecuted));
 
-        public ICommand FixTitleCommand => _fixTitleCommand ?? (_fixTitleCommand = new RelayCommand(FixTitleExecuted));
+        public ICommand FixTitleCommand => _fixTitleCommand ?? (_fixTitleCommand = new RelayCommand(FixTitleExecuted, () => UrlNotNull));
+
+        public ICommand CopyUrlCommand => _copyUrlCommand ?? (_copyUrlCommand = new RelayCommand(CopyUrlExecuted, () => UrlNotNull));
 
         public ICommand OpenUrlCommand => _openUrlCommand ?? (_openUrlCommand = new RelayCommand<string>(OpenUrlExecuted, s => !string.IsNullOrEmpty(s)));
 
@@ -362,6 +365,11 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
             // 2. If we fail, open the URL and the edit window to fix manually.
             OpenUrlExecuted(Source.Tags["url"]);
             EditExecuted();
+        }
+
+        private void CopyUrlExecuted()
+        {
+            Clipboard.SetText(Url.Trim());
         }
 
         private string RestoreUnicode(string title)

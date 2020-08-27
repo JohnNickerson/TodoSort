@@ -90,7 +90,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             }
             SaveSettings();
 
-            _repo = new TodoRepository(new ActionItemDiskMapper(FileName), Path.GetDirectoryName(FileName));
+            _repo = new TodoRepository(new ActionItemDiskMapper(FileName), Path.GetDirectoryName(FileName), Environment.MachineName);
             _api = new ViewModel(_repo);
 
             if (_api.SomedayItems.Any(s => s.TickleDate <= DateTime.Today))

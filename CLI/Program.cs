@@ -58,7 +58,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             }
             var f = FolderSettings.LoadFrom(settingspath);
             var todomapper = new ActionItemDiskMapper(f.TodoPath);
-            var repo = new TodoRepository(todomapper, Path.GetDirectoryName(f.TodoPath));
+            var repo = new TodoRepository(todomapper, Path.GetDirectoryName(f.TodoPath), Environment.MachineName);
 
             var vm = new ViewModel(repo);
 
