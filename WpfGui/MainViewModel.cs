@@ -379,9 +379,14 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         {
             // Show the Edit view.
             var editWindow = new EditItemView();
+            var selectedContextTitle = SelectedContext?.Title;
+            if (selectedContextTitle == null || selectedContextTitle.Equals("Search", StringComparison.CurrentCultureIgnoreCase))
+            {
+                selectedContextTitle = "inbox";
+            }
             var item = new ActionItem
             {
-                Context = SelectedContext?.Title ?? "inbox"
+                Context = selectedContextTitle
             };
             var editVm = new EditViewModel(this, new ActionViewItem(item, this), editWindow);
             editWindow.DataContext = editVm;
