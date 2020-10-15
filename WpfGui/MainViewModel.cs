@@ -579,6 +579,11 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             }
         }
 
+        public void RefreshContexts()
+        {
+            OnPropertyChanged(nameof(Contexts));
+        }
+
         #endregion
 
         #region Properties

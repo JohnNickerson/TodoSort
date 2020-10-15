@@ -5,9 +5,9 @@ using System.Linq;
 
 namespace AssimilationSoftware.TodoSort.Core.Data
 {
-    public class TodoRepository : OriginDiskRepository<ActionItem>, ITodoRepository
+    public class TodoRepository : MergeDiskRepository<ActionItem>, ITodoRepository
     {
-        public TodoRepository(Maroon.Interfaces.IMapper<ActionItem> mapper, string path, string thisMachineName) : base(mapper, path, thisMachineName)
+        public TodoRepository(Maroon.Interfaces.IMapper<ActionItem> mapper, string path, string thisMachineName) : base(mapper, path)
         {
 			FindAll();
         }

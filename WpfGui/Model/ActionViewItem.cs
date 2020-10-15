@@ -276,10 +276,11 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
             editWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             editWindow.Owner = Api.Window;
             var result = editWindow.ShowDialog();
+            var contextChanged = false;
             if (result.HasValue && result.Value)
             {
                 // Update the source item.
-                Title = editVm.Title;
+                Title = editVm.Title.Trim();
                 Source.Notes = new List<string>();
                 foreach (var line in editVm.Notes.Split('\n'))
                 {
@@ -298,11 +299,9 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
                 {
                     Source.Context = editVm.Context;
                     Api.Api.ResetPriorityParents(Source);
+                    contextChanged = true;
                 }
-                else
-                {
-                    Api.Update(Source);
-                }
+                Api.Update(Source);
             }
             OnPropertyChanged(nameof(Title));
             OnPropertyChanged(nameof(Url));
@@ -312,6 +311,8 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
             OnPropertyChanged(nameof(ToolTip));
             OnPropertyChanged(nameof(Notes));
             OnPropertyChanged(nameof(Tags));
+            if (contextChanged)
+                Api.RefreshContexts();
         }
 
         private void DeferExecuted(TimeSpan? delay)
