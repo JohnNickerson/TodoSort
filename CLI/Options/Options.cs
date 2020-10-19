@@ -21,7 +21,7 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
         public BalanceOptions BalanceVerb { get; set; }
 
         [VerbOption("bump", HelpText = "Halves the depth of an item, as a way of increasing its priority")]
-        public SingleSearchSubOptions BumpVerb { get; set; }
+        public BumpOptions BumpVerb { get; set; }
 
         [VerbOption("check-chain", HelpText = "Checks an implicit chain for missing and excluded items")]
         public MultiSearchSubOptions ChainVerb { get; set; }
