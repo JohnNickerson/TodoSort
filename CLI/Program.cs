@@ -134,7 +134,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                 #region Bump
                 case "bump":
                     {
-                        var bumpOpts = (SingleSearchSubOptions)argsubs;
+                        var bumpOpts = (BumpOptions)argsubs;
                         vm.SearchSpecification = bumpOpts.SearchSpecification;
                         var target = Disambiguate(vm.SearchResults, repo, !string.IsNullOrEmpty(bumpOpts.ItemId));
                         if (target != null)

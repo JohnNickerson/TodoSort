@@ -39,7 +39,7 @@ namespace BetterUnitTests
             }
         }
 
-        public void Update(ActionItem entity)
+        public void Update(ActionItem entity, bool isNew = false)
         {
             _items[entity.ID] = entity;
         }
