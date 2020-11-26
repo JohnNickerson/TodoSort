@@ -114,6 +114,15 @@
 2020-08-20: Build 1.3.15.0
 	- Title fix updated to reject blank titles.
 2020-09-03: Build 1.4.0.0
-	- Updated to Maroon 0.3..
-	- "Copy URL" context command..
+	- Updated to Maroon 0.3.
+	- "Copy URL" context command.
 	- Keyboard shortcuts for ranking window.
+2020-11-12: Build 1.4.1.0
+	- Updated target framework version numbers.
+	- Added project ID to the "bump" command search parameters.
+	- Expanded functionality to allow Enter key to search from any search parameter box.
+	- Fixed problem of being unable to edit an item into a new context.
+	- Fixed potential default to "Search" context for new items.
+	- Fixed bump option command definition to include the new "project" parameter.
+2020-11-26: Build 1.4.1.1
+	- Reverted to Maroon 0.2.3 to fix commit problems.
