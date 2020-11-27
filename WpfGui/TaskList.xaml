@@ -197,7 +197,7 @@
         <StatusBar Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2">
             <TextBlock Text="Count: "/>
             <TextBlock Text="{Binding Path=Items.Count}"/>
-            <TextBlock Text="{Binding Path=Api.StatusMessage}"/>
+            <TextBlock Text="{Binding Path=StatusMessage}"/>
         </StatusBar>
     </Grid>
 </Window>

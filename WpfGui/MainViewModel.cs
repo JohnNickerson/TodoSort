@@ -62,6 +62,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         private decimal? _lastPendingCount;
         private bool _isSearchContextSelected;
         private bool _isSearchProjectSelected;
+        private string _statusMessage;
 
         #endregion
 
@@ -171,11 +172,11 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             var pendingChanges = _repo.GetPendingChanges();
             if (pendingChanges.Count == 0)
             {
-                _api.StatusMessage = "No changes pending.";
+                StatusMessage = "No changes pending.";
             }
             else if (pendingChanges.Any(p => p.IsConflict))
             {
-                _api.StatusMessage = "Could not commit changes. Conflicting edits detected.";
+                StatusMessage = "Could not commit changes. Conflicting edits detected.";
             }
             else
             {
@@ -183,14 +184,14 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                 switch (committed)
                 {
                     case 0:
-                        _api.StatusMessage = "Could not commit changes. Possible conflicts.";
+                        StatusMessage = "Could not commit changes. Possible conflicts.";
                         break;
                     case 1:
-                        _api.StatusMessage = $"{committed} change committed.";
+                        StatusMessage = $"{committed} change committed.";
                         _api.UnsavedChanges = false;
                         break;
                     default:
-                        _api.StatusMessage = $"{committed} changes committed.";
+                        StatusMessage = $"{committed} changes committed.";
                         _api.UnsavedChanges = false;
                         break;
                 }
@@ -932,6 +933,17 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                 if (_isSearchContextSelected == value) return;
                 _isSearchContextSelected = value;
                 if (!value) SearchContext = null;
+                OnPropertyChanged();
+            }
+        }
+
+        public string StatusMessage
+        {
+            get => _statusMessage;
+            set
+            {
+                if (value == _statusMessage) return;
+                _statusMessage = value;
                 OnPropertyChanged();
             }
         }
