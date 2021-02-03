@@ -122,6 +122,13 @@ namespace AssimilationSoftware.TodoSort.CLI
                             var depths = vm.GetDepthsView();
                             var vine = vm.SearchResults.OrderBy(i => depths[i.ID]).ThenByDescending(i => i.Upvotes).ToArray();
                             vm.Balance(vine, balopts.BranchFactor);
+                            if (balopts.Commit)
+                            {
+                                // In large lists, rather than writing out thousands of changes, then reading them again to commit, just commit everything now.
+                                var commitCount = repo.CommitChanges();
+                                Console.WriteLine($"{commitCount} pending changes committed.");
+                                repo.SaveChanges();
+                            }
                         }
                         else
                         {

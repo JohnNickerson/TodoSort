@@ -120,9 +120,12 @@
 2020-11-12: Build 1.4.1.0
 	- Updated target framework version numbers.
 	- Added project ID to the "bump" command search parameters.
-	- Expanded functionality to allow Enter key to search from any search parameter box.
+	- Allow Enter key to search from any search parameter box.
 	- Fixed problem of being unable to edit an item into a new context.
 	- Fixed potential default to "Search" context for new items.
-	- Fixed bump option command definition to include the new "project" parameter.
 2020-11-26: Build 1.4.1.1
 	- Reverted to Maroon 0.2.3 to fix commit problems.
+2020-11-27: Build 1.4.1.2
+	- Fixed status message display.
+2021-02-04: Build 1.4.2
+	- Added a "commit" option on the balance command.

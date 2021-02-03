@@ -11,5 +11,8 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
     {
         [Option('b', "branch", HelpText = "Branching factor - the desired number of children for each node.", DefaultValue = 7)]
         public int BranchFactor { get; set; }
+
+        [Option("commit", HelpText = "Commit changes immediately from memory when done", DefaultValue = false)]
+        public bool Commit { get; set; }
     }
 }
