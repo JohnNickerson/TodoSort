@@ -176,6 +176,16 @@ namespace AssimilationSoftware.TodoSort.CLI
                             // 2. Make sure there are no gaps.
                             var min = vm.SearchResults.Min(i => i.GetIntTag("order", Int32.MaxValue));
                             var max = vm.SearchResults.Max(i => i.GetIntTag("order", Int32.MinValue));
+                            // Special case: If searching in a project, and the project specifies a size, use that for maximum. Must specify full project ID.
+                            if (Guid.TryParse(chainOptions.ProjectID, out var projId))
+                            {
+                                // Look for a "length" tag on the project.
+                                var project = repo.Find(projId);
+                                if (project.Tags.TryGetValue("length", out var maxString))
+                                {
+                                    max = int.Parse(maxString);
+                                }
+                            }
                             for (var i = min; i <= max; i++)
                             {
                                 var count = vm.SearchResults.Count(j => j.GetIntTag("order", 0) == i);
