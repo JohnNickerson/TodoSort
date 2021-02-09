@@ -48,6 +48,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         private RelayCommand _toggleHeadCommand;
         private RelayCommand _searchCommand;
         private RelayCommand _newFileCommand;
+        private RelayCommand _balanceCommand;
 
         private string _searchKeyword;
         private string _searchTagName;
@@ -311,6 +312,15 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                 }
                 OpenFile(dlg.FileName);
             }
+        }
+        
+        private void BalanceExecuted()
+        {
+            var balanceView = new BalanceView();
+            var balanceVm = new BalanceViewModel(balanceView, _api);
+            balanceView.DataContext = balanceVm;
+            balanceView.ShowDialog();
+            OnPropertyChanged(nameof(Items));
         }
 
         public void SaveCommandExecuted()
@@ -981,6 +991,8 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         public ICommand SearchCommand => _searchCommand ?? (_searchCommand = new RelayCommand(SearchExecuted));
 
         public ICommand NewFileCommand => _newFileCommand ?? (_newFileCommand = new RelayCommand(NewFileExecuted));
+
+        public ICommand BalanceCommand => _balanceCommand ?? (_balanceCommand = new RelayCommand(BalanceExecuted));
 
         #endregion
     }

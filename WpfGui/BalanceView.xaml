@@ -35,12 +35,19 @@
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
+                    <GridViewColumn Header="Result Count">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Path=ResultCount}"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
                 </GridView>
             </ListView.View>
         </ListView>
         <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
             <Button MinWidth="50" MinHeight="30" Margin="3" Content="Go" Command="{Binding Path=GoCommand}"/>
-            <Button MinWidth="50" MinHeight="30" Margin="3" Content="Cancel" Command="{Binding Path=CancelCommand}"/>
+            <Button MinWidth="50" MinHeight="30" Margin="3" Content="Close" Command="{Binding Path=CancelCommand}"/>
         </StackPanel>
 
     </Grid>

@@ -5,7 +5,10 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
+using AssimilationSoftware.TodoSort.Core;
+using AssimilationSoftware.TodoSort.Core.Search;
 using AssimilationSoftware.TodoSort.WpfGui.Annotations;
 
 namespace AssimilationSoftware.TodoSort.WpfGui.Model
@@ -16,6 +19,27 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
         private RelayCommand _goCommand;
         private RelayCommand _cancelCommand;
         public event PropertyChangedEventHandler PropertyChanged;
+        public Window _view;
+        private ViewModel _vm;
+
+        public BalanceViewModel(Window view, Core.ViewModel vm)
+        {
+            _view = view;
+            _vm = vm;
+            var contexts = new List<BranchOption>();
+            foreach (var contextName in _vm.GetContextNames("Search", "someday", "done"))
+            {
+                contexts.Add(new BranchOption
+                {
+                    BranchFactor = 4,
+                    ContextName = contextName,
+                    IsSelected = true,
+                    ResultCount = 0
+                });
+            }
+
+            BranchOptions = contexts;
+        }
 
         [NotifyPropertyChangedInvocator]
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
@@ -25,12 +49,29 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
 
         private void Rebalance()
         {
-            throw new NotImplementedException();
+            _vm.ShowHeadOnly = false;
+            foreach (var context in BranchOptions)
+            {
+                if (context.IsSelected && context.BranchFactor > 0)
+                {
+                    _vm.SearchSpecification = new ContextSearchSpecification(context.ContextName);
+                    var depths = _vm.GetDepthsView();
+                    var vine = _vm.SearchResults.OrderBy(i => depths[i.ID]).ThenByDescending(i => i.Upvotes).ToArray();
+                    context.ResultCount = vine.Length;
+                    _vm.Balance(vine, context.BranchFactor);
+                }
+                else
+                {
+                    context.ResultCount = 0;
+                }
+            }
+            _vm.ShowHeadOnly = true;
         }
 
         private void CancelExecuted()
         {
-            throw new NotImplementedException();
+            // Close the window.
+            _view.Close();
         }
 
         public List<BranchOption> BranchOptions

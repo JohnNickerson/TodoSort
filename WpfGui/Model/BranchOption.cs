@@ -14,6 +14,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
         private int _branchFactor;
         private bool _isSelected;
         private string _contextName;
+        private int _resultCount;
         public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]
@@ -51,6 +52,17 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
             {
                 if (value == _branchFactor) return;
                 _branchFactor = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public int ResultCount
+        {
+            get => _resultCount;
+            set
+            {
+                if (value == _resultCount) return;
+                _resultCount = value;
                 OnPropertyChanged();
             }
         }

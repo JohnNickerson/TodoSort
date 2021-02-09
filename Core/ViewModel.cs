@@ -483,7 +483,7 @@ namespace AssimilationSoftware.TodoSort.Core
                 }
 
                 // Report progress every 5%.
-                if (i % (items.Length / 20) == 0)
+                if (items.Length > 20 && (i == 0 || i % (items.Length / 20) == 0))
                 {
                     ProgressPercent = i * 100 / items.Length;
                 }
