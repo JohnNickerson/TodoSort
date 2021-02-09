@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 using System.Windows;
 using System.Windows.Input;
 using AssimilationSoftware.TodoSort.Core;
@@ -34,7 +32,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
                     BranchFactor = 4,
                     ContextName = contextName,
                     IsSelected = true,
-                    ResultCount = 0
+                    ResultCount = "Pending"
                 });
             }
 
@@ -47,6 +45,12 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
+        private void RebalanceExecuted()
+        {
+            var balanceThread = new Thread(Rebalance) { Priority = ThreadPriority.BelowNormal };
+            balanceThread.Start();
+        }
+
         private void Rebalance()
         {
             _vm.ShowHeadOnly = false;
@@ -57,12 +61,12 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
                     _vm.SearchSpecification = new ContextSearchSpecification(context.ContextName);
                     var depths = _vm.GetDepthsView();
                     var vine = _vm.SearchResults.OrderBy(i => depths[i.ID]).ThenByDescending(i => i.Upvotes).ToArray();
-                    context.ResultCount = vine.Length;
                     _vm.Balance(vine, context.BranchFactor);
+                    context.ResultCount = vine.Length.ToString();
                 }
                 else
                 {
-                    context.ResultCount = 0;
+                    context.ResultCount = "Skipped";
                 }
             }
             _vm.ShowHeadOnly = true;
@@ -85,7 +89,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
             }
         }
 
-        public ICommand GoCommand => _goCommand ?? (_goCommand = new RelayCommand(Rebalance));
+        public ICommand GoCommand => _goCommand ?? (_goCommand = new RelayCommand(RebalanceExecuted));
 
         public ICommand CancelCommand => _cancelCommand ?? (_cancelCommand = new RelayCommand(CancelExecuted));
     }

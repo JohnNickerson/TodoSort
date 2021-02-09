@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
+﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using AssimilationSoftware.TodoSort.WpfGui.Annotations;
 
 namespace AssimilationSoftware.TodoSort.WpfGui.Model
@@ -14,7 +9,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
         private int _branchFactor;
         private bool _isSelected;
         private string _contextName;
-        private int _resultCount;
+        private string _resultCount;
         public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]
@@ -56,7 +51,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
             }
         }
 
-        public int ResultCount
+        public string ResultCount
         {
             get => _resultCount;
             set
