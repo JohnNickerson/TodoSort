@@ -151,7 +151,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                             var depth = target.GetRankDepth(repo) / 2;
                             while (target.GetRankDepth(repo) > depth && target.ParentId != null)
                             {
-                                vm.SetParent(target, target.GetParent(repo).GetParent(repo));
+                                vm.SetParent(target, target.GetParent(repo)?.GetParent(repo));
                             }
                             // After
                             PrintTree(new List<ActionItem>(new[] { target }), true, repo, bumpOpts.NSFW);
@@ -1304,7 +1304,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                 // Fill out the results.
                 for (var i = 0; i < ancestors.Count; i++)
                 {
-                    if (ancestors[i].ParentId != null && !ancestors.Contains(ancestors[i].GetParent(repo)))
+                    if (ancestors[i] != null && ancestors[i].ParentId != null && !ancestors.Contains(ancestors[i].GetParent(repo)))
                     {
                         ancestors.Add(ancestors[i].GetParent(repo));
                     }
@@ -1312,7 +1312,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             }
 
             // Find the roots.
-            var roots = ancestors.Where(t => t.ParentId == null || !ancestors.Contains(t.GetParent(repo)));
+            var roots = ancestors.Where(t => t != null && (t.ParentId == null || !ancestors.Contains(t.GetParent(repo))));
 
             foreach (var r in roots)
             {

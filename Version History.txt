@@ -129,3 +129,8 @@
 	- Fixed status message display.
 2021-02-04: Build 1.4.2
 	- Added a "commit" option on the balance command.
+2021-02-11: Build 1.4.3
+	- Added ability to specify "length" for projects, used in "check-chain" command.
+	- Added rebalance functionality to the GUI.
+2021-03-03: Build 1.4.3.1
+	- Patched to fix null reference exception on bump operation.
