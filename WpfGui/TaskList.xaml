@@ -143,6 +143,7 @@
                     <Separator/>
                     <MenuItem Header="Defer 2 Weeks" Command="{Binding Path=ToggleDeferCommand}" CommandParameter="{Binding Path=ShortDeferDelay}" Visibility="{Binding Path=CanDefer}"/>
                     <MenuItem Header="Defer 2 Months" Command="{Binding Path=ToggleDeferCommand}" CommandParameter="{Binding Path=LongDeferDelay}" Visibility="{Binding Path=CanDefer}"/>
+                    <MenuItem Header="Defer Until..." Command="{Binding Path=DeferUntilCommand}" Visibility="{Binding Path=CanDefer}" />
                     <MenuItem Header="{Binding ToggleDeferTitle}" Command="{Binding Path=ToggleDeferCommand}"/>
                     <Separator/>
                     <MenuItem Header="Delete" Command="{Binding Path=DeleteCommand}"/>

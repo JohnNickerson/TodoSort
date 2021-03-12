@@ -18,6 +18,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
 
         private RelayCommand _editCommand;
         private RelayCommand<TimeSpan?> _deferCommand;
+        private RelayCommand _deferUntilCommand;
         private RelayCommand _deleteCommand;
         private RelayCommand _fixTitleCommand;
         private RelayCommand _copyUrlCommand;
@@ -251,6 +252,8 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
 
         public ICommand ToggleDeferCommand => _deferCommand ?? (_deferCommand = new RelayCommand<TimeSpan?>(DeferExecuted));
 
+        public ICommand DeferUntilCommand => _deferUntilCommand ?? (_deferUntilCommand = new RelayCommand(DeferUntilExecuted));
+
         public ICommand DeleteCommand => _deleteCommand ?? (_deleteCommand = new RelayCommand(DeleteExecuted));
 
         public ICommand FixTitleCommand => _fixTitleCommand ?? (_fixTitleCommand = new RelayCommand(FixTitleExecuted, () => UrlNotNull));
@@ -329,6 +332,13 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
                 }
                 Api.Defer(Source);
             }
+        }
+
+        private void DeferUntilExecuted()
+        {
+            Source.TickleDate = DateTime.Today.AddDays(2);
+            Api.Defer(Source);
+            EditExecuted();
         }
 
         private void DeleteExecuted()
