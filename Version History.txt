@@ -134,3 +134,5 @@
 	- Added rebalance functionality to the GUI.
 2021-03-03: Build 1.4.3.1
 	- Patched to fix null reference exception on bump operation.
+2021-03-18: Build 1.4.4
+	- Added "Defer Until..." context menu command for arbitrary defer dates.

@@ -27,6 +27,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         private List<Context> _contexts;
         private string _fileName;
         private FileInfo _lastOpenedFile;
+        private int _lastChangeFileCount;
         private List<ActionViewItem> _currentItems;
         private const int CommitLimit = 256;
 
@@ -197,7 +198,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                         break;
                 }
                 // Refresh the last opened file info, so that the updated file check doesn't trigger right now.
-                _lastOpenedFile = new FileInfo(_lastOpenedFile.FullName);
+                SaveLastOpenedFileMetaData(_lastOpenedFile);
                 OnPropertyChanged(nameof(HasUnsavedChanges));
                 OnPropertyChanged(nameof(WindowTitle));
             }
@@ -565,7 +566,10 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             if (_lastOpenedFile != null)
             {
                 var fileOnDisk = new FileInfo(_lastOpenedFile.FullName);
-                if (_lastOpenedFile.LastWriteTime != fileOnDisk.LastWriteTime)
+                var changeCount = fileOnDisk.DirectoryName != null
+                    ? Directory.EnumerateFiles(fileOnDisk.DirectoryName, "*.xml").Count()
+                    : 0;
+                if (_lastOpenedFile.LastWriteTime != fileOnDisk.LastWriteTime || changeCount != _lastChangeFileCount)
                 {
                     // Confirm.
                     var doOpen = false;
@@ -589,10 +593,17 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                     else
                     {
                         // If we're not opening this version of the file on disk, we need to make sure we don't ask again.
-                        _lastOpenedFile = fileOnDisk;
+                        SaveLastOpenedFileMetaData(fileOnDisk);
                     }
                 }
             }
+        }
+
+        private void SaveLastOpenedFileMetaData(FileInfo fileOnDisk)
+        {
+            _lastOpenedFile = fileOnDisk;
+            if (fileOnDisk.DirectoryName != null)
+                _lastChangeFileCount = Directory.EnumerateFiles(fileOnDisk.DirectoryName, "*.xml").Count();
         }
 
         public void RefreshContexts()
@@ -687,7 +698,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             set
             {
                 _fileName = value;
-                _lastOpenedFile = new FileInfo(value);
+                SaveLastOpenedFileMetaData(new FileInfo(value));
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(WindowTitle));
             }
