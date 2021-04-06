@@ -327,6 +327,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         public void SaveCommandExecuted()
         {
             _api.Save();
+            SaveLastOpenedFileMetaData(_lastOpenedFile);
             OnPropertyChanged(nameof(Items));
         }
 
@@ -566,9 +567,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             if (_lastOpenedFile != null)
             {
                 var fileOnDisk = new FileInfo(_lastOpenedFile.FullName);
-                var changeCount = fileOnDisk.DirectoryName != null
-                    ? Directory.EnumerateFiles(fileOnDisk.DirectoryName, "*.xml").Count()
-                    : 0;
+                var changeCount = ChangeCountOnDisk(fileOnDisk);
                 if (_lastOpenedFile.LastWriteTime != fileOnDisk.LastWriteTime || changeCount != _lastChangeFileCount)
                 {
                     // Confirm.
@@ -599,11 +598,18 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             }
         }
 
+        private static int ChangeCountOnDisk(FileInfo fileOnDisk)
+        {
+            return fileOnDisk.DirectoryName != null
+                ? Directory.EnumerateFiles(fileOnDisk.DirectoryName, "*.xml").Count()
+                : 0;
+        }
+
         private void SaveLastOpenedFileMetaData(FileInfo fileOnDisk)
         {
             _lastOpenedFile = fileOnDisk;
             if (fileOnDisk.DirectoryName != null)
-                _lastChangeFileCount = Directory.EnumerateFiles(fileOnDisk.DirectoryName, "*.xml").Count();
+                _lastChangeFileCount = ChangeCountOnDisk(fileOnDisk);
         }
 
         public void RefreshContexts()
