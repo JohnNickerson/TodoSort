@@ -137,3 +137,5 @@
 2021-03-18: Build 1.4.4.1
 	- Added "Defer Until..." context menu command for arbitrary defer dates.
 	- Added check for uncommitted changes when looking for data to reload.
+2021-04-06: Build 1.4.4.2
+	- Fixed: changes were detected as new when saved, prompting reload.
