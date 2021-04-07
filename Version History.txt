@@ -1,4 +1,4 @@
-2018-04-27: Build 0.9.10 released to Production
+﻿2018-04-27: Build 0.9.10 released to Production
 	- "Retag" option added to "Rename" command.
 2018-07-13: Build 0.9.11 released to Production
 	- Export sorting support.
@@ -139,3 +139,5 @@
 	- Added check for uncommitted changes when looking for data to reload.
 2021-04-06: Build 1.4.4.2
 	- Fixed: changes were detected as new when saved, prompting reload.
+2021-04-08: Build 1.4.4.3
+	- [FIXED]After committing changes, prompt to reload from disk appears.
