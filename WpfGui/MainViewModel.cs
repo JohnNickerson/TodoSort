@@ -96,11 +96,13 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             _repo = new TodoRepository(new ActionItemDiskMapper(FileName), Path.GetDirectoryName(FileName), Environment.MachineName);
             _api = new ViewModel(_repo);
 
-            if (_api.SomedayItems.Any(s => s.TickleDate <= DateTime.Today))
+            var undefers = _api.SomedayItems.Where(s => s.TickleDate <= DateTime.Today);
+            if (undefers.Any())
             {
+                var titleList = string.Join(Environment.NewLine, undefers.Select(u => u.Title));
                 // Confirm.
                 if (MessageBox.Show(
-                        "There are deferred items ready to return to the main lists. Do you want to process them now?",
+                    $"There are deferred items ready to return to the main lists:\n{titleList}\n Do you want to process them now?",
                         "Auto-undefer", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                 {
                     Cleanup();
