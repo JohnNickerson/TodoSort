@@ -118,7 +118,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         private void Cleanup()
         {
             // Confirm first.
-            switch (ConfirmSaveCancel("You have unsaved changes. This operation will discard them. Save first?"))
+            switch (ConfirmSaveCancel("Save changes before continuing? Unsaved changes will be discarded."))
             {
                 case null:
                     return;
@@ -602,7 +602,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
 
         private static int ChangeCountOnDisk(string changeFilesPath)
         {
-            return changeFilesPath != null
+            return changeFilesPath != null && Directory.Exists(changeFilesPath)
                 ? Directory.EnumerateFiles(changeFilesPath, "*.xml").Count()
                 : 0;
         }
