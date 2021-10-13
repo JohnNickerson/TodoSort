@@ -141,3 +141,5 @@
 	- Fixed: changes were detected as new when saved, prompting reload.
 2021-04-08: Build 1.4.4.3
 	- [FIXED]After committing changes, prompt to reload from disk appears.
+2021-10-14: Build 1.4.5.1
+	- Fixed search term immediate binding for faster tag/value refinement.
