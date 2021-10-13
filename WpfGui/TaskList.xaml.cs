@@ -1,30 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
+using System.Windows.Forms;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using AssimilationSoftware.Maroon;
-using AssimilationSoftware.Maroon.Mappers;
-using AssimilationSoftware.Maroon.Model;
-using AssimilationSoftware.TodoSort.Core;
 using AssimilationSoftware.TodoSort.WpfGui.Properties;
+using MessageBox = System.Windows.MessageBox;
 
 namespace AssimilationSoftware.TodoSort.WpfGui
 {
     /// <summary>
     /// Interaction logic for TaskList.xaml
     /// </summary>
-    public partial class TaskList : Window
+    public partial class TaskList
     {
         private readonly MainViewModel _vm;
 
@@ -73,8 +61,28 @@ namespace AssimilationSoftware.TodoSort.WpfGui
 
         private void MainWindow_OnGotFocus(object sender, EventArgs eventArgs)
         {
-            ((MainViewModel) DataContext).CheckForUpdatedFile();
+            ((MainViewModel)DataContext).CheckForUpdatedFile();
             ((MainViewModel)DataContext).CheckForCommit();
+
+            // Check window position and bounds.
+            if (ActualWidth > SystemParameters.WorkArea.Width)
+            {
+                Width = SystemParameters.WorkArea.Width;
+                Left = 0;
+            }
+            if (ActualHeight > SystemParameters.WorkArea.Height)
+            {
+                Height = SystemParameters.WorkArea.Height;
+                Top = 0;
+            }
+            if (Left + ActualWidth > SystemParameters.WorkArea.Width)
+            {
+                Left = Math.Max(0, SystemParameters.WorkArea.Width - Width);
+            }
+            if (Top + ActualHeight > SystemParameters.WorkArea.Height)
+            {
+                Top = Math.Max(0, SystemParameters.WorkArea.Height - ActualHeight);
+            }
         }
 
         private void SearchVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
