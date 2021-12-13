@@ -143,3 +143,5 @@
 	- [FIXED]After committing changes, prompt to reload from disk appears.
 2021-10-14: Build 1.4.5.1
 	- Fixed search term immediate binding for faster tag/value refinement.
+	- Fixed an exception when starting with a missing directory.
+	- Changed the wording of the prompt to save changes before the "cleanup" command.

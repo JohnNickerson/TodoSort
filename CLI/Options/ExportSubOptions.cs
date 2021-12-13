@@ -16,5 +16,8 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
 
         [Option("template", HelpText = "A template file to use for the output format. Overrides 'format' if present.")]
         public string TemplateFilename { get; set; }
+
+        [Option("sort-desc", HelpText = "Specifies a tag by which to sort in descending order. Will not be used if 'sort' is present.")]
+        public string SortDescTag { get; set; }
     }
 }

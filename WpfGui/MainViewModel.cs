@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics.Eventing.Reader;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -26,8 +25,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         private Context _searchResultsContext;
         private List<Context> _contexts;
         private string _fileName;
-        private FileInfo _lastOpenedFile;
-        private int _lastChangeFileCount;
+        private TodoFileInfo _lastOpenedFile;
         private List<ActionViewItem> _currentItems;
         private const int CommitLimit = 256;
 
@@ -96,10 +94,10 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             _repo = new TodoRepository(new ActionItemDiskMapper(FileName), Path.GetDirectoryName(FileName), Environment.MachineName);
             _api = new ViewModel(_repo);
 
-            var undefers = _api.SomedayItems.Where(s => s.TickleDate <= DateTime.Today);
+            var undefers = _api.SomedayItems.Where(s => s.TickleDate <= DateTime.Today).Select(u => u.Title).ToArray();
             if (undefers.Any())
             {
-                var titleList = string.Join(Environment.NewLine, undefers.Select(u => u.Title));
+                var titleList = string.Join(Environment.NewLine, undefers);
                 // Confirm.
                 if (MessageBox.Show(
                     $"There are deferred items ready to return to the main lists:\n{titleList}\n Do you want to process them now?",
@@ -200,7 +198,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                         break;
                 }
                 // Refresh the last opened file info, so that the updated file check doesn't trigger right now.
-                SaveLastOpenedFileMetaData(_lastOpenedFile);
+                SaveLastOpenedFileMetaData(_lastOpenedFile.FullName);
                 OnPropertyChanged(nameof(HasUnsavedChanges));
                 OnPropertyChanged(nameof(WindowTitle));
             }
@@ -329,7 +327,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         public void SaveCommandExecuted()
         {
             _api.Save();
-            SaveLastOpenedFileMetaData(_lastOpenedFile);
+            SaveLastOpenedFileMetaData(_lastOpenedFile.FullName);
             OnPropertyChanged(nameof(Items));
         }
 
@@ -570,7 +568,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             {
                 var fileOnDisk = new FileInfo(_lastOpenedFile.FullName);
                 var changeCount = ChangeCountOnDisk(fileOnDisk.DirectoryName);
-                if (_lastOpenedFile.LastWriteTime != fileOnDisk.LastWriteTime || changeCount != _lastChangeFileCount)
+                if (_lastOpenedFile.LastWriteTime != fileOnDisk.LastWriteTime || changeCount != _lastOpenedFile.ChangeCount)
                 {
                     // Confirm.
                     bool doOpen;
@@ -594,24 +592,22 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                     else
                     {
                         // If we're not opening this version of the file on disk, we need to make sure we don't ask again.
-                        SaveLastOpenedFileMetaData(fileOnDisk);
+                        SaveLastOpenedFileMetaData(fileOnDisk.FullName);
                     }
                 }
             }
         }
 
-        private static int ChangeCountOnDisk(string changeFilesPath)
+        internal static int ChangeCountOnDisk(string changeFilesPath)
         {
             return changeFilesPath != null && Directory.Exists(changeFilesPath)
                 ? Directory.EnumerateFiles(changeFilesPath, "*.xml").Count()
                 : 0;
         }
 
-        private void SaveLastOpenedFileMetaData(FileInfo fileOnDisk)
+        private void SaveLastOpenedFileMetaData(string fileName)
         {
-            _lastOpenedFile = new FileInfo(fileOnDisk.FullName);
-            if (fileOnDisk.DirectoryName != null)
-                _lastChangeFileCount = ChangeCountOnDisk(fileOnDisk.DirectoryName);
+            _lastOpenedFile = new TodoFileInfo(fileName);
         }
 
         public void RefreshContexts()
@@ -706,7 +702,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             set
             {
                 _fileName = value;
-                SaveLastOpenedFileMetaData(new FileInfo(value));
+                SaveLastOpenedFileMetaData((value));
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(WindowTitle));
             }
@@ -795,7 +791,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
 
         public List<ActionItem> Projects => _api != null ? _api.GetProjects().OrderBy(p => p?.Title).ToList() : new List<ActionItem> { null };
 
-        public List<Context> SearchContexts => Contexts.Where(c => c.Title != "Search").OrderBy(c => c?.Title).ToList();
+        public List<Context> SearchContexts => Contexts.Where(c => c.Title != "Search").OrderBy(c => c.Title).ToList();
 
         public string VersionNumber => "Version " + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
 
@@ -1014,5 +1010,28 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         public ICommand BalanceCommand => _balanceCommand ?? (_balanceCommand = new RelayCommand(BalanceExecuted));
 
         #endregion
+    }
+
+    internal class TodoFileInfo
+    {
+        private FileInfo _fileInfo;
+
+        public TodoFileInfo(string fullName)
+        {
+            FullName = fullName;
+            _fileInfo = new FileInfo(fullName);
+            if (_fileInfo.DirectoryName != null)
+            {
+                ChangeCount = MainViewModel.ChangeCountOnDisk(_fileInfo.DirectoryName);
+            }
+            else
+            {
+                ChangeCount = 0;
+            }
+        }
+
+        public string FullName { get; set; }
+        public DateTime LastWriteTime => _fileInfo.LastWriteTime;
+        public int ChangeCount { get; set; }
     }
 }

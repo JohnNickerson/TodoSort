@@ -8,6 +8,7 @@ using AssimilationSoftware.TodoSort.Core.Search;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Data.SqlClient;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -395,13 +396,17 @@ namespace AssimilationSoftware.TodoSort.CLI
                     if (exporter != null)
                     {
                         vm.SearchSpecification = exportOptions.GetSearchSpecification(repo);
-                        if (string.IsNullOrEmpty(exportOptions.SortTag))
+                        if (!string.IsNullOrEmpty(exportOptions.SortTag))
                         {
-                            exporter.Export(vm.SearchResults.ToList());
+                            exporter.Export(ApplySort(exportOptions.SortTag, vm.SearchResults).ToList());
+                        }
+                        else if (!string.IsNullOrEmpty(exportOptions.SortDescTag))
+                        {
+                            exporter.Export(ApplySort(exportOptions.SortDescTag, vm.SearchResults, SortOrder.Descending).ToList());
                         }
                         else
                         {
-                            exporter.Export(ApplySort(exportOptions.SortTag, vm.SearchResults).ToList());
+                            exporter.Export(vm.SearchResults.ToList());
                         }
                     }
                     break;
@@ -1254,28 +1259,43 @@ namespace AssimilationSoftware.TodoSort.CLI
             return preset;
         }
 
-        private static IOrderedEnumerable<ActionItem> ApplySort(string sorttag, IEnumerable<ActionItem> list)
+        private static IOrderedEnumerable<ActionItem> ApplySort(string sorttag, IEnumerable<ActionItem> list, SortOrder sort = SortOrder.Ascending)
         {
-            var sortedlist = from a in list orderby a.Context select a;
+            var sortedlist = sort == SortOrder.Descending ? list.OrderByDescending(a => a.Context) : from a in list orderby a.Context select a;
             if (sorttag == "done-date")
             {
-                sortedlist = sortedlist.ThenBy(i => i.DoneDate ?? DateTime.Now);
+                if (sort == SortOrder.Descending)
+                    sortedlist = sortedlist.ThenByDescending(i => i.DoneDate ?? DateTime.Now);
+                else
+                    sortedlist = sortedlist.ThenBy(i => i.DoneDate ?? DateTime.Now);
             }
             else if (sorttag == "tickle-date")
             {
-                sortedlist = sortedlist.ThenBy(i => i.TickleDate ?? DateTime.Now);
+                if (sort == SortOrder.Descending)
+                    sortedlist = sortedlist.ThenByDescending(i => i.TickleDate ?? DateTime.Now);
+                else
+                    sortedlist = sortedlist.ThenBy(i => i.TickleDate ?? DateTime.Now);
             }
             else if (sorttag == "upvotes")
             {
-                sortedlist = sortedlist.ThenBy(i => i.Upvotes);
+                if (sort == SortOrder.Descending)
+                    sortedlist = sortedlist.ThenByDescending(i => i.Upvotes);
+                else
+                    sortedlist = sortedlist.ThenBy(i => i.Upvotes);
             }
             else if (sorttag == "title" || string.IsNullOrEmpty(sorttag))
             {
-                sortedlist = sortedlist.ThenBy(i => i.Title);
+                if (sort == SortOrder.Descending)
+                    sortedlist = sortedlist.ThenByDescending(i => i.Title);
+                else
+                    sortedlist = sortedlist.ThenBy(i => i.Title);
             }
             else
             {
-                sortedlist = sortedlist.ThenBy(a => a.Tags.ContainsKey(sorttag) ? a.Tags[sorttag] : "0", new SemiNumericComparer());
+                if (sort == SortOrder.Descending)
+                    sortedlist = sortedlist.ThenByDescending(a => a.Tags.ContainsKey(sorttag) ? a.Tags[sorttag] : "0", new SemiNumericComparer());
+                else
+                    sortedlist = sortedlist.ThenBy(a => a.Tags.ContainsKey(sorttag) ? a.Tags[sorttag] : "0", new SemiNumericComparer());
             }
             return sortedlist;
         }
