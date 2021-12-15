@@ -145,3 +145,6 @@
 	- Fixed search term immediate binding for faster tag/value refinement.
 	- Fixed an exception when starting with a missing directory.
 	- Changed the wording of the prompt to save changes before the "cleanup" command.
+2021-12-16: Build 1.4.6
+	- Added "sort-desc" option for exports.
+	- Removed JSON mapper. I'm not using it.
