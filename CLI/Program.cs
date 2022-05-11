@@ -1417,11 +1417,11 @@ namespace AssimilationSoftware.TodoSort.CLI
         {
             var wrapwidth = Console.WindowWidth - 1;
             var title = i.Title;
-            if (i.Tags.ContainsKey("nsfw") && i.Tags["nsfw"].ToLower() == "true" && !nsfw)
+            if (i.Tags?.ContainsKey("nsfw") ?? false && !nsfw)
             {
                 title = "(nsfw) " + Rot13.Transform(title);
             }
-            if (i.Tags.ContainsKey("type"))
+            if (i.Tags?.ContainsKey("type") ?? false)
             {
                 title = string.Format("{1} [{0}]", i.Tags["type"].ToUpper(), title);
             }

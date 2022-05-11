@@ -522,9 +522,9 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         public void ApplySearchExecuted()
         {
             var specs = new List<ISearchSpecification<ActionItem>>();
-            if (!string.IsNullOrEmpty(SearchKeyword))
+            if (!string.IsNullOrWhiteSpace(SearchKeyword))
             {
-                specs.Add(new FullTextSearchSpecification(SearchKeyword));
+                specs.Add(new FullTextSearchSpecification(SearchKeyword.Trim()));
             }
 
             if (!string.IsNullOrEmpty(SearchTagName) || !string.IsNullOrWhiteSpace(SearchTagValue))
@@ -654,6 +654,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                         Title = "Search",
                         Window = Window,
                         DateVisible = Visibility.Collapsed,
+                        // TODO: Get full search spec from a new method or property.
                         SearchSpecification = new FullTextSearchSpecification(SearchKeyword),
                         CanMoveFrom = false
                     };

@@ -128,6 +128,7 @@
                     <MenuItem Header="Edit" Command="{Binding Path=EditCommand}"/>
                     <MenuItem Header="Copy URL" Command="{Binding Path=CopyUrlCommand}"/>
                     <MenuItem Header="Fix Title" Command="{Binding Path=FixTitleCommand}"/>
+                    <MenuItem Header="Mask/Unmask" Command="{Binding Path=MaskItemCommand}"/>
                     <Separator/>
                     <MenuItem Header="Bump" Command="{Binding Path=BumpCommand}"/>
                     <Separator/>

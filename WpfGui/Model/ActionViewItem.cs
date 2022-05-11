@@ -25,6 +25,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
         private RelayCommand<string> _openUrlCommand;
         private RelayCommand _bumpCommand;
         private RelayCommand<Context> _moveToContextCommand;
+        private RelayCommand _maskItemCommand;
 
         #endregion // Fields
 
@@ -40,7 +41,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
 
         #region Methods
 
-        protected override void OnPropertyChanged([CallerMemberName]string propertyName = null)
+        protected override void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             base.OnPropertyChanged(propertyName);
 
@@ -266,6 +267,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
 
         public ICommand MoveToContextCommand => _moveToContextCommand ?? (_moveToContextCommand = new RelayCommand<Context>(MoveToContextExecuted));
 
+        public ICommand MaskItemCommand => _maskItemCommand ?? (_maskItemCommand = new RelayCommand(MaskItemExecuted));
         #endregion // Command Properties
 
         #region Command Handlers
@@ -436,6 +438,20 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
         {
             if (toContext != null)
                 Api.Move(Source, toContext.Title);
+        }
+
+        private void MaskItemExecuted()
+        {
+            if (Source.Tags.ContainsKey("nsfw"))
+            {
+                Source.Tags.Remove("nsfw");
+            }
+            else
+            {
+                Source.Tags["nsfw"] = "true";
+            }
+            Api.Update(Source);
+            OnPropertyChanged(nameof(IsNsfw));
         }
         #endregion // Command Handlers
     }
