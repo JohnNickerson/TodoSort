@@ -148,3 +148,6 @@
 2021-12-16: Build 1.4.6
 	- Added "sort-desc" option for exports.
 	- Removed JSON mapper. I'm not using it.
+2022-05-12: Build 1.4.7
+	- Fixed search keyword to trim before applying.
+	- Added "Mask/Unmask" context command.

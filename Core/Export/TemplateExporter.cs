@@ -23,8 +23,9 @@ namespace AssimilationSoftware.TodoSort.Core.Export
             _tagindexes = new Dictionary<string, int>();
             _template = _template.Replace("{{id}}", "{0}");
             _template = _template.Replace("{{title}}", "{1}");
+            _template = _template.Replace("{{context}}", "{2}");
             // Find and replace "{{tag:..}}" with a number, and record number in _tagindexes.
-            int tagindex = 1;
+            int tagindex = 2;
             while (_template.IndexOf("{{tag:") > 0)
             {
                 // Extract the tag name.
