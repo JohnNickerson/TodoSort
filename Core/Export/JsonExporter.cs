@@ -1,6 +1,8 @@
 using AssimilationSoftware.Maroon.Model;
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace AssimilationSoftware.TodoSort.Core.Export
@@ -42,22 +44,19 @@ namespace AssimilationSoftware.TodoSort.Core.Export
                 {
                     result.AppendLine(string.Format("\t\t\"tickleDate\": \"{0:yyyy-MM-dd}\",", n.TickleDate.Value));
                 }
-                if (n.Notes.Count > 0)
+                var actualNotes = n.Notes.Where(l => l.Length > 0);
+                if (actualNotes.Any())
                 {
                     result.AppendLine($"\t\t\"notes\": [");
-                    foreach (var a in n.Notes)
-                    {
-                        result.AppendLine($"\t\t\t\"{a}\",");
-                    }
-                    result.AppendLine("],");
+                    result.Append("\t\t\t");
+                    result.AppendLine(String.Join(",\n\t\t\t", actualNotes.Select(line => $"\"{line}\"")));
+                    result.AppendLine("\t\t],");
                 }
                 if (n.Tags.Count > 0)
                 {
                     result.AppendLine("\t\t\"tags\": {");
-                    foreach (var k in n.Tags)
-                    {
-                        result.AppendLine($"\t\t\t\"{k.Key}\": \"{k.Value}\",");
-                    }
+                    result.Append("\t\t\t");
+                    result.AppendLine(String.Join(",\n\t\t\t", n.Tags.Select(k => $"\"{k.Key}\": \"{k.Value}\"")));
                     result.AppendLine("\t\t},");
                 }
                 if (n.Upvotes > 0)

@@ -377,7 +377,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                     }
                     else
                     {
-                        switch (exportOptions.Format)
+                        switch (exportOptions.Format.ToLower())
                         {
                             case "html":
                                 exporter = new HtmlExporter { Filename = exportOptions.Filename };

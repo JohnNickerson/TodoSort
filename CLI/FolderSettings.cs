@@ -9,11 +9,9 @@ namespace AssimilationSoftware.TodoSort.CLI
 {
     public class FolderSettings
     {
-        public string TodoPath { get; set; }
-        [Obsolete("No more multi-file setups")]
-        public string DonePath { get; set; }
-        [Obsolete("No more multi-file setups")]
-        public string SomedayPath { get; set; }
+        private string todoPath;
+
+        public string TodoPath { get => Environment.ExpandEnvironmentVariables(todoPath); set => todoPath = value; }
 
         public static FolderSettings LoadFrom(string path)
         {
