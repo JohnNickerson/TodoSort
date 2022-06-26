@@ -50,6 +50,7 @@ namespace AssimilationSoftware.TodoSort.Core.Export
                 List<string> tagvals = new List<string>();
                 tagvals.Add(i.ID.ToString());
                 tagvals.Add(i.Title);
+                tagvals.Add(i.Context);
                 foreach(var k in _tagindexes.Keys.OrderBy(x => _tagindexes[x]))
                 {
                     if (i.Tags.ContainsKey(k))
