@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace AssimilationSoftware.TodoSort.CLI.Options
 {
+    [Verb("set-project", HelpText = "Sets one item to be the project parent of another.")]
     public class SetProjectSubOptions : UniversalOptions
     {
         [Option('s', "search", HelpText = "A search term to find the child item.", Required = true)]

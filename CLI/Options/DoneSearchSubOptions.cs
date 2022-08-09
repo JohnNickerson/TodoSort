@@ -10,6 +10,7 @@ using AssimilationSoftware.TodoSort.Core.Data;
 
 namespace AssimilationSoftware.TodoSort.CLI.Options
 {
+    [Verb("search-done", HelpText = "Search through the collection of Done items.")]
     public class DoneSearchSubOptions : MultiSearchSubOptions
     {
         [Option("mindate", HelpText = "The minimum tickle date to look for.")]

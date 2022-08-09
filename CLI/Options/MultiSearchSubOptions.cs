@@ -10,6 +10,7 @@ using AssimilationSoftware.TodoSort.Core.Data;
 
 namespace AssimilationSoftware.TodoSort.CLI.Options
 {
+
     public class MultiSearchSubOptions : UniversalOptions
     {
         // Sort
@@ -53,12 +54,12 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
         public string PriorityParentID { get; set; }
 
         // Minimum depth }
-        [Option("mindepth", HelpText = "The minimum priority depth for results.", DefaultValue = 0)]
+        [Option("mindepth", HelpText = "The minimum priority depth for results.", Default = 0)]
         public int MinDepth { get; set; }
 
         // Maximum depth } Can be set together by one Depth option (i.e. "set { MinDepth = value; MaxDepth = value; }")
         private int _maxdepth;
-        [Option("maxdepth", HelpText = "The maximum priority depth for results.", DefaultValue = 0)]
+        [Option("maxdepth", HelpText = "The maximum priority depth for results.", Default = 0)]
         public int MaxDepth
         {
             get
@@ -150,7 +151,7 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
         [Option("tree", HelpText = "Display results in a tree format.")]
         public bool PrintTree { get; set; }
 
-        [Option("nocount", HelpText = "Hide the item count after printing results", DefaultValue = false)]
+        [Option("nocount", HelpText = "Hide the item count after printing results", Default = false)]
         public bool NoCount { get; set; }
     }
 }

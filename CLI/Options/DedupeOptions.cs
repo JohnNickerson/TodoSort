@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace AssimilationSoftware.TodoSort.CLI.Options
 {
+    [Verb("dedupe", HelpText = "Searches for duplicates and offers to merge them")]
     public class DedupeOptions : UniversalOptions
     {
         // Specify searching by name or a specific tag?

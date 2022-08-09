@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace AssimilationSoftware.TodoSort.CLI.Options
 {
+    [Verb("advanced-search", HelpText = "Advanced search with Lisp-like expression syntax (and (or (not term another))).")]
     public class AdvancedSearchOptions : UniversalOptions
     {
         [Option('s', "search", HelpText = "Search using Lisp-like complex expressions.", Required = true)]

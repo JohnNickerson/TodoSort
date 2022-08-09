@@ -9,6 +9,7 @@ using AssimilationSoftware.TodoSort.Core.Data;
 
 namespace AssimilationSoftware.TodoSort.CLI.Options
 {
+    [Verb("set-parent", HelpText = "Assigns one item to be the priority parent of another.")]
     public class SetParentSubOptions : UniversalOptions
     {
         [Option('s', "search", HelpText = "A search term to find the child item.", Required = true)]

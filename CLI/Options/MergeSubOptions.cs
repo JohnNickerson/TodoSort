@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace AssimilationSoftware.TodoSort.CLI.Options
 {
+    [Verb("merge", HelpText = "Merge two items together.")]
     public class MergeSubOptions : UniversalOptions
     {
         [Option('g', "target", HelpText = "A search term for the item to merge into.", Required = true)]

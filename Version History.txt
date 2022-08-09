@@ -153,3 +153,5 @@
 	- Added "Mask/Unmask" context command.
 2022-06-09: Build 1.4.8
 	- Added JSON export format.
+2022-06-26: Build 1.4.8.1
+	- Fixed TemplateExporter to include Context name value.

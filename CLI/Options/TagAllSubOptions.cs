@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace AssimilationSoftware.TodoSort.CLI.Options
 {
+    [Verb("tag-all", HelpText = "Applies a particular tag to a set of items.")]
     public class TagAllSubOptions : SingleSearchSubOptions
     {
         // Tag name

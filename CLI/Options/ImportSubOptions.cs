@@ -7,9 +7,10 @@ using System.Threading.Tasks;
 
 namespace AssimilationSoftware.TodoSort.CLI.Options
 {
+    [Verb("import", HelpText = "Imports items from an external source.")]
     public class ImportSubOptions
     {
-        [Option('e', "format", HelpText = "The import format to use (todosort, pocket).", DefaultValue = "todosort")]
+        [Option('e', "format", HelpText = "The import format to use (todosort, pocket).", Default = "todosort")]
         public string Format { get; set; }
 
         [Option('f', "file", HelpText = "The filename or folder to read from.", Required = true)]

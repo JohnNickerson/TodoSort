@@ -6,6 +6,7 @@ using CommandLine;
 
 namespace AssimilationSoftware.TodoSort.CLI.Options
 {
+    [Verb("bump", HelpText = "Halves the depth of an item, as a way of increasing its priority")]
     public class BumpOptions : UniversalOptions
     {
         [Option('s', "search", HelpText = "A partial name, tag value or note contents to search for.")]
