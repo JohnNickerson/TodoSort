@@ -155,3 +155,6 @@
 	- Added JSON export format.
 2022-06-26: Build 1.4.8.1
 	- Fixed TemplateExporter to include Context name value.
+2022-08-11: Build 1.5.0
+	- Upgraded to CommandLineParser v2.9
+    - Updated to target .NET 4.8

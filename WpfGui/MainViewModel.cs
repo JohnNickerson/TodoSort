@@ -580,9 +580,8 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                     }
                     else
                     {
-                        doOpen = MessageBox.Show(
-                            "The file on disk has been modified. Do you want to load the updated file from disk?",
-                            "Load updated file?", MessageBoxButton.YesNo) == MessageBoxResult.Yes;
+                        doOpen = true;
+                        StatusMessage = "File on disk has been modified. Loading changes...";
                     }
                     // Open.
                     if (doOpen)
