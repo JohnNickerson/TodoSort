@@ -19,6 +19,17 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
         [Option("project", HelpText = "The beginning of a project ID.")]
         public string ProjectId { get; set; }
 
+        [Option("top", HelpText = "The maximum number of search results to bump.")]
+        public int Top { get; set; }
+
+        [Option("sort", HelpText = "The name of a tag to sort by.")]
+        public string SortTag { get; set; }
+
+        [Option("sort-desc", HelpText = "Specifies a tag by which to sort in descending order. Will not be used if 'sort' is present.")]
+        public string SortDescTag { get; set; }
+
+        
+
         public ISearchSpecification<ActionItem> SearchSpecification
         {
             get

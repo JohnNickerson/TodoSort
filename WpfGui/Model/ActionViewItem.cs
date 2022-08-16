@@ -449,6 +449,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
             else
             {
                 Source.Tags["nsfw"] = "true";
+                Api.Masked = true;
             }
             Api.Update(Source);
             OnPropertyChanged(nameof(IsNsfw));

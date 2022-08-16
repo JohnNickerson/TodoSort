@@ -78,7 +78,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                     .WithParsed<TagOptions>(opts => Tag(opts, vm, repo))
                     .WithParsed<UndeferOptions>(opts => Undefer(opts, vm, repo))
                     .WithParsed<UndoSubOptions>(opts => Undo(opts, vm, repo))
-                    .WithParsed<UniversalOptions>(opts => Summary(opts, vm, repo))
+                    .WithParsed<SummaryOptions>(opts => Summary(opts, vm, repo))
                     .WithParsed<UnrankAllOptions>(opts => UnrankAll(opts, vm, repo))
                     .WithParsed<UnRankOptions>(opts => Unrank(opts, vm, repo))
                     .WithNotParsed(errs => HandleErrors(errs));
@@ -1167,19 +1167,38 @@ namespace AssimilationSoftware.TodoSort.CLI
         {
             SetUniversalOptions(bumpOpts, vm);
             vm.SearchSpecification = bumpOpts.SearchSpecification;
-            var target = Disambiguate(vm.SearchResults, repo, !string.IsNullOrEmpty(bumpOpts.ItemId));
-            if (target != null)
+            var bumpItems = new List<ActionItem>();
+            if (bumpOpts.Top == 0)
             {
-                // Before
-                PrintTree(new List<ActionItem>(new[] { target }), true, repo, bumpOpts.NSFW);
+                // Manually pick one item.
+                var chosen = Disambiguate(vm.SearchResults, repo, !string.IsNullOrEmpty(bumpOpts.ItemId));
+                if (chosen != null) bumpItems.Add(chosen);
+            }
+            else if (!string.IsNullOrEmpty(bumpOpts.SortTag))
+            {
+                // First items.
+                bumpItems.AddRange(ApplySort(bumpOpts.SortTag, vm.SearchResults).Take(bumpOpts.Top));
+            }
+            else if (!string.IsNullOrEmpty(bumpOpts.SortDescTag))
+            {
+                bumpItems.AddRange(ApplySort(bumpOpts.SortTag, vm.SearchResults, SortOrder.Descending).Take(bumpOpts.Top));
+            }
+            else
+            {
+                bumpItems.AddRange(vm.SearchResults.Take(bumpOpts.Top));
+            }
+            // Before
+            PrintTree(bumpItems, true, repo, bumpOpts.NSFW);
+            foreach (var target in bumpItems)
+            {
                 var depth = target.GetRankDepth(repo) / 2;
                 while (target.GetRankDepth(repo) > depth && target.ParentId != null)
                 {
                     vm.SetParent(target, target.GetParent(repo)?.GetParent(repo));
                 }
-                // After
-                PrintTree(new List<ActionItem>(new[] { target }), true, repo, bumpOpts.NSFW);
             }
+            // After
+            PrintTree(bumpItems, true, repo, bumpOpts.NSFW);
             TidyUp(vm, repo);
         }
 

@@ -7,6 +7,8 @@ using System.Text;
 namespace AssimilationSoftware.TodoSort.CLI.Options
 {
     [Verb("summary", HelpText = "Show context names and number of items in each.")]
+    public class SummaryOptions : UniversalOptions { }
+
     public class UniversalOptions
     {
 
