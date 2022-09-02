@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using AssimilationSoftware.Maroon.Interfaces;
@@ -78,7 +79,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
 
         #region Methods
 
-        private void OpenFile(string filename)
+        private async Task OpenFile(string filename)
         {
             FileName = filename;
 
@@ -91,8 +92,11 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             }
             SaveSettings();
 
-            _repo = new TodoRepository(new ActionItemDiskMapper(FileName), Path.GetDirectoryName(FileName), Environment.MachineName);
-            _api = new ViewModel(_repo);
+            await Task.Run(() =>
+            {
+                _repo = new TodoRepository(new ActionItemDiskMapper(FileName), Path.GetDirectoryName(FileName), Environment.MachineName);
+                _api = new ViewModel(_repo);
+            });
 
             var undefers = _api.SomedayItems.Where(s => s.TickleDate <= DateTime.Today).Select(u => u.Title).ToArray();
             if (undefers.Any())
@@ -314,7 +318,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                 OpenFile(dlg.FileName);
             }
         }
-        
+
         private void BalanceExecuted()
         {
             var balanceView = new BalanceView();
@@ -444,7 +448,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             OnPropertyChanged(nameof(Items));
         }
 
-        protected override void OnPropertyChanged([CallerMemberName]string propertyName = null)
+        protected override void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             // Cached properties.
             if (propertyName == nameof(Items) || propertyName == nameof(ShowHeadOnly))
@@ -561,7 +565,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             }
         }
 
-        public void CheckForUpdatedFile()
+        public async void CheckForUpdatedFile()
         {
             // If current file in memory is different to current file on disk, offer to reload.
             if (_lastOpenedFile != null)
@@ -586,7 +590,8 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                     // Open.
                     if (doOpen)
                     {
-                        OpenFile(_lastOpenedFile.FullName);
+                        await OpenFile(_lastOpenedFile.FullName);
+                        StatusMessage = string.Empty;
                     }
                     else
                     {
