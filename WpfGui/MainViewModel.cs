@@ -234,13 +234,13 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             OnPropertyChanged(nameof(Items));
         }
 
-        private void ReloadFile()
+        private async void ReloadFile()
         {
             if (string.IsNullOrEmpty(FileName)) return;
             var result = HasUnsavedChanges ? MessageBox.Show("You have unsaved changes in memory. Abandon these changes and reload the file?", "Abandon changes?", MessageBoxButton.YesNoCancel) : MessageBoxResult.None;
             if (!HasUnsavedChanges || result == MessageBoxResult.Yes)
             {
-                OpenFile(FileName);
+                await OpenFile(FileName);
             }
         }
 
@@ -258,7 +258,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             Settings.Default.Save();
         }
 
-        public void OpenCommandExecuted()
+        public async void OpenCommandExecuted()
         {
             switch (ConfirmSaveCancel("You have unsaved changes. Save first before opening another file?"))
             {
@@ -282,11 +282,11 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             var result = dlg.ShowDialog();
             if (result == true)
             {
-                OpenFile(dlg.FileName);
+                await OpenFile(dlg.FileName);
             }
         }
 
-        public void NewFileExecuted()
+        public async void NewFileExecuted()
         {
             switch (ConfirmSaveCancel("You have unsaved changes. Save first before creating a new file?"))
             {
@@ -315,7 +315,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                 {
                     // Replace the file?
                 }
-                OpenFile(dlg.FileName);
+                await OpenFile(dlg.FileName);
             }
         }
 
@@ -510,7 +510,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             }
         }
 
-        private void OpenRecentFile(string filename)
+        private async void OpenRecentFile(string filename)
         {
             switch (ConfirmSaveCancel("You have unsaved changes. Save before opening this file?"))
             {
@@ -520,7 +520,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                     _api.Save();
                     break;
             }
-            OpenFile(filename);
+            await OpenFile(filename);
         }
 
         public void ApplySearchExecuted()
