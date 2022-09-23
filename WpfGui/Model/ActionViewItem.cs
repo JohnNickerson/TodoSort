@@ -201,7 +201,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
                 toolTip.AppendLine($"#ID:{Source.ID}");
                 if (Source.ProjectId != null)
                 {
-                    toolTip.AppendLine($"#project:{Source.ProjectId} - {Source.GetProject(Api.Repository).Title}");
+                    toolTip.AppendLine($"#project:{Source.GetProject(Api.Repository).Title}");
                 }
 
                 return toolTip.ToString().TrimEnd();
