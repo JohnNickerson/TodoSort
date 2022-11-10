@@ -176,3 +176,5 @@ TodoSort is a task list and reading list app with an emphasis on priority. It st
 	- Enable masking on "mask item" action.
 * 2022-09-08: Build 1.5.2
 	- Fixed file change notice persisting after automatic reload.
+* 2022-11-10: Build 1.5.3
+	- Added tag searching to the bump command.
