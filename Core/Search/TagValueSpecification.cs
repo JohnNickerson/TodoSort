@@ -14,8 +14,8 @@ namespace AssimilationSoftware.TodoSort.Core.Search
 
         public TagValueSpecification(string tagname, string tagvalue)
         {
-            _tagname = tagname;
-            _tagvalue = tagvalue;
+            _tagname = tagname?.Trim();
+            _tagvalue = tagvalue?.Trim();
         }
 
         public bool IsSatisfiedBy(ActionItem b)

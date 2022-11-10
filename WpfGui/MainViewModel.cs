@@ -79,7 +79,12 @@ namespace AssimilationSoftware.TodoSort.WpfGui
 
         #region Methods
 
-        private async Task OpenFile(string filename)
+        private async void OpenFile(string filename)
+        {
+            await OpenFileAsync(filename);
+        }
+
+        private async Task OpenFileAsync(string filename)
         {
             FileName = filename;
 
@@ -240,7 +245,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             var result = HasUnsavedChanges ? MessageBox.Show("You have unsaved changes in memory. Abandon these changes and reload the file?", "Abandon changes?", MessageBoxButton.YesNoCancel) : MessageBoxResult.None;
             if (!HasUnsavedChanges || result == MessageBoxResult.Yes)
             {
-                await OpenFile(FileName);
+                await OpenFileAsync(FileName);
             }
         }
 
@@ -282,7 +287,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             var result = dlg.ShowDialog();
             if (result == true)
             {
-                await OpenFile(dlg.FileName);
+                await OpenFileAsync(dlg.FileName);
             }
         }
 
@@ -315,7 +320,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                 {
                     // Replace the file?
                 }
-                await OpenFile(dlg.FileName);
+                await OpenFileAsync(dlg.FileName);
             }
         }
 
@@ -520,7 +525,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                     _api.Save();
                     break;
             }
-            await OpenFile(filename);
+            await OpenFileAsync(filename);
         }
 
         public void ApplySearchExecuted()
@@ -590,7 +595,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                     // Open.
                     if (doOpen)
                     {
-                        await OpenFile(_lastOpenedFile.FullName);
+                        await OpenFileAsync(_lastOpenedFile.FullName);
                         StatusMessage = string.Empty;
                     }
                     else

@@ -146,8 +146,8 @@ namespace AssimilationSoftware.TodoSort.CLI
                 // Quick hack: If we have two items with the same title but different type tags, skip them.
                 if (vm.SearchResults.Count() == 2 &&
                     vm.SearchResults.All(i => i.Tags.ContainsKey("type")) &&
-                    vm.SearchResults.ElementAt(0).Tags["type"] !=
-                    vm.SearchResults.ElementAt(1).Tags["type"])
+                    vm.SearchResults.ElementAt(0).Tags["type"].ToLower() !=
+                    vm.SearchResults.ElementAt(1).Tags["type"].ToLower())
                 {
                     continue;
                 }
@@ -155,13 +155,13 @@ namespace AssimilationSoftware.TodoSort.CLI
                 // Get user input
                 Console.WriteLine();
                 Console.WriteLine("Select one item to merge all others into (i = ignore):");
-                var master = Disambiguate(vm.SearchResults, repo);
-                if (master != null)
+                var survivor = Disambiguate(vm.SearchResults, repo);
+                if (survivor != null)
                 {
-                    // Merge all into master.
-                    foreach (var c in vm.SearchResults.Except(new[] { master }).ToList())
+                    // Merge all into survivor.
+                    foreach (var c in vm.SearchResults.Except(new[] { survivor }).ToList())
                     {
-                        vm.Merge(c, master);
+                        vm.Merge(c, survivor);
                     }
                 }
             }
@@ -175,13 +175,13 @@ namespace AssimilationSoftware.TodoSort.CLI
                     // Get user input.
                     Console.WriteLine();
                     Console.WriteLine("Select one item to merge all others into (i = ignore):");
-                    var master = Disambiguate(vm.SearchResults, repo);
-                    if (master != null)
+                    var survivor = Disambiguate(vm.SearchResults, repo);
+                    if (survivor != null)
                     {
-                        // Merge into master.
-                        foreach (var c in vm.SearchResults.Except(new[] { master }).ToList())
+                        // Merge into survivor.
+                        foreach (var c in vm.SearchResults.Except(new[] { survivor }).ToList())
                         {
-                            vm.Merge(c, master);
+                            vm.Merge(c, survivor);
                         }
                     }
                 }
@@ -234,7 +234,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             // TODO: Paste Process section
             throw new NotImplementedException("The delete-done command was never implemented.");
 
-            TidyUp(vm, repo);
+            //TidyUp(vm, repo);
         }
 
         private static void Delete(DeleteOptions argsubs, ViewModel vm, TodoRepository repo)
