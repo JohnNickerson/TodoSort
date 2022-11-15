@@ -32,9 +32,11 @@
                 <MenuItem Header="_Open" Command="{Binding Path=OpenFileCommand}" InputGestureText="Ctrl+O" />
                 <MenuItem Header="_Save" Command="{Binding Path=SaveFileCommand}" InputGestureText="Ctrl+S" />
                 <MenuItem Header="Save _As" IsEnabled="False"/>
+                <Separator/>
                 <MenuItem Header="_Commit" Command="{Binding Path=CommitCommand}" ToolTip="Commits any pending changes to main storage."/>
                 <MenuItem Header="Reload" Command="{Binding ReloadCommand}" />
                 <MenuItem Header="Import" Command="{Binding ImportCommand}"/>
+                <Separator/>
                 <MenuItem Header="Rebalance" Command="{Binding Path=BalanceCommand}"/>
                 <Separator/>
                 <MenuItem Header="Recent Files" IsEnabled="True" ItemsSource="{Binding Path=RecentFileList}">
