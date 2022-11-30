@@ -178,3 +178,5 @@ TodoSort is a task list and reading list app with an emphasis on priority. It st
 	- Fixed file change notice persisting after automatic reload.
 * 2022-11-10: Build 1.5.3
 	- Added tag searching to the bump command.
+* 2022-11-24: Build.1.5.3.1
+	- Added some dividers to the File menu for readability.

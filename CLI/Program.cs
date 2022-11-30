@@ -689,7 +689,6 @@ namespace AssimilationSoftware.TodoSort.CLI
             vm.SearchSpecification = setparentOptions.GetParentSearchSpecification(repo);
             if (child != null)
             {
-                // TODO: Allow null parent.
                 var parent = Disambiguate(vm.SearchResults.Where(x => x.ID != child.ID), repo);
                 if (parent != null)
                 {
@@ -1171,7 +1170,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             if (bumpOpts.Top == 0)
             {
                 // Manually pick one item.
-                var chosen = Disambiguate(vm.SearchResults, repo, !string.IsNullOrEmpty(bumpOpts.ItemId));
+                var chosen = Disambiguate(vm.SearchResults, repo, true);
                 if (chosen != null) bumpItems.Add(chosen);
             }
             else if (!string.IsNullOrEmpty(bumpOpts.SortTag))
