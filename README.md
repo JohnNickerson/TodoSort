@@ -178,5 +178,11 @@ TodoSort is a task list and reading list app with an emphasis on priority. It st
 	- Fixed file change notice persisting after automatic reload.
 * 2022-11-10: Build 1.5.3
 	- Added tag searching to the bump command.
-* 2022-11-24: Build.1.5.3.1
+* 2022-11-24: Build 1.5.3.1
 	- Added some dividers to the File menu for readability.
+* 2022-12-01: Build 1.5.4
+	- Allow "bump" command to auto-select in all circumstances.
+* 2022-12-22: Build 1.5.4.1
+	- Fixed tooltip not updating after title update.
+	- Updated "Mask" behaviour when mask feature is disabled and target item is already marked for masking.
+	- Automatically expand Search panel when selecting Search context, and collapse when navigating away.

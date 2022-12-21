@@ -365,6 +365,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
                 if (ValidateTitle(title) && Title != title)
                 {
                     Title = title;
+                    OnPropertyChanged(nameof(ToolTip));
                     Api.Update(Source);
                     success = true;
                 }
@@ -444,7 +445,15 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
         {
             if (Source.Tags.ContainsKey("nsfw"))
             {
-                Source.Tags.Remove("nsfw");
+                if (!Api.Masked)
+                {
+                    // Asked to mask an already-masked item with masking off.
+                    Api.Masked = true;
+                }
+                else
+                {
+                    Source.Tags.Remove("nsfw");
+                }
             }
             else
             {
