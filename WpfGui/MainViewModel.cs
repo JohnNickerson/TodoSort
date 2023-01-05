@@ -683,7 +683,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             get => _selectedContext;
             set
             {
-                if (_selectedContext == value) return;
+                if (_selectedContext == value && value != _searchResultsContext) return;
                 // First, if we are currently in the Search context, and we're moving away from it, enable ShowHeadOnly.
                 if (_selectedContext == _searchResultsContext && value != _searchResultsContext)
                 {
