@@ -186,3 +186,7 @@ TodoSort is a task list and reading list app with an emphasis on priority. It st
 	- Fixed tooltip not updating after title update.
 	- Updated "Mask" behaviour when mask feature is disabled and target item is already marked for masking.
 	- Automatically expand Search panel when selecting Search context, and collapse when navigating away.
+* 2023-01-05: Build 1.5.4.2
+	- Fixed search results not updating in GUI.
+* 2023-01-19: Build 1.5.4.3
+	- Added upvotes for items bumped if no parent is found.
