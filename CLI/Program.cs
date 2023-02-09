@@ -1191,6 +1191,11 @@ namespace AssimilationSoftware.TodoSort.CLI
             foreach (var target in bumpItems)
             {
                 var depth = target.GetRankDepth(repo) / 2;
+                if (depth == 0)
+                {
+                    target.Upvotes++;
+                    vm.Update(target);
+                }
                 while (target.GetRankDepth(repo) > depth && target.ParentId != null)
                 {
                     vm.SetParent(target, target.GetParent(repo)?.GetParent(repo));

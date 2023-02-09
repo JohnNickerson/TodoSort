@@ -190,3 +190,6 @@ TodoSort is a task list and reading list app with an emphasis on priority. It st
 	- Fixed search results not updating in GUI.
 * 2023-01-19: Build 1.5.4.3
 	- Added upvotes for items bumped if no parent is found.
+* 2023-02-09: Build 1.5.4.4
+	- Added upvotes for zero-depth bump targets.
+	- Fixed import bug for split-line titles.
