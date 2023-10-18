@@ -1,96 +1,23 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{73FC6562-D6B8-422D-BDF6-B7DCF9DC9850}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <ImplicitUsings>disable</ImplicitUsings>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <AssemblyTitle>Core</AssemblyTitle>
+    <Company>Assimilation Software</Company>
+    <Product>TodoSort</Product>
+    <Copyright>Copyright © Assimilation Software 2023</Copyright>
+    <Version>1.5.4.4</Version>
+    <FileVersion>1.5.4.4</FileVersion>
     <RootNamespace>AssimilationSoftware.TodoSort.Core</RootNamespace>
     <AssemblyName>TodoSort.Core</AssemblyName>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Maroon, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="Maroon">
       <HintPath>..\Library\Maroon.dll</HintPath>
     </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Memory, Version=4.0.1.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51" />
-    <Reference Include="System.Text.Json, Version=4.0.1.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="ActionItem_Extensions.cs" />
-    <Compile Include="Data\ActionItemSqliteMapper.cs" />
-    <Compile Include="Data\ITodoRepository.cs" />
-    <Compile Include="Data\TodoRepository.cs" />
-    <Compile Include="Export\GraphVizExporter.cs" />
-    <Compile Include="Export\HtmlExporter.cs" />
-    <Compile Include="Export\IExporter.cs" />
-    <Compile Include="Export\JsonExporter.cs" />
-    <Compile Include="Export\TemplateExporter.cs" />
-    <Compile Include="Export\TextExporter.cs" />
-    <Compile Include="Import\IImporter.cs" />
-    <Compile Include="Import\PocketImporter.cs" />
-    <Compile Include="Import\TextFolderImporter.cs" />
-    <Compile Include="Import\TextImporter.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Rot13.cs" />
-    <Compile Include="Search\AndSpecification.cs" />
-    <Compile Include="Search\ContextSearchSpecification.cs" />
-    <Compile Include="Search\HeadOnlySearchSpecification.cs" />
-    <Compile Include="Search\PriorityChildrenSearchSpecification.cs" />
-    <Compile Include="Search\DepthRangeSearchSpecification.cs" />
-    <Compile Include="Search\DoneDateGreaterThanSpecification.cs" />
-    <Compile Include="Search\DoneDateLessThanSpecification.cs" />
-    <Compile Include="Search\ExactPropertyValueSpecification.cs" />
-    <Compile Include="Search\FullTextSearchSpecification.cs" />
-    <Compile Include="Search\IdSearchSpecification.cs" />
-    <Compile Include="Search\ISearchSpecification.cs" />
-    <Compile Include="Search\NoteSearchSpecification.cs" />
-    <Compile Include="Search\NotSpecification.cs" />
-    <Compile Include="Search\OrSpecification.cs" />
-    <Compile Include="Search\PartialPropertyValueSpecification.cs" />
-    <Compile Include="Search\ProjectChildrenSearchSpecification.cs" />
-    <Compile Include="Search\SpecificationExtensionMethods.cs" />
-    <Compile Include="Search\TagValueSpecification.cs" />
-    <Compile Include="Search\TickleDateGreaterThanSpecification.cs" />
-    <Compile Include="Search\TickleDateLessThanSpecification.cs" />
-    <Compile Include="Search\TickleDateSearchSpecification.cs" />
-    <Compile Include="Search\TrueSpecification.cs" />
-    <Compile Include="SemiNumericComparer.cs" />
-    <Compile Include="ViewModel.cs" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>
