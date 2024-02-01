@@ -12,7 +12,7 @@ using System.Windows;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Assimilation Software")]
 [assembly: AssemblyProduct("TodoSort")]
-[assembly: AssemblyCopyright("Copyright © Assimilation Software 2023")]
+[assembly: AssemblyCopyright("Copyright © Assimilation Software 2024")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -51,5 +51,5 @@ using System.Windows;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.5.4.4")]
-[assembly: AssemblyFileVersion("1.5.4.4")]
+[assembly: AssemblyVersion("1.5.4.5")]
+[assembly: AssemblyFileVersion("1.5.4.5")]

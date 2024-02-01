@@ -740,7 +740,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                         break;
                     case "someday":
                         _api.SomedaySearchSpecification = SelectedContext.SearchSpecification;
-                        _currentItems = _api.SomedaySearchResults.Select(s => new ActionViewItem(s, this)).OrderBy(i => i.TickleDate).ThenBy(i => i.Title).ToList();
+                        _currentItems = _api.SomedaySearchResults.Select(s => new ActionViewItem(s, this)).OrderBy(i => i.TickleDate ?? DateTime.MaxValue).ThenBy(i => i.Title).ToList();
                         break;
                     case "Search":
                         if (SearchContext != null && SearchContext.Title == "done")
@@ -1023,7 +1023,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
 
         public ICommand NewFileCommand => _newFileCommand ?? (_newFileCommand = new RelayCommand(NewFileExecuted));
 
-        public ICommand BalanceCommand => _balanceCommand ?? (_balanceCommand = new RelayCommand(BalanceExecuted));
+        public ICommand BalanceCommand => _balanceCommand ?? (_balanceCommand = new RelayCommand(BalanceExecuted, () => false));
 
         #endregion
     }

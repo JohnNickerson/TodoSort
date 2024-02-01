@@ -19,6 +19,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
@@ -52,11 +53,12 @@
                 <MenuItem Header="E_xit" Command="{Binding CloseCommand}" InputGestureText="Alt+F4" />
             </MenuItem>
             <MenuItem Header="_Edit">
-                <MenuItem Header="_Add" Command="{Binding AddItemCommand}"/>
+                <MenuItem Header="_Add Item" Command="{Binding AddItemCommand}"/>
+                <MenuItem Header="Add URL" Command="{Binding AddUrlCommand}" IsEnabled="False" />
                 <MenuItem Header="_Rank" Command="{Binding RankCommand}" />
                 <MenuItem Header="_Clean up" Command="{Binding CleanupCommand}" ToolTip="Assign missing contexts, undefer due someday items, fix chains, etc."/>
             </MenuItem>
-            <MenuItem Header="_Options">
+            <MenuItem Header="_View">
                 <MenuItem Header="_Mask NSFW items" Command="{Binding MaskTextCommand}" IsChecked="{Binding Path=Masked}" InputGestureText="Ctrl+M"/>
                 <MenuItem Header="Show _head only" IsChecked="{Binding ShowHeadOnly}" Command="{Binding ToggleHeadCommand}" InputGestureText="Ctrl+H" />
                 <MenuItem Header="Sort by...">
@@ -70,7 +72,7 @@
             </MenuItem>
         </Menu>
 
-        <ListBox Grid.Row="1" Grid.Column="0" Grid.RowSpan="2" Name="Contexts" ItemsSource="{Binding Path=Contexts}" SelectedItem="{Binding Path=SelectedContext}" MinWidth="85">
+        <ListBox Grid.Row="1" Grid.Column="0" Grid.RowSpan="3" Name="Contexts" ItemsSource="{Binding Path=Contexts}" SelectedItem="{Binding Path=SelectedContext}" MinWidth="85">
             <ListBox.Resources>
                 <ContextMenu x:Key="MetaContextMenu">
                     <MenuItem Header="Move All" IsEnabled="True" ItemsSource="{Binding AllOtherContexts}">
@@ -129,7 +131,11 @@
                 <Button Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2" Content="Go" Margin="3" MaxWidth="50" Command="{Binding ApplySearchCommand}" IsDefault="{Binding Path=SearchExpanded}"/>
             </Grid>
         </Expander>
-        <ListView Grid.Row="2" Grid.Column="1" ItemsSource="{Binding Path=Items}" SelectedItem="{Binding Path=SelectedItem}" MouseDoubleClick="OnMouseDoubleClick">
+        <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal">
+            <TextBlock Text="Count: "/>
+            <TextBlock Text="{Binding Path=Items.Count}"/>
+        </StackPanel>
+        <ListView Grid.Row="3" Grid.Column="1" ItemsSource="{Binding Path=Items}" SelectedItem="{Binding Path=SelectedItem}" MouseDoubleClick="OnMouseDoubleClick">
             <ListView.Resources>
                 <ContextMenu x:Key="ItemContextMenu">
                     <MenuItem Header="Edit" Command="{Binding Path=EditCommand}"/>
@@ -204,9 +210,7 @@
                 </GridView>
             </ListView.View>
         </ListView>
-        <StatusBar Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2">
-            <TextBlock Text="Count: "/>
-            <TextBlock Text="{Binding Path=Items.Count}"/>
+        <StatusBar Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2">
             <TextBlock Text="{Binding Path=StatusMessage}"/>
         </StatusBar>
     </Grid>
