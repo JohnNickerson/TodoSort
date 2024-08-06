@@ -193,3 +193,7 @@ TodoSort is a task list and reading list app with an emphasis on priority. It st
 * 2023-02-09: Build 1.5.4.4
 	- Added upvotes for zero-depth bump targets.
 	- Fixed import bug for split-line titles.
+* 2024-02-01: Build 1.5.4.5
+	- Changed Someday context to show items with return dates first.
+    - Disabled the GUI Rebalance command.
+    - Moved item count under the search block for better visibility on long lists.
