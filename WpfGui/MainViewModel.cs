@@ -108,7 +108,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             {
                 var titleList = string.Join(Environment.NewLine, undefers);
                 // Confirm.
-                if (MessageBox.Show(
+                if (System.Windows.MessageBox.Show(
                     $"There are deferred items ready to return to the main lists:\n{titleList}\n Do you want to process them now?",
                         "Auto-undefer", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                 {
@@ -218,7 +218,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             var pendingCount = _repo?.GetPendingChanges().Sum(p => p.Updates.Count);
             if (pendingCount > CommitLimit && _lastPendingCount != pendingCount)
             {
-                var response = MessageBox.Show($"{pendingCount} changes are pending. Commit now?", "Commit Changes",
+                var response = System.Windows.MessageBox.Show($"{pendingCount} changes are pending. Commit now?", "Commit Changes",
                     MessageBoxButton.YesNo);
                 if (response == MessageBoxResult.Yes)
                 {
@@ -242,7 +242,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         private async void ReloadFile()
         {
             if (string.IsNullOrEmpty(FileName)) return;
-            var result = HasUnsavedChanges ? MessageBox.Show("You have unsaved changes in memory. Abandon these changes and reload the file?", "Abandon changes?", MessageBoxButton.YesNoCancel) : MessageBoxResult.None;
+            var result = HasUnsavedChanges ? System.Windows.MessageBox.Show("You have unsaved changes in memory. Abandon these changes and reload the file?", "Abandon changes?", MessageBoxButton.YesNoCancel) : MessageBoxResult.None;
             if (!HasUnsavedChanges || result == MessageBoxResult.Yes)
             {
                 await OpenFileAsync(FileName);
@@ -363,7 +363,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                     _api.Save();
                     break;
             }
-            Application.Current.Shutdown();
+            System.Windows.Application.Current.Shutdown();
         }
 
         public void Update(ActionItem item)
@@ -501,7 +501,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         private bool? ConfirmSaveCancel(string message)
         {
             if (!HasUnsavedChanges) return false;
-            var result = MessageBox.Show(message, "Save changes?", MessageBoxButton.YesNoCancel);
+            var result = System.Windows.MessageBox.Show(message, "Save changes?", MessageBoxButton.YesNoCancel);
             switch (result)
             {
                 case MessageBoxResult.Cancel:
@@ -583,7 +583,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                     bool doOpen;
                     if (HasUnsavedChanges)
                     {
-                        doOpen = MessageBox.Show(
+                        doOpen = System.Windows.MessageBox.Show(
                             "The file on disk has been modified and you have unsaved changes in memory. Abandon changes and reload the file from disk?",
                             "Abandon changes?", MessageBoxButton.YesNo) == MessageBoxResult.Yes;
                     }
@@ -795,12 +795,14 @@ namespace AssimilationSoftware.TodoSort.WpfGui
 
         public string WindowTitle => $"{(HasUnsavedChanges ? "*" : "")}TodoSort - {FileName}";
 
+        private ObservableCollection<string> _recentFilesList;
         public ObservableCollection<string> RecentFileList
         {
-            get => Settings.Default.RecentFiles ?? (Settings.Default.RecentFiles = new ObservableCollection<string>());
+            get => _recentFilesList ?? ( _recentFilesList= new ObservableCollection<string>(Settings.Default.RecentFiles));
             set
             {
-                Settings.Default.RecentFiles = value;
+                _recentFilesList = value;
+                Settings.Default.RecentFiles = value.ToArray();
                 OnPropertyChanged();
             }
         }

@@ -345,7 +345,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
 
         private void DeleteExecuted()
         {
-            if (MessageBox.Show("Delete this item. Are you sure?", "Delete", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+            if (System.Windows.MessageBox.Show("Delete this item. Are you sure?", "Delete", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
             {
                 Api.Delete(Source);
             }
@@ -383,7 +383,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
 
         private void CopyUrlExecuted()
         {
-            Clipboard.SetText(Url.Trim());
+            System.Windows.Clipboard.SetText(Url.Trim());
         }
 
         private string RestoreUnicode(string title)

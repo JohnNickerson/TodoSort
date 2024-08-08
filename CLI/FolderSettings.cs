@@ -18,23 +18,32 @@ namespace AssimilationSoftware.TodoSort.CLI
             if (File.Exists(path))
             {
                 var lines = File.ReadAllLines(path);
-                var result = new FolderSettings();
-                foreach (string line in lines)
+                // New: JSON serialisation mode
+                try
                 {
-                    var setting = line.Split(new char[] { '=' }, 2);
-                    if (setting.Length == 2)
+                    return Newtonsoft.Json.JsonConvert.DeserializeObject<FolderSettings>(string.Join(' ', lines));
+                }
+                catch
+                {
+                    var result = new FolderSettings();
+                    foreach (string line in lines)
                     {
-                        switch (setting[0].Trim().ToLower())
+                        var setting = line.Split(new char[] { '=' }, 2);
+                        if (setting.Length == 2)
                         {
-                            case "todopath":
-                                result.TodoPath = setting[1];
-                                break;
-                            default:
-                                break;
+                            switch (setting[0].Trim().ToLower())
+                            {
+                                case "todopath":
+                                    result.TodoPath = setting[1];
+                                    break;
+                                default:
+                                    break;
+                            }
                         }
                     }
+                    SaveTo(path, result);
+                    return result;
                 }
-                return result;
             }
             else
             {
@@ -44,9 +53,7 @@ namespace AssimilationSoftware.TodoSort.CLI
 
         public static void SaveTo(string path, FolderSettings tosave)
         {
-            StringBuilder output = new StringBuilder();
-            output.AppendLine(string.Format("TodoPath={0}", tosave.TodoPath));
-            File.WriteAllText(path, output.ToString());
+            File.WriteAllText(path, Newtonsoft.Json.JsonConvert.SerializeObject(tosave));
         }
     }
 }

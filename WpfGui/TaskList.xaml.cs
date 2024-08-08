@@ -5,7 +5,6 @@ using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
 using AssimilationSoftware.TodoSort.WpfGui.Properties;
-using MessageBox = System.Windows.MessageBox;
 
 namespace AssimilationSoftware.TodoSort.WpfGui
 {
@@ -40,7 +39,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             // Confirm close if the ViewModel says there are unsaved changes.
             if (_vm.HasUnsavedChanges)
             {
-                var result = MessageBox.Show("You have unsaved changes. Save and quit?", "Unsaved changes", MessageBoxButton.OKCancel);
+                var result = System.Windows.MessageBox.Show("You have unsaved changes. Save and quit?", "Unsaved changes", MessageBoxButton.OKCancel);
                 switch (result)
                 {
                     case MessageBoxResult.OK:

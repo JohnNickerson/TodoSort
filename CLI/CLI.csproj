@@ -1,56 +1,16 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30729</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{73610637-57B2-4210-852E-FBF7D361A42F}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>AssimilationSoftware.TodoSort.CLI</RootNamespace>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
     <AssemblyName>TodoSort</AssemblyName>
-    <TargetFrameworkVersion>v4.8.1</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <PublishUrl>publish\</PublishUrl>
-    <Install>true</Install>
-    <InstallFrom>Disk</InstallFrom>
-    <UpdateEnabled>false</UpdateEnabled>
-    <UpdateMode>Foreground</UpdateMode>
-    <UpdateInterval>7</UpdateInterval>
-    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
-    <UpdatePeriodically>false</UpdatePeriodically>
-    <UpdateRequired>false</UpdateRequired>
-    <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
-    <UseApplicationTrust>false</UseApplicationTrust>
-    <BootstrapperEnabled>true</BootstrapperEnabled>
-    <FileUpgradeFlags>
-    </FileUpgradeFlags>
-    <OldToolsVersion>3.5</OldToolsVersion>
-    <UpgradeBackupLocation />
-    <TargetFrameworkProfile />
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
+    <Company>Assimilation Software</Company>
+    <Product>TodoSort</Product>
+    <Copyright>Copyright © Assimilation Software 2024</Copyright>
+    <Version>1.6.0.0</Version>
+    <FileVersion>1.6.0.0</FileVersion>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="CommandLine, Version=2.9.1.0, Culture=neutral, PublicKeyToken=5a870481e358d379, processorArchitecture=MSIL">
@@ -126,110 +86,16 @@
     </Reference>
     <Reference Include="System.Xml" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="ExpressionParser.cs" />
-    <Compile Include="FolderSettings.cs" />
-    <Compile Include="Options\AddSubOptions.cs" />
-    <Compile Include="Options\AdvancedSearchOptions.cs" />
-    <Compile Include="Options\BalanceOptions.cs" />
-    <Compile Include="Options\BumpOptions.cs" />
-    <Compile Include="Options\CheckChainOptions.cs" />
-    <Compile Include="Options\CommitOptions.cs" />
-    <Compile Include="Options\DedupeOptions.cs" />
-    <Compile Include="Options\DeferAllOptions.cs" />
-    <Compile Include="Options\DeleteDoneOptions.cs" />
-    <Compile Include="Options\DeleteOptions.cs" />
-    <Compile Include="Options\DoneSearchSubOptions.cs" />
-    <Compile Include="Options\DoneSubOptions.cs" />
-    <Compile Include="Options\FixTitlesOptions.cs" />
-    <Compile Include="Options\MultiSearchSubOptions.cs" />
-    <Compile Include="Options\DeferSubOptions.cs" />
-    <Compile Include="Options\ExportSubOptions.cs" />
-    <Compile Include="Options\ImportSubOptions.cs" />
-    <Compile Include="Options\InitSubOptions.cs" />
-    <Compile Include="Options\MergeSubOptions.cs" />
-    <Compile Include="Options\MoveAllSubOptions.cs" />
-    <Compile Include="Options\MoveSubOptions.cs" />
-    <Compile Include="Options\NoteSubOptions.cs" />
-    <Compile Include="Options\OpenTagSubOptions.cs" />
-    <Compile Include="Options\NoSubOptions.cs" />
-    <Compile Include="Options\PocketSyncOptions.cs" />
-    <Compile Include="Options\ProcessOptions.cs" />
-    <Compile Include="Options\RankOptions.cs" />
-    <Compile Include="Options\RenameSubOptions.cs" />
-    <Compile Include="Options\SearchOptions.cs" />
-    <Compile Include="Options\SingleSearchSubOptions.cs" />
-    <Compile Include="Options\SetParentSubOptions.cs" />
-    <Compile Include="Options\SetProjectSubOptions.cs" />
-    <Compile Include="Options\SomedaySearchSubOptions.cs" />
-    <Compile Include="Options\SomedaySubOptions.cs" />
-    <Compile Include="Options\TagAllSubOptions.cs" />
-    <Compile Include="Options\TagOptions.cs" />
-    <Compile Include="Options\UndeferOptions.cs" />
-    <Compile Include="Options\UndoSubOptions.cs" />
-    <Compile Include="Options\UniversalOptions.cs" />
-    <Compile Include="Options\UnrankAllOptions.cs" />
-    <Compile Include="Options\UnRankOptions.cs" />
-    <Compile Include="Program.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>Settings.settings</DependentUpon>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
-    <None Include="packages.config" />
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework Client Profile</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 2.0 %28x86%29</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.0">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.0 %28x86%29</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
-      <Visible>False</Visible>
-      <ProductName>Windows Installer 3.1</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-  </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\Core\Core.csproj">
       <Project>{73fc6562-d6b8-422d-bdf6-b7dcf9dc9850}</Project>
       <Name>Core</Name>
     </ProjectReference>
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+
+  <ItemGroup>
+    <PackageReference Include="System.Security.Permissions" Version="8.0.0" />
+  </ItemGroup>
+
 </Project>

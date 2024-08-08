@@ -21,6 +21,12 @@ using System.Text.RegularExpressions;
 
 namespace AssimilationSoftware.TodoSort.CLI
 {
+    enum SortOrder
+    {
+        Ascending,
+        Descending
+    }
+
     class Program
     {
         private static bool verbose = false;
@@ -31,7 +37,8 @@ namespace AssimilationSoftware.TodoSort.CLI
         static void Main(string[] args)
         {
 #if DEBUG
-            Debug.Listeners.Add(new ConsoleTraceListener());
+            Trace.Listeners.Add(new ConsoleTraceListener());
+            Trace.AutoFlush = true;
 #endif
             var argverb = string.Empty;
             var f = FolderSettings.LoadFrom(settingspath);
