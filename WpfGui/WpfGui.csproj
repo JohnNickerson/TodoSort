@@ -12,8 +12,8 @@
     <Company>Assimilation Software</Company>
     <Product>TodoSort</Product>
     <Copyright>Copyright © Assimilation Software 2024</Copyright>
-    <Version>1.5.4.5</Version>
-    <FileVersion>1.5.4.5</FileVersion>
+    <Version>1.6.0.0</Version>
+    <FileVersion>1.6.0.0</FileVersion>
     <ApplicationIcon>Task.ico</ApplicationIcon>
   </PropertyGroup>
 

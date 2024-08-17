@@ -1,7 +1,9 @@
 # TodoSort
+
 TodoSort is a task list and reading list app with an emphasis on priority. It stores your decisions about which items are more important than others, and constructs a prioritised tree to show you only your most important tasks, or most desirable reading articles. By asking you to compare only two items at a time with each other, priority decisions are atomised and simplified. It also makes use of my "Maroon" merge-friendly data access library to allow use across multiple computers without (much) need to worry about conflicting file edits.
 
 # Features
+
 - Organise items by category and mark with "type" icons.
 - Sort by title, upvotes, or "order" tag.
 - Arrange items into ordered projects.
@@ -10,190 +12,193 @@ TodoSort is a task list and reading list app with an emphasis on priority. It st
 - Rebalance the priority list if and when it gets too deep.
 
 # Releases
-* 2018-04-27: Build 0.9.10 released to Production
-	- "Retag" option added to "Rename" command.
-* 2018-07-13: Build 0.9.11 released to Production
-	- Export sorting support.
-* 2018-08-16: Build 0.9.12 released to Production
-	- Default import context.
-	- Force-save option.
-	- Bug: deduplication search returns every single item as the last set.
-* 2018-10-11: Build 1.0.0 released to Production
-	- Basic GUI
-* 2018-10-18: Build 1.0.1 released to Production
-	- Recent Files list in GUI.
-* 2018-10-25: Build 1.0.2 released to Production
-	- Save to update view
-	- Size window to contents
-	- Done and Someday views
-* 2018-11-01: Build 1.0.3 released to Production
-	- GUI improvements
-	- Ranking GUI
-* 2018-11-08: Build 1.0.4 released to Production
-	- Live list updates.
-* 2018-11-13: Build 1.0.5 released to Production
-	- Implicit chains.
-	- Item editing in GUI.
-	- Some GUI bug fixes.
-* 2018-11-15: Build 1.0.5.1 released to Production
-	- Hot fix for implicit chains (everything was losing ranking data).
-* 2018-11-30: Build 1.0.7 released to Production
-	- Add items via GUI.
-* 2019-01-24: Build 1.1.3 released to Production
-	- Title fixing and search improvements.
-* 2019-01-31: Build 1.1.3 released to Production
-	- Manually-triggered cleanup
-	- Chain re-heading
-	- Search for missing tags
-	- Mask NSFW item titles.
-* 2019-02-07: Build 1.1.5 released to Production
-	- Preserve context selection when moving items, marking done or undone.
-	- Update item list when performing cleanup.
-* 2019-02-21: Build 1.1.6 released to Production
-	- Show Head Only option moved to Options menu with keyboard shortcut.
-	- Close ranking window automatically when finished.
-	- Open any file type.
-* 2019-02-28: Build 1.1.7 released to Production
-	- Validation for title fixing from GUI.
-	- Full item details in tooltip.
-	- Bump items via GUI.
-	- Save NSFW masking option.
-	- Open link updates after edit.
-* 2019-03-21: Build 1.1.8 released to Production
-	- Double-click to edit. 
-	- Display item count. 
-	- Maroon back-end (v0.1.2.1)
-	- Fix for done items deferring with projects.
-* 2019-04-25: Build 1.2.1.2
-	- Maroon 0.1.3.2 back-end
-	- Fix for rapid-clicking crashes.
-	- Fix for import command.
-	- Optimised depth calculation code.
-	- Other bug fixes and UI improvements.
-* 2019-05-14: Build 1.3.0
-	- Maroon 0.2 back-end.
-	- Fix for conflict resolution process.
-* 2019-05-27: Build 1.3.0.1
-	- Updated to Maroon 0.2.0.3 for optimised conflict detection algorithm.
-* 2019-05-30: Build 1.3.1.1
-	- Check-chain command.
-	- Move individual items to other contexts in GUI.
-	- Implemented File -> New.
-	- Patched to Maroon 0.2.0.3 for commit performance.
-* 2019-06-20: Build 1.3.2
-	- Search by project and context. 
-	- Fix for editing deferred items.
-* 2019-07-04: Build 1.3.3
-	- UI and bug fixes.
-* 2019-08-14: Build 1.3.4
-	- Sort by title, upvotes or order tag.
-* 2019-09-05: Build 1.3.5.1
-	- Tag and value search. 
-	- Offer to commit pending items. 
-	- Disable "Move To" in search results. 
-	- Sort projects by title in search list. 
-	- Patched to fix null reference in "time to commit" check.
-* 2019-09-18: Build 1.3.5.2
-	- Patched to fix interaction error in prompt to commit with conflicts.
-* 2019-10-10: Build 1.3.6
-	- Added text replacements in GUI for title fixing. 
-	- Fixed inability to remove Context and Project from search conditions. 
-	- Fixed commit prompt count calculation.
-* 2019-11-14: Build 1.3.7.1
-	- Updated title fixing to process HTML/Unicode elements before validating. 
-	- Import all text files from a folder. 
-	- Import from Pocket html export file.
-* 2019-12-12: Build 1.3.8
-	- Fixed unsaved changes indicator when committing. 
-	- Set keyword search box focus properly. 
-	- Added GUI import features.
-* 2020-01-16: Build 1.3.9
-	- Show deep results automatically in Search.
-* 2020-02-06: Build 1.3.10
-	- Search from the keyword box by pressing "Enter".
-	- Removed obsolete "someday" and "done" arguments from CLI "init" command.
-* 2020-02-27: Build 1.3.11
-	- Added a default import context.
-	- Changed to a folder browser when TodoSortFolder import type is selected.
-	- Set the file filter on the import file browser based on chosen import type.
-* 2020-03-12: Build 1.3.12
-	- Ignore duplicate matches if they have different type values.
-* 2020-06-25: Build 1.3.13.0
-	- Changed title-fixing code to use HTML Decode.
-* 2020-08-18: Build 1.3.14.1
-	- Fixed empty "Move To" context menu.
-	- Fixed "Commit" command asking to reload the file.
-* 2020-08-20: Build 1.3.15.0
-	- Title fix updated to reject blank titles.
-* 2020-09-03: Build 1.4.0.0
-	- Updated to Maroon 0.3.
-	- "Copy URL" context command.
-	- Keyboard shortcuts for ranking window.
-* 2020-11-12: Build 1.4.1.0
-	- Updated target framework version numbers.
-	- Added project ID to the "bump" command search parameters.
-	- Allow Enter key to search from any search parameter box.
-	- Fixed problem of being unable to edit an item into a new context.
-	- Fixed potential default to "Search" context for new items.
-* 2020-11-26: Build 1.4.1.1
-	- Reverted to Maroon 0.2.3 to fix commit problems.
-* 2020-11-27: Build 1.4.1.2
-	- Fixed status message display.
-* 2021-02-04: Build 1.4.2
-	- Added a "commit" option on the balance command.
-* 2021-02-11: Build 1.4.3
-	- Added ability to specify "length" for projects, used in "check-chain" command.
-	- Added rebalance functionality to the GUI.
-* 2021-03-03: Build 1.4.3.1
-	- Patched to fix null reference exception on bump operation.
-* 2021-03-18: Build 1.4.4.1
-	- Added "Defer Until..." context menu command for arbitrary defer dates.
-	- Added check for uncommitted changes when looking for data to reload.
-* 2021-04-06: Build 1.4.4.2
-	- Fixed: changes were detected as new when saved, prompting reload.
-* 2021-04-08: Build 1.4.4.3
-	- [FIXED]After committing changes, prompt to reload from disk appears.
-* 2021-10-14: Build 1.4.5.1
-	- Fixed search term immediate binding for faster tag/value refinement.
-	- Fixed an exception when starting with a missing directory.
-	- Changed the wording of the prompt to save changes before the "cleanup" command.
-* 2021-12-16: Build 1.4.6
-	- Added "sort-desc" option for exports.
-	- Removed JSON mapper. I'm not using it.
-* 2022-05-12: Build 1.4.7
-	- Fixed search keyword to trim before applying.
-	- Added "Mask/Unmask" context command.
-* 2022-06-09: Build 1.4.8
-	- Added JSON export format.
-* 2022-06-26: Build 1.4.8.1
-	- Fixed TemplateExporter to include Context name value.
-* 2022-08-11: Build 1.5.0
-	- Upgraded to CommandLineParser v2.9
+
+- 2018-04-27: Build 0.9.10 released to Production
+  - "Retag" option added to "Rename" command.
+- 2018-07-13: Build 0.9.11 released to Production
+  - Export sorting support.
+- 2018-08-16: Build 0.9.12 released to Production
+  - Default import context.
+  - Force-save option.
+  - Bug: deduplication search returns every single item as the last set.
+- 2018-10-11: Build 1.0.0 released to Production
+  - Basic GUI
+- 2018-10-18: Build 1.0.1 released to Production
+  - Recent Files list in GUI.
+- 2018-10-25: Build 1.0.2 released to Production
+  - Save to update view
+  - Size window to contents
+  - Done and Someday views
+- 2018-11-01: Build 1.0.3 released to Production
+  - GUI improvements
+  - Ranking GUI
+- 2018-11-08: Build 1.0.4 released to Production
+  - Live list updates.
+- 2018-11-13: Build 1.0.5 released to Production
+  - Implicit chains.
+  - Item editing in GUI.
+  - Some GUI bug fixes.
+- 2018-11-15: Build 1.0.5.1 released to Production
+  - Hot fix for implicit chains (everything was losing ranking data).
+- 2018-11-30: Build 1.0.7 released to Production
+  - Add items via GUI.
+- 2019-01-24: Build 1.1.3 released to Production
+  - Title fixing and search improvements.
+- 2019-01-31: Build 1.1.3 released to Production
+  - Manually-triggered cleanup
+  - Chain re-heading
+  - Search for missing tags
+  - Mask NSFW item titles.
+- 2019-02-07: Build 1.1.5 released to Production
+  - Preserve context selection when moving items, marking done or undone.
+  - Update item list when performing cleanup.
+- 2019-02-21: Build 1.1.6 released to Production
+  - Show Head Only option moved to Options menu with keyboard shortcut.
+  - Close ranking window automatically when finished.
+  - Open any file type.
+- 2019-02-28: Build 1.1.7 released to Production
+  - Validation for title fixing from GUI.
+  - Full item details in tooltip.
+  - Bump items via GUI.
+  - Save NSFW masking option.
+  - Open link updates after edit.
+- 2019-03-21: Build 1.1.8 released to Production
+  - Double-click to edit.
+  - Display item count.
+  - Maroon back-end (v0.1.2.1)
+  - Fix for done items deferring with projects.
+- 2019-04-25: Build 1.2.1.2
+  - Maroon 0.1.3.2 back-end
+  - Fix for rapid-clicking crashes.
+  - Fix for import command.
+  - Optimised depth calculation code.
+  - Other bug fixes and UI improvements.
+- 2019-05-14: Build 1.3.0
+  - Maroon 0.2 back-end.
+  - Fix for conflict resolution process.
+- 2019-05-27: Build 1.3.0.1
+  - Updated to Maroon 0.2.0.3 for optimised conflict detection algorithm.
+- 2019-05-30: Build 1.3.1.1
+  - Check-chain command.
+  - Move individual items to other contexts in GUI.
+  - Implemented File -> New.
+  - Patched to Maroon 0.2.0.3 for commit performance.
+- 2019-06-20: Build 1.3.2
+  - Search by project and context.
+  - Fix for editing deferred items.
+- 2019-07-04: Build 1.3.3
+  - UI and bug fixes.
+- 2019-08-14: Build 1.3.4
+  - Sort by title, upvotes or order tag.
+- 2019-09-05: Build 1.3.5.1
+  - Tag and value search.
+  - Offer to commit pending items.
+  - Disable "Move To" in search results.
+  - Sort projects by title in search list.
+  - Patched to fix null reference in "time to commit" check.
+- 2019-09-18: Build 1.3.5.2
+  - Patched to fix interaction error in prompt to commit with conflicts.
+- 2019-10-10: Build 1.3.6
+  - Added text replacements in GUI for title fixing.
+  - Fixed inability to remove Context and Project from search conditions.
+  - Fixed commit prompt count calculation.
+- 2019-11-14: Build 1.3.7.1
+  - Updated title fixing to process HTML/Unicode elements before validating.
+  - Import all text files from a folder.
+  - Import from Pocket html export file.
+- 2019-12-12: Build 1.3.8
+  - Fixed unsaved changes indicator when committing.
+  - Set keyword search box focus properly.
+  - Added GUI import features.
+- 2020-01-16: Build 1.3.9
+  - Show deep results automatically in Search.
+- 2020-02-06: Build 1.3.10
+  - Search from the keyword box by pressing "Enter".
+  - Removed obsolete "someday" and "done" arguments from CLI "init" command.
+- 2020-02-27: Build 1.3.11
+  - Added a default import context.
+  - Changed to a folder browser when TodoSortFolder import type is selected.
+  - Set the file filter on the import file browser based on chosen import type.
+- 2020-03-12: Build 1.3.12
+  - Ignore duplicate matches if they have different type values.
+- 2020-06-25: Build 1.3.13.0
+  - Changed title-fixing code to use HTML Decode.
+- 2020-08-18: Build 1.3.14.1
+  - Fixed empty "Move To" context menu.
+  - Fixed "Commit" command asking to reload the file.
+- 2020-08-20: Build 1.3.15.0
+  - Title fix updated to reject blank titles.
+- 2020-09-03: Build 1.4.0.0
+  - Updated to Maroon 0.3.
+  - "Copy URL" context command.
+  - Keyboard shortcuts for ranking window.
+- 2020-11-12: Build 1.4.1.0
+  - Updated target framework version numbers.
+  - Added project ID to the "bump" command search parameters.
+  - Allow Enter key to search from any search parameter box.
+  - Fixed problem of being unable to edit an item into a new context.
+  - Fixed potential default to "Search" context for new items.
+- 2020-11-26: Build 1.4.1.1
+  - Reverted to Maroon 0.2.3 to fix commit problems.
+- 2020-11-27: Build 1.4.1.2
+  - Fixed status message display.
+- 2021-02-04: Build 1.4.2
+  - Added a "commit" option on the balance command.
+- 2021-02-11: Build 1.4.3
+  - Added ability to specify "length" for projects, used in "check-chain" command.
+  - Added rebalance functionality to the GUI.
+- 2021-03-03: Build 1.4.3.1
+  - Patched to fix null reference exception on bump operation.
+- 2021-03-18: Build 1.4.4.1
+  - Added "Defer Until..." context menu command for arbitrary defer dates.
+  - Added check for uncommitted changes when looking for data to reload.
+- 2021-04-06: Build 1.4.4.2
+  - Fixed: changes were detected as new when saved, prompting reload.
+- 2021-04-08: Build 1.4.4.3
+  - [FIXED]After committing changes, prompt to reload from disk appears.
+- 2021-10-14: Build 1.4.5.1
+  - Fixed search term immediate binding for faster tag/value refinement.
+  - Fixed an exception when starting with a missing directory.
+  - Changed the wording of the prompt to save changes before the "cleanup" command.
+- 2021-12-16: Build 1.4.6
+  - Added "sort-desc" option for exports.
+  - Removed JSON mapper. I'm not using it.
+- 2022-05-12: Build 1.4.7
+  - Fixed search keyword to trim before applying.
+  - Added "Mask/Unmask" context command.
+- 2022-06-09: Build 1.4.8
+  - Added JSON export format.
+- 2022-06-26: Build 1.4.8.1
+  - Fixed TemplateExporter to include Context name value.
+- 2022-08-11: Build 1.5.0
+  - Upgraded to CommandLineParser v2.9
     - Updated to target .NET 4.8
-* 2022-08-18: Build 1.5.1
-	- Added "sort" and "top" options to the "bump" command.
-	- Fixed summary displaying after every command.
-	- Enable masking on "mask item" action.
-* 2022-09-08: Build 1.5.2
-	- Fixed file change notice persisting after automatic reload.
-* 2022-11-10: Build 1.5.3
-	- Added tag searching to the bump command.
-* 2022-11-24: Build 1.5.3.1
-	- Added some dividers to the File menu for readability.
-* 2022-12-01: Build 1.5.4
-	- Allow "bump" command to auto-select in all circumstances.
-* 2022-12-22: Build 1.5.4.1
-	- Fixed tooltip not updating after title update.
-	- Updated "Mask" behaviour when mask feature is disabled and target item is already marked for masking.
-	- Automatically expand Search panel when selecting Search context, and collapse when navigating away.
-* 2023-01-05: Build 1.5.4.2
-	- Fixed search results not updating in GUI.
-* 2023-01-19: Build 1.5.4.3
-	- Added upvotes for items bumped if no parent is found.
-* 2023-02-09: Build 1.5.4.4
-	- Added upvotes for zero-depth bump targets.
-	- Fixed import bug for split-line titles.
-* 2024-02-01: Build 1.5.4.5
-	- Changed Someday context to show items with return dates first.
+- 2022-08-18: Build 1.5.1
+  - Added "sort" and "top" options to the "bump" command.
+  - Fixed summary displaying after every command.
+  - Enable masking on "mask item" action.
+- 2022-09-08: Build 1.5.2
+  - Fixed file change notice persisting after automatic reload.
+- 2022-11-10: Build 1.5.3
+  - Added tag searching to the bump command.
+- 2022-11-24: Build 1.5.3.1
+  - Added some dividers to the File menu for readability.
+- 2022-12-01: Build 1.5.4
+  - Allow "bump" command to auto-select in all circumstances.
+- 2022-12-22: Build 1.5.4.1
+  - Fixed tooltip not updating after title update.
+  - Updated "Mask" behaviour when mask feature is disabled and target item is already marked for masking.
+  - Automatically expand Search panel when selecting Search context, and collapse when navigating away.
+- 2023-01-05: Build 1.5.4.2
+  - Fixed search results not updating in GUI.
+- 2023-01-19: Build 1.5.4.3
+  - Added upvotes for items bumped if no parent is found.
+- 2023-02-09: Build 1.5.4.4
+  - Added upvotes for zero-depth bump targets.
+  - Fixed import bug for split-line titles.
+- 2024-02-01: Build 1.5.4.5
+  - Changed Someday context to show items with return dates first.
     - Disabled the GUI Rebalance command.
     - Moved item count under the search block for better visibility on long lists.
+- 2024-08-15: Build 1.6.0
+  - Convert to .NET 8 and JSON configuration.

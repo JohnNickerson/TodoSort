@@ -575,14 +575,19 @@ namespace AssimilationSoftware.TodoSort.CLI
             // for each context..
             var quitandsave = false;
             vm.ShowHeadOnly = true;
-            foreach (var con in vm.GetContextNames("inbox", "done"))
+            var contextList = vm.GetContextNames("inbox", "done").ToArray();
+            for (int contextIndex = 0; contextIndex < contextList.Length; contextIndex++)
             {
+                var con = contextList[contextIndex];
                 if (quitandsave) break;
                 // select all items without rank parents
                 vm.SearchSpecification = new ContextSearchSpecification(con).And(rankOptions.GetSearchSpecification(repo));
                 var items = vm.SearchResults.ToArray();
                 var index = new List<int>();
-                for (var dex = 0; dex < items.Count(); dex++) index.Add(dex);
+                for (var dex = 0; dex < items.Count(); dex++) 
+                {
+                    index.Add(dex);
+                }
                 // randomise an index list
                 var rand = new Random();
                 for (var dex = 0; dex < index.Count; dex++)
