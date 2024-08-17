@@ -31,7 +31,7 @@ namespace AssimilationSoftware.TodoSort.CLI
     {
         private static bool verbose = false;
         private static ActionItem selected = null;
-        private static string settingspath = Path.Combine(Directory.GetCurrentDirectory(), ".todosort");
+        private static string settingsPath = Path.Combine(Directory.GetCurrentDirectory(), ".todosort");
         private static bool forceSave = false;
 
         static void Main(string[] args)
@@ -40,8 +40,8 @@ namespace AssimilationSoftware.TodoSort.CLI
             Trace.Listeners.Add(new ConsoleTraceListener());
             Trace.AutoFlush = true;
 #endif
-            var argverb = string.Empty;
-            var f = FolderSettings.LoadFrom(settingspath);
+            var argVerb = string.Empty;
+            var f = FolderSettings.LoadFrom(settingsPath);
             var todomapper = new ActionItemDiskMapper(f.TodoPath);
             var repo = new TodoRepository(todomapper, Path.GetDirectoryName(f.TodoPath), Environment.MachineName);
 
@@ -441,7 +441,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             };
 
             // Save settings.
-            FolderSettings.SaveTo(settingspath, initsettings);
+            FolderSettings.SaveTo(settingsPath, initsettings);
         }
 
         private static void Merge(MergeSubOptions mergeOptions, ViewModel vm, TodoRepository repo)
@@ -450,15 +450,15 @@ namespace AssimilationSoftware.TodoSort.CLI
 
             Console.WriteLine("Confirm child item:");
             vm.SearchTerm = mergeOptions.ChildSearchTerm ?? mergeOptions.TargetSearchTerm;
-            var mergevictim = Disambiguate(vm.SearchResults, repo);
-            if (mergevictim != null)
+            var mergeVictim = Disambiguate(vm.SearchResults, repo);
+            if (mergeVictim != null)
             {
                 Console.WriteLine("Confirm item to merge into:");
                 vm.SearchTerm = mergeOptions.TargetSearchTerm;
-                var combined = Disambiguate(vm.SearchResults.Where(x => x.ID != mergevictim.ID), repo);
-                if (mergevictim != null && combined != null)
+                var combined = Disambiguate(vm.SearchResults.Where(x => x.ID != mergeVictim.ID), repo);
+                if (mergeVictim != null && combined != null)
                 {
-                    vm.Merge(mergevictim, combined);
+                    vm.Merge(mergeVictim, combined);
                     selected = combined;
                 }
             }
@@ -520,48 +520,48 @@ namespace AssimilationSoftware.TodoSort.CLI
             TidyUp(vm, repo);
         }
 
-        private static void OpenTag(OpenTagSubOptions opentagOptions, ViewModel vm, TodoRepository repo)
+        private static void OpenTag(OpenTagSubOptions openTagOptions, ViewModel vm, TodoRepository repo)
         {
-            SetUniversalOptions(opentagOptions, vm);
+            SetUniversalOptions(openTagOptions, vm);
 
-            // Read a tag and pass it through to the "start" argverb. Intended for URLs and file names.
-            vm.SearchSpecification = opentagOptions.SearchSpecification;
-            selected = Disambiguate(vm.SearchResults, repo, !string.IsNullOrEmpty(opentagOptions.ItemId));
+            // Read a tag and pass it through to the "start" argVerb. Intended for URLs and file names.
+            vm.SearchSpecification = openTagOptions.SearchSpecification;
+            selected = Disambiguate(vm.SearchResults, repo, !string.IsNullOrEmpty(openTagOptions.ItemId));
             if (selected != null)
             {
-                if (selected.Tags.ContainsKey(opentagOptions.Tag))
+                if (selected.Tags.ContainsKey(openTagOptions.Tag))
                 {
-                    var tagvalue = selected.Tags[opentagOptions.Tag];
-                    if (opentagOptions.Copy)
+                    var tagValue = selected.Tags[openTagOptions.Tag];
+                    if (openTagOptions.Copy)
                     {
-                        //System.Windows.Forms.Clipboard.SetText(tagvalue);
+                        //System.Windows.Forms.Clipboard.SetText(tagValue);
                         // ^^ This doesn't work.
                     }
                     else
                     {
-                        OpenItemTag(tagvalue);
+                        OpenItemTag(tagValue);
                     }
-                    if (opentagOptions.Rename)
+                    if (openTagOptions.Rename)
                     {
                         Console.WriteLine("What new title should this item have?");
-                        var newtitle = Console.ReadLine();
-                        if (!string.IsNullOrWhiteSpace(newtitle))
+                        var newTitle = Console.ReadLine();
+                        if (!string.IsNullOrWhiteSpace(newTitle))
                         {
-                            vm.Rename(selected, newtitle);
+                            vm.Rename(selected, newTitle);
                         }
                     }
-                    if (opentagOptions.Retag)
+                    if (openTagOptions.Retag)
                     {
                         TagItem(vm, selected);
                     }
-                    if (opentagOptions.MarkAsDone)
+                    if (openTagOptions.MarkAsDone)
                     {
                         vm.MarkDone(null, selected);
                     }
                 }
                 else
                 {
-                    Console.WriteLine("Tag not found: {0}", opentagOptions.Tag);
+                    Console.WriteLine("Tag not found: {0}", openTagOptions.Tag);
                 }
             }
 
@@ -573,13 +573,13 @@ namespace AssimilationSoftware.TodoSort.CLI
             SetUniversalOptions(rankOptions, vm);
 
             // for each context..
-            var quitandsave = false;
+            var quitAndSave = false;
             vm.ShowHeadOnly = true;
             var contextList = vm.GetContextNames("inbox", "done").ToArray();
             for (int contextIndex = 0; contextIndex < contextList.Length; contextIndex++)
             {
                 var con = contextList[contextIndex];
-                if (quitandsave) break;
+                if (quitAndSave) break;
                 // select all items without rank parents
                 vm.SearchSpecification = new ContextSearchSpecification(con).And(rankOptions.GetSearchSpecification(repo));
                 var items = vm.SearchResults.ToArray();
@@ -604,7 +604,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                 }
                 for (var x = 0; x < items.Count() - 1; x += 2)
                 {
-                    if (quitandsave) break;
+                    if (quitAndSave) break;
                     // get vote
                     Console.WriteLine("{0}/{1} ({2}%) complete", x, items.Count(), 100 * x / items.Count());
                     PrintItem(items.ElementAt(index[x]), 1, repo, rankOptions.NSFW);
@@ -629,7 +629,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                             {
                                 case 'y':
                                     // Quit and save.
-                                    quitandsave = true;
+                                    quitAndSave = true;
                                     break;
                                 case 'n':
                                     // Quit without saving.
@@ -690,15 +690,15 @@ namespace AssimilationSoftware.TodoSort.CLI
             TidyUp(vm, repo);
         }
 
-        private static void SetParent(SetParentSubOptions setparentOptions, ViewModel vm, TodoRepository repo)
+        private static void SetParent(SetParentSubOptions setParentOptions, ViewModel vm, TodoRepository repo)
         {
-            SetUniversalOptions(setparentOptions, vm);
+            SetUniversalOptions(setParentOptions, vm);
 
             Console.WriteLine("Confirm child item:");
-            vm.SearchSpecification = setparentOptions.GetChildSearchSpecification(repo);
+            vm.SearchSpecification = setParentOptions.GetChildSearchSpecification(repo);
             var child = Disambiguate(vm.SearchResults, repo);
             Console.WriteLine("Confirm parent item:");
-            vm.SearchSpecification = setparentOptions.GetParentSearchSpecification(repo);
+            vm.SearchSpecification = setParentOptions.GetParentSearchSpecification(repo);
             if (child != null)
             {
                 var parent = Disambiguate(vm.SearchResults.Where(x => x.ID != child.ID), repo);
@@ -706,7 +706,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                 {
                     vm.SetParent(child, parent);
                     Console.WriteLine();
-                    PrintTree(new List<ActionItem> { { child }, { parent } }, false, repo, setparentOptions.NSFW);
+                    PrintTree(new List<ActionItem> { { child }, { parent } }, false, repo, setParentOptions.NSFW);
                 }
                 else
                 {
@@ -717,7 +717,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                     {
                         vm.SetParent(child, null);
                         Console.WriteLine();
-                        PrintTree(new List<ActionItem> { child }, false, repo, setparentOptions.NSFW);
+                        PrintTree(new List<ActionItem> { child }, false, repo, setParentOptions.NSFW);
                     }
                 }
             }
@@ -1239,10 +1239,10 @@ namespace AssimilationSoftware.TodoSort.CLI
             }
         }
 
-        private static void OpenItemTag(string tagvalue)
+        private static void OpenItemTag(string tagValue)
         {
             var p = new System.Diagnostics.Process();
-            p.StartInfo.FileName = tagvalue;
+            p.StartInfo.FileName = tagValue;
             p.Start();
         }
 
