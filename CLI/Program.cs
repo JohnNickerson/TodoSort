@@ -957,12 +957,14 @@ namespace AssimilationSoftware.TodoSort.CLI
         private static void CheckChain(CheckChainOptions chainOptions, ViewModel vm, TodoRepository repo)
         {
             SetUniversalOptions(chainOptions, vm);
+            var problemsFound = 0;
 
             vm.SearchSpecification = chainOptions.GetSearchSpecification(repo);
             // 1. Make sure there is at least one item.
             if (!vm.SearchResults.Any())
             {
                 Console.WriteLine("No items found in the chain.");
+                problemsFound++;
             }
             else
             {
@@ -985,23 +987,32 @@ namespace AssimilationSoftware.TodoSort.CLI
                     if (count == 0)
                     {
                         Console.WriteLine($"Item missing at index {i}");
+                        problemsFound++;
                     }
                     else if (count > 1)
                     {
                         Console.WriteLine($"Too many items with index {i}");
+                        problemsFound++;
                     }
                 }
 
                 if (min == max)
                 {
                     Console.WriteLine("Only one item in chain.");
+                    problemsFound++;
                 }
                 // 3. Find and add items that might belong in the chain.
                 foreach (var excluded in vm.SearchResults.Where(i => !i.Tags.ContainsKey("order") || (!i.Tags.ContainsKey("series") && !i.ProjectId.HasValue)))
                 {
                     Console.WriteLine("Item potentially excluded:");
                     PrintItem(excluded, null, repo, chainOptions.NSFW);
+                    problemsFound++;
                 }
+            }
+            if (chainOptions.PauseOnProblems && problemsFound > 0)
+            {
+                Console.WriteLine("Press a key to continue...");
+                Console.ReadKey();
             }
 
             TidyUp(vm, repo);
