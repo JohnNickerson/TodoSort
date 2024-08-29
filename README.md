@@ -198,7 +198,11 @@ TodoSort is a task list and reading list app with an emphasis on priority. It st
   - Fixed import bug for split-line titles.
 - 2024-02-01: Build 1.5.4.5
   - Changed Someday context to show items with return dates first.
-    - Disabled the GUI Rebalance command.
-    - Moved item count under the search block for better visibility on long lists.
+  - Disabled the GUI Rebalance command.
+  - Moved item count under the search block for better visibility on long lists.
 - 2024-08-15: Build 1.6.0
   - Convert to .NET 8 and JSON configuration.
+- 2024-08-29: Build 1.6.1
+  - Fix error with "rank" command in CLI.
+  - Correct some variable capitalisations to handle code spell-check issues.
+  - Add "pause-on-problem" option to speed up "check-chain" batch processing.

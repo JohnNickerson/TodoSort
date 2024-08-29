@@ -1,17 +1,15 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <ImplicitUsings>disable</ImplicitUsings>
   </PropertyGroup>
-
   <PropertyGroup>
     <AssemblyTitle>Core</AssemblyTitle>
     <Company>Assimilation Software</Company>
     <Product>TodoSort</Product>
     <Copyright>Copyright © Assimilation Software 2023</Copyright>
-    <Version>1.5.4.4</Version>
-    <FileVersion>1.5.4.4</FileVersion>
+    <Version>1.6.1.0</Version>
+    <FileVersion>1.6.1.0</FileVersion>
     <RootNamespace>AssimilationSoftware.TodoSort.Core</RootNamespace>
     <AssemblyName>TodoSort.Core</AssemblyName>
   </PropertyGroup>

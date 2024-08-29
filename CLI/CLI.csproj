@@ -1,5 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net8.0</TargetFramework>
@@ -9,8 +8,8 @@
     <Company>Assimilation Software</Company>
     <Product>TodoSort</Product>
     <Copyright>Copyright © Assimilation Software 2024</Copyright>
-    <Version>1.6.0.0</Version>
-    <FileVersion>1.6.0.0</FileVersion>
+    <Version>1.6.1.0</Version>
+    <FileVersion>1.6.1.0</FileVersion>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="CommandLine, Version=2.9.1.0, Culture=neutral, PublicKeyToken=5a870481e358d379, processorArchitecture=MSIL">
@@ -86,16 +85,13 @@
     </Reference>
     <Reference Include="System.Xml" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\Core\Core.csproj">
       <Project>{73fc6562-d6b8-422d-bdf6-b7dcf9dc9850}</Project>
       <Name>Core</Name>
     </ProjectReference>
   </ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="System.Security.Permissions" Version="8.0.0" />
   </ItemGroup>
-
 </Project>
