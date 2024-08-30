@@ -411,7 +411,14 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
 
         private void OpenUrlExecuted(string url)
         {
-            Process.Start(new ProcessStartInfo(url));
+            try
+            {
+                System.Diagnostics.Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
+            }
+            catch (Exception ex)
+            {
+                System.Windows.MessageBox.Show($"Could not open URL: {ex.Message}");
+            }
         }
 
         private void BumpExecuted()
