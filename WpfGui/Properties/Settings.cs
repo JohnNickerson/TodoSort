@@ -6,7 +6,7 @@ using System.ComponentModel;
 namespace AssimilationSoftware.TodoSort.WpfGui.Properties {
     
     
-    internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
+    internal sealed partial class Settings {
         
         private static Settings defaultInstance = new Settings();
         
@@ -54,12 +54,12 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Properties {
             System.Text.StringBuilder json = new();
             json.AppendLine("{");
             json.AppendLine("  \"Default\":");
-            json.AppendLine(Newtonsoft.Json.JsonConvert.SerializeObject(Default));
+            json.AppendLine(Newtonsoft.Json.JsonConvert.SerializeObject(Default, Newtonsoft.Json.Formatting.Indented));
             json.AppendLine("}");
             File.WriteAllText(jsonPath, json.ToString());
         }
 
-        private string _todo = Environment.ExpandEnvironmentVariables("%OneDrive%\\Thoughts\\todo.txt");
+        private string _todo;
         public string Todo {
             get {
                 return _todo;
@@ -69,7 +69,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Properties {
             }
         }
         
-        private bool _reconfigure = true;
+        private bool _reconfigure;
         public bool Reconfigure {
             get {
                 return _reconfigure;
@@ -89,7 +89,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Properties {
             }
         }
         
-        private bool _maskNsfwItems = false;
+        private bool _maskNsfwItems;
         public bool MaskNsfwItems {
             get {
                 return _maskNsfwItems;

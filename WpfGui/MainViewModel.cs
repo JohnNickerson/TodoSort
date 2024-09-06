@@ -89,12 +89,15 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             FileName = filename;
 
             // Store the file name as the most recent one opened.
+            _recentFilesList = new ObservableCollection<string>(Settings.Default.RecentFiles);
             RecentFileList.Remove(filename);
             RecentFileList.Insert(0, filename);
             while (RecentFileList.Count > 10)
             {
                 RecentFileList.RemoveAt(10);
             }
+            Settings.Default.RecentFiles = _recentFilesList.ToArray();
+            _recentFilesList = null;
             SaveSettings();
 
             await Task.Run(() =>
@@ -617,6 +620,8 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         private void SaveLastOpenedFileMetaData(string fileName)
         {
             _lastOpenedFile = new TodoFileInfo(fileName);
+            Settings.Default.Todo = fileName;
+            SaveSettings();
         }
 
         public void RefreshContexts()

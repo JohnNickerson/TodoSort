@@ -19,7 +19,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         {
             InitializeComponent();
             // TODO: This goes in App.xaml.cs
-            var recentFile = Settings.Default.RecentFiles?.FirstOrDefault();
+            var recentFile = Settings.Default.Todo;
             _vm = new MainViewModel(recentFile);
             _vm.Window = this;
             DataContext = _vm;

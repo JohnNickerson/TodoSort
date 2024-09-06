@@ -206,3 +206,5 @@ TodoSort is a task list and reading list app with an emphasis on priority. It st
   - Fix error with "rank" command in CLI.
   - Correct some variable capitalisations to handle code spell-check issues.
   - Add "pause-on-problem" option to speed up "check-chain" batch processing.
+- 2024-08-30: Build 1.6.1.1
+  - Fix problem opening URLs in GUI.
