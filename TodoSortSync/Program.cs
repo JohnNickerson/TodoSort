@@ -54,16 +54,17 @@ class Program
             // }
             // await client.Delete(item);
             Console.WriteLine($"Removing from archive: {item.ID} - {item.Title}");
-            bool isSuccess = await client.Delete(item);
+            bool isSuccess = await client.Delete(item.ID);
         }
-        client.AfterRequest = responseString =>
-        {
-            Console.WriteLine("Raw JSON response is: " + responseString);
-        };
+        // client.AfterRequest = responseString =>
+        // {
+        //     Console.WriteLine("Raw JSON response is: " + responseString);
+        // };
         Console.WriteLine("Press a key to continue...");
         Console.ReadKey();
+        Console.WriteLine();
         // 2. Import all Pocket items to TodoSort.
-        var allItems = await client.Get();
+        var allItems = await client.Get(RetrieveFilter.Unread);
         if (!Directory.Exists(savePath))
         {
             Directory.CreateDirectory(savePath);
@@ -127,7 +128,7 @@ class Program
                     { "pocketId", item.ID }
                 }
         };
-        Debug.WriteLine($"TODO: Check {actionItem.ID}:{actionItem.Title} in save path");
+        Console.WriteLine($"Added {actionItem.ID}:{actionItem.Title}");
         repository.Create(actionItem);
         // 3. Archive all items in Pocket.
         bool isSuccess = archiveOnSuccess ? await client.Archive(item) : true;
@@ -161,6 +162,7 @@ class Program
             }
         }
     }
+
     static async Task<Dictionary<string, string>> GetRequestTokenAsync(HttpClient httpClient, string consumerKey)
     {
         var content = new StringContent($"consumer_key={consumerKey}&redirect_uri=dummy", Encoding.UTF8, "application/x-www-form-urlencoded");
