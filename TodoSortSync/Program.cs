@@ -18,10 +18,10 @@ class Program
 {
     static async Task Main()
     {
-        // Replace with your Pocket API consumer key and access token
+        // TodoSort Pocket API consumer key
         string consumerKey = "103918-ef23adaea7e86b894500de8";
 
-        PocketClient client = new PocketClient(consumerKey, callbackUri: "http://www.google.com/");
+        PocketClient client = new PocketClient(consumerKey, callbackUri: "https://getpocket.com/saves");
         string requestCode = await client.GetRequestCode();
 
         if (string.IsNullOrEmpty(Settings.Default.AccessCode))
@@ -32,7 +32,7 @@ class Program
 
             PocketUser user = await client.GetUser(requestCode);
 
-            string accessToken = user.Code; // TODO: Sign in properly.
+            string accessToken = user.Code;
             Settings.Default.AccessCode = accessToken;
             Settings.Default.Save();
         }
@@ -161,48 +161,5 @@ class Program
                 throw;
             }
         }
-    }
-
-    static async Task<Dictionary<string, string>> GetRequestTokenAsync(HttpClient httpClient, string consumerKey)
-    {
-        var content = new StringContent($"consumer_key={consumerKey}&redirect_uri=dummy", Encoding.UTF8, "application/x-www-form-urlencoded");
-        var response = await httpClient.PostAsync("https://getpocket.com/v3/oauth/request", content);
-        response.EnsureSuccessStatusCode();
-
-        var responseContent = await response.Content.ReadAsStringAsync();
-        return ParseQueryString(responseContent);
-    }
-
-    static async Task AuthorizeRequestTokenAsync(string consumerKey, string requestToken)
-    {
-        Console.WriteLine($"Authorize the following URL: https://getpocket.com/auth/authorize?request_token={requestToken}&redirect_uri=dummy");
-
-        // Wait for user input to continue after authorization
-        Console.WriteLine("Press Enter after authorization...");
-        Console.ReadLine();
-    }
-
-    static async Task<Dictionary<string, string>> GetAccessTokenAsync(HttpClient httpClient, string consumerKey, string requestToken)
-    {
-        var content = new StringContent($"consumer_key={consumerKey}&code={requestToken}", Encoding.UTF8, "application/x-www-form-urlencoded");
-        var response = await httpClient.PostAsync("https://getpocket.com/v3/oauth/authorize", content);
-        response.EnsureSuccessStatusCode();
-
-        var responseContent = await response.Content.ReadAsStringAsync();
-        return ParseQueryString(responseContent);
-    }
-
-    static Dictionary<string, string> ParseQueryString(string queryString)
-    {
-        var parameters = new Dictionary<string, string>();
-        var pairs = queryString.Split('&');
-
-        foreach (var pair in pairs)
-        {
-            var keyValue = pair.Split('=');
-            parameters.Add(keyValue[0], keyValue[1]);
-        }
-
-        return parameters;
     }
 }
