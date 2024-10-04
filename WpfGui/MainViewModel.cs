@@ -21,7 +21,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
     public class MainViewModel : ViewModelBase
     {
         #region Fields
-
+        const string _defaultContext = "inbox";
         private Context _selectedContext;
         private Context _searchResultsContext;
         private List<Context> _contexts;
@@ -39,6 +39,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         private RelayCommand _importCommand;
         private RelayCommand _closeCommand;
         private RelayCommand _addItemCommand;
+        private RelayCommand _addUrlCommand;
         private RelayCommand _openFileCommand;
         private RelayCommand _saveFileCommand;
         private RelayCommand _applySearchCommand;
@@ -142,14 +143,14 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             {
                 if (string.IsNullOrEmpty(i.Context))
                 {
-                    i.Context = "inbox";
+                    i.Context = _defaultContext;
                     _api.Update(i);
                 }
             }
 
             // Process pending items for any to return to the main list.
             _api.SomedaySearchSpecification = new TickleDateSearchSpecification(null, DateTime.Today);
-            _api.Undefer("inbox", _api.SomedaySearchResults.ToArray());
+            _api.Undefer(_defaultContext, _api.SomedaySearchResults.ToArray());
 
             // Check for out-of-order chain items.
             foreach (var headItem in Items.ToArray())
@@ -349,7 +350,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             OnPropertyChanged(nameof(Items));
         }
 
-        public void Undo(ActionItem item, string context = "inbox")
+        public void Undo(ActionItem item, string context = _defaultContext)
         {
             _api.Undo(context, item);
             OnPropertyChanged(nameof(Items));
@@ -395,7 +396,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
 
         public void Undefer(ActionItem item)
         {
-            _api.Undefer("inbox", item);
+            _api.Undefer(_defaultContext, item);
             OnPropertyChanged(nameof(Items));
             OnPropertyChanged(nameof(Contexts));
         }
@@ -404,14 +405,9 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         {
             // Show the Edit view.
             var editWindow = new EditItemView();
-            var selectedContextTitle = SelectedContext?.Title;
-            if (selectedContextTitle == null || selectedContextTitle.Equals("Search", StringComparison.CurrentCultureIgnoreCase))
-            {
-                selectedContextTitle = "inbox";
-            }
             var item = new ActionItem
             {
-                Context = selectedContextTitle
+                Context = SelectedContext?.IsSearch ?? false ? SelectedContext?.Title : _defaultContext
             };
             var editVm = new EditViewModel(this, new ActionViewItem(item, this), editWindow);
             editWindow.DataContext = editVm;
@@ -430,6 +426,28 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                 {
                     item.TickleDate = editVm.TickleDate;
                 }
+                _api.AddItem(item);
+                OnPropertyChanged(nameof(Items));
+                OnPropertyChanged(nameof(Contexts));
+            }
+        }
+
+        private void AddUrlExecuted()
+        {
+            var addWindow = new AddUrlView();
+            var item = new ActionItem
+            {
+                Context = SelectedContext?.IsSearch ?? false ? SelectedContext?.Title : _defaultContext
+            };
+            var addVm = new AddUrlViewModel(this, new ActionViewItem(item, this), addWindow);
+            addWindow.DataContext = addVm;
+            addWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            addWindow.Owner = Window;
+            var result = addWindow.ShowDialog();
+            if (result.HasValue && result.Value)
+            {
+                item.Title = string.IsNullOrEmpty(addVm.Title) ? addVm.Url : addVm.Title;
+                item.Tags = new Dictionary<string, string> { { "url", addVm.Url } };
                 _api.AddItem(item);
                 OnPropertyChanged(nameof(Items));
                 OnPropertyChanged(nameof(Contexts));
@@ -803,7 +821,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         private ObservableCollection<string> _recentFilesList;
         public ObservableCollection<string> RecentFileList
         {
-            get => _recentFilesList ?? ( _recentFilesList= new ObservableCollection<string>(Settings.Default.RecentFiles));
+            get => _recentFilesList ?? (_recentFilesList = new ObservableCollection<string>(Settings.Default.RecentFiles));
             set
             {
                 _recentFilesList = value;
@@ -1011,6 +1029,8 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         public RelayCommand CloseCommand => _closeCommand ?? (_closeCommand = new RelayCommand(CloseExecute));
 
         public RelayCommand AddItemCommand => _addItemCommand ?? (_addItemCommand = new RelayCommand(AddExecuted));
+
+        public RelayCommand AddUrlCommand => _addUrlCommand ?? (_addUrlCommand = new RelayCommand(AddUrlExecuted));
 
         public RelayCommand OpenFileCommand => _openFileCommand ?? (_openFileCommand = new RelayCommand(OpenCommandExecuted));
 

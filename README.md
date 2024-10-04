@@ -208,3 +208,5 @@ TodoSort is a task list and reading list app with an emphasis on priority. It st
   - Add "pause-on-problem" option to speed up "check-chain" batch processing.
 - 2024-08-30: Build 1.6.1.1
   - Fix problem opening URLs in GUI.
+- 2024-09-06: Build 1.6.1.2
+  - Fix reopening most recent file.

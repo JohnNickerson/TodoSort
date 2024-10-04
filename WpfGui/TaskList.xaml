@@ -54,7 +54,7 @@
             </MenuItem>
             <MenuItem Header="_Edit">
                 <MenuItem Header="_Add Item" Command="{Binding AddItemCommand}"/>
-                <MenuItem Header="Add URL" Command="{Binding AddUrlCommand}" IsEnabled="False" />
+                <MenuItem Header="Add URL" Command="{Binding AddUrlCommand}" />
                 <MenuItem Header="_Rank" Command="{Binding RankCommand}" />
                 <MenuItem Header="_Clean up" Command="{Binding CleanupCommand}" ToolTip="Assign missing contexts, undefer due someday items, fix chains, etc."/>
             </MenuItem>

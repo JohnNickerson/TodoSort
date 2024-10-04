@@ -75,6 +75,8 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
             }
         }
 
+        public bool IsSearch => Title.Equals("Search", StringComparison.CurrentCultureIgnoreCase);
+
         public List<Context> AllOtherContexts { get; set; }
 
         public MainViewModel ParentVm { get; set; }

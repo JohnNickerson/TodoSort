@@ -7,6 +7,10 @@ using PocketSharp;
 using AssimilationSoftware.Maroon.Model;
 using AssimilationSoftware.TodoSort.Core.Data;
 using AssimilationSoftware.Maroon.Repositories;
+using PocketSharp.Models;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
 
 namespace AssimilationSoftware.TodoSort.Sync;
 
@@ -17,15 +21,23 @@ class Program
         // Replace with your Pocket API consumer key and access token
         string consumerKey = "103918-ef23adaea7e86b894500de8";
 
-        PocketClient client = new PocketClient(consumerKey);
+        PocketClient client = new PocketClient(consumerKey, callbackUri: "http://www.google.com/");
         string requestCode = await client.GetRequestCode();
-        Uri authenticationUri = client.GenerateAuthenticationUri();
-        OpenUrl(authenticationUri);
-        Console.WriteLine("Sign in, then press a key to continue here.");
-        PocketUser user = await client.GetUser();
 
-        string accessToken = user.AccessToken; // TODO: Sign in properly.
-        var savePath = @"C:\Users\hoopl\OneDrive\Reading\"; // Environment.ExpandEnvironmentVariables(@"%OneDrive%\Reading\");
+        if (string.IsNullOrEmpty(Settings.Default.AccessCode))
+        {
+            Uri authenticationUri = client.GenerateAuthenticationUri();
+            OpenUrl(authenticationUri.AbsoluteUri);
+            Console.WriteLine("Sign in, then press a key to continue here.");
+
+            PocketUser user = await client.GetUser(requestCode);
+
+            string accessToken = user.Code; // TODO: Sign in properly.
+            Settings.Default.AccessCode = accessToken;
+            Settings.Default.Save();
+        }
+        client.AccessCode = Settings.Default.AccessCode;
+        var savePath = Environment.ExpandEnvironmentVariables(@"%OneDrive%\Reading\");
         var todoMapper = new AssimilationSoftware.Maroon.Mappers.Text.ActionItemDiskMapper(savePath);
         var repository = new TodoRepository(todoMapper, savePath, Environment.MachineName);
 
@@ -44,6 +56,10 @@ class Program
             Console.WriteLine($"Removing from archive: {item.ID} - {item.Title}");
             bool isSuccess = await client.Delete(item);
         }
+        client.AfterRequest = responseString =>
+        {
+            Console.WriteLine("Raw JSON response is: " + responseString);
+        };
         Console.WriteLine("Press a key to continue...");
         Console.ReadKey();
         // 2. Import all Pocket items to TodoSort.
@@ -69,26 +85,15 @@ class Program
             // {
             //      add to TodoSort including a "pocketId:{item.ID}" tag.
             // }
-            if (item.Title.Contains("\n"))
+            if (item?.Title == null && item?.Uri == null)
             {
-                item.Title = item.Title.Split("\n")[0];
+                Console.WriteLine($"Skipping item with no URL ({item.ID})");
+                continue;
             }
-            ActionItem actionItem = new()
+            else
             {
-                ID = Guid.NewGuid(),
-                Title = string.IsNullOrWhiteSpace(item.Title) ? item.Uri.AbsoluteUri : item.Title,
-                Context = "pocket",
-                Tags = new()
-                {
-                    { "url", item.Uri.AbsoluteUri },
-                    { "pocketId", item.ID }
-                }
-            };
-            Console.WriteLine($"TODO: Check {actionItem.ID}:{actionItem.Title} in {savePath}");
-            repository.Create(actionItem);
-            // 3. Archive all items in Pocket.
-            bool isSuccess = await client.Archive(item);
-            if (isSuccess) {repository.SaveChanges();}
+                await CreateItemAsync(repository, client, item, true);
+            }
         }
         repository.SaveChanges();
 
@@ -105,34 +110,57 @@ class Program
         return;
     }
 
-static void OpenUrl(string url)
-{
-    try
+    private static async Task CreateItemAsync(TodoRepository repository, PocketClient client, PocketSharp.Models.PocketItem item, bool archiveOnSuccess)
     {
-        Process.Start(url);
+        if (item.Title.Contains("\n"))
+        {
+            item.Title = item.Title.Split("\n")[0];
+        }
+        ActionItem actionItem = new()
+        {
+            ID = Guid.NewGuid(),
+            Title = string.IsNullOrWhiteSpace(item.Title) ? item.Uri.AbsoluteUri : item.Title.Split("\n")[0],
+            Context = "pocket",
+            Tags = new()
+                {
+                    { "url", item.Uri.AbsoluteUri },
+                    { "pocketId", item.ID }
+                }
+        };
+        Debug.WriteLine($"TODO: Check {actionItem.ID}:{actionItem.Title} in save path");
+        repository.Create(actionItem);
+        // 3. Archive all items in Pocket.
+        bool isSuccess = archiveOnSuccess ? await client.Archive(item) : true;
+        if (isSuccess) { repository.SaveChanges(); }
     }
-    catch
+
+    static void OpenUrl(string url)
     {
-        // hack because of this: https://github.com/dotnet/corefx/issues/10361
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        try
         {
-            url = url.Replace("&", "^&");
-            Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
+            Process.Start(url);
         }
-        else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+        catch
         {
-            Process.Start("xdg-open", url);
-        }
-        else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-        {
-            Process.Start("open", url);
-        }
-        else
-        {
-            throw;
+            // hack because of this: https://github.com/dotnet/corefx/issues/10361
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                Process.Start("xdg-open", url);
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                Process.Start("open", url);
+            }
+            else
+            {
+                throw;
+            }
         }
     }
-}
     static async Task<Dictionary<string, string>> GetRequestTokenAsync(HttpClient httpClient, string consumerKey)
     {
         var content = new StringContent($"consumer_key={consumerKey}&redirect_uri=dummy", Encoding.UTF8, "application/x-www-form-urlencoded");

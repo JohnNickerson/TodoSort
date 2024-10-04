@@ -7,8 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "..\Core\Core.csproj
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TodoSortSync", "TodoSortSync.csproj", "{14D9612E-84E3-42C3-8570-7D140F83B686}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Maroon", "..\..\Maroon\Maroon\Maroon.csproj", "{C88D4BBE-213E-44DB-9609-C973B66A964D}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,10 +21,6 @@ Global
 		{14D9612E-84E3-42C3-8570-7D140F83B686}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{14D9612E-84E3-42C3-8570-7D140F83B686}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{14D9612E-84E3-42C3-8570-7D140F83B686}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C88D4BBE-213E-44DB-9609-C973B66A964D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C88D4BBE-213E-44DB-9609-C973B66A964D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C88D4BBE-213E-44DB-9609-C973B66A964D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C88D4BBE-213E-44DB-9609-C973B66A964D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
