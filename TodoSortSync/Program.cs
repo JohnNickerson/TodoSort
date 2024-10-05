@@ -113,10 +113,6 @@ class Program
 
     private static async Task CreateItemAsync(TodoRepository repository, PocketClient client, PocketSharp.Models.PocketItem item, bool archiveOnSuccess)
     {
-        if (item.Title.Contains("\n"))
-        {
-            item.Title = item.Title.Split("\n")[0];
-        }
         ActionItem actionItem = new()
         {
             ID = Guid.NewGuid(),
@@ -128,7 +124,7 @@ class Program
                     { "pocketId", item.ID }
                 }
         };
-        Console.WriteLine($"Added {actionItem.ID}:{actionItem.Title}");
+        Console.WriteLine($"Adding {actionItem.ID}:{actionItem.Title}");
         repository.Create(actionItem);
         // 3. Archive all items in Pocket.
         bool isSuccess = archiveOnSuccess ? await client.Archive(item) : true;

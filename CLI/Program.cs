@@ -7,6 +7,8 @@ using AssimilationSoftware.TodoSort.Core.Export;
 using AssimilationSoftware.TodoSort.Core.Import;
 using AssimilationSoftware.TodoSort.Core.Search;
 using CommandLine;
+using PocketSharp;
+using PocketSharp.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -18,6 +20,9 @@ using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
 
 namespace AssimilationSoftware.TodoSort.CLI
 {
@@ -88,6 +93,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                     .WithParsed<SummaryOptions>(opts => Summary(opts, vm, repo))
                     .WithParsed<UnrankAllOptions>(opts => UnrankAll(opts, vm, repo))
                     .WithParsed<UnRankOptions>(opts => Unrank(opts, vm, repo))
+                    .WithParsed<PocketSyncOptions>(opts => NotImplemented())
                     .WithNotParsed(errs => HandleErrors(errs));
         }
 
@@ -584,7 +590,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                 vm.SearchSpecification = new ContextSearchSpecification(con).And(rankOptions.GetSearchSpecification(repo));
                 var items = vm.SearchResults.ToArray();
                 var index = new List<int>();
-                for (var dex = 0; dex < items.Count(); dex++) 
+                for (var dex = 0; dex < items.Count(); dex++)
                 {
                     index.Add(dex);
                 }
@@ -792,6 +798,103 @@ namespace AssimilationSoftware.TodoSort.CLI
             }
 
             TidyUp(vm, repo);
+        }
+
+        private static async void SyncWithPocket(PocketSyncOptions syncOptions, ViewModel vm, TodoRepository repo, FolderSettings settings, string settingsPath)
+        {
+            // 0. Authorise.
+            // TodoSort Pocket API consumer key
+            string consumerKey = "103918-ef23adaea7e86b894500de8";
+
+            PocketClient client = new PocketClient(consumerKey, callbackUri: "https://getpocket.com/saves");
+            string requestCode = await client.GetRequestCode();
+
+            if (string.IsNullOrEmpty(settings.AccessCode))
+            {
+                Uri authenticationUri = client.GenerateAuthenticationUri();
+                OpenUrl(authenticationUri.AbsoluteUri);
+                Console.WriteLine("Sign in, then press a key to continue here.");
+
+                PocketUser user = await client.GetUser(requestCode);
+
+                string accessToken = user.Code;
+                settings.AccessCode = accessToken;
+                FolderSettings.SaveTo(settingsPath, settings);
+            }
+            client.AccessCode = settings.AccessCode;
+
+            // 1. Clean archive
+            if (syncOptions.ClearArchive)
+            {
+                var archivedItems = await client.Get(RetrieveFilter.Archive);
+                foreach (var item in archivedItems)
+                {
+                    Console.WriteLine($"Removing from Pocket archive: {item.ID} - {item.Title}");
+                    bool isSuccess = await client.Delete(item.ID);
+                }
+            }
+
+            // 2. Import
+            if (syncOptions.Import)
+            {
+                var allItems = await client.Get(RetrieveFilter.Unread);
+                foreach (var item in allItems)
+                {
+                    if (item?.Title == null && item?.Uri == null)
+                    {
+                        Console.WriteLine($"Skipping item with no URL ({item.ID})");
+                        continue;
+                    }
+
+                    ActionItem actionItem = new()
+                    {
+                        ID = Guid.NewGuid(),
+                        Title = string.IsNullOrWhiteSpace(item.Title) ? item.Uri.AbsoluteUri : item.Title.Split("\n")[0],
+                        Context = "pocket",
+                        Tags = new()
+                        {
+                            { "url", item.Uri.AbsoluteUri },
+                            { "pocketId", item.ID }
+                        }
+                    };
+                    Console.WriteLine($"Adding {actionItem.ID} - {actionItem.Title}");
+                    repo.Create(actionItem);
+                    // 3. Archive all items in Pocket.
+                    bool isSuccess = await client.Archive(item);
+                    if (isSuccess) { repo.SaveChanges(); }
+                }
+                repo.SaveChanges();
+            }
+
+            // 3. Export (not yet implemented)
+        }
+
+        static void OpenUrl(string url)
+        {
+            try
+            {
+                System.Diagnostics.Process.Start(url);
+            }
+            catch
+            {
+                // hack because of this: https://github.com/dotnet/corefx/issues/10361
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                {
+                    System.Diagnostics.Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
+                }
+                else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                {
+                    System.Diagnostics.Process.Start("xdg-open", url);
+                }
+                else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                {
+                    System.Diagnostics.Process.Start("open", url);
+                }
+                else
+                {
+                    throw;
+                }
+            }
         }
 
         private static void TagAll(TagAllSubOptions tagAllOptions, ViewModel vm, TodoRepository repo)

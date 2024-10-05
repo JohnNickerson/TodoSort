@@ -12,6 +12,7 @@ namespace AssimilationSoftware.TodoSort.CLI
         private string todoPath;
 
         public string TodoPath { get => Environment.ExpandEnvironmentVariables(todoPath); set => todoPath = value; }
+        public string AccessCode { get; set; }
 
         public static FolderSettings LoadFrom(string path)
         {
@@ -25,6 +26,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                 }
                 catch
                 {
+                    // Backwards compatibility: old INI format.
                     var result = new FolderSettings();
                     foreach (string line in lines)
                     {
@@ -53,7 +55,7 @@ namespace AssimilationSoftware.TodoSort.CLI
 
         public static void SaveTo(string path, FolderSettings tosave)
         {
-            File.WriteAllText(path, Newtonsoft.Json.JsonConvert.SerializeObject(tosave));
+            File.WriteAllText(path, Newtonsoft.Json.JsonConvert.SerializeObject(tosave, Newtonsoft.Json.Formatting.Indented));
         }
     }
 }
