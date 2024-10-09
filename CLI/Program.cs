@@ -93,7 +93,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                     .WithParsed<SummaryOptions>(opts => Summary(opts, vm, repo))
                     .WithParsed<UnrankAllOptions>(opts => UnrankAll(opts, vm, repo))
                     .WithParsed<UnRankOptions>(opts => Unrank(opts, vm, repo))
-                    .WithParsed<PocketSyncOptions>(opts => NotImplemented())
+                    .WithParsed<PocketSyncOptions>(opts => SyncWithPocket(opts, vm, repo, f, settingsPath))
                     .WithNotParsed(errs => HandleErrors(errs));
         }
 
@@ -802,15 +802,30 @@ namespace AssimilationSoftware.TodoSort.CLI
 
         private static async void SyncWithPocket(PocketSyncOptions syncOptions, ViewModel vm, TodoRepository repo, FolderSettings settings, string settingsPath)
         {
+            Trace.AutoFlush = true;
             // 0. Authorise.
+            Debug.WriteLine("--- Authorising ---");
             // TodoSort Pocket API consumer key
             string consumerKey = "103918-ef23adaea7e86b894500de8";
 
-            PocketClient client = new PocketClient(consumerKey, callbackUri: "https://getpocket.com/saves");
-            string requestCode = await client.GetRequestCode();
-
+            PocketClient client = null;
             if (string.IsNullOrEmpty(settings.AccessCode))
             {
+                client = new PocketClient(consumerKey, callbackUri: "https://getpocket.com/saves");
+                Debug.Write("Getting request code: ");
+                string requestCode = string.Empty;
+                try
+                {
+                    requestCode = await client.GetRequestCode();
+                    Debug.WriteLine(requestCode);
+                }
+                catch (Exception ex)
+                {
+                    Trace.WriteLine("Cannot get request code.");
+                    Debug.WriteLine(ex.Message);
+                }
+
+                Debug.WriteLine("User access code not set. Opening website to authorise access to Pocket.");
                 Uri authenticationUri = client.GenerateAuthenticationUri();
                 OpenUrl(authenticationUri.AbsoluteUri);
                 Console.WriteLine("Sign in, then press a key to continue here.");
@@ -820,12 +835,22 @@ namespace AssimilationSoftware.TodoSort.CLI
                 string accessToken = user.Code;
                 settings.AccessCode = accessToken;
                 FolderSettings.SaveTo(settingsPath, settings);
+                client.AccessCode = settings.AccessCode;
             }
-            client.AccessCode = settings.AccessCode;
+            else
+            {
+                client = new PocketClient(consumerKey, accessCode: settings.AccessCode);
+            }
+            if (string.IsNullOrEmpty(settings.AccessCode))
+            {
+            }
+            Debug.WriteLine("Authorisation and authentication complete.");
+            Debug.WriteLine(string.Empty);
 
             // 1. Clean archive
             if (syncOptions.ClearArchive)
             {
+                Trace.WriteLine("Clearing Pocket archive...");
                 var archivedItems = await client.Get(RetrieveFilter.Archive);
                 foreach (var item in archivedItems)
                 {
@@ -1427,26 +1452,26 @@ namespace AssimilationSoftware.TodoSort.CLI
 
         private static void TagItem(ViewModel vm, ActionItem selected)
         {
-            string tagname;
+            string? tagName;
             do
             {
                 Console.WriteLine("What should this new tag be called? (ENTER to quit)");
-                tagname = Console.ReadLine().ToLower().Trim();
-                if (tagname.Length > 0)
+                tagName = Console.ReadLine()?.ToLower()?.Trim();
+                if (!string.IsNullOrEmpty(tagName))
                 {
                     Console.WriteLine("What is the value of the tag?");
                     var value = Console.ReadLine();
-                    if (value.Trim().Length > 0)
+                    if (!string.IsNullOrWhiteSpace(value))
                     {
-                        vm.SetTag(selected, tagname, value);
+                        vm.SetTag(selected, tagName, value);
                     }
-                    else if (selected.Tags.ContainsKey(tagname))
+                    else if (selected.Tags.ContainsKey(tagName))
                     {
-                        vm.RemoveTag(selected, tagname);
+                        vm.RemoveTag(selected, tagName);
                     }
                     Console.WriteLine();
                 }
-            } while (tagname.Length > 0);
+            } while (!string.IsNullOrEmpty(tagName));
         }
 
         private static IOrderedEnumerable<ActionItem> ApplySort(string sorttag, IEnumerable<ActionItem> list, SortOrder sort = SortOrder.Ascending)
