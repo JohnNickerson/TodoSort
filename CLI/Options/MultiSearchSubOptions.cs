@@ -15,43 +15,43 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
     {
         // Sort
         [Option("sort", HelpText = "The name of a tag to sort by.")]
-        public string SortTag { get; set; }
+        public string? SortTag { get; set; }
 
         // Context
         [Option('c', "context", HelpText = "The context to search in.")]
-        public string Context { get; set; }
+        public string? Context { get; set; }
 
         // Partial prefix
         [Option('n', "name", HelpText = "Partial name to search for.")]
-        public string Title { get; set; }
+        public string? Title { get; set; }
 
         // Keyword (full-text search)
         [Option('s', "search", HelpText = "Full-text search keyword.")]
-        public string Keyword { get; set; }
+        public string? Keyword { get; set; }
 
         // Tag name
         [Option('t', "tag", HelpText = "Tag name.")]
-        public string TagName { get; set; }
+        public string? TagName { get; set; }
 
         // Tag value
         [Option('u', "value", HelpText = "Tag value.")]
-        public string TagValue { get; set; }
+        public string? TagValue { get; set; }
 
         // Partial note
         [Option('o', "note", HelpText = "Partial contents of a note.")]
-        public string Note { get; set; }
+        public string? Note { get; set; }
 
         // Partial ID
         [Option('i', "id", HelpText = "The beginning of an item ID.")]
-        public string ID { get; set; }
+        public string? ID { get; set; }
 
         // Project ID
         [Option("project", HelpText = "The beginning of a project ID.")]
-        public string ProjectID { get; set; }
+        public string? ProjectID { get; set; }
 
         // Priority parent ID
         [Option("parent", HelpText = "The beginning of a priority parent ID.")]
-        public string PriorityParentID { get; set; }
+        public string? PriorityParentID { get; set; }
 
         // Minimum depth }
         [Option("mindepth", HelpText = "The minimum priority depth for results.", Default = 0)]

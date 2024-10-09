@@ -13,7 +13,7 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
     public class AdvancedSearchOptions : UniversalOptions
     {
         [Option('s', "search", HelpText = "Search using Lisp-like complex expressions.", Required = true)]
-        public string Expression { get; set; }
+        public string? Expression { get; set; }
 
         public ISearchSpecification<ActionItem> SearchSpecification
         {

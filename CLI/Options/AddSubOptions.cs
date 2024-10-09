@@ -11,12 +11,12 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
     public class AddSubOptions
     {
         [Option('n', "name", HelpText = "The name of the new action.", Required = true)]
-        public string ActionTitle { get; set; }
+        public string? ActionTitle { get; set; }
 
         [Option('c', "context", HelpText = "The context for the new action.", Default = "inbox")]
-        public string Context { get; set; }
+        public string? Context { get; set; }
 
         [Option('o', "note", HelpText = "A note to add to the new item.")]
-        public string Note { get; set; }
+        public string? Note { get; set; }
     }
 }

@@ -11,6 +11,6 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
     public class MoveAllSubOptions : MultiSearchSubOptions
     {
         [Option('g', "target", HelpText = "The new context to which the items should be moved.", Required = true)]
-        public string NewContext { get; set; }
+        public string? NewContext { get; set; }
     }
 }

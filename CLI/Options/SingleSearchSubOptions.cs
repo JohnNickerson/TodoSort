@@ -12,10 +12,10 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
     public class SingleSearchSubOptions : UniversalOptions
     {
         [Option('s', "search", HelpText = "A partial name, tag value or note contents to search for.")]
-        public string SearchTerm { get; set; }
+        public string? SearchTerm { get; set; }
 
         [Option('i', "id", HelpText = "The beginning of the ID of the item to work on. If present, overrides full-text search.")]
-        public string ItemId { get; set; }
+        public string? ItemId { get; set; }
 
         public ISearchSpecification<ActionItem> SearchSpecification
         {

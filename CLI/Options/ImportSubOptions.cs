@@ -11,12 +11,12 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
     public class ImportSubOptions
     {
         [Option('e', "format", HelpText = "The import format to use (todosort, pocket).", Default = "todosort")]
-        public string Format { get; set; }
+        public string? Format { get; set; }
 
         [Option('f', "file", HelpText = "The filename or folder to read from.", Required = true)]
-        public string Filename { get; set; }
+        public string? Filename { get; set; }
 
         [Option('c', "context", HelpText = "The context to assign to imported items.")]
-        public string Context { get; set; }
+        public string? Context { get; set; }
     }
 }

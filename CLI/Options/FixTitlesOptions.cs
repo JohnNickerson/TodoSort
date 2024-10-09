@@ -11,6 +11,6 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
     public class FixTitlesOptions : MultiSearchSubOptions
     {
         [Option("move", HelpText = "The context to move items to when they are successfully renamed.")]
-        public string MoveTo { get; set; }
+        public string? MoveTo { get; set; }
     }
 }

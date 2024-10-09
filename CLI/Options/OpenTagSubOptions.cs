@@ -10,7 +10,7 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
     public class OpenTagSubOptions : SingleSearchSubOptions
     {
         [Option('t', "tag", HelpText = "The tag to open.", Required = true)]
-        public string Tag { get; set; }
+        public string? Tag { get; set; }
 
         [Option('m', "done", HelpText = "Mark as done, too.", Default = false)]
         public bool MarkAsDone { get; set; }

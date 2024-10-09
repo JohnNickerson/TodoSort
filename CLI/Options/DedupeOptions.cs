@@ -12,6 +12,6 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
     {
         // Specify searching by name or a specific tag?
         [Option('t', "tag", HelpText = "A tag to search for duplicate values")]
-        public string Tag { get; set; }
+        public string? Tag { get; set; }
     }
 }

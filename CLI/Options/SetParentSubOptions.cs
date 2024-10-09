@@ -13,10 +13,10 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
     public class SetParentSubOptions : UniversalOptions
     {
         [Option('s', "search", HelpText = "A search term to find the child item.", Required = true)]
-        public string ChildSearchTerm { get; set; }
+        public string? ChildSearchTerm { get; set; }
 
         [Option('g', "target", HelpText = "A search term to find the parent item. Defaults to same as 'search' option.")]
-        public string ParentSearchTerm { get; set; }
+        public string? ParentSearchTerm { get; set; }
 
         public ISearchSpecification<ActionItem> GetChildSearchSpecification(ITodoRepository repo)
         {

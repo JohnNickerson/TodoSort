@@ -10,6 +10,6 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
     public class InitSubOptions
     {
         [Option('f', "filename", HelpText = "The main action list file name.", Required = true)]
-        public string TodoFile { get; set; }
+        public string? TodoFile { get; set; }
     }
 }

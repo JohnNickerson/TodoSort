@@ -12,11 +12,11 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
     {
         // Tag name
         [Option('t', "tag", HelpText = "New tag name to add.", Required = true)]
-        public string TagName { get; set; }
+        public string? TagName { get; set; }
 
         // Tag value
         [Option('u', "value", HelpText = "Tag value to assign. If empty, tag will be removed.")]
-        public string TagValue { get; set; }
+        public string? TagValue { get; set; }
 
     }
 }
