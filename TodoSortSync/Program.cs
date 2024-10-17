@@ -41,7 +41,6 @@ class Program
         var todoMapper = new AssimilationSoftware.Maroon.Mappers.Text.ActionItemDiskMapper(savePath);
         var repository = new TodoRepository(todoMapper, savePath, Environment.MachineName);
 
-        // Weekly review process:
         // 1. Empty the Pocket archive.
         // 1a. Get all items in the Pocket archive.
         var archivedItems = await client.Get(RetrieveFilter.Archive);
@@ -60,43 +59,47 @@ class Program
         // {
         //     Console.WriteLine("Raw JSON response is: " + responseString);
         // };
-        Console.WriteLine("Press a key to continue...");
-        Console.ReadKey();
         Console.WriteLine();
+
         // 2. Import all Pocket items to TodoSort.
         var allItems = await client.Get(RetrieveFilter.Unread);
-        if (!Directory.Exists(savePath))
+        // Loop until this list comes back empty. Pocket API returns only a few items at a time.
+        while (allItems.Any())
         {
-            Directory.CreateDirectory(savePath);
-        }
-        foreach (var item in allItems)
-        {
-            // if item exists in TodoSort,
-            // {
-            //      if it's marked as done,
-            //      {
-            //          await client.Archive(item);
-            //      }
-            //      else
-            //      {
-            //          await client.ReplaceTags(item, new string[] {todoSortItem.Context});
-            //      }
-            // }
-            // else
-            // {
-            //      add to TodoSort including a "pocketId:{item.ID}" tag.
-            // }
-            if (item?.Title == null && item?.Uri == null)
+            if (!Directory.Exists(savePath))
             {
-                Console.WriteLine($"Skipping item with no URL ({item.ID})");
-                continue;
+                Directory.CreateDirectory(savePath);
             }
-            else
+            foreach (var item in allItems)
             {
-                await CreateItemAsync(repository, client, item, true);
+                // if item exists in TodoSort,
+                // {
+                //      if it's marked as done,
+                //      {
+                //          await client.Archive(item);
+                //      }
+                //      else
+                //      {
+                //          await client.ReplaceTags(item, new string[] {todoSortItem.Context});
+                //      }
+                // }
+                // else
+                // {
+                //      add to TodoSort including a "pocketId:{item.ID}" tag.
+                // }
+                if (item?.Title == null && item?.Uri == null)
+                {
+                    Console.WriteLine($"Skipping item with no URL ({item.ID})");
+                    continue;
+                }
+                else
+                {
+                    await CreateItemAsync(repository, client, item, true);
+                }
             }
+            repository.SaveChanges();
+            allItems = await client.Get(RetrieveFilter.Unread);
         }
-        repository.SaveChanges();
 
         /*
         In pocket:
