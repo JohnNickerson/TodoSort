@@ -22,7 +22,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
     {
         #region Fields
         const string _defaultContext = "inbox";
-        private Context _selectedContext;
+        private Context? _selectedContext;
         private Context _searchResultsContext;
         private List<Context> _contexts;
         private string _fileName;
@@ -56,11 +56,11 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         private string _searchTagValue;
         private ActionViewItem _selectedItem;
         private bool _searchExpanded;
-        private ActionItem _searchProject;
+        private ActionItem? _searchProject;
         private bool _sortByUpvotes = true;
         private bool _sortByTitle;
         private bool _sortByOrder;
-        private Context _searchContext;
+        private Context? _searchContext;
         private decimal? _lastPendingCount;
         private bool _isSearchContextSelected;
         private bool _isSearchProjectSelected;
@@ -597,7 +597,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             if (_lastOpenedFile != null)
             {
                 var fileOnDisk = new FileInfo(_lastOpenedFile.FullName);
-                var changeCount = ChangeCountOnDisk(fileOnDisk.DirectoryName);
+                var changeCount = ChangeCountOnDisk(fileOnDisk.DirectoryName!);
                 if (_lastOpenedFile.LastWriteTime != fileOnDisk.LastWriteTime || changeCount != _lastOpenedFile.ChangeCount)
                 {
                     // Confirm.
@@ -701,7 +701,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             }
         }
 
-        public Context SelectedContext
+        public Context? SelectedContext
         {
             get => _selectedContext;
             set
@@ -719,7 +719,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                 }
                 _selectedContext = value;
                 OnPropertyChanged();
-                _currentItems = null;
+                _currentItems = [];
                 OnPropertyChanged(nameof(Items));
             }
         }
@@ -812,7 +812,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                         }
                         break;
                 }
-                return _currentItems;
+                return _currentItems ?? [];
             }
         }
 
@@ -830,7 +830,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             }
         }
 
-        public List<ActionItem> Projects => _api != null ? _api.GetProjects().OrderBy(p => p?.Title).ToList() : new List<ActionItem> { null };
+        public List<ActionItem> Projects => _api != null ? _api.GetProjects().OrderBy(p => p?.Title).ToList() : new List<ActionItem> {  };
 
         public List<Context> SearchContexts => Contexts.Where(c => c.Title != "Search").OrderBy(c => c.Title).ToList();
 
@@ -880,7 +880,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             }
         }
 
-        public ActionItem SearchProject
+        public ActionItem? SearchProject
         {
             get => _searchProject;
             set
@@ -919,7 +919,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
 
         public ViewModel Api => _api;
 
-        public Context SearchContext
+        public Context? SearchContext
         {
             get => _searchContext;
             set

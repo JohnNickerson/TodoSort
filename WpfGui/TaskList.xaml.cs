@@ -11,7 +11,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
     /// <summary>
     /// Interaction logic for TaskList.xaml
     /// </summary>
-    public partial class TaskList
+    public partial class TaskList : Window
     {
         private readonly MainViewModel _vm;
 

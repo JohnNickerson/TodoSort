@@ -44,6 +44,7 @@ class Program
         // 1. Empty the Pocket archive.
         // 1a. Get all items in the Pocket archive.
         var archivedItems = await client.Get(RetrieveFilter.Archive);
+        var archivedCount = archivedItems.Count();
         // 1b. For each item, delete in Pocket.
         foreach (var item in archivedItems)
         {
@@ -63,9 +64,11 @@ class Program
 
         // 2. Import all Pocket items to TodoSort.
         var allItems = await client.Get(RetrieveFilter.Unread);
+        var addedItemsCount = 0;
         // Loop until this list comes back empty. Pocket API returns only a few items at a time.
         while (allItems.Any())
         {
+            addedItemsCount += allItems.Count();
             if (!Directory.Exists(savePath))
             {
                 Directory.CreateDirectory(savePath);
@@ -100,6 +103,9 @@ class Program
             repository.SaveChanges();
             allItems = await client.Get(RetrieveFilter.Unread);
         }
+
+        Console.WriteLine($"{archivedCount} items removed from the Pocket archive.");
+        Console.WriteLine($"{addedItemsCount} items added to TodoSort");
 
         /*
         In pocket:

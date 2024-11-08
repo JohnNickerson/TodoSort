@@ -9,10 +9,10 @@ namespace AssimilationSoftware.TodoSort.CLI
 {
     public class FolderSettings
     {
-        private string todoPath;
+        private string? todoPath;
 
-        public string TodoPath { get => Environment.ExpandEnvironmentVariables(todoPath); set => todoPath = value; }
-        public string AccessCode { get; set; }
+        public string? TodoPath { get => Environment.ExpandEnvironmentVariables(todoPath ?? string.Empty); set => todoPath = value; }
+        public string? AccessCode { get; set; }
 
         public static FolderSettings LoadFrom(string path)
         {
@@ -22,7 +22,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                 // New: JSON serialisation mode
                 try
                 {
-                    return Newtonsoft.Json.JsonConvert.DeserializeObject<FolderSettings>(string.Join(' ', lines));
+                    return Newtonsoft.Json.JsonConvert.DeserializeObject<FolderSettings>(string.Join(' ', lines)) ?? new();
                 }
                 catch
                 {
@@ -53,9 +53,9 @@ namespace AssimilationSoftware.TodoSort.CLI
             }
         }
 
-        public static void SaveTo(string path, FolderSettings tosave)
+        public static void SaveTo(string path, FolderSettings settings)
         {
-            File.WriteAllText(path, Newtonsoft.Json.JsonConvert.SerializeObject(tosave, Newtonsoft.Json.Formatting.Indented));
+            File.WriteAllText(path, Newtonsoft.Json.JsonConvert.SerializeObject(settings, Newtonsoft.Json.Formatting.Indented));
         }
     }
 }

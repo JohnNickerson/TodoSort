@@ -20,8 +20,6 @@ using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.ComponentModel;
-using System.Diagnostics;
 using System.Runtime.InteropServices;
 
 namespace AssimilationSoftware.TodoSort.CLI
@@ -35,7 +33,7 @@ namespace AssimilationSoftware.TodoSort.CLI
     class Program
     {
         private static bool verbose = false;
-        private static ActionItem selected = null;
+        private static ActionItem? selected = null;
         private static string settingsPath = Path.Combine(Directory.GetCurrentDirectory(), ".todosort");
         private static bool forceSave = false;
 
@@ -47,8 +45,8 @@ namespace AssimilationSoftware.TodoSort.CLI
 #endif
             var argVerb = string.Empty;
             var f = FolderSettings.LoadFrom(settingsPath);
-            var todomapper = new ActionItemDiskMapper(f.TodoPath);
-            var repo = new TodoRepository(todomapper, Path.GetDirectoryName(f.TodoPath), Environment.MachineName);
+            var todoMapper = new ActionItemDiskMapper(f.TodoPath);
+            var repo = new TodoRepository(todoMapper, Path.GetDirectoryName(f.TodoPath), Environment.MachineName);
 
             var vm = new ViewModel(repo);
 
@@ -305,14 +303,14 @@ namespace AssimilationSoftware.TodoSort.CLI
                 Console.WriteLine("Target filename is empty. You must specify a file name to write to.");
                 return;
             }
-            IExporter exporter = null;
+            IExporter? exporter = null;
             if (!string.IsNullOrEmpty(exportOptions.TemplateFilename))
             {
                 exporter = new TemplateExporter(exportOptions.Filename, exportOptions.TemplateFilename);
             }
             else
             {
-                switch (exportOptions.Format.ToLower())
+                switch (exportOptions.Format?.ToLower())
                 {
                     case "html":
                         exporter = new HtmlExporter { Filename = exportOptions.Filename };
@@ -408,7 +406,7 @@ namespace AssimilationSoftware.TodoSort.CLI
         {
             SetUniversalOptions(importOptions, vm);
 
-            IImporter importer = null;
+            IImporter? importer = null;
             switch (importOptions.Format)
             {
                 case "todosort":
@@ -421,7 +419,10 @@ namespace AssimilationSoftware.TodoSort.CLI
                         importer = new TextImporter { Filename = importOptions.Filename };
                     }
                     break;
-                case "pocket":
+                case "pocket-csv":
+                    Console.WriteLine("Pocket CSV importer may be supported in future versions. Consider using sync instead.");
+                    break;
+                case "pocket-html":
                     importer = new PocketImporter { Filename = importOptions.Filename };
                     break;
                 default:
@@ -535,9 +536,8 @@ namespace AssimilationSoftware.TodoSort.CLI
             selected = Disambiguate(vm.SearchResults, repo, !string.IsNullOrEmpty(openTagOptions.ItemId));
             if (selected != null)
             {
-                if (selected.Tags.ContainsKey(openTagOptions.Tag))
+                if (selected.Tags.TryGetValue(openTagOptions.Tag ?? string.Empty, out string? tagValue))
                 {
-                    var tagValue = selected.Tags[openTagOptions.Tag];
                     if (openTagOptions.Copy)
                     {
                         //System.Windows.Forms.Clipboard.SetText(tagValue);
@@ -686,7 +686,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             }
             else
             {
-                PrintItems(searchOptions.SortTag, vm.SearchResults, repo, searchOptions.NSFW);
+                PrintItems(searchOptions.SortTag ?? string.Empty, vm.SearchResults, repo, searchOptions.NSFW);
                 if (!searchOptions.NoCount)
                 {
                     Console.WriteLine("{0} item(s) found.", vm.SearchResults.Count());
@@ -772,7 +772,7 @@ namespace AssimilationSoftware.TodoSort.CLI
 
             verbose = somesub.Verbose;
             // Display the whole Someday file, [somesub.PageSize] items at a time, and either delete or do one per listing.
-            ActionItem undefer = null;
+            ActionItem? undefer = null;
             if (somesub.PageSize <= 0) somesub.PageSize = 1;
             if (somesub.PageSize > 10) somesub.PageSize = 10;
             var someitems = (from s in vm.SomedayItems where !s.TickleDate.HasValue || somesub.IncludeTickle select s);
@@ -808,22 +808,20 @@ namespace AssimilationSoftware.TodoSort.CLI
             // TodoSort Pocket API consumer key
             string consumerKey = "103918-ef23adaea7e86b894500de8";
 
-            PocketClient client = null;
+            PocketClient? client = null;
             if (string.IsNullOrEmpty(settings.AccessCode))
             {
                 client = new PocketClient(consumerKey, callbackUri: "https://getpocket.com/saves");
                 Debug.Write("Getting request code: ");
                 string requestCode = string.Empty;
-                try
-                {
-                    requestCode = await client.GetRequestCode();
-                    Debug.WriteLine(requestCode);
-                }
-                catch (Exception ex)
+                var requestCodeTask = client.GetRequestCode();
+                if (requestCodeTask.IsFaulted)
                 {
                     Trace.WriteLine("Cannot get request code.");
-                    Debug.WriteLine(ex.Message);
+                    Debug.WriteLine(requestCodeTask.Exception.Message);
+                    return;
                 }
+                Debug.WriteLine(requestCode);
 
                 Debug.WriteLine("User access code not set. Opening website to authorise access to Pocket.");
                 Uri authenticationUri = client.GenerateAuthenticationUri();
@@ -841,9 +839,6 @@ namespace AssimilationSoftware.TodoSort.CLI
             {
                 client = new PocketClient(consumerKey, accessCode: settings.AccessCode);
             }
-            if (string.IsNullOrEmpty(settings.AccessCode))
-            {
-            }
             Debug.WriteLine("Authorisation and authentication complete.");
             Debug.WriteLine(string.Empty);
 
@@ -851,8 +846,13 @@ namespace AssimilationSoftware.TodoSort.CLI
             if (syncOptions.ClearArchive)
             {
                 Trace.WriteLine("Clearing Pocket archive...");
-                var archivedItems = await client.Get(RetrieveFilter.Archive);
-                foreach (var item in archivedItems)
+                var archivedItemsTask = client.Get(RetrieveFilter.Archive);
+                if (archivedItemsTask.IsFaulted)
+                {
+                    Trace.WriteLine("Could not retrieve archived items.");
+                    return;
+                }
+                foreach (var item in archivedItemsTask.Result)
                 {
                     Console.WriteLine($"Removing from Pocket archive: {item.ID} - {item.Title}");
                     bool isSuccess = await client.Delete(item.ID);
@@ -867,7 +867,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                 {
                     if (item?.Title == null && item?.Uri == null)
                     {
-                        Console.WriteLine($"Skipping item with no URL ({item.ID})");
+                        Console.WriteLine($"Skipping item with no URL ({item?.ID})");
                         continue;
                     }
 
@@ -1331,7 +1331,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             }
             else if (!string.IsNullOrEmpty(bumpOpts.SortDescTag))
             {
-                bumpItems.AddRange(ApplySort(bumpOpts.SortTag, vm.SearchResults, SortOrder.Descending).Take(bumpOpts.Top));
+                bumpItems.AddRange(ApplySort(bumpOpts.SortTag ?? string.Empty, vm.SearchResults, SortOrder.Descending).Take(bumpOpts.Top));
             }
             else
             {
@@ -1362,11 +1362,11 @@ namespace AssimilationSoftware.TodoSort.CLI
             return 1;
         }
 
-        private static void VmOnPropertyChanged(object sender, PropertyChangedEventArgs e)
+        private static void VmOnPropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(ViewModel.ProgressPercent))
             {
-                Console.WriteLine($"{((ViewModel)sender).ProgressPercent}%");
+                Console.WriteLine($"{((ViewModel?)sender)?.ProgressPercent}%");
             }
         }
 
@@ -1423,9 +1423,9 @@ namespace AssimilationSoftware.TodoSort.CLI
                     case '3':
                         Console.WriteLine("What tag to open?");
                         var tag = Console.ReadLine();
-                        if (item.Tags.ContainsKey(tag))
+                        if (item.Tags.TryGetValue(tag ?? string.Empty, out string? tagValue))
                         {
-                            OpenItemTag(item.Tags[tag]);
+                            OpenItemTag(tagValue);
                         }
                         else
                         {
@@ -1561,7 +1561,7 @@ namespace AssimilationSoftware.TodoSort.CLI
         {
             public ActionItem Item;
             public int Depth;
-            public string PadLine;
+            public string? PadLine;
         }
 
         private static void PrintTree(ActionItem root, List<ActionItem> tree, List<ActionItem> ancestors, bool nsfw = false)
@@ -1674,7 +1674,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                         WrapOutput("        - ", n, wrapwidth);
                     }
                 }
-                if (i.Tags.Count > 0)
+                if (i.Tags?.Count > 0)
                 {
                     foreach (var k in i.Tags)
                     {
@@ -1731,9 +1731,9 @@ namespace AssimilationSoftware.TodoSort.CLI
             Console.WriteLine(content);
         }
 
-        private static ActionItem Disambiguate(IEnumerable<ActionItem> todolist, ITodoRepository repo, bool autoAcceptOne = false, bool nsfw = false)
+        private static ActionItem? Disambiguate(IEnumerable<ActionItem> todolist, ITodoRepository repo, bool autoAcceptOne = false, bool nsfw = false)
         {
-            ActionItem selected = null;
+            ActionItem? selected = null;
 
             // Disambiguate or verify search results.
             if (todolist.Count() == 0)
