@@ -44,17 +44,22 @@ class Program
         // 1. Empty the Pocket archive.
         // 1a. Get all items in the Pocket archive.
         var archivedItems = await client.Get(RetrieveFilter.Archive);
-        var archivedCount = archivedItems.Count();
+        var archivedCount = 0;
         // 1b. For each item, delete in Pocket.
-        foreach (var item in archivedItems)
+        while (archivedItems.Any())
         {
-            // if (repository.Find((i) => i.Tags["pocketId"] == item.ID)) //item exists in TodoSort, 
-            // {
-            //      mark as done in TodoSort
-            // }
-            // await client.Delete(item);
-            Console.WriteLine($"Removing from archive: {item.ID} - {item.Title}");
-            bool isSuccess = await client.Delete(item.ID);
+            archivedCount += archivedItems.Count();
+            foreach (var item in archivedItems)
+            {
+                // if (repository.Find((i) => i.Tags["pocketId"] == item.ID)) //item exists in TodoSort, 
+                // {
+                //      mark as done in TodoSort
+                // }
+                // await client.Delete(item);
+                Console.WriteLine($"Removing from archive: {item.ID} - {item.Title}");
+                bool isSuccess = await client.Delete(item.ID);
+            }
+            archivedItems = await client.Get(RetrieveFilter.Archive);
         }
         // client.AfterRequest = responseString =>
         // {
