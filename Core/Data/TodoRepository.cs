@@ -1,5 +1,6 @@
 ﻿using AssimilationSoftware.Maroon.Model;
 using AssimilationSoftware.Maroon.Repositories;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -26,6 +27,11 @@ namespace AssimilationSoftware.TodoSort.Core.Data
             {
                 return Items.Where(i => i.Context == "done");
             }
+        }
+
+        public ActionItem FindByTag(string tagName, string tagValue)
+        {
+            return Items.FirstOrDefault(i => i.Tags.ContainsKey(tagName) && i.Tags[tagName] == tagValue);
         }
 
         public IEnumerable<ActionItem> GetChildren(ActionItem selected)

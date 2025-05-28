@@ -21,6 +21,8 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Runtime.InteropServices;
+using Spectre.Console;
+using AssimilationSoftware.Maroon.Mappers.Csv;
 
 namespace AssimilationSoftware.TodoSort.CLI
 {
@@ -425,6 +427,9 @@ namespace AssimilationSoftware.TodoSort.CLI
                 case "pocket-html":
                     importer = new PocketImporter { Filename = importOptions.Filename };
                     break;
+                case "instapaper":
+                    importer = new InstapaperImporter(importOptions.Filename);
+                    break;
                 default:
                     Console.WriteLine($"Unknown import format: {importOptions.Format}");
                     break;
@@ -449,6 +454,10 @@ namespace AssimilationSoftware.TodoSort.CLI
 
             // Save settings.
             FolderSettings.SaveTo(settingsPath, initsettings);
+            if (!Directory.Exists(Path.GetDirectoryName(initty.TodoFile)) && AnsiConsole.Confirm($"{initty.TodoFile} does not exist. Create it?", false))
+            {
+                Directory.CreateDirectory(Path.GetDirectoryName(initty.TodoFile));
+            }
         }
 
         private static void Merge(MergeSubOptions mergeOptions, ViewModel vm, TodoRepository repo)
@@ -800,6 +809,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             TidyUp(vm, repo);
         }
 
+        [Obsolete("Pocket will be retired by Mozilla in June 2024. This method will be removed in a future version.")]
         private static async void SyncWithPocket(PocketSyncOptions syncOptions, ViewModel vm, TodoRepository repo, FolderSettings settings, string settingsPath)
         {
             Trace.AutoFlush = true;
@@ -893,6 +903,62 @@ namespace AssimilationSoftware.TodoSort.CLI
 
             // 3. Export (not yet implemented)
         }
+
+        // private static void Update(UpdateSubOptions updateOptions, ViewModel vm, TodoRepository repo)
+        // {
+        //     var itemSource = new CsvReader(updateOptions.Filename);
+        //     IEnumerable<Dictionary<string, string>> items = itemSource.GetAllItems();
+        //     foreach (var item in items)
+        //     {
+        //         if (repo.FindByTag("url", item["Url"]) is ActionItem existingItem)
+        //         {
+        //             if (item["Folder"].Equals("Unread", StringComparison.CurrentCultureIgnoreCase))
+        //             {
+        //                 if (existingItem.Done)
+        //                 {
+        //                     // Delete from Instapaper (full API required)
+        //                     vm.MarkDone(DateTime.Now, existingItem);
+        //                 }
+        //                 // else do nothing (unread in both places already)
+        //             }
+        //             else if (item["Folder"].Equals("Archive", StringComparison.CurrentCultureIgnoreCase))
+        //             {
+        //                 if (existingItem.Done)
+        //                 {
+        //                     // Delete from Instapaper (full API required)
+        //                 }
+        //                 else
+        //                 {
+        //                     vm.MarkDone(DateTime.Now, existingItem);
+        //                 }
+        //             }
+        //         }
+        //         else
+        //         {
+        //             vm.AddItem(new ActionItem
+        //             {
+        //                 ID = Guid.NewGuid(),
+        //                 Title = item["Title"],
+        //                 Context = "instapaper",
+        //                 Tags = new Dictionary<string, string>
+        //                 {
+        //                     { "url", item["Url"] },
+        //                 },
+        //                 LastModified = DateTime.Now,
+        //                 RevisionGuid = Guid.NewGuid()
+        //             });
+        //         }
+        //         vm.SearchSpecification = new ContextSearchSpecification("playlist");
+        //         foreach (var todoItem in vm.SearchResults)
+        //         {
+        //             if (!items.Any(i => i["Url"] == todoItem.Tags["url"]))
+        //             {
+        //                 // Add to Instapaper (simple API - https://www.instapaper.com/api/simple) 
+        //             }
+        //         }
+        //     }
+        //     Console.WriteLine("Update functionality is not yet implemented.");
+        // }
 
         static void OpenUrl(string url)
         {
@@ -1773,6 +1839,46 @@ namespace AssimilationSoftware.TodoSort.CLI
                 }
             }
             return selected;
+        }
+    }
+
+    internal class CsvReader
+    {
+        private string? filename;
+
+        public CsvReader(string? filename)
+        {
+            this.filename = filename;
+        }
+
+        public IEnumerable<Dictionary<string, string>> GetAllItems()
+        {
+            if (string.IsNullOrEmpty(filename) || !System.IO.File.Exists(filename))
+            {
+                throw new FileNotFoundException("CSV file not found.", filename);
+            }
+
+            var lines = System.IO.File.ReadAllLines(filename);
+            // Assuming the first line contains headers.
+            if (lines.Length == 0)
+            {
+                throw new InvalidOperationException("CSV file is empty.");
+            }
+            var headers = lines[0].Tokenise().Select(h => h.Trim()).ToArray();
+            for (var i = 1; i < lines.Length; i++)
+            {
+                var tokens = lines[i].Tokenise();
+                if (tokens.Count != headers.Length)
+                {
+                    throw new InvalidOperationException($"Line {i + 1} does not match header count.");
+                }
+                var item = new Dictionary<string, string>();
+                for (var j = 0; j < headers.Length; j++)
+                {
+                    item[headers[j]] = tokens[j].Trim();
+                }
+                yield return item;
+            }
         }
     }
 }
