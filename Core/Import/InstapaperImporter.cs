@@ -51,11 +51,10 @@ namespace AssimilationSoftware.TodoSort.Core.Import
                             IsDeleted = false,
                             LastModified = DateTime.Now,
                             RevisionGuid = Guid.NewGuid(),
-                            Title = tokens[1],
+                            Title = string.IsNullOrWhiteSpace(tokens[1]) ? tokens[0] : tokens[1],
                             Tags = new Dictionary<string, string>()
                             {
                                 { "url", tokens[0] },
-                                { "instapaperId", tokens[4] },
                             }
                         };
                         result.Add(item);

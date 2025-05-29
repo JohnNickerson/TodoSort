@@ -42,7 +42,7 @@ public class InstapaperImportTests
         // Create a mock CSV file with test data
         var csvContent = new StringBuilder();
         csvContent.AppendLine("URL,Title,Selection,Folder,Timestamp,Tags");
-        csvContent.AppendLine("https://theoatmeal.com:443/,Cyberlove,,Unread,1747964343,[]");
+        csvContent.AppendLine("https://theoatmeal.com:443/,,,Unread,1747964343,[]");
         csvContent.AppendLine("https://ganxy.com/i/48595/robert-brockway/rx-episode-1-the-blackouts,Robert Brockway â Rx - Episode 1: The Blackouts,,Unread,1747964366,[]");
         csvContent.AppendLine("http://www.lifehacker.com.au/2010/10/automate-just-about-anything-on-your-windows-pc-no-coding-required/,\"Automate Just About Anything On Your Windows PC, No Coding Required | Lifehacker Australia\",,Archive,1339641431,[]");
         fileSystem.AddDirectory("D:\\Temp\\TodoSortTests");
@@ -55,5 +55,13 @@ public class InstapaperImportTests
         Assert.NotNull(result);
         Assert.IsType<AssimilationSoftware.Maroon.Model.ActionItem[]>(result);
         Assert.Equal(3, result.Length);
+        foreach (var item in result)
+        {
+            Assert.NotNull(item);
+            Assert.False(item.IsDeleted);
+            Assert.NotEmpty(item.Title);
+            Assert.NotEmpty(item.Tags);
+            Assert.Contains("url", item.Tags.Keys);
+        }
     }
 }
