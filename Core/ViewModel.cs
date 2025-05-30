@@ -658,6 +658,11 @@ namespace AssimilationSoftware.TodoSort.Core
             return depths;
         }
 
+        public ActionItem FindByTag(string tagName, string tagValue)
+        {
+            return _repository.Items.FirstOrDefault(i => i.Tags.ContainsKey(tagName) && i.Tags[tagName] == tagValue);
+        }
+
         #endregion
     }
 }

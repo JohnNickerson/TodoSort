@@ -29,11 +29,6 @@ namespace AssimilationSoftware.TodoSort.Core.Data
             }
         }
 
-        public ActionItem FindByTag(string tagName, string tagValue)
-        {
-            return Items.FirstOrDefault(i => i.Tags.ContainsKey(tagName) && i.Tags[tagName] == tagValue);
-        }
-
         public IEnumerable<ActionItem> GetChildren(ActionItem selected)
         {
             return Items.Where(t => t.ParentId != null && t.ParentId.Equals(selected.ID));
