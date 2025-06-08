@@ -210,3 +210,10 @@ TodoSort is a task list and reading list app with an emphasis on priority. It st
   - Fix problem opening URLs in GUI.
 - 2024-09-06: Build 1.6.1.2
   - Fix reopening most recent file.
+- 2025-05-28: Build 1.6.2.0
+  - Implement 'Add URL' feature.
+  - Implement import from Instapaper.
+- 2025-05-29: Build 1.6.2.1
+  - Use URL for title in Instapaper import if title is blank.
+- 2025-06-04: Build 1.6.3
+  - Add an 'update' command to apply changes from an Instapaper export.

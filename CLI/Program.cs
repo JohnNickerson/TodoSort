@@ -920,11 +920,11 @@ namespace AssimilationSoftware.TodoSort.CLI
                     vm.AddItem(new ActionItem
                     {
                         ID = Guid.NewGuid(),
-                        Title = item["Title"],
+                        Title = string.IsNullOrWhiteSpace(item["Title"]) ? item["URL"] : item["Title"],
                         Context = string.IsNullOrWhiteSpace(updateOptions.Context) ? "instapaper" : updateOptions.Context,
                         Tags = new Dictionary<string, string>
                         {
-                            { "url", item["Url"] },
+                            { "url", item["URL"] },
                         },
                         LastModified = DateTime.Now,
                         RevisionGuid = Guid.NewGuid()
