@@ -51,8 +51,8 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                 case ImportFileType.TodoSortFolder:
                     importer = new TextFolderImporter { Folder = Filename };
                     break;
-                case ImportFileType.Pocket:
-                    importer = new PocketImporter { Filename = Filename };
+                case ImportFileType.Instapaper:
+                    importer = new InstapaperImporter(Filename);
                     break;
             }
             if (importer != null && importer.IsValid)
@@ -84,12 +84,12 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                 {
                     FileName = "Document",
                     DefaultExt = "txt",
-                    Filter = "Text documents (.txt)|*.txt|Pocket Exports (.html)|*.html|All documents (*.*)|*.*",
+                    Filter = "Text documents (.txt)|*.txt|Instapaper Exports (.csv)|*.html|All documents (*.*)|*.*",
                     Title = "Todo file"
                 };
                 switch (FileType)
                 {
-                    case ImportFileType.Pocket:
+                    case ImportFileType.Instapaper:
                         dlg.FilterIndex = 2;
                         break;
                     case ImportFileType.TodoSort:
@@ -153,7 +153,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
     public enum ImportFileType
     {
         TodoSort,
-        Pocket,
+        Instapaper,
         TodoSortFolder,
         Unknown
     }

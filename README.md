@@ -217,3 +217,5 @@ TodoSort is a task list and reading list app with an emphasis on priority. It st
   - Use URL for title in Instapaper import if title is blank.
 - 2025-06-04: Build 1.6.3
   - Add an 'update' command to apply changes from an Instapaper export.
+- 2025-06-08: Build 1.6.3.1
+  - Fixed Instapaper import URL reference for added items.

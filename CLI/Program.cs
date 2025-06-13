@@ -7,8 +7,6 @@ using AssimilationSoftware.TodoSort.Core.Export;
 using AssimilationSoftware.TodoSort.Core.Import;
 using AssimilationSoftware.TodoSort.Core.Search;
 using CommandLine;
-using PocketSharp;
-using PocketSharp.Models;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Net;
@@ -88,7 +86,6 @@ namespace AssimilationSoftware.TodoSort.CLI
                     .WithParsed<SummaryOptions>(opts => Summary(opts, vm, repo))
                     .WithParsed<UnrankAllOptions>(opts => UnrankAll(opts, vm, repo))
                     .WithParsed<UnRankOptions>(opts => Unrank(opts, vm, repo))
-                    .WithParsed<PocketSyncOptions>(opts => SyncWithPocket(opts, vm, repo, f, settingsPath))
                     .WithNotParsed(errs => HandleErrors(errs));
         }
 
@@ -415,12 +412,6 @@ namespace AssimilationSoftware.TodoSort.CLI
                     {
                         importer = new TextImporter { Filename = importOptions.Filename };
                     }
-                    break;
-                case "pocket-csv":
-                    Console.WriteLine("Pocket CSV importer may be supported in future versions. Consider using sync instead.");
-                    break;
-                case "pocket-html":
-                    importer = new PocketImporter { Filename = importOptions.Filename };
                     break;
                 case "instapaper":
                     importer = new InstapaperImporter(importOptions.Filename);
@@ -802,101 +793,6 @@ namespace AssimilationSoftware.TodoSort.CLI
             }
 
             TidyUp(vm, repo);
-        }
-
-        [Obsolete("Pocket will be retired by Mozilla in June 2024. This method will be removed in a future version.")]
-        private static async void SyncWithPocket(PocketSyncOptions syncOptions, ViewModel vm, TodoRepository repo, FolderSettings settings, string settingsPath)
-        {
-            Trace.AutoFlush = true;
-            // 0. Authorise.
-            Debug.WriteLine("--- Authorising ---");
-            // TodoSort Pocket API consumer key
-            string consumerKey = "103918-ef23adaea7e86b894500de8";
-
-            PocketClient? client = null;
-            if (string.IsNullOrEmpty(settings.AccessCode))
-            {
-                client = new PocketClient(consumerKey, callbackUri: "https://getpocket.com/saves");
-                Debug.Write("Getting request code: ");
-                string requestCode = string.Empty;
-                var requestCodeTask = client.GetRequestCode();
-                if (requestCodeTask.IsFaulted)
-                {
-                    Trace.WriteLine("Cannot get request code.");
-                    Debug.WriteLine(requestCodeTask.Exception.Message);
-                    return;
-                }
-                Debug.WriteLine(requestCode);
-
-                Debug.WriteLine("User access code not set. Opening website to authorise access to Pocket.");
-                Uri authenticationUri = client.GenerateAuthenticationUri();
-                OpenUrl(authenticationUri.AbsoluteUri);
-                Console.WriteLine("Sign in, then press a key to continue here.");
-
-                PocketUser user = await client.GetUser(requestCode);
-
-                string accessToken = user.Code;
-                settings.AccessCode = accessToken;
-                FolderSettings.SaveTo(settingsPath, settings);
-                client.AccessCode = settings.AccessCode;
-            }
-            else
-            {
-                client = new PocketClient(consumerKey, accessCode: settings.AccessCode);
-            }
-            Debug.WriteLine("Authorisation and authentication complete.");
-            Debug.WriteLine(string.Empty);
-
-            // 1. Clean archive
-            if (syncOptions.ClearArchive)
-            {
-                Trace.WriteLine("Clearing Pocket archive...");
-                var archivedItemsTask = client.Get(RetrieveFilter.Archive);
-                if (archivedItemsTask.IsFaulted)
-                {
-                    Trace.WriteLine("Could not retrieve archived items.");
-                    return;
-                }
-                foreach (var item in archivedItemsTask.Result)
-                {
-                    Console.WriteLine($"Removing from Pocket archive: {item.ID} - {item.Title}");
-                    bool isSuccess = await client.Delete(item.ID);
-                }
-            }
-
-            // 2. Import
-            if (syncOptions.Import)
-            {
-                var allItems = await client.Get(RetrieveFilter.Unread);
-                foreach (var item in allItems)
-                {
-                    if (item?.Title == null && item?.Uri == null)
-                    {
-                        Console.WriteLine($"Skipping item with no URL ({item?.ID})");
-                        continue;
-                    }
-
-                    ActionItem actionItem = new()
-                    {
-                        ID = Guid.NewGuid(),
-                        Title = string.IsNullOrWhiteSpace(item.Title) ? item.Uri.AbsoluteUri : item.Title.Split("\n")[0],
-                        Context = "pocket",
-                        Tags = new()
-                        {
-                            { "url", item.Uri.AbsoluteUri },
-                            { "pocketId", item.ID }
-                        }
-                    };
-                    Console.WriteLine($"Adding {actionItem.ID} - {actionItem.Title}");
-                    repo.Create(actionItem);
-                    // 3. Archive all items in Pocket.
-                    bool isSuccess = await client.Archive(item);
-                    if (isSuccess) { repo.SaveChanges(); }
-                }
-                repo.SaveChanges();
-            }
-
-            // 3. Export (not yet implemented)
         }
 
         public static void Update(UpdateSubOptions updateOptions, ViewModel vm)
