@@ -26,7 +26,7 @@ namespace AssimilationSoftware.TodoSort.CLI
         Descending
     }
 
-    class Program
+    public class Program
     {
         private static bool verbose = false;
         private static ActionItem? selected = null;
@@ -901,7 +901,7 @@ namespace AssimilationSoftware.TodoSort.CLI
 
         public static void Update(UpdateSubOptions updateOptions, ViewModel vm)
         {
-            var itemSource = new CsvReader(updateOptions.Filename);
+            var itemSource = new CsvReader(updateOptions.Filename, updateOptions.FileSystem);
             IEnumerable<Dictionary<string, string>> items = itemSource.GetAllItems();
             foreach (var item in items)
             {

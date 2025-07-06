@@ -1,3 +1,4 @@
+using System.IO.Abstractions;
 using CommandLine;
 
 namespace AssimilationSoftware.TodoSort.CLI.Options
@@ -13,5 +14,8 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
 
         [Option('c', "context", HelpText = "The context to assign to new items.")]
         public string? Context { get; set; }
+
+        // For testing purposes, we allow the file system to be injected.
+        public IFileSystem? FileSystem { get; set; }
     }
 }

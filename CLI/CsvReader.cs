@@ -6,18 +6,16 @@ namespace AssimilationSoftware.TodoSort.CLI
     public class CsvReader
     {
         private string? filename;
+        private System.IO.Abstractions.IFileSystem fileSystem;
 
         public CsvReader(string? filename, System.IO.Abstractions.IFileSystem? fileSystem = null)
         {
-            if (fileSystem == null)
-            {
-                fileSystem = new System.IO.Abstractions.FileSystem();
-            }
+            this.fileSystem = fileSystem ?? new System.IO.Abstractions.FileSystem();
             if (string.IsNullOrEmpty(filename))
             {
                 throw new ArgumentException("Filename cannot be null or empty.", nameof(filename));
             }
-            if (!fileSystem.File.Exists(filename))
+            if (!this.fileSystem.File.Exists(filename))
             {
                 throw new FileNotFoundException("CSV file not found.", filename);
             }
@@ -26,12 +24,12 @@ namespace AssimilationSoftware.TodoSort.CLI
 
         public IEnumerable<Dictionary<string, string>> GetAllItems()
         {
-            if (string.IsNullOrEmpty(filename) || !System.IO.File.Exists(filename))
+            if (string.IsNullOrEmpty(filename) || !fileSystem.File.Exists(filename))
             {
                 throw new FileNotFoundException("CSV file not found.", filename);
             }
 
-            var lines = System.IO.File.ReadAllLines(filename);
+            var lines = fileSystem.File.ReadAllLines(filename);
             // Assuming the first line contains headers.
             if (lines.Length == 0)
             {
