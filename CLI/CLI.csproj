@@ -8,8 +8,8 @@
     <Company>Assimilation Software</Company>
     <Product>TodoSort</Product>
     <Copyright>Copyright © Assimilation Software 2024</Copyright>
-    <Version>1.6.3.0</Version>
-    <FileVersion>1.6.3.0</FileVersion>
+    <Version>1.6.3.1</Version>
+    <FileVersion>1.6.3.1</FileVersion>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="CommandLine, Version=2.9.1.0, Culture=neutral, PublicKeyToken=5a870481e358d379, processorArchitecture=MSIL">
@@ -20,7 +20,6 @@
       <HintPath>..\Library\Maroon.dll</HintPath>
     </Reference>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="PocketSharp" Version="5.0.0" />
     <Reference Include="Spectre.Console, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Spectre.Console.0.49.1\lib\netstandard2.0\Spectre.Console.dll</HintPath>
     </Reference>
