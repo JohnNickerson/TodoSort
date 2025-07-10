@@ -219,3 +219,5 @@ TodoSort is a task list and reading list app with an emphasis on priority. It st
   - Add an 'update' command to apply changes from an Instapaper export.
 - 2025-06-08: Build 1.6.3.1
   - Fixed Instapaper import URL reference for added items.
+- 2025-07-09: Build 1.7.0.0
+	- Remove obsolete Pocket integration features.

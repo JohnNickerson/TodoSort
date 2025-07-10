@@ -294,7 +294,15 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
                         Source.Notes.Add(line);
                     }
                 }
-                Source.Tags = editVm.Tags.ToDictionary(k => k.Tag, v => v.Value);
+                Source.Tags = new Dictionary<string, string>();
+                foreach (var tv in editVm.Tags)
+                {
+                    if (tv?.Tag is not null || tv?.Value is not null)
+                    {
+                        // Only add non-empty tags, and overwrite any with duplicate keys.
+                        Source.Tags[tv.Tag ?? string.Empty] = tv.Value ?? string.Empty;
+                    }
+                }
                 Source.ProjectId = editVm.Project?.ID;
                 if (editVm.IsDeferred)
                 {
