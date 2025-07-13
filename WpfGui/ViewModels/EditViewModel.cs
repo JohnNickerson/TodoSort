@@ -13,11 +13,11 @@ namespace AssimilationSoftware.TodoSort.WpfGui
     {
         #region Fields
 
-        private string _title;
-        private string _notes;
+        private string? _title;
+        private string? _notes;
         private ObservableCollection<TagValueModel> _tags;
-        private string _context;
-        private ActionItem _project;
+        private string? _context;
+        private ActionItem? _project;
         private DateTime? _tickleDate;
         private readonly string[] _excludeContexts = { "done", "someday", "Search" };
 
@@ -122,7 +122,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         }
 
         // TODO: Consider changing to ProjectId
-        public ActionItem Project
+        public ActionItem? Project
         {
             get => _project;
             set

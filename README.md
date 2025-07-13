@@ -221,3 +221,5 @@ TodoSort is a task list and reading list app with an emphasis on priority. It st
   - Fixed Instapaper import URL reference for added items.
 - 2025-07-09: Build 1.7.0.0
 	- Remove obsolete Pocket integration features.
+- 2025-07-10: Build 1.7.0.1
+	- Fixed a bug where adding a blank tag crashed the GUI.

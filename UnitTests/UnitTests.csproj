@@ -5,6 +5,9 @@
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
+    <Company>Assimilation Software</Company>
+    <Product>TodoSort</Product>
+    <Copyright>Copyright © Assimilation Software 2025</Copyright>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="coverlet.collector" Version="6.0.0" />

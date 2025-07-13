@@ -7,9 +7,9 @@
     <AssemblyTitle>Core</AssemblyTitle>
     <Company>Assimilation Software</Company>
     <Product>TodoSort</Product>
-    <Copyright>Copyright © Assimilation Software 2023</Copyright>
-    <Version>1.7.0.0</Version>
-    <FileVersion>1.7.0.0</FileVersion>
+    <Copyright>Copyright © Assimilation Software 2025</Copyright>
+    <Version>1.7.0.1</Version>
+    <FileVersion>1.7.0.1</FileVersion>
     <RootNamespace>AssimilationSoftware.TodoSort.Core</RootNamespace>
     <AssemblyName>TodoSort.Core</AssemblyName>
   </PropertyGroup>
