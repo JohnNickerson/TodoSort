@@ -2,6 +2,7 @@ using System.Windows.Input;
 using AssimilationSoftware.TodoSort.WpfGui.Model;
 using System.Windows;
 using System.Diagnostics;
+using CommunityToolkit.Mvvm.Input;
 
 namespace AssimilationSoftware.TodoSort.WpfGui;
 
