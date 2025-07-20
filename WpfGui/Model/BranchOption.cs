@@ -1,7 +1,4 @@
-﻿using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using AssimilationSoftware.TodoSort.WpfGui.Annotations;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace AssimilationSoftware.TodoSort.WpfGui.Model
 {

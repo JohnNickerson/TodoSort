@@ -4,7 +4,6 @@ using AssimilationSoftware.TodoSort.Core.Search;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
 
 namespace AssimilationSoftware.TodoSort.Core

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace AssimilationSoftware.TodoSort.Core
+﻿namespace AssimilationSoftware.TodoSort.Core
 {
     public static class Rot13
     {

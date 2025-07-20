@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.IO;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using AssimilationSoftware.Maroon.Interfaces;
@@ -26,8 +22,8 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         private Context? _selectedContext;
         private Context _searchResultsContext;
         private List<Context> _contexts;
-        private string _fileName;
-        private TodoFileInfo _lastOpenedFile;
+        private string? _fileName;
+        private TodoFileInfo? _lastOpenedFile;
         private List<ActionViewItem> _currentItems;
         private const int CommitLimit = 256;
 
@@ -86,20 +82,23 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             await OpenFileAsync(filename);
         }
 
-        private async Task OpenFileAsync(string filename)
+        private async Task OpenFileAsync(string? filename)
         {
             FileName = filename;
 
             // Store the file name as the most recent one opened.
             _recentFilesList = new ObservableCollection<string>(Settings.Default.RecentFiles);
-            RecentFileList.Remove(filename);
-            RecentFileList.Insert(0, filename);
+            if (!string.IsNullOrEmpty(filename))
+            {
+                RecentFileList.Remove(filename);
+                RecentFileList.Insert(0, filename);
+            }
             while (RecentFileList.Count > 10)
             {
                 RecentFileList.RemoveAt(10);
             }
             Settings.Default.RecentFiles = _recentFilesList.ToArray();
-            _recentFilesList = null;
+            _recentFilesList.Clear();
             SaveSettings();
 
             await Task.Run(() =>
@@ -212,7 +211,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                         break;
                 }
                 // Refresh the last opened file info, so that the updated file check doesn't trigger right now.
-                SaveLastOpenedFileMetaData(_lastOpenedFile.FullName);
+                SaveLastOpenedFileMetaData(_lastOpenedFile?.FullName ?? string.Empty);
                 RaisePropertyChanged(nameof(HasUnsavedChanges));
                 RaisePropertyChanged(nameof(WindowTitle));
             }
@@ -341,7 +340,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         public void SaveCommandExecuted()
         {
             _api.Save();
-            SaveLastOpenedFileMetaData(_lastOpenedFile.FullName);
+            SaveLastOpenedFileMetaData(_lastOpenedFile?.FullName);
             RaisePropertyChanged(nameof(Items));
         }
 
@@ -475,16 +474,16 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             RaisePropertyChanged(nameof(Items));
         }
 
-        protected void RaisePropertyChanged([CallerMemberName] string propertyName = null)
+        protected void RaisePropertyChanged([CallerMemberName] string? propertyName = null)
         {
             // Cached properties.
             if (propertyName == nameof(Items) || propertyName == nameof(ShowHeadOnly))
             {
-                _currentItems = null;
+                _currentItems.Clear();
             }
             else if (propertyName == nameof(Contexts))
             {
-                _contexts = null;
+                _contexts.Clear();
             }
 
             base.OnPropertyChanged(propertyName);
@@ -537,7 +536,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             }
         }
 
-        private async void OpenRecentFile(string filename)
+        private async void OpenRecentFile(string? filename)
         {
             switch (ConfirmSaveCancel("You have unsaved changes. Save before opening this file?"))
             {
@@ -636,10 +635,17 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                 : 0;
         }
 
-        private void SaveLastOpenedFileMetaData(string fileName)
+        private void SaveLastOpenedFileMetaData(string? fileName)
         {
-            _lastOpenedFile = new TodoFileInfo(fileName);
-            Settings.Default.Todo = fileName;
+            if (fileName is not null)
+            {
+                _lastOpenedFile = new TodoFileInfo(fileName);
+            }
+            else
+            {
+                _lastOpenedFile = null;
+            }
+            Settings.Default.Todo = fileName ?? string.Empty;
             SaveSettings();
         }
 
@@ -736,13 +742,13 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             }
         }
 
-        public string FileName
+        public string? FileName
         {
             get => _fileName;
             set
             {
                 _fileName = value;
-                SaveLastOpenedFileMetaData((value));
+                SaveLastOpenedFileMetaData(value);
                 RaisePropertyChanged();
                 RaisePropertyChanged(nameof(WindowTitle));
             }
@@ -831,7 +837,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             }
         }
 
-        public List<ActionItem> Projects => _api != null ? _api.GetProjects().OrderBy(p => p?.Title).ToList() : new List<ActionItem> {  };
+        public List<ActionItem> Projects => _api != null ? _api.GetProjects().OrderBy(p => p?.Title).ToList() : new List<ActionItem> { };
 
         public List<Context> SearchContexts => Contexts.Where(c => c.Title != "Search").OrderBy(c => c.Title).ToList();
 

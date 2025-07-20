@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using AssimilationSoftware.Maroon.Model;
+﻿using AssimilationSoftware.Maroon.Model;
 using AssimilationSoftware.TodoSort.Core.Search;
 using CommandLine;
 // ReSharper disable UnusedAutoPropertyAccessor.Global
