@@ -7,19 +7,12 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using AssimilationSoftware.TodoSort.WpfGui.Annotations;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace AssimilationSoftware.TodoSort.WpfGui
 {
-    public class ViewModelBase : INotifyPropertyChanged
+    public class ViewModelBase : ObservableObject
     {
         public Window Window { get; set; }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        [NotifyPropertyChangedInvocator]
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
     }
 }

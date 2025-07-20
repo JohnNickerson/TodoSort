@@ -12,11 +12,12 @@ using System.Windows.Input;
 using AssimilationSoftware.TodoSort.Core;
 using AssimilationSoftware.TodoSort.Core.Import;
 using AssimilationSoftware.TodoSort.WpfGui.Annotations;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
 namespace AssimilationSoftware.TodoSort.WpfGui
 {
-    public class ImportViewModel : INotifyPropertyChanged
+    public class ImportViewModel : ObservableObject
     {
         private readonly ViewModel _vm;
         private readonly Window _view;
@@ -26,19 +27,12 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         private RelayCommand _importCommand;
         private RelayCommand _cancelCommand;
         private RelayCommand _browseCommand;
-        public event PropertyChangedEventHandler PropertyChanged;
 
         public ImportViewModel(Core.ViewModel vm, Window view)
         {
             _vm = vm;
             _view = view;
             _targetContext = "import";
-        }
-
-        [NotifyPropertyChangedInvocator]
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         private void ImportExecuted()

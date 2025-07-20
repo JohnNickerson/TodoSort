@@ -1,22 +1,16 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using AssimilationSoftware.TodoSort.WpfGui.Annotations;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace AssimilationSoftware.TodoSort.WpfGui.Model
 {
-    public class BranchOption : INotifyPropertyChanged
+    public class BranchOption : ObservableObject
     {
         private int _branchFactor;
         private bool _isSelected;
         private string _contextName;
         private string _resultCount;
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        [NotifyPropertyChangedInvocator]
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
 
         public string ContextName
         {
