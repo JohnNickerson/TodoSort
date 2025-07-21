@@ -57,7 +57,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             }
             if (importer != null && importer.IsValid)
             {
-                _vm.AddAllItems(TargetContext, true, importer.GetAllItems());
+                _vm.AddAllItems(TargetContext, true, importer.GetAllItems().ToArray());
                 _view.Close();
             }
         }
