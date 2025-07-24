@@ -798,26 +798,30 @@ namespace AssimilationSoftware.TodoSort.CLI
         public static void Update(UpdateSubOptions updateOptions, ViewModel vm)
         {
             var itemSource = new CsvReader(updateOptions.Filename, updateOptions.FileSystem);
+            var addCount = 0;
+            var doneCount = 0;
             IEnumerable<Dictionary<string, string>> items = itemSource.GetAllItems();
             foreach (var item in items)
             {
                 if (vm.FindByTag("url", item["URL"]) is ActionItem existingItem)
                 {
-                    if (item["Folder"].Equals("Archive", StringComparison.CurrentCultureIgnoreCase))
+                    if (item.TryGetValue("Folder", out string? folder) && folder.Equals("Archive", StringComparison.CurrentCultureIgnoreCase))
                     {
                         if (!existingItem.Done)
                         {
                             vm.MarkDone(DateTime.Now, existingItem);
+                            doneCount++;
                         }
                     }
                 }
                 else
                 {
+                    bool hasTitle = item.ContainsKey("Title") && !string.IsNullOrWhiteSpace(item["Title"]);
                     vm.AddItem(new ActionItem
                     {
                         ID = Guid.NewGuid(),
-                        Title = string.IsNullOrWhiteSpace(item["Title"]) ? item["URL"] : item["Title"],
-                        Context = string.IsNullOrWhiteSpace(updateOptions.Context) ? "instapaper" : updateOptions.Context,
+                        Title = hasTitle ? item["Title"] : item["URL"],
+                        Context = string.IsNullOrWhiteSpace(updateOptions.Context) ? "import" : updateOptions.Context,
                         Tags = new Dictionary<string, string>
                         {
                             { "url", item["URL"] },
@@ -825,9 +829,11 @@ namespace AssimilationSoftware.TodoSort.CLI
                         LastModified = DateTime.Now,
                         RevisionGuid = Guid.NewGuid()
                     });
+                    addCount++;
                 }
             }
             vm.Save();
+            Console.WriteLine($"{addCount} items added, {doneCount} items marked done.");
         }
 
         static void OpenUrl(string url)
