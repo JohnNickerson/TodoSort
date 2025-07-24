@@ -13,8 +13,8 @@ using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Runtime.InteropServices;
 using Spectre.Console;
+using Humanizer;
 
 namespace AssimilationSoftware.TodoSort.CLI
 {
@@ -770,7 +770,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             ActionItem? undefer = null;
             if (somesub.PageSize <= 0) somesub.PageSize = 1;
             if (somesub.PageSize > 10) somesub.PageSize = 10;
-            var someitems = (from s in vm.SomedayItems where !s.TickleDate.HasValue || somesub.IncludeTickle select s);
+            var someitems = from s in vm.SomedayItems where !s.TickleDate.HasValue || somesub.IncludeTickle select s;
             for (var offset = 0; offset <= someitems.Count(); offset += somesub.PageSize)
             {
                 Console.Clear();
@@ -797,6 +797,7 @@ namespace AssimilationSoftware.TodoSort.CLI
 
         public static void Update(UpdateSubOptions updateOptions, ViewModel vm)
         {
+            // TODO: Refactor into Core to allow reuse from GUI.
             var itemSource = new CsvReader(updateOptions.Filename, updateOptions.FileSystem);
             var addCount = 0;
             var doneCount = 0;
@@ -833,35 +834,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                 }
             }
             vm.Save();
-            Console.WriteLine($"{addCount} items added, {doneCount} items marked done.");
-        }
-
-        static void OpenUrl(string url)
-        {
-            try
-            {
-                System.Diagnostics.Process.Start(url);
-            }
-            catch
-            {
-                // hack because of this: https://github.com/dotnet/corefx/issues/10361
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                {
-                    System.Diagnostics.Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
-                }
-                else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-                {
-                    System.Diagnostics.Process.Start("xdg-open", url);
-                }
-                else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-                {
-                    System.Diagnostics.Process.Start("open", url);
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            Console.WriteLine($"{"item".ToQuantity(addCount)} added, {"item".ToQuantity(doneCount)} marked done.");
         }
 
         private static void TagAll(TagAllSubOptions tagAllOptions, ViewModel vm, TodoRepository repo)
@@ -938,18 +911,18 @@ namespace AssimilationSoftware.TodoSort.CLI
                 vm.ShowHeadOnly = false;
             }
             vm.SearchSpecification = new TrueSpecification<ActionItem>();
-            var summarydata = (from i in vm.SearchResults group i by i.Context into c select new { Context = c.Key, Count = c.Count() });
+            var summaryData = from i in vm.SearchResults group i by i.Context into c select new { Context = c.Key, Count = c.Count() };
 
-            // TODO: Cuneiform table display.
-            var maxwidth = (summarydata.Count() > 0 ? (from r in summarydata select r.Context.Length).Max() : 0);
-            var maxnum = Math.Ceiling(Math.Log10((summarydata.Count() > 0 ? (from c in summarydata select c.Count).Max() : 0)));
+            // TODO: Spectre table display.
+            var maxwidth = summaryData.Count() > 0 ? (from r in summaryData select r.Context.Length).Max() : 0;
+            var maxnum = Math.Ceiling(Math.Log10(summaryData.Count() > 0 ? (from c in summaryData select c.Count).Max() : 0));
             var total = 0;
-            foreach (var c in summarydata)
+            foreach (var c in summaryData)
             {
                 total += c.Count;
 
                 // @context         n item(s)
-                var format = string.Format("@{{0}}\t{{1,{0}}} item{1}", maxnum, (c.Count == 1 ? "" : "s"));
+                var format = string.Format("@{{0}}\t{{1,{0}}} {1}", maxnum, c.Count == 1 ? "item" : "items");
                 Console.WriteLine(format, c.Context.PadRight(maxwidth), c.Count);
 
                 if (summaryArgs.Verbose)
