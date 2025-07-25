@@ -913,18 +913,20 @@ namespace AssimilationSoftware.TodoSort.CLI
             vm.SearchSpecification = new TrueSpecification<ActionItem>();
             var summaryData = from i in vm.SearchResults group i by i.Context into c select new { Context = c.Key, Count = c.Count() };
 
-            // TODO: Spectre table display.
-            var maxwidth = summaryData.Count() > 0 ? (from r in summaryData select r.Context.Length).Max() : 0;
-            var maxnum = Math.Ceiling(Math.Log10(summaryData.Count() > 0 ? (from c in summaryData select c.Count).Max() : 0));
+            var table = new Table();
+            table.AddColumn(new TableColumn("Context").Padding(2, 0));
+            table.AddColumn(new TableColumn("Count").RightAligned().Padding(2, 0));
             var total = 0;
+            var secondOrLaterContext = false;
             foreach (var c in summaryData)
             {
                 total += c.Count;
-
-                // @context         n item(s)
-                var format = string.Format("@{{0}}\t{{1,{0}}} {1}", maxnum, c.Count == 1 ? "item" : "items");
-                Console.WriteLine(format, c.Context.PadRight(maxwidth), c.Count);
-
+                if (secondOrLaterContext && summaryArgs.Verbose)
+                {
+                    table.AddEmptyRow();
+                }
+                table.AddRow($"@{c.Context}", "item".ToQuantity(c.Count));
+                secondOrLaterContext = true;
                 if (summaryArgs.Verbose)
                 {
                     // Show a summary of numbers at each depth.
@@ -954,17 +956,17 @@ namespace AssimilationSoftware.TodoSort.CLI
                     }
                     foreach (var d in detailed.OrderBy(r => r.Key))
                     {
-                        format = $"\t{{0}}\t{{1,{maxnum}}} item{(d.Value == 1 ? "" : "s")}";
-                        Console.WriteLine(format, d.Key, d.Value);
+                        table.AddRow(new TableRow([new Markup(d.Key.ToString()).RightJustified(), new Markup("item".ToQuantity(d.Value))]));
                     }
                     if (unknownCount > 0)
                     {
-                        Console.WriteLine(format, "-", unknownCount);
+                        table.AddRow("-", "item".ToQuantity(unknownCount));
                     }
-                    Console.WriteLine();
                 }
             }
-            Console.WriteLine("Total\t{0}", total);
+            table.AddEmptyRow();
+            table.AddRow("Total", "item".ToQuantity(total));
+            AnsiConsole.Write(table);
 
             TidyUp(vm, repo);
         }
