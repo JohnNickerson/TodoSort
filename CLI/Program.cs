@@ -1480,6 +1480,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             public ActionItem Item;
             public int Depth;
             public string? PadLine;
+            public Spectre.Console.TreeNode TreeNode;
         }
 
         private static void PrintTree(ActionItem root, List<ActionItem> tree, List<ActionItem> ancestors, bool nsfw = false)
@@ -1487,7 +1488,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             Tree spRoot = new(root.Title);
             var conwide = Console.WindowWidth;
             var stack = new Stack<PrintTreeItem>();
-            stack.Push(new PrintTreeItem { Item = root, Depth = 1, PadLine = null });
+            stack.Push(new PrintTreeItem { Item = root, Depth = 1, PadLine = null, TreeNode = spRoot.Nodes.ElementAt(0) });
             while (stack.Count > 0)
             {
                 var node = stack.Pop();
@@ -1533,9 +1534,11 @@ namespace AssimilationSoftware.TodoSort.CLI
 
                 for (var j = 0; j < children.Count(); j++)
                 {
-                    stack.Push(new PrintTreeItem { Item = children.ElementAt(j), PadLine = padline.ToString().Trim() + (j == 0 ? "" : "\\"), Depth = node.Depth + (j == 0 ? 0 : 1) });
+                    var childNode = node.TreeNode.AddNode(children.ElementAt(j).Title);
+                    stack.Push(new PrintTreeItem { Item = children.ElementAt(j), PadLine = padline.ToString().Trim() + (j == 0 ? "" : "\\"), Depth = node.Depth + (j == 0 ? 0 : 1), TreeNode = childNode });
                 }
             }
+            AnsiConsole.Write(spRoot);
         }
 
         /// <summary>

@@ -6,6 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
     <UseWindowsForms>true</UseWindowsForms>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
     <Title>TodoSort GUI</Title>
     <AssemblyName>TodoSort</AssemblyName>
     <Company>Assimilation Software</Company>
