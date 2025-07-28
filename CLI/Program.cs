@@ -1254,7 +1254,9 @@ namespace AssimilationSoftware.TodoSort.CLI
             {
                 bumpItems.AddRange(vm.SearchResults.Take(bumpOpts.Top));
             }
-            // Before
+            // TODO: Display the before and after positions together.
+            // Before: red and strike-through.
+            // After: yellow and bold.
             PrintTree(bumpItems, true, repo, bumpOpts.NSFW);
             foreach (var target in bumpItems)
             {
@@ -1449,7 +1451,6 @@ namespace AssimilationSoftware.TodoSort.CLI
 
         private static void PrintTree(List<ActionItem> list, bool showAncestors, ITodoRepository repo, bool nsfw = false)
         {
-            // TODO: Spectre tree display
             var ancestors = new List<ActionItem>();
             ancestors.AddRange(list);
             if (showAncestors)
@@ -1475,17 +1476,98 @@ namespace AssimilationSoftware.TodoSort.CLI
             }
         }
 
+        private static void PrintTreeSpectre(List<ActionItem> bold, List<ActionItem> strike, bool showAncestors, ITodoRepository repo, bool nsfw = false)
+        {
+            var ancestors = new List<ActionItem>();
+            ancestors.AddRange(bold);
+            ancestors.AddRange(strike);
+            Dictionary<Guid, Tree> roots = new Dictionary<Guid, Tree>();
+            if (showAncestors)
+            {
+                // Fill out the results.
+                for (var i = 0; i < ancestors.Count; i++)
+                {
+                    if (ancestors[i] != null && ancestors[i].ParentId != null)
+                    {
+                        var parent = ancestors[i].GetParent(repo);
+                        if (!ancestors.Contains(parent))
+                        {
+                            ancestors.Add(parent);
+                        }
+                    }
+                    // Find the roots.
+                    if (ancestors[i] != null && ancestors[i].ParentId == null && !roots.ContainsKey(ancestors[i].ID))
+                    {
+                        // roots.Add(ancestors[i].ID, ancestors[i]);
+                    }
+                }
+            }
+            var boldNodes = bold.Select(i => i.ID).ToHashSet();
+            var strikeNodes = strike.Select(i => i.ID).ToHashSet();
+            ancestors.Reverse(); // Try to encounter roots first.
+            var treeNodes = new Dictionary<Guid, TreeNode>();
+
+            foreach (var a in ancestors)
+            {
+                // If a.ParentId is null, it is a root. It should already be in the roots dictionary. Need to turn it into a Tree.
+                if (a == null || a.ID == Guid.Empty) continue; // Skip null or empty items.
+                if (a.ParentId != null)
+                {
+                    roots[a.ID] = new Tree(a.Title.EscapeMarkup());
+                    if (boldNodes.Contains(a.ID))
+                    {
+                        roots[a.ID].Style = "yellow";
+                    }
+                }
+                else
+                {
+                    var rawTitle = a.Title.EscapeMarkup();
+                    if (a.Tags.ContainsKey("nsfw") && !nsfw)
+                    {
+                        rawTitle = "(nsfw) " + Rot13.Transform(rawTitle);
+                    }
+                    Markup childTitle = new Markup(rawTitle);
+                    if (boldNodes?.Contains(a.ID) ?? false)
+                    {
+                        childTitle = new Markup($"[yellow]{rawTitle}[/]");
+                    }
+                    else if (strikeNodes?.Contains(a.ID) ?? false)
+                    {
+                        childTitle = new Markup($"[strikethrough]{rawTitle}[/]");
+                    }
+
+                    // This node has a parent, but have we seen it yet?
+                    if (!treeNodes.ContainsKey(a.ParentId.Value))
+                    {
+                        // No, so create a new TreeNode for it.
+                        treeNodes[a.ParentId.Value] = new TreeNode(childTitle);
+                    }
+                    else
+                    {
+                        var newNode = treeNodes[a.ParentId.Value].AddNode(childTitle);
+                        treeNodes[a.ID] = newNode; // Add the new node to the dictionary.
+                    }
+                }
+            }
+            foreach (var r in roots)
+            {
+                // Print the tree.
+                AnsiConsole.Write(r.Value);
+                Console.WriteLine();
+                Console.WriteLine();
+            }
+        }
+
         private struct PrintTreeItem
         {
             public ActionItem Item;
-            public Spectre.Console.TreeNode? TreeNode;
+            public TreeNode? TreeNode;
         }
 
         private static void PrintTree(ActionItem root, List<ActionItem> tree, List<ActionItem> ancestors, bool nsfw = false)
         {
             // I think this is too slow, and it certainly feels like it.
             Tree spRoot = new(root.Title);
-            var conwide = Console.WindowWidth;
             var stack = new Stack<PrintTreeItem>();
             stack.Push(new PrintTreeItem { Item = root, TreeNode = null });
             while (stack.Count > 0)
