@@ -1449,6 +1449,7 @@ namespace AssimilationSoftware.TodoSort.CLI
 
         private static void PrintTree(List<ActionItem> list, bool showAncestors, ITodoRepository repo, bool nsfw = false)
         {
+            // TODO: Spectre tree display
             var ancestors = new List<ActionItem>();
             ancestors.AddRange(list);
             if (showAncestors)
@@ -1483,6 +1484,7 @@ namespace AssimilationSoftware.TodoSort.CLI
 
         private static void PrintTree(ActionItem root, List<ActionItem> tree, List<ActionItem> ancestors, bool nsfw = false)
         {
+            Tree spRoot = new(root.Title);
             var conwide = Console.WindowWidth;
             var stack = new Stack<PrintTreeItem>();
             stack.Push(new PrintTreeItem { Item = root, Depth = 1, PadLine = null });
@@ -1518,9 +1520,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                 }
                 if (tree != null && tree.Contains(focus))
                 {
-                    Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.Write(name);
-                    Console.ResetColor();
+                    AnsiConsole.Markup($"[yellow]{name}[/]");
                 }
                 else
                 {

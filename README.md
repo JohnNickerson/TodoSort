@@ -13,56 +13,56 @@ TodoSort is a task list and reading list app with an emphasis on priority. It st
 
 # Releases
 
-- 2018-04-27: Build 0.9.10 released to Production
+- 2018-04-27: Build 0.9.10 
   - "Retag" option added to "Rename" command.
-- 2018-07-13: Build 0.9.11 released to Production
+- 2018-07-13: Build 0.9.11 
   - Export sorting support.
-- 2018-08-16: Build 0.9.12 released to Production
+- 2018-08-16: Build 0.9.12 
   - Default import context.
   - Force-save option.
   - Bug: deduplication search returns every single item as the last set.
-- 2018-10-11: Build 1.0.0 released to Production
+- 2018-10-11: Build 1.0.0 
   - Basic GUI
-- 2018-10-18: Build 1.0.1 released to Production
+- 2018-10-18: Build 1.0.1 
   - Recent Files list in GUI.
-- 2018-10-25: Build 1.0.2 released to Production
+- 2018-10-25: Build 1.0.2 
   - Save to update view
   - Size window to contents
   - Done and Someday views
-- 2018-11-01: Build 1.0.3 released to Production
+- 2018-11-01: Build 1.0.3 
   - GUI improvements
   - Ranking GUI
-- 2018-11-08: Build 1.0.4 released to Production
+- 2018-11-08: Build 1.0.4 
   - Live list updates.
-- 2018-11-13: Build 1.0.5 released to Production
+- 2018-11-13: Build 1.0.5 
   - Implicit chains.
   - Item editing in GUI.
   - Some GUI bug fixes.
-- 2018-11-15: Build 1.0.5.1 released to Production
+- 2018-11-15: Build 1.0.5.1 
   - Hot fix for implicit chains (everything was losing ranking data).
-- 2018-11-30: Build 1.0.7 released to Production
+- 2018-11-30: Build 1.0.7 
   - Add items via GUI.
-- 2019-01-24: Build 1.1.3 released to Production
+- 2019-01-24: Build 1.1.3 
   - Title fixing and search improvements.
-- 2019-01-31: Build 1.1.3 released to Production
+- 2019-01-31: Build 1.1.3 
   - Manually-triggered cleanup
   - Chain re-heading
   - Search for missing tags
   - Mask NSFW item titles.
-- 2019-02-07: Build 1.1.5 released to Production
+- 2019-02-07: Build 1.1.5 
   - Preserve context selection when moving items, marking done or undone.
   - Update item list when performing cleanup.
-- 2019-02-21: Build 1.1.6 released to Production
+- 2019-02-21: Build 1.1.6 
   - Show Head Only option moved to Options menu with keyboard shortcut.
   - Close ranking window automatically when finished.
   - Open any file type.
-- 2019-02-28: Build 1.1.7 released to Production
+- 2019-02-28: Build 1.1.7 
   - Validation for title fixing from GUI.
   - Full item details in tooltip.
   - Bump items via GUI.
   - Save NSFW masking option.
   - Open link updates after edit.
-- 2019-03-21: Build 1.1.8 released to Production
+- 2019-03-21: Build 1.1.8 
   - Double-click to edit.
   - Display item count.
   - Maroon back-end (v0.1.2.1)
