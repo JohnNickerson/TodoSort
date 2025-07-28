@@ -677,7 +677,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             }
             else if (searchOptions.PrintTree)
             {
-                PrintTree(vm.SearchResults.ToList(), true, repo, searchOptions.NSFW);
+                PrintTreeSpectre(vm.SearchResults.ToList(), new List<ActionItem>(), true, repo, searchOptions.NSFW);
             }
             else
             {
@@ -1481,7 +1481,10 @@ namespace AssimilationSoftware.TodoSort.CLI
             var ancestors = new List<ActionItem>();
             ancestors.AddRange(bold);
             ancestors.AddRange(strike);
-            Dictionary<Guid, Tree> roots = new Dictionary<Guid, Tree>();
+            var boldNodes = bold.Select(i => i.ID).ToHashSet();
+            var strikeNodes = strike.Select(i => i.ID).ToHashSet();
+            var roots = new Dictionary<Guid, Tree>();
+            var treeNodes = new Dictionary<Guid, TreeNode>();
             if (showAncestors)
             {
                 // Fill out the results.
@@ -1495,60 +1498,46 @@ namespace AssimilationSoftware.TodoSort.CLI
                             ancestors.Add(parent);
                         }
                     }
-                    // Find the roots.
-                    if (ancestors[i] != null && ancestors[i].ParentId == null && !roots.ContainsKey(ancestors[i].ID))
-                    {
-                        // roots.Add(ancestors[i].ID, ancestors[i]);
-                    }
-                }
-            }
-            var boldNodes = bold.Select(i => i.ID).ToHashSet();
-            var strikeNodes = strike.Select(i => i.ID).ToHashSet();
-            ancestors.Reverse(); // Try to encounter roots first.
-            var treeNodes = new Dictionary<Guid, TreeNode>();
 
-            foreach (var a in ancestors)
-            {
-                // If a.ParentId is null, it is a root. It should already be in the roots dictionary. Need to turn it into a Tree.
-                if (a == null || a.ID == Guid.Empty) continue; // Skip null or empty items.
-                if (a.ParentId != null)
-                {
-                    roots[a.ID] = new Tree(a.Title.EscapeMarkup());
-                    if (boldNodes.Contains(a.ID))
+                    // Construct the tree nodes.
+                    if (ancestors[i] != null && ancestors[i].ParentId == null)
                     {
-                        roots[a.ID].Style = "yellow";
-                    }
-                }
-                else
-                {
-                    var rawTitle = a.Title.EscapeMarkup();
-                    if (a.Tags.ContainsKey("nsfw") && !nsfw)
-                    {
-                        rawTitle = "(nsfw) " + Rot13.Transform(rawTitle);
-                    }
-                    Markup childTitle = new Markup(rawTitle);
-                    if (boldNodes?.Contains(a.ID) ?? false)
-                    {
-                        childTitle = new Markup($"[yellow]{rawTitle}[/]");
-                    }
-                    else if (strikeNodes?.Contains(a.ID) ?? false)
-                    {
-                        childTitle = new Markup($"[strikethrough]{rawTitle}[/]");
-                    }
-
-                    // This node has a parent, but have we seen it yet?
-                    if (!treeNodes.ContainsKey(a.ParentId.Value))
-                    {
-                        // No, so create a new TreeNode for it.
-                        treeNodes[a.ParentId.Value] = new TreeNode(childTitle);
+                        // This is a root node.
+                        if (!roots.ContainsKey(ancestors[i].ID))
+                        {
+                            roots[ancestors[i].ID] = new Tree(MarkupTitle(ancestors[i], boldNodes.Contains(ancestors[i].ID), strikeNodes.Contains(ancestors[i].ID)));
+                        }
                     }
                     else
                     {
-                        var newNode = treeNodes[a.ParentId.Value].AddNode(childTitle);
-                        treeNodes[a.ID] = newNode; // Add the new node to the dictionary.
+                        var newNode = new TreeNode(MarkupTitle(ancestors[i], boldNodes.Contains(ancestors[i].ID), strikeNodes.Contains(ancestors[i].ID)));
+                        treeNodes[ancestors[i].ID] = newNode; // Add the new node to the dictionary.
                     }
                 }
             }
+
+            // Link to parents.
+            foreach (var a in ancestors)
+            {
+                // If a.ParentId is null, it is a root. It should already be in the roots dictionary.
+                if (a == null || a.ID == Guid.Empty || a.ParentId is null) continue; // Skip null or empty items.
+                if (roots.ContainsKey(a.ParentId ?? Guid.Empty))
+                {
+                    // Parent is a root node.
+                    roots[a.ParentId ?? Guid.Empty].AddNode(treeNodes[a.ID]);
+                }
+                else if (treeNodes.ContainsKey(a.ParentId ?? Guid.Empty))
+                {
+                    // Parent is not a root, so it should be in the treeNodes list.
+                    treeNodes[a.ParentId ?? Guid.Empty].AddNode(treeNodes[a.ID]);
+                }
+                else
+                {
+                    // Parent is not found, but we have the node itself.
+                    roots[a.ID] = new Tree(MarkupTitle(a, boldNodes.Contains(a.ID), strikeNodes.Contains(a.ID)));
+                }
+            }
+
             foreach (var r in roots)
             {
                 // Print the tree.
@@ -1556,6 +1545,25 @@ namespace AssimilationSoftware.TodoSort.CLI
                 Console.WriteLine();
                 Console.WriteLine();
             }
+        }
+
+        private static Markup MarkupTitle(ActionItem item, bool bold, bool strikethrough)
+        {
+            var rawTitle = item.Title.EscapeMarkup();
+            if (item.Tags.ContainsKey("nsfw") && !verbose)
+            {
+                rawTitle = "(nsfw) " + Rot13.Transform(rawTitle);
+            }
+            Markup title = new Markup(rawTitle);
+            if (bold)
+            {
+                title = new Markup($"[yellow]{rawTitle}[/]");
+            }
+            else if (strikethrough)
+            {
+                title = new Markup($"[strikethrough]{rawTitle}[/]");
+            }
+            return title;
         }
 
         private struct PrintTreeItem
