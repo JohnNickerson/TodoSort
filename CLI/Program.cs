@@ -1478,64 +1478,45 @@ namespace AssimilationSoftware.TodoSort.CLI
         private struct PrintTreeItem
         {
             public ActionItem Item;
-            public int Depth;
-            public string? PadLine;
-            public Spectre.Console.TreeNode TreeNode;
+            public Spectre.Console.TreeNode? TreeNode;
         }
 
         private static void PrintTree(ActionItem root, List<ActionItem> tree, List<ActionItem> ancestors, bool nsfw = false)
         {
+            // I think this is too slow, and it certainly feels like it.
             Tree spRoot = new(root.Title);
             var conwide = Console.WindowWidth;
             var stack = new Stack<PrintTreeItem>();
-            stack.Push(new PrintTreeItem { Item = root, Depth = 1, PadLine = null, TreeNode = spRoot.Nodes.ElementAt(0) });
+            stack.Push(new PrintTreeItem { Item = root, TreeNode = null });
             while (stack.Count > 0)
             {
                 var node = stack.Pop();
-                var indent = node.Depth;
                 var focus = node.Item;
                 var children = ancestors.Where(i => i.ParentId == focus.ID);
-                var prefix = new StringBuilder();
-                var padline = new StringBuilder();
-                for (var i = 0; i < indent; i++)
-                {
-                    if (i < indent - 1)
-                    {
-                        prefix.Append("| ");
-                    }
-                    else
-                    {
-                        prefix.Append("* ");
-                    }
-                    padline.Append("| ");
-                }
-                if (!string.IsNullOrEmpty(node.PadLine))
-                {
-                    Console.WriteLine(node.PadLine);
-                }
-                Console.Write(prefix);
-                var name = focus.Title.Substring(0, Math.Min(conwide - prefix.Length, focus.Title.Length));
-                if (focus.Tags.ContainsKey("nsfw") && focus.Tags["nsfw"].ToLower() == "true" && !nsfw)
-                {
-                    name = "(nsfw) " + Rot13.Transform(name);
-                }
-                if (tree != null && tree.Contains(focus))
-                {
-                    AnsiConsole.Markup($"[yellow]{name}[/]");
-                }
-                else
-                {
-                    Console.Write(name);
-                }
-                if (name.Length + prefix.Length < conwide)
-                {
-                    Console.WriteLine();
-                }
 
                 for (var j = 0; j < children.Count(); j++)
                 {
-                    var childNode = node.TreeNode.AddNode(children.ElementAt(j).Title);
-                    stack.Push(new PrintTreeItem { Item = children.ElementAt(j), PadLine = padline.ToString().Trim() + (j == 0 ? "" : "\\"), Depth = node.Depth + (j == 0 ? 0 : 1), TreeNode = childNode });
+                    var child = children.ElementAt(j);
+                    TreeNode? childNode = null;
+                    var rawTitle = child.Title.EscapeMarkup();
+                    if (child.Tags.ContainsKey("nsfw") && !nsfw)
+                    {
+                        rawTitle = "(nsfw) " + Rot13.Transform(rawTitle);
+                    }
+                    Markup childTitle = new Markup(rawTitle);
+                    if (tree?.Contains(child) ?? false)
+                    {
+                        childTitle = new Markup($"[yellow]{rawTitle}[/]");
+                    }
+                    if (node.TreeNode != null)
+                    {
+                        childNode = node.TreeNode.AddNode(childTitle);
+                    }
+                    else
+                    {
+                        childNode = spRoot.AddNode(childTitle);
+                    }
+                    stack.Push(new PrintTreeItem { Item = child, TreeNode = childNode });
                 }
             }
             AnsiConsole.Write(spRoot);
