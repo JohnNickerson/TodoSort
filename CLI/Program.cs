@@ -677,7 +677,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             }
             else if (searchOptions.PrintTree)
             {
-                PrintTreeSpectre(vm.SearchResults.ToList(), new List<ActionItem>(), true, repo, searchOptions.NSFW);
+                PrintTreeSpectre(vm.SearchResults.ToList(), new List<ActionItem>(), repo, searchOptions.NSFW);
             }
             else
             {
@@ -707,7 +707,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                 {
                     vm.SetParent(child, parent);
                     Console.WriteLine();
-                    PrintTree(new List<ActionItem> { { child }, { parent } }, false, repo, setParentOptions.NSFW);
+                    PrintTreeSpectre(new List<ActionItem> { { child }, { parent } }, new List<ActionItem>(), repo, setParentOptions.NSFW);
                 }
                 else
                 {
@@ -718,7 +718,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                     {
                         vm.SetParent(child, null);
                         Console.WriteLine();
-                        PrintTree(new List<ActionItem> { child }, false, repo, setParentOptions.NSFW);
+                        PrintTreeSpectre(new List<ActionItem> { child }, new List<ActionItem>(), repo, setParentOptions.NSFW);
                     }
                 }
             }
@@ -1257,7 +1257,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             // TODO: Display the before and after positions together.
             // Before: red and strike-through.
             // After: yellow and bold.
-            PrintTree(bumpItems, true, repo, bumpOpts.NSFW);
+            PrintTreeSpectre(new List<ActionItem>(), bumpItems, repo, bumpOpts.NSFW);
             foreach (var target in bumpItems)
             {
                 var depth = target.GetRankDepth(repo) / 2;
@@ -1272,7 +1272,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                 }
             }
             // After
-            PrintTree(bumpItems, true, repo, bumpOpts.NSFW);
+            PrintTreeSpectre(bumpItems, new List<ActionItem>(), repo, bumpOpts.NSFW);
             TidyUp(vm, repo);
         }
 
@@ -1449,34 +1449,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             }
         }
 
-        private static void PrintTree(List<ActionItem> list, bool showAncestors, ITodoRepository repo, bool nsfw = false)
-        {
-            var ancestors = new List<ActionItem>();
-            ancestors.AddRange(list);
-            if (showAncestors)
-            {
-                // Fill out the results.
-                for (var i = 0; i < ancestors.Count; i++)
-                {
-                    if (ancestors[i] != null && ancestors[i].ParentId != null && !ancestors.Contains(ancestors[i].GetParent(repo)))
-                    {
-                        ancestors.Add(ancestors[i].GetParent(repo));
-                    }
-                }
-            }
-
-            // Find the roots.
-            var roots = ancestors.Where(t => t != null && (t.ParentId == null || !ancestors.Contains(t.GetParent(repo))));
-
-            foreach (var r in roots)
-            {
-                PrintTree(r, list, ancestors, nsfw);
-                Console.WriteLine();
-                Console.WriteLine();
-            }
-        }
-
-        private static void PrintTreeSpectre(List<ActionItem> bold, List<ActionItem> strike, bool showAncestors, ITodoRepository repo, bool nsfw = false)
+        private static void PrintTreeSpectre(List<ActionItem> bold, List<ActionItem> strike, ITodoRepository repo, bool nsfw = false)
         {
             var ancestors = new List<ActionItem>();
             ancestors.AddRange(bold);
@@ -1485,34 +1458,31 @@ namespace AssimilationSoftware.TodoSort.CLI
             var strikeNodes = strike.Select(i => i.ID).ToHashSet();
             var roots = new Dictionary<Guid, Tree>();
             var treeNodes = new Dictionary<Guid, TreeNode>();
-            if (showAncestors)
+            // Fill out the results.
+            for (var i = 0; i < ancestors.Count; i++)
             {
-                // Fill out the results.
-                for (var i = 0; i < ancestors.Count; i++)
+                if (ancestors[i] != null && ancestors[i].ParentId != null)
                 {
-                    if (ancestors[i] != null && ancestors[i].ParentId != null)
+                    var parent = ancestors[i].GetParent(repo);
+                    if (!ancestors.Contains(parent))
                     {
-                        var parent = ancestors[i].GetParent(repo);
-                        if (!ancestors.Contains(parent))
-                        {
-                            ancestors.Add(parent);
-                        }
+                        ancestors.Add(parent);
                     }
+                }
 
-                    // Construct the tree nodes.
-                    if (ancestors[i] != null && ancestors[i].ParentId == null)
+                // Construct the tree nodes.
+                if (ancestors[i] != null && ancestors[i].ParentId == null)
+                {
+                    // This is a root node.
+                    if (!roots.ContainsKey(ancestors[i].ID))
                     {
-                        // This is a root node.
-                        if (!roots.ContainsKey(ancestors[i].ID))
-                        {
-                            roots[ancestors[i].ID] = new Tree(MarkupTitle(ancestors[i], boldNodes.Contains(ancestors[i].ID), strikeNodes.Contains(ancestors[i].ID)));
-                        }
+                        roots[ancestors[i].ID] = new Tree(MarkupTitle(ancestors[i], boldNodes.Contains(ancestors[i].ID), strikeNodes.Contains(ancestors[i].ID)));
                     }
-                    else
-                    {
-                        var newNode = new TreeNode(MarkupTitle(ancestors[i], boldNodes.Contains(ancestors[i].ID), strikeNodes.Contains(ancestors[i].ID)));
-                        treeNodes[ancestors[i].ID] = newNode; // Add the new node to the dictionary.
-                    }
+                }
+                else
+                {
+                    var newNode = new TreeNode(MarkupTitle(ancestors[i], boldNodes.Contains(ancestors[i].ID), strikeNodes.Contains(ancestors[i].ID)));
+                    treeNodes[ancestors[i].ID] = newNode; // Add the new node to the dictionary.
                 }
             }
 
@@ -1561,55 +1531,9 @@ namespace AssimilationSoftware.TodoSort.CLI
             }
             else if (strikethrough)
             {
-                title = new Markup($"[strikethrough]{rawTitle}[/]");
+                title = new Markup($"[red][strikethrough]{rawTitle}[/][/]");
             }
             return title;
-        }
-
-        private struct PrintTreeItem
-        {
-            public ActionItem Item;
-            public TreeNode? TreeNode;
-        }
-
-        private static void PrintTree(ActionItem root, List<ActionItem> tree, List<ActionItem> ancestors, bool nsfw = false)
-        {
-            // I think this is too slow, and it certainly feels like it.
-            Tree spRoot = new(root.Title);
-            var stack = new Stack<PrintTreeItem>();
-            stack.Push(new PrintTreeItem { Item = root, TreeNode = null });
-            while (stack.Count > 0)
-            {
-                var node = stack.Pop();
-                var focus = node.Item;
-                var children = ancestors.Where(i => i.ParentId == focus.ID);
-
-                for (var j = 0; j < children.Count(); j++)
-                {
-                    var child = children.ElementAt(j);
-                    TreeNode? childNode = null;
-                    var rawTitle = child.Title.EscapeMarkup();
-                    if (child.Tags.ContainsKey("nsfw") && !nsfw)
-                    {
-                        rawTitle = "(nsfw) " + Rot13.Transform(rawTitle);
-                    }
-                    Markup childTitle = new Markup(rawTitle);
-                    if (tree?.Contains(child) ?? false)
-                    {
-                        childTitle = new Markup($"[yellow]{rawTitle}[/]");
-                    }
-                    if (node.TreeNode != null)
-                    {
-                        childNode = node.TreeNode.AddNode(childTitle);
-                    }
-                    else
-                    {
-                        childNode = spRoot.AddNode(childTitle);
-                    }
-                    stack.Push(new PrintTreeItem { Item = child, TreeNode = childNode });
-                }
-            }
-            AnsiConsole.Write(spRoot);
         }
 
         /// <summary>
