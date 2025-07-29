@@ -223,3 +223,6 @@ TodoSort is a task list and reading list app with an emphasis on priority. It st
 	- Remove obsolete Pocket integration features.
 - 2025-07-10: Build 1.7.0.1
 	- Fixed a bug where adding a blank tag crashed the GUI.
+- 2025-07-29: Build 1.7.1.0
+	- Add Markdown import and raw URLs update feature.
+	- Rewrite tree display methods to use Spectre.
