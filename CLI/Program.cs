@@ -1536,6 +1536,27 @@ namespace AssimilationSoftware.TodoSort.CLI
             return title;
         }
 
+        private static string FormatTitle(ActionItem i, bool nsfw = false)
+        {
+            var maskTitle = (i.Tags?.ContainsKey("nsfw") ?? false && !nsfw) ? $"(nsfw) {Rot13.Transform(i.Title)}" : i.Title;
+            if (i.Tags?.TryGetValue("type", out var itemType) ?? false)
+            {
+                var typeIcon = i.Tags["type"].ToUpper() switch
+                {
+                    "MOVIE" => ":movie_camera:",
+                    "TV" => ":television:",
+                    "BOOK" => ":open_book:",
+                    "GAME" => ":video_game:",
+                    _ => $"[{i.Tags["type"].ToUpper()}]"
+                };
+                return string.Format("{0} {1}", typeIcon, maskTitle);
+            }
+            else
+            {
+                return maskTitle;
+            }
+        }
+
         /// <summary>
         /// Prints an individual item to the console.
         /// </summary>
@@ -1546,26 +1567,19 @@ namespace AssimilationSoftware.TodoSort.CLI
         private static void PrintItem(ActionItem i, int? index, ITodoRepository repo, bool nsfw = false)
         {
             var wrapwidth = Console.WindowWidth - 1;
-            var title = i.Title;
-            if (i.Tags?.ContainsKey("nsfw") ?? false && !nsfw)
-            {
-                title = "(nsfw) " + Rot13.Transform(title);
-            }
-            if (i.Tags?.ContainsKey("type") ?? false)
-            {
-                title = string.Format("{1} [{0}]", i.Tags["type"].ToUpper(), title);
-            }
+            var title = FormatTitle(i, nsfw);
             if (i.DoneDate.HasValue)
             {
-                title = string.Format("[{0:yyyy-MM-dd}] {1}", i.DoneDate.Value, title);
+                title = string.Format("[green][[{0:yyyy-MM-dd}]][/] {1}", i.DoneDate.Value, title.EscapeMarkup());
             }
             if (i.TickleDate.HasValue)
             {
-                title = string.Format("[{0:yyyy-MM-dd}] {1}", i.TickleDate.Value, title);
+                title = string.Format("[blue][[{0:yyyy-MM-dd}]][/] {1}", i.TickleDate.Value, title.EscapeMarkup());
             }
             if (i.IsDeleted)
             {
-                title = $"[DELETED] {title}";
+                // NOTE: I think we only get here for conflict editing.
+                title = $"[red][[DELETED]][/] {title.EscapeMarkup()}";
             }
 
             if (index.HasValue)
@@ -1615,7 +1629,6 @@ namespace AssimilationSoftware.TodoSort.CLI
                 }
                 WrapOutput("        #context:", i.Context, wrapwidth);
                 WrapOutput("        #last-modified:", i.LastModified.ToString("yyyy-MM-dd"), wrapwidth);
-                // TODO: Any other special tags?
             }
         }
 
@@ -1638,12 +1651,12 @@ namespace AssimilationSoftware.TodoSort.CLI
                 }
                 line.Append(content.Substring(0, snip));
                 content = content.Remove(0, snip).TrimStart();
-                Console.WriteLine(line);
+                AnsiConsole.MarkupLine(line.ToString());
                 line.Clear();
                 line.Append(' ', indent.Length);
             }
-            Console.Write(line);
-            Console.WriteLine(content);
+            AnsiConsole.Markup(line.ToString());
+            AnsiConsole.MarkupLine(content);
         }
 
         private static ActionItem? Disambiguate(IEnumerable<ActionItem> todolist, ITodoRepository repo, bool autoAcceptOne = false, bool nsfw = false)
@@ -1655,15 +1668,6 @@ namespace AssimilationSoftware.TodoSort.CLI
             {
                 Console.WriteLine("No search matches. No action will be taken.");
             }
-            else if (todolist.Count() > 9)
-            {
-                // Print the items so we know what to narrow down.
-                for (var i = 0; i < todolist.Count(); i++)
-                {
-                    PrintItem(todolist.ElementAt(i), null, repo, nsfw);
-                }
-                Console.WriteLine("Too many search matches. Try to be more specific. No action will be taken this time.");
-            }
             else if (todolist.Count() == 1 && autoAcceptOne)
             {
                 PrintItem(todolist.ElementAt(0), null, repo, nsfw);
@@ -1672,20 +1676,15 @@ namespace AssimilationSoftware.TodoSort.CLI
             }
             else
             {
-                for (var i = 0; i < todolist.Count(); i++)
-                {
-                    PrintItem(todolist.ElementAt(i), i, repo, nsfw);
-                }
-                var choice = Console.ReadKey().KeyChar;
-                // Write a blank line to prevent whatever comes next from printing right after this on the same line.
-                Console.WriteLine();
-                if (int.TryParse(choice.ToString(), out int dex))
-                {
-                    if (todolist.Count() > dex)
-                    {
-                        selected = todolist.ElementAt(dex);
-                    }
-                }
+                // TODO: Cancellation?
+                selected = AnsiConsole.Prompt(
+                    new SelectionPrompt<ActionItem>()
+                    .Title($"{"search result".ToQuantity(todolist.Count())}. Choose one:")
+                    .PageSize(10)
+                    .MoreChoicesText("[grey](Move up and down to reveal more items)[/]")
+                    .AddChoices(todolist)
+                    .UseConverter(a => FormatTitle(a))
+                );
             }
             return selected;
         }
