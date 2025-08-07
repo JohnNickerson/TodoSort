@@ -610,36 +610,27 @@ namespace AssimilationSoftware.TodoSort.CLI
                     Console.WriteLine("{0}/{1} ({2}%) complete", x, items.Count(), 100 * x / items.Count());
                     PrintItem(items.ElementAt(index[x]), 1, repo, rankOptions.NSFW);
                     PrintItem(items.ElementAt(index[x + 1]), 2, repo, rankOptions.NSFW);
-                    Console.Write("Which of these is more important? (q=quit) ");
+                    var choice = AnsiConsole.Prompt(new Spectre.Console.TextPrompt<string>("Which of these is more important? (q=quit and save, c=cancel)")
+                        .AddChoices(["1", "2", "q", "c"]));
                     // assign parents based on vote
-                    switch (Console.ReadKey().KeyChar)
+                    switch (choice)
                     {
-                        case '1':
+                        case "1":
                             vm.SetParent(items.ElementAt(index[x + 1]), items.ElementAt(index[x]));
                             break;
-                        case '2':
+                        case "2":
                             vm.SetParent(items.ElementAt(index[x]), items.ElementAt(index[x + 1]));
                             break;
-                        case 'q':
+                        case "q":
+                            quitAndSave = true;
                             Console.WriteLine();
-                            Console.WriteLine("Quitting. Save ranking so far?");
-                            Console.WriteLine("\tY: Quit and save.");
-                            Console.WriteLine("\tN: Quit without saving (all work this session will be lost, no undo).");
-                            Console.WriteLine("\tC: Cancel (default). Return to ranking.");
-                            switch (Console.ReadKey().KeyChar)
-                            {
-                                case 'y':
-                                    // Quit and save.
-                                    quitAndSave = true;
-                                    break;
-                                case 'n':
-                                    // Quit without saving.
-                                    return;
-                                    // Default. No action. Just return to ranking.
-                            }
+                            Console.WriteLine("Saving changes.");
                             break;
+                        case "c":
+                            Console.WriteLine();
+                            Console.WriteLine("Cancelling. No changes saved.");
+                            return;
                     }
-                    Console.WriteLine();
                     Console.WriteLine();
                 }
             }
@@ -1539,6 +1530,7 @@ namespace AssimilationSoftware.TodoSort.CLI
         private static string FormatTitle(ActionItem i, bool nsfw = false)
         {
             var maskTitle = (i.Tags?.ContainsKey("nsfw") ?? false && !nsfw) ? $"(nsfw) {Rot13.Transform(i.Title)}" : i.Title;
+            maskTitle = maskTitle.EscapeMarkup();
             if (i.Tags?.TryGetValue("type", out var itemType) ?? false)
             {
                 var typeIcon = i.Tags["type"].ToUpper() switch
@@ -1547,7 +1539,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                     "TV" => ":television:",
                     "BOOK" => ":open_book:",
                     "GAME" => ":video_game:",
-                    _ => $"[{i.Tags["type"].ToUpper()}]"
+                    _ => $"[[{i.Tags["type"].ToUpper()}]]"
                 };
                 return string.Format("{0} {1}", typeIcon, maskTitle);
             }
