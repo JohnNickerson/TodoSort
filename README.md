@@ -226,3 +226,7 @@ TodoSort is a task list and reading list app with an emphasis on priority. It st
 - 2025-07-29: Build 1.7.1.0
 	- Add Markdown import and raw URLs update feature.
 	- Rewrite tree display methods to use Spectre.
+- 2025-08-06: Build 1.7.2.0
+	- Use Spectre prompt for disambiguation.
+	- Add emoji for item types to console display.
+	- Colour-code tickle and done dates.
