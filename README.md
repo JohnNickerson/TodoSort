@@ -233,3 +233,5 @@ TodoSort is a task list and reading list app with an emphasis on priority. It st
 - 2025-08-07: Build 1.7.2.1
 	- Fix a Spectre display bug in ranking items.
 	- Use Spectre prompt for ranking in CLI.
+- 2025-08-13: Build 1.7.2.2
+	- Add missing SharpSerializer reference to Core project.
