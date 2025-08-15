@@ -159,8 +159,8 @@ namespace AssimilationSoftware.TodoSort.CLI
                 // Present options for merging
                 // Get user input
                 Console.WriteLine();
-                Console.WriteLine("Select one item to merge all others into (i = ignore):");
-                var survivor = Disambiguate(vm.SearchResults, repo);
+                Console.WriteLine("Select one item to merge all others into (or Cancel to stop):");
+                var survivor = Disambiguate(vm.SearchResults, repo, includeCancel: true);
                 if (survivor != null)
                 {
                     // Merge all into survivor.
@@ -1535,10 +1535,12 @@ namespace AssimilationSoftware.TodoSort.CLI
             {
                 var typeIcon = i.Tags["type"].ToUpper() switch
                 {
-                    "MOVIE" => ":movie_camera:",
-                    "TV" => ":television:",
-                    "BOOK" => ":open_book:",
-                    "GAME" => ":video_game:",
+                    // These don't seem to display on Windows by default, so commented out. :(
+                    // TODO: Use ascii art or something?
+                    // "MOVIE" => ":movie_camera:", // [ ]<
+                    // "TV" => ":television:", // [_]
+                    // "BOOK" => ":open_book:", // \/
+                    // "GAME" => ":video_game:", // <+>
                     _ => $"[[{i.Tags["type"].ToUpper()}]]"
                 };
                 return string.Format("{0} {1}", typeIcon, maskTitle);
@@ -1651,7 +1653,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             AnsiConsole.MarkupLine(content);
         }
 
-        private static ActionItem? Disambiguate(IEnumerable<ActionItem> todolist, ITodoRepository repo, bool autoAcceptOne = false, bool nsfw = false)
+        private static ActionItem? Disambiguate(IEnumerable<ActionItem> todolist, ITodoRepository repo, bool autoAcceptOne = false, bool nsfw = false, bool includeCancel = false)
         {
             ActionItem? selected = null;
 
@@ -1668,15 +1670,26 @@ namespace AssimilationSoftware.TodoSort.CLI
             }
             else
             {
-                // TODO: Cancellation?
-                selected = AnsiConsole.Prompt(
-                    new SelectionPrompt<ActionItem>()
+                SelectionPrompt<ActionItem> prompt = new SelectionPrompt<ActionItem>()
                     .Title($"{"search result".ToQuantity(todolist.Count())}. Choose one:")
                     .PageSize(10)
                     .MoreChoicesText("[grey](Move up and down to reveal more items)[/]")
                     .AddChoices(todolist)
-                    .UseConverter(a => FormatTitle(a))
-                );
+                    .UseConverter(a => FormatTitle(a));
+                if (includeCancel)
+                {
+                    prompt.AddChoice(new ActionItem
+                    {
+                        Title = "Cancel",
+                        Context = "cancel"
+                    });
+                }
+                selected = AnsiConsole.Prompt(prompt);
+                if (selected.Context == "cancel")
+                {
+                    Console.WriteLine("Cancelled.");
+                    return null;
+                }
             }
             return selected;
         }
