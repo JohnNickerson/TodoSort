@@ -235,3 +235,8 @@ TodoSort is a task list and reading list app with an emphasis on priority. It st
 	- Use Spectre prompt for ranking in CLI.
 - 2025-08-13: Build 1.7.2.2
 	- Add missing SharpSerializer reference to Core project.
+- 2025-08-28: Build 1.7.3.0
+	- Add the ability to cancel merging in dedupe command.
+	- Remove emoji, since they don't display on Windows CMD.
+	- Change Humanizer reference to Humanizer.
+	- Core to include only English files.

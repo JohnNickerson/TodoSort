@@ -448,6 +448,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             {
                 item.Title = string.IsNullOrEmpty(addVm.Title) ? addVm.Url : addVm.Title;
                 item.Tags = new Dictionary<string, string> { { "url", addVm.Url } };
+                item.Context = addVm.SelectedContext?.IsSearch ?? false ? _defaultContext : addVm.SelectedContext?.Title;
                 _api.AddItem(item);
                 OnPropertyChanged(nameof(Items));
                 OnPropertyChanged(nameof(Contexts));
@@ -830,7 +831,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             }
         }
 
-        public List<ActionItem> Projects => _api != null ? _api.GetProjects().OrderBy(p => p?.Title).ToList() : new List<ActionItem> {  };
+        public List<ActionItem> Projects => _api != null ? _api.GetProjects().OrderBy(p => p?.Title).ToList() : new List<ActionItem> { };
 
         public List<Context> SearchContexts => Contexts.Where(c => c.Title != "Search").OrderBy(c => c.Title).ToList();
 
