@@ -1670,7 +1670,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             }
             else
             {
-                SelectionPrompt<ActionItem> prompt = new SelectionPrompt<ActionItem>()
+                var prompt = new SelectionPrompt<ActionItem>()
                     .Title($"{"search result".ToQuantity(todolist.Count())}. Choose one:")
                     .PageSize(10)
                     .MoreChoicesText("[grey](Move up and down to reveal more items)[/]")
