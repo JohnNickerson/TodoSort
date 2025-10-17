@@ -39,7 +39,7 @@ public class AddUrlViewModel : ViewModelBase
         try
         {
             _sourceItem.Tags["url"] = _url;
-            _sourceItem.FixTitleCommand.Execute(this);
+            Title = ActionViewItem.FetchWebTitle(_url);
         }
         catch (Exception ex)
         {

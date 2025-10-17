@@ -365,11 +365,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
             var success = false;
             try
             {
-                var client = new WebClient();
-                // TODO: Also get the redirected URL, if any.
-                var source = client.DownloadString(Source.Tags["url"]);
-                var title = Regex.Match(source, @"\<title\b[^>]*\>\s*(?<Title>[\s\S]*?)\</title\>", RegexOptions.IgnoreCase).Groups["Title"].Value;
-                title = RestoreUnicode(title);
+                string title = FetchWebTitle(Source.Tags["url"]);
                 if (ValidateTitle(title) && Title != title)
                 {
                     Title = title;
@@ -389,14 +385,19 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
             EditExecuted();
         }
 
+        public static string FetchWebTitle(string url)
+        {
+            var client = new WebClient();
+            // TODO: Also get the redirected URL, if any.
+            var source = client.DownloadString(url);
+            var title = Regex.Match(source, @"\<title\b[^>]*\>\s*(?<Title>[\s\S]*?)\</title\>", RegexOptions.IgnoreCase).Groups["Title"].Value;
+            title = WebUtility.HtmlDecode(title);
+            return title;
+        }
+
         private void CopyUrlExecuted()
         {
             System.Windows.Clipboard.SetText(Url.Trim());
-        }
-
-        private string RestoreUnicode(string title)
-        {
-            return WebUtility.HtmlDecode(title);
         }
 
         /// <summary>
