@@ -240,3 +240,5 @@ TodoSort is a task list and reading list app with an emphasis on priority. It st
 	- Remove emoji, since they don't display on Windows CMD.
 	- Change Humanizer reference to Humanizer.
 	- Core to include only English files.
+- 2025-09-10: Build 1.7.4.0
+	- Add context selection and fix title fetching in Add URL window.
