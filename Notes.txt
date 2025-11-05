@@ -7,19 +7,6 @@
 		- To allow undeleting items if required.
 		#type:feature
 		#id:11761e28-949d-470d-aeb8-b7cd1d4bc58a
-	Work offline
-		- Enqueue commands to process later without changing files.
-		- Useful for when the files are not up to date (eg Dropbox sync has fallen behind).
-		- Serialise options classes?
-		- Store commands as files in a folder. Apply in-memory but not to disk. Separate 'apply' command for when all up to date. (2015-02-19)
-		- Conflict detection: were all changes made in one place since the last 'apply' operation? (2015-03-19)
-		#release:0.8
-		#id:5e70eaeb-8525-42eb-9824-407482dc0588
-	Increase merge-friendliness by always sorting text files by ID
-		- Should be handy for Git branches.
-		- Make it an option? (2015-04-17)
-		#type:feature
-		#id:5bd414f0-3288-419c-ade0-23bccfa2cff7
 	Always rank project items together
 		- Children of the same project need to be ordered against each other, not necessarily everything else.
 		#type:feature
@@ -72,17 +59,13 @@
 		- On the other hand, it could be good to delay that for an unimportant project.
 		#type:feature
 		#id:76757caa-17d7-4a14-a337-afda259a9ab6
-	Add a URL directly
-		- Extract the page title for the item and store the URL as a tag.
-		- This would be very handy for my work priority-setting where I play off bugs vs features. (2015-01-28)
-		#type:feature
-		#id:1e0f158c-f8e4-44d7-82b5-2bef833490df
 	Show priority depth in verbose output
 		- I want to know how deep certain items are. (2014-06-02)
 		- Maybe merge this with the individual item tree display idea. (2014-06-02)
 		#type:feature
 		#id:540d5e5a-e748-48d4-8131-ba284623b73a
 	Add tags on command line with add command
+		- Currently interactive. Allow as an argument.
 		#type:feature
 		#id:734bc716-c2d6-44d6-8a7a-04fb0374238c
 	Display depth for individual item search results
@@ -96,10 +79,6 @@
 	Use word wrap for status messages while adding new items
 		#type:feature
 		#id:e4807656-e261-4f76-9db6-181d4387d118
-	Allow adding an item with the Done command
-		- Sometimes, being able to create a new item instead of having to look for it first would be handy.
-		#type:feature
-		#id:55334296-a38c-4268-adf7-7e9cabd9e07a
 	Hide NSFW-tagged items
 		- Might be easiest to specify with advanced search.
 		#type:feature
@@ -123,11 +102,6 @@
 		#type:feature
 		#id:c7f20b28-948a-4530-be53-7234e8fbdb65
 		#priority-parent:76757caa-17d7-4a14-a337-afda259a9ab6
-	Change the disambiguation process to demand a single match
-		- Tough for short words that might appear everywhere. Allow IDs?
-		#type:feature
-		#id:fb247274-9a35-4f42-bb8c-4361cd29fd9e
-		#priority-parent:1e0f158c-f8e4-44d7-82b5-2bef833490df
 	Copy tag to clipboard
 		- Or export directly to clipboard instead of file.
 		#type:feature
@@ -162,43 +136,16 @@
 		#done-date:2017-11-21
 		#id:c16bf60e-abb0-4847-867b-cba0df9e7e3e
 @gui
-	Open url via GUI
-		- With this, mark as done and ranking, I'll have my main playlist functions in the GUI.
-		#type:feature
-		#id:6ce50539-3ffe-4f30-b85e-d947f7699788
-	Edit titles
-		- Much easier in a GUI than command line. (2014-06-04)
-		#type:feature
-		#id:cae7238f-17db-46ce-b726-e24c4ea29f60
-		#priority-parent:6ce50539-3ffe-4f30-b85e-d947f7699788
 	Warn when closing without saving
 		#type:feature
 		#id:6bb0c52c-6f9a-4676-81a3-608db07e917a
 		#priority-parent:6ce50539-3ffe-4f30-b85e-d947f7699788
-	Rank items for priority via GUI
-		#id:4ed8be70-a8dd-41b7-8826-37d7b1e9b4ab
-		#priority-parent:6ce50539-3ffe-4f30-b85e-d947f7699788
-	Add notes via GUI
-		#id:d84fd47b-4bb0-43bf-a4d3-5237a649ebf9
-		#priority-parent:6ce50539-3ffe-4f30-b85e-d947f7699788
 	A Chrome/Firefox plugin to add a page to the playlist
 		#id:d4e41a1d-782b-4f1d-959a-61e8cefcf892
 		#priority-parent:6ce50539-3ffe-4f30-b85e-d947f7699788
-	Add/edit tags via GUI
-		#id:eac9e80b-2f1b-4fb6-bb79-75c8d850a07f
-		#priority-parent:4ed8be70-a8dd-41b7-8826-37d7b1e9b4ab
-	Process inbox via GUI
-		#id:4629aebd-92fa-4e25-afbe-f619d15f7a37
-		#priority-parent:d84fd47b-4bb0-43bf-a4d3-5237a649ebf9
 	Add follow-up actions via GUI
 		#id:bdf4dbf2-cc3c-4004-811b-1d8371c37d3f
 		#priority-parent:eac9e80b-2f1b-4fb6-bb79-75c8d850a07f
-	Review Someday items via GUI
-		#id:6995c2c3-e576-467e-91d4-5775e85e984c
-		#priority-parent:4629aebd-92fa-4e25-afbe-f619d15f7a37
-	Defer items via GUI
-		#id:4f1a19ec-4ff9-4245-811f-6f1d4bcc9f49
-		#priority-parent:bdf4dbf2-cc3c-4004-811b-1d8371c37d3f
 @someday
 	Import from RSS
 		- Can be used for just about anything, then.
@@ -207,19 +154,6 @@
 	Detect "[x]" marks as completed items
 		#tickle-date:2014-04-16
 		#id:aa8b5a86-32d5-4445-a90e-ed517b77c292
-	Import from Pocket
-		#id:560190c3-9571-48e0-a951-3bbdba5c05d1
-		#priority-parent:3d069478-d751-492c-8ca0-6fdd551f31eb
-	Extensible command framework?
-		- Doesn't seem like a great idea, actually.
-		#id:3e979de9-32a2-466c-87f0-b23768955a95
-		#priority-parent:560190c3-9571-48e0-a951-3bbdba5c05d1
-	Review mode?
-		- Process inbox and projects
-		- Ask if each item is done or should be deferred
-		- Process someday list and see if any were done or should be done now
-		#id:b84a8574-a3eb-4208-ba13-8746a9bca871
-		#priority-parent:560190c3-9571-48e0-a951-3bbdba5c05d1
 	Sync with external services
 		- Outlook, Google Tasks, Wunderlist, Google Keep?
 		- API mappers where possible.
@@ -231,6 +165,3 @@
 		- eg "Check something" then "|@shopping Buy this" and "|@home Set up that".
 		#id:79db8c53-b314-4c57-a692-e4791e749215
 		#priority-parent:bcac196a-52cf-4e95-8491-3cc5eafbe98b
-	Add a timestamp when items are processed through the inbox.
-		#id:d7eec29c-e5c6-4347-8950-a9500cc56eb3
-		#priority-parent:43b0868b-d3e5-477f-82cd-b7da7c01a092
