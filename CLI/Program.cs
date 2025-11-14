@@ -1452,7 +1452,9 @@ namespace AssimilationSoftware.TodoSort.CLI
             // Fill out the results.
             for (var i = 0; i < ancestors.Count; i++)
             {
-                if (ancestors[i] != null && ancestors[i].ParentId != null)
+                if (ancestors[i] == null) continue; // Skip null or empty items (should not happen).
+
+                if (ancestors[i].ParentId != null)
                 {
                     var parent = ancestors[i].GetParent(repo);
                     if (!ancestors.Contains(parent))
@@ -1462,7 +1464,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                 }
 
                 // Construct the tree nodes.
-                if (ancestors[i] != null && ancestors[i].ParentId == null)
+                if (ancestors[i].ParentId == null)
                 {
                     // This is a root node.
                     if (!roots.ContainsKey(ancestors[i].ID))
