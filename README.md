@@ -245,3 +245,5 @@ TodoSort is a task list and reading list app with an emphasis on priority. It st
 - 2025-10-22: Build 1.7.4.1
 	- Fix: Prevent the Add URL window from opening the Edit window during title fetching.
 	- Fix: Null reference on blank context search.
+- 2025-11-19: Build 1.7.4.2
+	- Bug fix: occasional null reference in PrintTreeSpectre.

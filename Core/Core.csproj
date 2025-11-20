@@ -2,14 +2,16 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <ImplicitUsings>disable</ImplicitUsings>
+    <InformationalVersion>1.7.4.2</InformationalVersion>
+    <PackageVersion>1.7.4.2</PackageVersion>
   </PropertyGroup>
   <PropertyGroup>
     <AssemblyTitle>Core</AssemblyTitle>
     <Company>Assimilation Software</Company>
     <Product>TodoSort</Product>
     <Copyright>Copyright © Assimilation Software 2025</Copyright>
-    <Version>1.7.4.1</Version>
-    <FileVersion>1.7.4.1</FileVersion>
+    <Version>1.7.4.2</Version>
+    <FileVersion>1.7.4.2</FileVersion>
     <RootNamespace>AssimilationSoftware.TodoSort.Core</RootNamespace>
     <AssemblyName>TodoSort.Core</AssemblyName>
   </PropertyGroup>
