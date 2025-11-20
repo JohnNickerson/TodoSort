@@ -38,6 +38,10 @@ namespace AssimilationSoftware.TodoSort.CLI
             var headers = lines[0].Tokenise().Select(h => h.Trim()).ToArray();
             for (var i = 1; i < lines.Length; i++)
             {
+                if (string.IsNullOrWhiteSpace(lines[i]))
+                {
+                    continue; // Skip empty lines
+                }
                 var tokens = lines[i].Tokenise();
                 if (tokens.Count != headers.Length)
                 {
