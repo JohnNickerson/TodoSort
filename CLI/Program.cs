@@ -1566,16 +1566,16 @@ namespace AssimilationSoftware.TodoSort.CLI
             var title = FormatTitle(i, nsfw);
             if (i.DoneDate.HasValue)
             {
-                title = string.Format("[green][[{0:yyyy-MM-dd}]][/] {1}", i.DoneDate.Value, title.EscapeMarkup());
+                title = string.Format("[green][[{0:yyyy-MM-dd}]][/] {1}", i.DoneDate.Value, title);
             }
             if (i.TickleDate.HasValue)
             {
-                title = string.Format("[blue][[{0:yyyy-MM-dd}]][/] {1}", i.TickleDate.Value, title.EscapeMarkup());
+                title = string.Format("[blue][[{0:yyyy-MM-dd}]][/] {1}", i.TickleDate.Value, title);
             }
             if (i.IsDeleted)
             {
                 // NOTE: I think we only get here for conflict editing.
-                title = $"[red][[DELETED]][/] {title.EscapeMarkup()}";
+                title = $"[red][[DELETED]][/] {title}";
             }
 
             if (index.HasValue)
