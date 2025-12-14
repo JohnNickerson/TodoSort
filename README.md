@@ -247,3 +247,5 @@ TodoSort is a task list and reading list app with an emphasis on priority. It st
 	- Fix: Null reference on blank context search.
 - 2025-11-19: Build 1.7.4.2
 	- Bug fix: occasional null reference in PrintTreeSpectre.
+- 2025-11-26: Build 1.7.4.3
+	- Ignore empty lines during import (CsvReader).
