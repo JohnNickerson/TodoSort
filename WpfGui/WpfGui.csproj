@@ -12,11 +12,11 @@
     <Company>Assimilation Software</Company>
     <Product>TodoSort</Product>
     <Copyright>Copyright © Assimilation Software 2025</Copyright>
-    <Version>1.7.4.3</Version>
-    <FileVersion>1.7.4.3</FileVersion>
+    <Version>1.7.4.4</Version>
+    <FileVersion>1.7.4.4</FileVersion>
     <ApplicationIcon>Resources\Task.ico</ApplicationIcon>
-    <InformationalVersion>1.7.4.3</InformationalVersion>
-    <PackageVersion>1.7.4.3</PackageVersion>
+    <InformationalVersion>1.7.4.4</InformationalVersion>
+    <PackageVersion>1.7.4.4</PackageVersion>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Core\Core.csproj" />
