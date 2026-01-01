@@ -795,6 +795,11 @@ namespace AssimilationSoftware.TodoSort.CLI
             IEnumerable<Dictionary<string, string>> items = itemSource.GetAllItems();
             foreach (var item in items)
             {
+                if (!item.ContainsKey("URL") || string.IsNullOrWhiteSpace(item["URL"]))
+                {
+                    Console.WriteLine("Skipping item without URL.");
+                    continue; // Skip items without URLs.
+                }
                 if (vm.FindByTag("url", item["URL"]) is ActionItem existingItem)
                 {
                     if (item.TryGetValue("Folder", out string? folder) && folder.Equals("Archive", StringComparison.CurrentCultureIgnoreCase))

@@ -70,4 +70,30 @@ public class RawUrlImportTests
             item.Tags["url"] == "http://www.youtube.com/watch?v=example"
         );
     }
+
+    [Fact]
+    public void No_Error_On_Missing_Column()
+    {
+        // Arrange
+        var mockFileSystem = new System.IO.Abstractions.TestingHelpers.MockFileSystem();
+        UpdateSubOptions options = new()
+        {
+            Context = "inbox",
+            Filename = "c:\\Downloads\\links.csv",
+            Format = "urls",
+            FileSystem = mockFileSystem
+        };
+        System.IO.Abstractions.TestingHelpers.MockFileData mockFile = new(
+            "\"Link\"\n" +
+            "\"https://theoatmeal.com:443/\"\n" +
+            "\"https://ganxy.com/i/48595/robert-brockway/rx-episode-1-the-blackouts\"\n" +
+            "\"http://www.youtube.com/watch?v=example\"\n"
+        );
+        mockFileSystem.AddFile("c:\\Downloads\\links.csv", mockFile);
+        MockTodoRepository mockRepository = new(mockFileSystem);
+        ViewModel viewModel = new(mockRepository);
+
+        // Act & Assert
+        AssimilationSoftware.TodoSort.CLI.Program.Update(options, viewModel);
+    }
 }
