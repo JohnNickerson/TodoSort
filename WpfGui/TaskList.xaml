@@ -65,6 +65,7 @@
                     <MenuItem Header="Upvotes" IsChecked="{Binding SortByUpvotes}" IsCheckable="True"/>
                     <MenuItem Header="Title" IsChecked="{Binding SortByTitle}" IsCheckable="True"/>
                     <MenuItem Header="Order tag" IsChecked="{Binding SortByOrder}" IsCheckable="True"/>
+                    <MenuItem Header="Created Date" IsChecked="{Binding SortByCreatedDate}" IsCheckable="True"/>
                 </MenuItem>
             </MenuItem>
             <MenuItem Header="_Help">

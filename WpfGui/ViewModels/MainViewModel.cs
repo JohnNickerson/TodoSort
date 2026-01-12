@@ -57,9 +57,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         private ActionViewItem _selectedItem;
         private bool _searchExpanded;
         private ActionItem? _searchProject;
-        private bool _sortByUpvotes = true;
-        private bool _sortByTitle;
-        private bool _sortByOrder;
+        private SortByProperty _sortBy = SortByProperty.Upvotes;
         private Context? _searchContext;
         private decimal? _lastPendingCount;
         private bool _isSearchContextSelected;
@@ -508,12 +506,6 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                 (Window as TaskList)?.ResizeColumns();
             }
 
-            if (propertyName == nameof(SortByUpvotes) || propertyName == nameof(SortByOrder) ||
-                propertyName == nameof(SortByTitle))
-            {
-                OnPropertyChanged(nameof(Items));
-            }
-
             if (propertyName == nameof(Contexts))
             {
                 OnPropertyChanged(nameof(SearchContexts));
@@ -793,6 +785,10 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                             {
                                 _currentItems = selectedItems.OrderBy(a => a.Tags.ContainsKey("order") ? a.Tags["order"] : "0", new SemiNumericComparer()).ToList();
                             }
+                            else if (SortByCreatedDate)
+                            {
+                                _currentItems = selectedItems.OrderByDescending(a => a.Tags.ContainsKey("created-date") ? DateTime.Parse(a.Tags["created-date"]) : DateTime.MinValue).ToList();
+                            }
                         }
                         break;
                     default:
@@ -810,6 +806,10 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                         else if (SortByOrder)
                         {
                             _currentItems = defaultItems.OrderBy(a => a.Tags.ContainsKey("order") ? a.Tags["order"] : "0", new SemiNumericComparer()).ToList();
+                        }
+                        else if (SortByCreatedDate)
+                        {
+                            _currentItems = defaultItems.OrderByDescending(a => a.Tags.ContainsKey("created-date") ? DateTime.Parse(a.Tags["created-date"]) : DateTime.MinValue).ToList();
                         }
                         break;
                 }
@@ -934,49 +934,61 @@ namespace AssimilationSoftware.TodoSort.WpfGui
 
         public bool SortByUpvotes
         {
-            get => _sortByUpvotes;
+            get => _sortBy == SortByProperty.Upvotes;
             set
             {
-                if (_sortByUpvotes == value) return;
-                _sortByUpvotes = value;
-                if (value)
-                {
-                    SortByTitle = false;
-                    SortByOrder = false;
-                }
+                if (_sortBy == SortByProperty.Upvotes == value) return;
+                _sortBy = value ? SortByProperty.Upvotes : SortByProperty.None;
+                OnPropertyChanged(nameof(SortByCreatedDate));
+                OnPropertyChanged(nameof(SortByOrder));
+                OnPropertyChanged(nameof(SortByTitle));
                 OnPropertyChanged(nameof(SortByUpvotes));
+                OnPropertyChanged(nameof(Items));
             }
         }
 
         public bool SortByTitle
         {
-            get => _sortByTitle;
+            get => _sortBy == SortByProperty.Title;
             set
             {
-                if (_sortByTitle == value) return;
-                _sortByTitle = value;
-                if (value)
-                {
-                    SortByUpvotes = false;
-                    SortByOrder = false;
-                }
+                if (_sortBy == SortByProperty.Title == value) return;
+                _sortBy = value ? SortByProperty.Title : SortByProperty.None;
+                OnPropertyChanged(nameof(SortByCreatedDate));
+                OnPropertyChanged(nameof(SortByOrder));
                 OnPropertyChanged(nameof(SortByTitle));
+                OnPropertyChanged(nameof(SortByUpvotes));
+                OnPropertyChanged(nameof(Items));
             }
         }
 
         public bool SortByOrder
         {
-            get => _sortByOrder;
+            get => _sortBy == SortByProperty.Order;
             set
             {
-                if (_sortByOrder == value) return;
-                _sortByOrder = value;
-                if (value)
-                {
-                    SortByTitle = false;
-                    SortByUpvotes = false;
-                }
+                if (_sortBy == SortByProperty.Order == value) return;
+                _sortBy = value ? SortByProperty.Order : SortByProperty.None;
+                OnPropertyChanged(nameof(SortByCreatedDate));
                 OnPropertyChanged(nameof(SortByOrder));
+                OnPropertyChanged(nameof(SortByTitle));
+                OnPropertyChanged(nameof(SortByUpvotes));
+                OnPropertyChanged(nameof(Items));
+            }
+        }
+
+        public bool SortByCreatedDate
+        {
+            get => _sortBy == SortByProperty.CreatedDate;
+            set
+            {
+                if (_sortBy == SortByProperty.CreatedDate == value) return;
+                _sortBy = value ? SortByProperty.CreatedDate : SortByProperty.None;
+                OnPropertyChanged(nameof(SortByCreatedDate));
+                OnPropertyChanged(nameof(SortByOrder));
+                OnPropertyChanged(nameof(SortByTitle));
+                OnPropertyChanged(nameof(SortByUpvotes));
+                OnPropertyChanged(nameof(Items));
             }
         }
 
