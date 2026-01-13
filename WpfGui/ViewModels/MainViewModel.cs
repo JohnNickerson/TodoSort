@@ -939,11 +939,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             {
                 if (_sortBy == SortByProperty.Upvotes == value) return;
                 _sortBy = value ? SortByProperty.Upvotes : SortByProperty.None;
-                OnPropertyChanged(nameof(SortByCreatedDate));
-                OnPropertyChanged(nameof(SortByOrder));
-                OnPropertyChanged(nameof(SortByTitle));
-                OnPropertyChanged(nameof(SortByUpvotes));
-                OnPropertyChanged(nameof(Items));
+                NotifySortChanged();
             }
         }
 
@@ -954,11 +950,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             {
                 if (_sortBy == SortByProperty.Title == value) return;
                 _sortBy = value ? SortByProperty.Title : SortByProperty.None;
-                OnPropertyChanged(nameof(SortByCreatedDate));
-                OnPropertyChanged(nameof(SortByOrder));
-                OnPropertyChanged(nameof(SortByTitle));
-                OnPropertyChanged(nameof(SortByUpvotes));
-                OnPropertyChanged(nameof(Items));
+                NotifySortChanged();
             }
         }
 
@@ -969,11 +961,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             {
                 if (_sortBy == SortByProperty.Order == value) return;
                 _sortBy = value ? SortByProperty.Order : SortByProperty.None;
-                OnPropertyChanged(nameof(SortByCreatedDate));
-                OnPropertyChanged(nameof(SortByOrder));
-                OnPropertyChanged(nameof(SortByTitle));
-                OnPropertyChanged(nameof(SortByUpvotes));
-                OnPropertyChanged(nameof(Items));
+                NotifySortChanged();
             }
         }
 
@@ -984,12 +972,17 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             {
                 if (_sortBy == SortByProperty.CreatedDate == value) return;
                 _sortBy = value ? SortByProperty.CreatedDate : SortByProperty.None;
-                OnPropertyChanged(nameof(SortByCreatedDate));
-                OnPropertyChanged(nameof(SortByOrder));
-                OnPropertyChanged(nameof(SortByTitle));
-                OnPropertyChanged(nameof(SortByUpvotes));
-                OnPropertyChanged(nameof(Items));
+                NotifySortChanged();
             }
+        }
+
+        private void NotifySortChanged()
+        {
+            OnPropertyChanged(nameof(SortByCreatedDate));
+            OnPropertyChanged(nameof(SortByOrder));
+            OnPropertyChanged(nameof(SortByTitle));
+            OnPropertyChanged(nameof(SortByUpvotes));
+            OnPropertyChanged(nameof(Items));
         }
 
         public bool IsSearchProjectSelected
