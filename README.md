@@ -251,3 +251,5 @@ TodoSort is a task list and reading list app with an emphasis on priority. It st
 	- Ignore empty lines during import (CsvReader).
 - 2025-12-17: Build 1.7.4.4
 	- Avoid double-escaping titles when printing.
+- 2026-01-14: Build 1.7.5.0
+	- Allow sorting by created date.
