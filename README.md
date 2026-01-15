@@ -13,35 +13,9 @@ TodoSort is a task list and reading list app with an emphasis on priority. It st
 
 # Releases
 
-- 2018-04-27: Build 0.9.10 
-  - "Retag" option added to "Rename" command.
-- 2018-07-13: Build 0.9.11 
-  - Export sorting support.
-- 2018-08-16: Build 0.9.12 
-  - Default import context.
-  - Force-save option.
-  - Bug: deduplication search returns every single item as the last set.
-- 2018-10-11: Build 1.0.0 
-  - Basic GUI
-- 2018-10-18: Build 1.0.1 
-  - Recent Files list in GUI.
-- 2018-10-25: Build 1.0.2 
-  - Save to update view
-  - Size window to contents
-  - Done and Someday views
-- 2018-11-01: Build 1.0.3 
-  - GUI improvements
-  - Ranking GUI
-- 2018-11-08: Build 1.0.4 
-  - Live list updates.
-- 2018-11-13: Build 1.0.5 
-  - Implicit chains.
-  - Item editing in GUI.
-  - Some GUI bug fixes.
-- 2018-11-15: Build 1.0.5.1 
-  - Hot fix for implicit chains (everything was losing ranking data).
-- 2018-11-30: Build 1.0.7 
-  - Add items via GUI.
+- 2018: Builds 0.9.10 to 1.0.7
+  - GUI with live list updates, item editing, and "Recent Files" list.
+  - Ranking functionality, "Done/Someday" views, and improved import/export workflows.
 - 2019-01-24: Build 1.1.3 
   - Title fixing and search improvements.
 - 2019-01-31: Build 1.1.3 
