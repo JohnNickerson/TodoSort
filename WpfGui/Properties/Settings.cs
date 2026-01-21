@@ -29,7 +29,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Properties {
                 string machineFile = $"appsettings.{Environment.MachineName}.json";
                 var builder = new ConfigurationBuilder()
                     .SetBasePath(Directory.GetCurrentDirectory())
-                    .AddJsonFile(settingsFile, optional: false, reloadOnChange: true)
+                    .AddJsonFile(settingsFile, optional: true, reloadOnChange: true)
                     .AddJsonFile(machineFile, optional: true, reloadOnChange: true);
                 Debug.WriteLine("Builder initialised.");
 
