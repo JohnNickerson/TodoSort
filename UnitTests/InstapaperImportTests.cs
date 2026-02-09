@@ -57,7 +57,7 @@ public class InstapaperImportTests
         // Assert
         Assert.NotNull(result);
         Assert.IsType<AssimilationSoftware.Maroon.Model.ActionItem[]>(result);
-        Assert.Equal(3, result.Length);
+        Assert.Equal(3, result.Count());
         foreach (var item in result)
         {
             Assert.NotNull(item);

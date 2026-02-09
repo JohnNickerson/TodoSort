@@ -13,8 +13,8 @@ using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Runtime.InteropServices;
 using Spectre.Console;
+using Humanizer;
 
 namespace AssimilationSoftware.TodoSort.CLI
 {
@@ -159,8 +159,8 @@ namespace AssimilationSoftware.TodoSort.CLI
                 // Present options for merging
                 // Get user input
                 Console.WriteLine();
-                Console.WriteLine("Select one item to merge all others into (i = ignore):");
-                var survivor = Disambiguate(vm.SearchResults, repo);
+                Console.WriteLine("Select one item to merge all others into (or Cancel to stop):");
+                var survivor = Disambiguate(vm.SearchResults, repo, includeCancel: true);
                 if (survivor != null)
                 {
                     // Merge all into survivor.
@@ -424,7 +424,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             {
                 // Get everything from the source file.
                 // Exclude anything already seen, according to its import hash field.
-                vm.AddAllItems(importOptions.Context, true, importer.GetAllItems());
+                vm.AddAllItems(importOptions.Context, true, importer.GetAllItems().ToArray());
                 Console.WriteLine(vm.StatusMessage);
             }
 
@@ -610,36 +610,27 @@ namespace AssimilationSoftware.TodoSort.CLI
                     Console.WriteLine("{0}/{1} ({2}%) complete", x, items.Count(), 100 * x / items.Count());
                     PrintItem(items.ElementAt(index[x]), 1, repo, rankOptions.NSFW);
                     PrintItem(items.ElementAt(index[x + 1]), 2, repo, rankOptions.NSFW);
-                    Console.Write("Which of these is more important? (q=quit) ");
+                    var choice = AnsiConsole.Prompt(new Spectre.Console.TextPrompt<string>("Which of these is more important? (q=quit and save, c=cancel)")
+                        .AddChoices(["1", "2", "q", "c"]));
                     // assign parents based on vote
-                    switch (Console.ReadKey().KeyChar)
+                    switch (choice)
                     {
-                        case '1':
+                        case "1":
                             vm.SetParent(items.ElementAt(index[x + 1]), items.ElementAt(index[x]));
                             break;
-                        case '2':
+                        case "2":
                             vm.SetParent(items.ElementAt(index[x]), items.ElementAt(index[x + 1]));
                             break;
-                        case 'q':
+                        case "q":
+                            quitAndSave = true;
                             Console.WriteLine();
-                            Console.WriteLine("Quitting. Save ranking so far?");
-                            Console.WriteLine("\tY: Quit and save.");
-                            Console.WriteLine("\tN: Quit without saving (all work this session will be lost, no undo).");
-                            Console.WriteLine("\tC: Cancel (default). Return to ranking.");
-                            switch (Console.ReadKey().KeyChar)
-                            {
-                                case 'y':
-                                    // Quit and save.
-                                    quitAndSave = true;
-                                    break;
-                                case 'n':
-                                    // Quit without saving.
-                                    return;
-                                    // Default. No action. Just return to ranking.
-                            }
+                            Console.WriteLine("Saving changes.");
                             break;
+                        case "c":
+                            Console.WriteLine();
+                            Console.WriteLine("Cancelling. No changes saved.");
+                            return;
                     }
-                    Console.WriteLine();
                     Console.WriteLine();
                 }
             }
@@ -677,7 +668,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             }
             else if (searchOptions.PrintTree)
             {
-                PrintTree(vm.SearchResults.ToList(), true, repo, searchOptions.NSFW);
+                PrintTreeSpectre(vm.SearchResults.ToList(), new List<ActionItem>(), repo, searchOptions.NSFW);
             }
             else
             {
@@ -707,7 +698,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                 {
                     vm.SetParent(child, parent);
                     Console.WriteLine();
-                    PrintTree(new List<ActionItem> { { child }, { parent } }, false, repo, setParentOptions.NSFW);
+                    PrintTreeSpectre(new List<ActionItem> { { child }, { parent } }, new List<ActionItem>(), repo, setParentOptions.NSFW);
                 }
                 else
                 {
@@ -718,7 +709,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                     {
                         vm.SetParent(child, null);
                         Console.WriteLine();
-                        PrintTree(new List<ActionItem> { child }, false, repo, setParentOptions.NSFW);
+                        PrintTreeSpectre(new List<ActionItem> { child }, new List<ActionItem>(), repo, setParentOptions.NSFW);
                     }
                 }
             }
@@ -770,7 +761,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             ActionItem? undefer = null;
             if (somesub.PageSize <= 0) somesub.PageSize = 1;
             if (somesub.PageSize > 10) somesub.PageSize = 10;
-            var someitems = (from s in vm.SomedayItems where !s.TickleDate.HasValue || somesub.IncludeTickle select s);
+            var someitems = from s in vm.SomedayItems where !s.TickleDate.HasValue || somesub.IncludeTickle select s;
             for (var offset = 0; offset <= someitems.Count(); offset += somesub.PageSize)
             {
                 Console.Clear();
@@ -797,27 +788,37 @@ namespace AssimilationSoftware.TodoSort.CLI
 
         public static void Update(UpdateSubOptions updateOptions, ViewModel vm)
         {
+            // TODO: Refactor into Core to allow reuse from GUI.
             var itemSource = new CsvReader(updateOptions.Filename, updateOptions.FileSystem);
+            var addCount = 0;
+            var doneCount = 0;
             IEnumerable<Dictionary<string, string>> items = itemSource.GetAllItems();
             foreach (var item in items)
             {
+                if (!item.ContainsKey("URL") || string.IsNullOrWhiteSpace(item["URL"]))
+                {
+                    Console.WriteLine("Skipping item without URL.");
+                    continue; // Skip items without URLs.
+                }
                 if (vm.FindByTag("url", item["URL"]) is ActionItem existingItem)
                 {
-                    if (item["Folder"].Equals("Archive", StringComparison.CurrentCultureIgnoreCase))
+                    if (item.TryGetValue("Folder", out string? folder) && folder.Equals("Archive", StringComparison.CurrentCultureIgnoreCase))
                     {
                         if (!existingItem.Done)
                         {
                             vm.MarkDone(DateTime.Now, existingItem);
+                            doneCount++;
                         }
                     }
                 }
                 else
                 {
+                    bool hasTitle = item.ContainsKey("Title") && !string.IsNullOrWhiteSpace(item["Title"]);
                     vm.AddItem(new ActionItem
                     {
                         ID = Guid.NewGuid(),
-                        Title = string.IsNullOrWhiteSpace(item["Title"]) ? item["URL"] : item["Title"],
-                        Context = string.IsNullOrWhiteSpace(updateOptions.Context) ? "instapaper" : updateOptions.Context,
+                        Title = hasTitle ? item["Title"] : item["URL"],
+                        Context = string.IsNullOrWhiteSpace(updateOptions.Context) ? "import" : updateOptions.Context,
                         Tags = new Dictionary<string, string>
                         {
                             { "url", item["URL"] },
@@ -825,37 +826,11 @@ namespace AssimilationSoftware.TodoSort.CLI
                         LastModified = DateTime.Now,
                         RevisionGuid = Guid.NewGuid()
                     });
+                    addCount++;
                 }
             }
             vm.Save();
-        }
-
-        static void OpenUrl(string url)
-        {
-            try
-            {
-                System.Diagnostics.Process.Start(url);
-            }
-            catch
-            {
-                // hack because of this: https://github.com/dotnet/corefx/issues/10361
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                {
-                    System.Diagnostics.Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
-                }
-                else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-                {
-                    System.Diagnostics.Process.Start("xdg-open", url);
-                }
-                else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-                {
-                    System.Diagnostics.Process.Start("open", url);
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            Console.WriteLine($"{"item".ToQuantity(addCount)} added, {"item".ToQuantity(doneCount)} marked done.");
         }
 
         private static void TagAll(TagAllSubOptions tagAllOptions, ViewModel vm, TodoRepository repo)
@@ -932,20 +907,22 @@ namespace AssimilationSoftware.TodoSort.CLI
                 vm.ShowHeadOnly = false;
             }
             vm.SearchSpecification = new TrueSpecification<ActionItem>();
-            var summarydata = (from i in vm.SearchResults group i by i.Context into c select new { Context = c.Key, Count = c.Count() });
+            var summaryData = from i in vm.SearchResults group i by i.Context into c select new { Context = c.Key, Count = c.Count() };
 
-            // TODO: Cuneiform table display.
-            var maxwidth = (summarydata.Count() > 0 ? (from r in summarydata select r.Context.Length).Max() : 0);
-            var maxnum = Math.Ceiling(Math.Log10((summarydata.Count() > 0 ? (from c in summarydata select c.Count).Max() : 0)));
+            var table = new Table();
+            table.AddColumn(new TableColumn("Context").Padding(2, 0));
+            table.AddColumn(new TableColumn("Count").RightAligned().Padding(2, 0));
             var total = 0;
-            foreach (var c in summarydata)
+            var secondOrLaterContext = false;
+            foreach (var c in summaryData)
             {
                 total += c.Count;
-
-                // @context         n item(s)
-                var format = string.Format("@{{0}}\t{{1,{0}}} item{1}", maxnum, (c.Count == 1 ? "" : "s"));
-                Console.WriteLine(format, c.Context.PadRight(maxwidth), c.Count);
-
+                if (secondOrLaterContext && summaryArgs.Verbose)
+                {
+                    table.AddEmptyRow();
+                }
+                table.AddRow($"@{c.Context}", "item".ToQuantity(c.Count));
+                secondOrLaterContext = true;
                 if (summaryArgs.Verbose)
                 {
                     // Show a summary of numbers at each depth.
@@ -975,17 +952,17 @@ namespace AssimilationSoftware.TodoSort.CLI
                     }
                     foreach (var d in detailed.OrderBy(r => r.Key))
                     {
-                        format = $"\t{{0}}\t{{1,{maxnum}}} item{(d.Value == 1 ? "" : "s")}";
-                        Console.WriteLine(format, d.Key, d.Value);
+                        table.AddRow(new TableRow([new Markup(d.Key.ToString()).RightJustified(), new Markup("item".ToQuantity(d.Value))]));
                     }
                     if (unknownCount > 0)
                     {
-                        Console.WriteLine(format, "-", unknownCount);
+                        table.AddRow("-", "item".ToQuantity(unknownCount));
                     }
-                    Console.WriteLine();
                 }
             }
-            Console.WriteLine("Total\t{0}", total);
+            table.AddEmptyRow();
+            table.AddRow("Total", "item".ToQuantity(total));
+            AnsiConsole.Write(table);
 
             TidyUp(vm, repo);
         }
@@ -1273,8 +1250,10 @@ namespace AssimilationSoftware.TodoSort.CLI
             {
                 bumpItems.AddRange(vm.SearchResults.Take(bumpOpts.Top));
             }
-            // Before
-            PrintTree(bumpItems, true, repo, bumpOpts.NSFW);
+            // TODO: Display the before and after positions together.
+            // Before: red and strike-through.
+            // After: yellow and bold.
+            PrintTreeSpectre(new List<ActionItem>(), bumpItems, repo, bumpOpts.NSFW);
             foreach (var target in bumpItems)
             {
                 var depth = target.GetRankDepth(repo) / 2;
@@ -1289,7 +1268,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                 }
             }
             // After
-            PrintTree(bumpItems, true, repo, bumpOpts.NSFW);
+            PrintTreeSpectre(bumpItems, new List<ActionItem>(), repo, bumpOpts.NSFW);
             TidyUp(vm, repo);
         }
 
@@ -1466,94 +1445,116 @@ namespace AssimilationSoftware.TodoSort.CLI
             }
         }
 
-        private static void PrintTree(List<ActionItem> list, bool showAncestors, ITodoRepository repo, bool nsfw = false)
+        private static void PrintTreeSpectre(List<ActionItem> bold, List<ActionItem> strike, ITodoRepository repo, bool nsfw = false)
         {
             var ancestors = new List<ActionItem>();
-            ancestors.AddRange(list);
-            if (showAncestors)
+            ancestors.AddRange(bold);
+            ancestors.AddRange(strike);
+            var boldNodes = bold.Select(i => i.ID).ToHashSet();
+            var strikeNodes = strike.Select(i => i.ID).ToHashSet();
+            var roots = new Dictionary<Guid, Tree>();
+            var treeNodes = new Dictionary<Guid, TreeNode>();
+            // Fill out the results.
+            for (var i = 0; i < ancestors.Count; i++)
             {
-                // Fill out the results.
-                for (var i = 0; i < ancestors.Count; i++)
+                if (ancestors[i] == null) continue; // Skip null or empty items (should not happen).
+
+                if (ancestors[i].ParentId != null)
                 {
-                    if (ancestors[i] != null && ancestors[i].ParentId != null && !ancestors.Contains(ancestors[i].GetParent(repo)))
+                    var parent = ancestors[i].GetParent(repo);
+                    if (!ancestors.Contains(parent))
                     {
-                        ancestors.Add(ancestors[i].GetParent(repo));
+                        ancestors.Add(parent);
                     }
                 }
-            }
 
-            // Find the roots.
-            var roots = ancestors.Where(t => t != null && (t.ParentId == null || !ancestors.Contains(t.GetParent(repo))));
-
-            foreach (var r in roots)
-            {
-                PrintTree(r, list, ancestors, nsfw);
-                Console.WriteLine();
-                Console.WriteLine();
-            }
-        }
-
-        private struct PrintTreeItem
-        {
-            public ActionItem Item;
-            public int Depth;
-            public string? PadLine;
-        }
-
-        private static void PrintTree(ActionItem root, List<ActionItem> tree, List<ActionItem> ancestors, bool nsfw = false)
-        {
-            var conwide = Console.WindowWidth;
-            var stack = new Stack<PrintTreeItem>();
-            stack.Push(new PrintTreeItem { Item = root, Depth = 1, PadLine = null });
-            while (stack.Count > 0)
-            {
-                var node = stack.Pop();
-                var indent = node.Depth;
-                var focus = node.Item;
-                var children = ancestors.Where(i => i.ParentId == focus.ID);
-                var prefix = new StringBuilder();
-                var padline = new StringBuilder();
-                for (var i = 0; i < indent; i++)
+                // Construct the tree nodes.
+                if (ancestors[i].ParentId == null)
                 {
-                    if (i < indent - 1)
+                    // This is a root node.
+                    if (!roots.ContainsKey(ancestors[i].ID))
                     {
-                        prefix.Append("| ");
+                        roots[ancestors[i].ID] = new Tree(MarkupTitle(ancestors[i], boldNodes.Contains(ancestors[i].ID), strikeNodes.Contains(ancestors[i].ID)));
                     }
-                    else
-                    {
-                        prefix.Append("* ");
-                    }
-                    padline.Append("| ");
-                }
-                if (!string.IsNullOrEmpty(node.PadLine))
-                {
-                    Console.WriteLine(node.PadLine);
-                }
-                Console.Write(prefix);
-                var name = focus.Title.Substring(0, Math.Min(conwide - prefix.Length, focus.Title.Length));
-                if (focus.Tags.ContainsKey("nsfw") && focus.Tags["nsfw"].ToLower() == "true" && !nsfw)
-                {
-                    name = "(nsfw) " + Rot13.Transform(name);
-                }
-                if (tree != null && tree.Contains(focus))
-                {
-                    Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.Write(name);
-                    Console.ResetColor();
                 }
                 else
                 {
-                    Console.Write(name);
+                    var newNode = new TreeNode(MarkupTitle(ancestors[i], boldNodes.Contains(ancestors[i].ID), strikeNodes.Contains(ancestors[i].ID)));
+                    treeNodes[ancestors[i].ID] = newNode; // Add the new node to the dictionary.
                 }
-                if (name.Length + prefix.Length < conwide)
-                {
-                    Console.WriteLine();
-                }
+            }
 
-                for (var j = 0; j < children.Count(); j++)
+            // Link to parents.
+            foreach (var a in ancestors)
+            {
+                // If a.ParentId is null, it is a root. It should already be in the roots dictionary.
+                if (a == null || a.ID == Guid.Empty || a.ParentId is null) continue; // Skip null or empty items.
+                if (roots.ContainsKey(a.ParentId ?? Guid.Empty))
                 {
-                    stack.Push(new PrintTreeItem { Item = children.ElementAt(j), PadLine = padline.ToString().Trim() + (j == 0 ? "" : "\\"), Depth = node.Depth + (j == 0 ? 0 : 1) });
+                    // Parent is a root node.
+                    roots[a.ParentId ?? Guid.Empty].AddNode(treeNodes[a.ID]);
                 }
+                else if (treeNodes.ContainsKey(a.ParentId ?? Guid.Empty))
+                {
+                    // Parent is not a root, so it should be in the treeNodes list.
+                    treeNodes[a.ParentId ?? Guid.Empty].AddNode(treeNodes[a.ID]);
+                }
+                else
+                {
+                    // Parent is not found, but we have the node itself.
+                    roots[a.ID] = new Tree(MarkupTitle(a, boldNodes.Contains(a.ID), strikeNodes.Contains(a.ID)));
+                }
+            }
+
+            foreach (var r in roots)
+            {
+                // Print the tree.
+                AnsiConsole.Write(r.Value);
+                Console.WriteLine();
+                Console.WriteLine();
+            }
+        }
+
+        private static Markup MarkupTitle(ActionItem item, bool bold, bool strikethrough)
+        {
+            var rawTitle = item.Title.EscapeMarkup();
+            if (item.Tags.ContainsKey("nsfw") && !verbose)
+            {
+                rawTitle = "(nsfw) " + Rot13.Transform(rawTitle);
+            }
+            Markup title = new Markup(rawTitle);
+            if (bold)
+            {
+                title = new Markup($"[yellow]{rawTitle}[/]");
+            }
+            else if (strikethrough)
+            {
+                title = new Markup($"[red][strikethrough]{rawTitle}[/][/]");
+            }
+            return title;
+        }
+
+        private static string FormatTitle(ActionItem i, bool nsfw = false)
+        {
+            var maskTitle = (i.Tags?.ContainsKey("nsfw") ?? false && !nsfw) ? $"(nsfw) {Rot13.Transform(i.Title)}" : i.Title;
+            maskTitle = maskTitle.EscapeMarkup();
+            if (i.Tags?.TryGetValue("type", out var itemType) ?? false)
+            {
+                var typeIcon = i.Tags["type"].ToUpper() switch
+                {
+                    // These don't seem to display on Windows by default, so commented out. :(
+                    // TODO: Use ascii art or something?
+                    // "MOVIE" => ":movie_camera:", // [ ]<
+                    // "TV" => ":television:", // [_]
+                    // "BOOK" => ":open_book:", // \/
+                    // "GAME" => ":video_game:", // <+>
+                    _ => $"[[{i.Tags["type"].ToUpper()}]]"
+                };
+                return string.Format("{0} {1}", typeIcon, maskTitle);
+            }
+            else
+            {
+                return maskTitle;
             }
         }
 
@@ -1567,26 +1568,19 @@ namespace AssimilationSoftware.TodoSort.CLI
         private static void PrintItem(ActionItem i, int? index, ITodoRepository repo, bool nsfw = false)
         {
             var wrapwidth = Console.WindowWidth - 1;
-            var title = i.Title;
-            if (i.Tags?.ContainsKey("nsfw") ?? false && !nsfw)
-            {
-                title = "(nsfw) " + Rot13.Transform(title);
-            }
-            if (i.Tags?.ContainsKey("type") ?? false)
-            {
-                title = string.Format("{1} [{0}]", i.Tags["type"].ToUpper(), title);
-            }
+            var title = FormatTitle(i, nsfw);
             if (i.DoneDate.HasValue)
             {
-                title = string.Format("[{0:yyyy-MM-dd}] {1}", i.DoneDate.Value, title);
+                title = string.Format("[green][[{0:yyyy-MM-dd}]][/] {1}", i.DoneDate.Value, title);
             }
             if (i.TickleDate.HasValue)
             {
-                title = string.Format("[{0:yyyy-MM-dd}] {1}", i.TickleDate.Value, title);
+                title = string.Format("[blue][[{0:yyyy-MM-dd}]][/] {1}", i.TickleDate.Value, title);
             }
             if (i.IsDeleted)
             {
-                title = $"[DELETED] {title}";
+                // NOTE: I think we only get here for conflict editing.
+                title = $"[red][[DELETED]][/] {title}";
             }
 
             if (index.HasValue)
@@ -1636,7 +1630,6 @@ namespace AssimilationSoftware.TodoSort.CLI
                 }
                 WrapOutput("        #context:", i.Context, wrapwidth);
                 WrapOutput("        #last-modified:", i.LastModified.ToString("yyyy-MM-dd"), wrapwidth);
-                // TODO: Any other special tags?
             }
         }
 
@@ -1659,15 +1652,15 @@ namespace AssimilationSoftware.TodoSort.CLI
                 }
                 line.Append(content.Substring(0, snip));
                 content = content.Remove(0, snip).TrimStart();
-                Console.WriteLine(line);
+                AnsiConsole.MarkupLine(line.ToString());
                 line.Clear();
                 line.Append(' ', indent.Length);
             }
-            Console.Write(line);
-            Console.WriteLine(content);
+            AnsiConsole.Markup(line.ToString());
+            AnsiConsole.MarkupLine(content);
         }
 
-        private static ActionItem? Disambiguate(IEnumerable<ActionItem> todolist, ITodoRepository repo, bool autoAcceptOne = false, bool nsfw = false)
+        private static ActionItem? Disambiguate(IEnumerable<ActionItem> todolist, ITodoRepository repo, bool autoAcceptOne = false, bool nsfw = false, bool includeCancel = false)
         {
             ActionItem? selected = null;
 
@@ -1675,15 +1668,6 @@ namespace AssimilationSoftware.TodoSort.CLI
             if (todolist.Count() == 0)
             {
                 Console.WriteLine("No search matches. No action will be taken.");
-            }
-            else if (todolist.Count() > 9)
-            {
-                // Print the items so we know what to narrow down.
-                for (var i = 0; i < todolist.Count(); i++)
-                {
-                    PrintItem(todolist.ElementAt(i), null, repo, nsfw);
-                }
-                Console.WriteLine("Too many search matches. Try to be more specific. No action will be taken this time.");
             }
             else if (todolist.Count() == 1 && autoAcceptOne)
             {
@@ -1693,19 +1677,25 @@ namespace AssimilationSoftware.TodoSort.CLI
             }
             else
             {
-                for (var i = 0; i < todolist.Count(); i++)
+                var prompt = new SelectionPrompt<ActionItem>()
+                    .Title($"{"search result".ToQuantity(todolist.Count())}. Choose one:")
+                    .PageSize(10)
+                    .MoreChoicesText("[grey](Move up and down to reveal more items)[/]")
+                    .AddChoices(todolist)
+                    .UseConverter(a => FormatTitle(a));
+                if (includeCancel)
                 {
-                    PrintItem(todolist.ElementAt(i), i, repo, nsfw);
-                }
-                var choice = Console.ReadKey().KeyChar;
-                // Write a blank line to prevent whatever comes next from printing right after this on the same line.
-                Console.WriteLine();
-                if (int.TryParse(choice.ToString(), out int dex))
-                {
-                    if (todolist.Count() > dex)
+                    prompt.AddChoice(new ActionItem
                     {
-                        selected = todolist.ElementAt(dex);
-                    }
+                        Title = "Cancel",
+                        Context = "cancel"
+                    });
+                }
+                selected = AnsiConsole.Prompt(prompt);
+                if (selected.Context == "cancel")
+                {
+                    Console.WriteLine("Cancelled.");
+                    return null;
                 }
             }
             return selected;

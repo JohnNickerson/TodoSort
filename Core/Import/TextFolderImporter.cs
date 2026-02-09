@@ -9,7 +9,7 @@ namespace AssimilationSoftware.TodoSort.Core.Import
 {
     public class TextFolderImporter : IImporter
     {
-        public ActionItem[] GetAllItems()
+        public IEnumerable<ActionItem> GetAllItems()
         {
             var result = new List<ActionItem>();
             foreach (var f in Directory.GetFiles(Folder, "*.txt", SearchOption.AllDirectories))

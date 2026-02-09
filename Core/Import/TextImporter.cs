@@ -3,6 +3,7 @@ using System.IO;
 using AssimilationSoftware.Maroon.Mappers.Text;
 using AssimilationSoftware.Maroon.Model;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace AssimilationSoftware.TodoSort.Core.Import
 {
@@ -10,7 +11,7 @@ namespace AssimilationSoftware.TodoSort.Core.Import
     {
         public string Filename { get; set; }
 
-        public ActionItem[] GetAllItems()
+        public IEnumerable<ActionItem> GetAllItems()
         {
             var m = new ActionItemDiskMapper(Filename).LoadAll();
             foreach (var h in m)

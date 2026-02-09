@@ -3,6 +3,7 @@ using AssimilationSoftware.TodoSort.WpfGui.Model;
 using System.Windows;
 using System.Diagnostics;
 using CommunityToolkit.Mvvm.Input;
+using System.Collections.ObjectModel;
 
 namespace AssimilationSoftware.TodoSort.WpfGui;
 
@@ -13,6 +14,8 @@ public class AddUrlViewModel : ViewModelBase
 
     private ICommand _okCommand;
     private ICommand _fetchTitleCommand;
+    public List<Context> Contexts { get; }
+    private Context _selectedContext;
 
     public AddUrlViewModel(MainViewModel api, ActionViewItem item, Window window)
     {
@@ -22,6 +25,8 @@ public class AddUrlViewModel : ViewModelBase
             item.Tags.TryGetValue("url", out _url);
         }
         _sourceItem = item;
+        Contexts = api.Contexts;
+        _selectedContext = api.SelectedContext;
     }
 
     private void OkExecuted()
@@ -34,13 +39,15 @@ public class AddUrlViewModel : ViewModelBase
     {
         try
         {
-            _sourceItem.FixTitleCommand.Execute(this);
+            _sourceItem.Tags["url"] = _url;
+            Title = ActionViewItem.FetchWebTitle(_url);
         }
         catch (Exception ex)
         {
             Debug.WriteLine(ex.Message);
             _sourceItem.Title = _url;
         }
+        OnPropertyChanged(nameof(Title));
     }
 
     public string Title
@@ -61,6 +68,17 @@ public class AddUrlViewModel : ViewModelBase
         {
             if (_url == value) return;
             _url = value;
+            OnPropertyChanged();
+        }
+    }
+
+    public Context SelectedContext
+    {
+        get => _selectedContext;
+        set
+        {
+            if (_selectedContext == value) return;
+            _selectedContext = value;
             OnPropertyChanged();
         }
     }

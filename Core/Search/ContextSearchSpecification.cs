@@ -12,7 +12,7 @@ namespace AssimilationSoftware.TodoSort.Core.Search
 
         public bool IsSatisfiedBy(ActionItem b)
         {
-            return b.Context?.ToLower() == Context.ToLower();
+            return b.Context?.ToLower() == Context?.ToLower();
         }
     }
 }

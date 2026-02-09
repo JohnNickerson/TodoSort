@@ -28,7 +28,7 @@ namespace AssimilationSoftware.TodoSort.Core.Import
             _fileSystem = fileSystem;
         }
 
-        public ActionItem[] GetAllItems()
+        public IEnumerable<ActionItem> GetAllItems()
         {
             var result = new List<ActionItem>();
             if (_fileSystem.File.Exists(Filename))

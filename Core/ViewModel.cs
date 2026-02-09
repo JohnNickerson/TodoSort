@@ -218,6 +218,7 @@ namespace AssimilationSoftware.TodoSort.Core
 
         public void AddItem(ActionItem next)
         {
+            next.Tags["created-date"] = DateTime.Now.ToString("yyyy-MM-dd");
             // Special case: if adding straight to the "done" list, and there is no date, mark as today.
             if (next.Context == "done" && !next.DoneDate.HasValue)
             {

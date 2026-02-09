@@ -13,56 +13,30 @@ TodoSort is a task list and reading list app with an emphasis on priority. It st
 
 # Releases
 
-- 2018-04-27: Build 0.9.10 released to Production
-  - "Retag" option added to "Rename" command.
-- 2018-07-13: Build 0.9.11 released to Production
-  - Export sorting support.
-- 2018-08-16: Build 0.9.12 released to Production
-  - Default import context.
-  - Force-save option.
-  - Bug: deduplication search returns every single item as the last set.
-- 2018-10-11: Build 1.0.0 released to Production
-  - Basic GUI
-- 2018-10-18: Build 1.0.1 released to Production
-  - Recent Files list in GUI.
-- 2018-10-25: Build 1.0.2 released to Production
-  - Save to update view
-  - Size window to contents
-  - Done and Someday views
-- 2018-11-01: Build 1.0.3 released to Production
-  - GUI improvements
-  - Ranking GUI
-- 2018-11-08: Build 1.0.4 released to Production
-  - Live list updates.
-- 2018-11-13: Build 1.0.5 released to Production
-  - Implicit chains.
-  - Item editing in GUI.
-  - Some GUI bug fixes.
-- 2018-11-15: Build 1.0.5.1 released to Production
-  - Hot fix for implicit chains (everything was losing ranking data).
-- 2018-11-30: Build 1.0.7 released to Production
-  - Add items via GUI.
-- 2019-01-24: Build 1.1.3 released to Production
+- 2018: Builds 0.9.10 to 1.0.7
+  - GUI with live list updates, item editing, and "Recent Files" list.
+  - Ranking functionality, "Done/Someday" views, and improved import/export workflows.
+- 2019-01-24: Build 1.1.3 
   - Title fixing and search improvements.
-- 2019-01-31: Build 1.1.3 released to Production
+- 2019-01-31: Build 1.1.3 
   - Manually-triggered cleanup
   - Chain re-heading
   - Search for missing tags
   - Mask NSFW item titles.
-- 2019-02-07: Build 1.1.5 released to Production
+- 2019-02-07: Build 1.1.5 
   - Preserve context selection when moving items, marking done or undone.
   - Update item list when performing cleanup.
-- 2019-02-21: Build 1.1.6 released to Production
+- 2019-02-21: Build 1.1.6 
   - Show Head Only option moved to Options menu with keyboard shortcut.
   - Close ranking window automatically when finished.
   - Open any file type.
-- 2019-02-28: Build 1.1.7 released to Production
+- 2019-02-28: Build 1.1.7 
   - Validation for title fixing from GUI.
   - Full item details in tooltip.
   - Bump items via GUI.
   - Save NSFW masking option.
   - Open link updates after edit.
-- 2019-03-21: Build 1.1.8 released to Production
+- 2019-03-21: Build 1.1.8 
   - Double-click to edit.
   - Display item count.
   - Maroon back-end (v0.1.2.1)
@@ -223,3 +197,33 @@ TodoSort is a task list and reading list app with an emphasis on priority. It st
 	- Remove obsolete Pocket integration features.
 - 2025-07-10: Build 1.7.0.1
 	- Fixed a bug where adding a blank tag crashed the GUI.
+- 2025-07-29: Build 1.7.1.0
+	- Add Markdown import and raw URLs update feature.
+	- Rewrite tree display methods to use Spectre.
+- 2025-08-06: Build 1.7.2.0
+	- Use Spectre prompt for disambiguation.
+	- Add emoji for item types to console display.
+	- Colour-code tickle and done dates.
+- 2025-08-07: Build 1.7.2.1
+	- Fix a Spectre display bug in ranking items.
+	- Use Spectre prompt for ranking in CLI.
+- 2025-08-13: Build 1.7.2.2
+	- Add missing SharpSerializer reference to Core project.
+- 2025-08-28: Build 1.7.3.0
+	- Add the ability to cancel merging in dedupe command.
+	- Remove emoji, since they don't display on Windows CMD.
+	- Change Humanizer reference to Humanizer.
+	- Core to include only English files.
+- 2025-09-10: Build 1.7.4.0
+	- Add context selection and fix title fetching in Add URL window.
+- 2025-10-22: Build 1.7.4.1
+	- Fix: Prevent the Add URL window from opening the Edit window during title fetching.
+	- Fix: Null reference on blank context search.
+- 2025-11-19: Build 1.7.4.2
+	- Bug fix: occasional null reference in PrintTreeSpectre.
+- 2025-11-26: Build 1.7.4.3
+	- Ignore empty lines during import (CsvReader).
+- 2025-12-17: Build 1.7.4.4
+	- Avoid double-escaping titles when printing.
+- 2026-01-14: Build 1.7.5.0
+	- Allow sorting by created date.
