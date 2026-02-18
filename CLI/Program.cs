@@ -1037,7 +1037,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                     }
                 }
 
-                if (min == max)
+                if (min == max && vm.SearchResults.Count() == 1)
                 {
                     Console.WriteLine("Only one item in chain.");
                     problemsFound++;
