@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using System.IO;
-using System.ComponentModel;
 
 namespace AssimilationSoftware.TodoSort.WpfGui.Properties {
     

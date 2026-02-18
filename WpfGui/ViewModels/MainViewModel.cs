@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.IO;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using AssimilationSoftware.Maroon.Interfaces;
@@ -15,6 +11,7 @@ using AssimilationSoftware.TodoSort.Core.Data;
 using AssimilationSoftware.TodoSort.Core.Search;
 using AssimilationSoftware.TodoSort.WpfGui.Model;
 using AssimilationSoftware.TodoSort.WpfGui.Properties;
+using CommunityToolkit.Mvvm.Input;
 
 namespace AssimilationSoftware.TodoSort.WpfGui
 {
@@ -25,8 +22,8 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         private Context? _selectedContext;
         private Context _searchResultsContext;
         private List<Context> _contexts;
-        private string _fileName;
-        private TodoFileInfo _lastOpenedFile;
+        private string? _fileName;
+        private TodoFileInfo? _lastOpenedFile;
         private List<ActionViewItem> _currentItems;
         private const int CommitLimit = 256;
 
@@ -83,20 +80,23 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             await OpenFileAsync(filename);
         }
 
-        private async Task OpenFileAsync(string filename)
+        private async Task OpenFileAsync(string? filename)
         {
             FileName = filename;
 
             // Store the file name as the most recent one opened.
             _recentFilesList = new ObservableCollection<string>(Settings.Default.RecentFiles);
-            RecentFileList.Remove(filename);
-            RecentFileList.Insert(0, filename);
+            if (!string.IsNullOrEmpty(filename))
+            {
+                RecentFileList.Remove(filename);
+                RecentFileList.Insert(0, filename);
+            }
             while (RecentFileList.Count > 10)
             {
                 RecentFileList.RemoveAt(10);
             }
             Settings.Default.RecentFiles = _recentFilesList.ToArray();
-            _recentFilesList = null;
+            _recentFilesList.Clear();
             SaveSettings();
 
             await Task.Run(() =>
@@ -118,10 +118,10 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                 }
             }
 
-            OnPropertyChanged(nameof(Contexts));
-            OnPropertyChanged(nameof(Items));
-            OnPropertyChanged(nameof(RecentFileList));
-            OnPropertyChanged(nameof(Projects));
+            RaisePropertyChanged(nameof(Contexts));
+            RaisePropertyChanged(nameof(Items));
+            RaisePropertyChanged(nameof(RecentFileList));
+            RaisePropertyChanged(nameof(Projects));
         }
 
         private void Cleanup()
@@ -177,7 +177,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                 }
             }
 
-            OnPropertyChanged(nameof(Items));
+            RaisePropertyChanged(nameof(Items));
         }
 
         private void CommitChanges()
@@ -209,9 +209,9 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                         break;
                 }
                 // Refresh the last opened file info, so that the updated file check doesn't trigger right now.
-                SaveLastOpenedFileMetaData(_lastOpenedFile.FullName);
-                OnPropertyChanged(nameof(HasUnsavedChanges));
-                OnPropertyChanged(nameof(WindowTitle));
+                SaveLastOpenedFileMetaData(_lastOpenedFile?.FullName ?? string.Empty);
+                RaisePropertyChanged(nameof(HasUnsavedChanges));
+                RaisePropertyChanged(nameof(WindowTitle));
             }
         }
 
@@ -238,7 +238,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             var rvm = new RankViewModel(Items, rv, _api);
             rv.DataContext = rvm;
             rv.ShowDialog();
-            OnPropertyChanged(nameof(Items));
+            RaisePropertyChanged(nameof(Items));
         }
 
         private async void ReloadFile()
@@ -257,7 +257,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             var importVm = new ImportViewModel(_api, importView);
             importView.DataContext = importVm;
             importView.ShowDialog();
-            OnPropertyChanged(nameof(Contexts));
+            RaisePropertyChanged(nameof(Contexts));
         }
 
         private void SaveSettings()
@@ -332,26 +332,26 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             var balanceVm = new BalanceViewModel(balanceView, _api);
             balanceView.DataContext = balanceVm;
             balanceView.ShowDialog();
-            OnPropertyChanged(nameof(Items));
+            RaisePropertyChanged(nameof(Items));
         }
 
         public void SaveCommandExecuted()
         {
             _api.Save();
-            SaveLastOpenedFileMetaData(_lastOpenedFile.FullName);
-            OnPropertyChanged(nameof(Items));
+            SaveLastOpenedFileMetaData(_lastOpenedFile?.FullName);
+            RaisePropertyChanged(nameof(Items));
         }
 
         public void MarkDone(ActionItem item, DateTime? doneDate = null)
         {
             _api.MarkDone(doneDate, item);
-            OnPropertyChanged(nameof(Items));
+            RaisePropertyChanged(nameof(Items));
         }
 
         public void Undo(ActionItem item, string context = _defaultContext)
         {
             _api.Undo(context, item);
-            OnPropertyChanged(nameof(Items));
+            RaisePropertyChanged(nameof(Items));
         }
 
         private void CloseExecute()
@@ -371,8 +371,8 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         public void Update(ActionItem item)
         {
             _api.Update(item);
-            OnPropertyChanged(nameof(WindowTitle));
-            OnPropertyChanged(nameof(HasUnsavedChanges));
+            RaisePropertyChanged(nameof(WindowTitle));
+            RaisePropertyChanged(nameof(HasUnsavedChanges));
         }
 
         public void Move(ActionItem source, string newContext, bool disconnectChildren = true)
@@ -382,21 +382,21 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             {
                 _api.ResetPriorityParents(source);
             }
-            OnPropertyChanged(nameof(Contexts));
-            OnPropertyChanged(nameof(Items));
+            RaisePropertyChanged(nameof(Contexts));
+            RaisePropertyChanged(nameof(Items));
         }
 
         public void Defer(ActionItem item)
         {
             _api.Defer(item);
-            OnPropertyChanged(nameof(Items));
+            RaisePropertyChanged(nameof(Items));
         }
 
         public void Undefer(ActionItem item)
         {
             _api.Undefer(_defaultContext, item);
-            OnPropertyChanged(nameof(Items));
-            OnPropertyChanged(nameof(Contexts));
+            RaisePropertyChanged(nameof(Items));
+            RaisePropertyChanged(nameof(Contexts));
         }
 
         private void AddExecuted()
@@ -425,8 +425,8 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                     item.TickleDate = editVm.TickleDate;
                 }
                 _api.AddItem(item);
-                OnPropertyChanged(nameof(Items));
-                OnPropertyChanged(nameof(Contexts));
+                RaisePropertyChanged(nameof(Items));
+                RaisePropertyChanged(nameof(Contexts));
             }
         }
 
@@ -448,8 +448,8 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                 item.Tags = new Dictionary<string, string> { { "url", addVm.Url } };
                 item.Context = addVm.SelectedContext?.IsSearch ?? false ? _defaultContext : addVm.SelectedContext?.Title;
                 _api.AddItem(item);
-                OnPropertyChanged(nameof(Items));
-                OnPropertyChanged(nameof(Contexts));
+                RaisePropertyChanged(nameof(Items));
+                RaisePropertyChanged(nameof(Contexts));
             }
         }
 
@@ -462,27 +462,27 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                 _api.SetContext(item, newContext);
             }
             _api.ShowHeadOnly = true;
-            OnPropertyChanged(nameof(Contexts));
-            OnPropertyChanged(nameof(Items));
+            RaisePropertyChanged(nameof(Contexts));
+            RaisePropertyChanged(nameof(Items));
         }
 
         public void Delete(ActionItem source)
         {
             _api.ResetPriorityParents(source);
             _api.Delete(source);
-            OnPropertyChanged(nameof(Items));
+            RaisePropertyChanged(nameof(Items));
         }
 
-        protected override void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        protected void RaisePropertyChanged([CallerMemberName] string? propertyName = null)
         {
             // Cached properties.
             if (propertyName == nameof(Items) || propertyName == nameof(ShowHeadOnly))
             {
-                _currentItems = null;
+                _currentItems.Clear();
             }
             else if (propertyName == nameof(Contexts))
             {
-                _contexts = null;
+                _contexts.Clear();
             }
 
             base.OnPropertyChanged(propertyName);
@@ -508,7 +508,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
 
             if (propertyName == nameof(Contexts))
             {
-                OnPropertyChanged(nameof(SearchContexts));
+                RaisePropertyChanged(nameof(SearchContexts));
             }
         }
 
@@ -529,7 +529,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             }
         }
 
-        private async void OpenRecentFile(string filename)
+        private async void OpenRecentFile(string? filename)
         {
             switch (ConfirmSaveCancel("You have unsaved changes. Save before opening this file?"))
             {
@@ -580,7 +580,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             if (_contexts.All(c => c.Title != context))
             {
                 // Context not found. Refresh.
-                OnPropertyChanged(nameof(Contexts));
+                RaisePropertyChanged(nameof(Contexts));
             }
         }
 
@@ -628,16 +628,23 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                 : 0;
         }
 
-        private void SaveLastOpenedFileMetaData(string fileName)
+        private void SaveLastOpenedFileMetaData(string? fileName)
         {
-            _lastOpenedFile = new TodoFileInfo(fileName);
-            Settings.Default.Todo = fileName;
+            if (fileName is not null)
+            {
+                _lastOpenedFile = new TodoFileInfo(fileName);
+            }
+            else
+            {
+                _lastOpenedFile = null;
+            }
+            Settings.Default.Todo = fileName ?? string.Empty;
             SaveSettings();
         }
 
         public void RefreshContexts()
         {
-            OnPropertyChanged(nameof(Contexts));
+            RaisePropertyChanged(nameof(Contexts));
         }
 
         #endregion
@@ -711,9 +718,9 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                     SearchExpanded = true;
                 }
                 _selectedContext = value;
-                OnPropertyChanged();
+                RaisePropertyChanged();
                 _currentItems = [];
-                OnPropertyChanged(nameof(Items));
+                RaisePropertyChanged(nameof(Items));
             }
         }
 
@@ -724,19 +731,19 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             {
                 if (_selectedItem == value) return;
                 _selectedItem = value;
-                OnPropertyChanged();
+                RaisePropertyChanged();
             }
         }
 
-        public string FileName
+        public string? FileName
         {
             get => _fileName;
             set
             {
                 _fileName = value;
-                SaveLastOpenedFileMetaData((value));
-                OnPropertyChanged();
-                OnPropertyChanged(nameof(WindowTitle));
+                SaveLastOpenedFileMetaData(value);
+                RaisePropertyChanged();
+                RaisePropertyChanged(nameof(WindowTitle));
             }
         }
 
@@ -827,7 +834,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             {
                 _recentFilesList = value;
                 Settings.Default.RecentFiles = value.ToArray();
-                OnPropertyChanged();
+                RaisePropertyChanged();
             }
         }
 
@@ -844,7 +851,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             {
                 if (_api.ShowHeadOnly == value) return;
                 _api.ShowHeadOnly = value;
-                OnPropertyChanged();
+                RaisePropertyChanged();
             }
         }
 
@@ -855,7 +862,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             {
                 if (_searchKeyword == value) return;
                 _searchKeyword = value;
-                OnPropertyChanged();
+                RaisePropertyChanged();
             }
         }
 
@@ -866,7 +873,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             {
                 if (_searchTagName == value) return;
                 _searchTagName = value;
-                OnPropertyChanged();
+                RaisePropertyChanged();
             }
         }
 
@@ -877,7 +884,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             {
                 if (_searchTagValue == value) return;
                 _searchTagValue = value;
-                OnPropertyChanged();
+                RaisePropertyChanged();
             }
         }
 
@@ -889,7 +896,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                 if (Equals(_searchProject, value)) return;
                 _searchProject = value;
                 if (value != null) IsSearchProjectSelected = true;
-                OnPropertyChanged();
+                RaisePropertyChanged();
             }
         }
 
@@ -900,7 +907,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             {
                 if (_searchExpanded == value) return;
                 _searchExpanded = value;
-                OnPropertyChanged();
+                RaisePropertyChanged();
             }
         }
 
@@ -912,7 +919,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                 if (Settings.Default.MaskNsfwItems == value) return;
                 Settings.Default.MaskNsfwItems = value;
                 Settings.Default.Save();
-                OnPropertyChanged();
+                RaisePropertyChanged();
             }
         }
 
@@ -928,7 +935,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                 if (_searchContext == value) return;
                 _searchContext = value;
                 if (value != null) IsSearchContextSelected = true;
-                OnPropertyChanged();
+                RaisePropertyChanged();
             }
         }
 
@@ -993,7 +1000,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                 if (_isSearchProjectSelected == value) return;
                 _isSearchProjectSelected = value;
                 if (!value) SearchProject = null;
-                OnPropertyChanged();
+                RaisePropertyChanged();
             }
         }
 
@@ -1005,7 +1012,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                 if (_isSearchContextSelected == value) return;
                 _isSearchContextSelected = value;
                 if (!value) SearchContext = null;
-                OnPropertyChanged();
+                RaisePropertyChanged();
             }
         }
 
@@ -1016,7 +1023,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             {
                 if (value == _statusMessage) return;
                 _statusMessage = value;
-                OnPropertyChanged();
+                RaisePropertyChanged();
             }
         }
 

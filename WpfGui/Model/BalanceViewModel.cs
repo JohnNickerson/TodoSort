@@ -1,22 +1,17 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Threading;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Input;
 using AssimilationSoftware.TodoSort.Core;
 using AssimilationSoftware.TodoSort.Core.Search;
-using AssimilationSoftware.TodoSort.WpfGui.Annotations;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 
 namespace AssimilationSoftware.TodoSort.WpfGui.Model
 {
-    public class BalanceViewModel : INotifyPropertyChanged
+    public class BalanceViewModel : ObservableObject
     {
         private List<BranchOption> _branchOptions;
         private RelayCommand _goCommand;
         private RelayCommand _cancelCommand;
-        public event PropertyChangedEventHandler PropertyChanged;
         public Window _view;
         private ViewModel _vm;
 
@@ -37,12 +32,6 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
             }
 
             BranchOptions = contexts;
-        }
-
-        [NotifyPropertyChangedInvocator]
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         private void RebalanceExecuted()

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
+﻿using System.Diagnostics;
 using System.Net;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -9,6 +6,7 @@ using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Input;
 using AssimilationSoftware.Maroon.Model;
+using CommunityToolkit.Mvvm.Input;
 
 namespace AssimilationSoftware.TodoSort.WpfGui.Model
 {
@@ -41,7 +39,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
 
         #region Methods
 
-        protected override void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        protected void RaisePropertyChanged([CallerMemberName] string propertyName = null)
         {
             base.OnPropertyChanged(propertyName);
 
@@ -75,7 +73,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
                     Api.Undo(Source);
                 }
 
-                OnPropertyChanged();
+                RaisePropertyChanged();
             }
         }
 
@@ -110,7 +108,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
             {
                 if (Source.Title == value) return;
                 Source.Title = value;
-                OnPropertyChanged();
+                RaisePropertyChanged();
             }
         }
 
@@ -121,8 +119,8 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
             {
                 if (Source.Tags["url"] == value) return;
                 Source.Tags["url"] = value;
-                OnPropertyChanged();
-                OnPropertyChanged(nameof(UrlNotNull));
+                RaisePropertyChanged();
+                RaisePropertyChanged(nameof(UrlNotNull));
             }
         }
 
@@ -137,7 +135,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
             {
                 if (Source.Upvotes == value) return;
                 Source.Upvotes = value;
-                OnPropertyChanged();
+                RaisePropertyChanged();
             }
         }
 
@@ -150,8 +148,8 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
             {
                 if (Source.DoneDate == value) return;
                 Source.DoneDate = value;
-                OnPropertyChanged();
-                OnPropertyChanged(nameof(ItemDate));
+                RaisePropertyChanged();
+                RaisePropertyChanged(nameof(ItemDate));
             }
         }
 
@@ -162,8 +160,8 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
             {
                 if (Source.TickleDate == value) return;
                 Source.TickleDate = value;
-                OnPropertyChanged();
-                OnPropertyChanged(nameof(ItemDate));
+                RaisePropertyChanged();
+                RaisePropertyChanged(nameof(ItemDate));
             }
         }
 
@@ -316,14 +314,14 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
                 }
                 Api.Update(Source);
             }
-            OnPropertyChanged(nameof(Title));
-            OnPropertyChanged(nameof(Url));
-            OnPropertyChanged(nameof(UrlNotNull));
-            OnPropertyChanged(nameof(IsNsfw));
-            OnPropertyChanged(nameof(ItemDate));
-            OnPropertyChanged(nameof(ToolTip));
-            OnPropertyChanged(nameof(Notes));
-            OnPropertyChanged(nameof(Tags));
+            RaisePropertyChanged(nameof(Title));
+            RaisePropertyChanged(nameof(Url));
+            RaisePropertyChanged(nameof(UrlNotNull));
+            RaisePropertyChanged(nameof(IsNsfw));
+            RaisePropertyChanged(nameof(ItemDate));
+            RaisePropertyChanged(nameof(ToolTip));
+            RaisePropertyChanged(nameof(Notes));
+            RaisePropertyChanged(nameof(Tags));
             if (contextChanged)
                 Api.RefreshContexts();
         }
@@ -369,7 +367,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
                 if (ValidateTitle(title) && Title != title)
                 {
                     Title = title;
-                    OnPropertyChanged(nameof(ToolTip));
+                    RaisePropertyChanged(nameof(ToolTip));
                     Api.Update(Source);
                     success = true;
                 }
@@ -448,7 +446,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
                 if (newParent != null) Source.ParentId = newParent.ID;
             }
             Api.Update(Source);
-            OnPropertyChanged(nameof(ToolTip));
+            RaisePropertyChanged(nameof(ToolTip));
         }
 
         private void MoveToContextExecuted(Context toContext)
@@ -477,7 +475,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
                 Api.Masked = true;
             }
             Api.Update(Source);
-            OnPropertyChanged(nameof(IsNsfw));
+            RaisePropertyChanged(nameof(IsNsfw));
         }
         #endregion // Command Handlers
     }

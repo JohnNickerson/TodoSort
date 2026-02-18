@@ -1,9 +1,6 @@
-using System.IO.Abstractions;
 using System.Text;
 using AssimilationSoftware.TodoSort.CLI.Options;
 using AssimilationSoftware.TodoSort.Core;
-using Microsoft.VisualStudio.TestPlatform.TestHost;
-using Moq;
 using UnitTests.Scaffolding;
 
 namespace UnitTests;
