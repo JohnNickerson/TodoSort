@@ -601,6 +601,11 @@ namespace AssimilationSoftware.TodoSort.Core
             return _repository.Items.Where(i => i.ProjectId == projectId);
         }
 
+        public IEnumerable<ActionItem> GetDoneProjectItems(Guid projectId)
+        {
+            return _repository.DoneItems.Where(i => i.ProjectId == projectId);
+        }
+
         public void Update(ActionItem item)
         {
             _repository.Update(item);
