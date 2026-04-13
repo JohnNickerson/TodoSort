@@ -8,7 +8,7 @@ public class CsvReaderTests
     public void ReadCsvFile()
     {
         // Arrange
-        var csvPath = ".\\instapaper.csv";
+        var csvPath = "instapaper.csv";
         var fileSystem = new System.IO.Abstractions.TestingHelpers.MockFileSystem();
         StringBuilder csvContent = new StringBuilder();
         csvContent.AppendLine(@"URL,Title,Selection,Folder,Timestamp,Tags
@@ -18,7 +18,6 @@ https://www.justwatch.com/au/movie/testament,Testament - movie: where to watch s
 https://www.justwatch.com/au/movie/thx-1138,THX 1138 - movie: where to watch stream online,,Unread,1748489876,[]
 https://youtube.com/watch?v=Cz1XEWqL-Tc&si=0oFufM4HNW3lTiB8,,,Unread,1748482121,[]
 https://www.youtube.com/watch?v=0b1d9a2f3c8,The 10 Most Dangerous Places on Earth,,Unread,1748482121,[]");
-        fileSystem.AddDirectory(fileSystem.Path.GetDirectoryName(csvPath));
         fileSystem.AddFile(csvPath, new System.IO.Abstractions.TestingHelpers.MockFileData(csvContent.ToString()));
         var csvReader = new CLI.CsvReader(csvPath, fileSystem);
 
@@ -37,14 +36,13 @@ https://www.youtube.com/watch?v=0b1d9a2f3c8,The 10 Most Dangerous Places on Eart
     public void ReadCsvFile_EmptyLines_Skipped()
     {
         // Arrange
-        var csvPath = ".\\instapaper_with_empty_lines.csv";
+        var csvPath = "instapaper_with_empty_lines.csv";
         var fileSystem = new System.IO.Abstractions.TestingHelpers.MockFileSystem();
         StringBuilder csvContent = new StringBuilder();
         csvContent.AppendLine(@"URL
 https://www.example.com
 
 https://www.example2.com");
-        fileSystem.AddDirectory(fileSystem.Path.GetDirectoryName(csvPath));
         fileSystem.AddFile(csvPath, new System.IO.Abstractions.TestingHelpers.MockFileData(csvContent.ToString()));
         var csvReader = new CLI.CsvReader(csvPath, fileSystem);
 
