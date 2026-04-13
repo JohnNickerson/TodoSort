@@ -227,3 +227,6 @@ TodoSort is a task list and reading list app with an emphasis on priority. It st
 	- Avoid double-escaping titles when printing.
 - 2026-01-14: Build 1.7.5.0
 	- Allow sorting by created date.
+- 2026-04-14: Build 1.8.0.0
+	- Target .NET 10.
+	- Use MVVM Toolkit.

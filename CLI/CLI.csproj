@@ -8,10 +8,10 @@
     <Company>Assimilation Software</Company>
     <Product>TodoSort</Product>
     <Copyright>Copyright © Assimilation Software 2025</Copyright>
-    <Version>1.7.5.0</Version>
-    <FileVersion>1.7.5.0</FileVersion>
-    <InformationalVersion>1.7.5.0</InformationalVersion>
-    <PackageVersion>1.7.5.0</PackageVersion>
+    <Version>1.8.0.0</Version>
+    <FileVersion>1.8.0.0</FileVersion>
+    <InformationalVersion>1.8.0.0</InformationalVersion>
+    <PackageVersion>1.8.0.0</PackageVersion>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="CommandLineParser" Version="2.9.1" />
