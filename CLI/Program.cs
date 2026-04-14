@@ -82,7 +82,6 @@ namespace AssimilationSoftware.TodoSort.CLI
                     .WithParsed<TagOptions>(opts => Tag(opts, vm, repo))
                     .WithParsed<UndeferOptions>(opts => Undefer(opts, vm, repo))
                     .WithParsed<UndoSubOptions>(opts => Undo(opts, vm, repo))
-                    .WithParsed<UpdateSubOptions>(opts => Update(opts, vm))
                     .WithParsed<SummaryOptions>(opts => Summary(opts, vm, repo))
                     .WithParsed<UnrankAllOptions>(opts => UnrankAll(opts, vm, repo))
                     .WithParsed<UnRankOptions>(opts => Unrank(opts, vm, repo))
@@ -396,7 +395,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             TidyUp(vm, repo);
         }
 
-        private static void Import(ImportSubOptions importOptions, ViewModel vm, TodoRepository repo)
+        public static void Import(ImportSubOptions importOptions, ViewModel vm, ITodoRepository repo)
         {
             SetUniversalOptions(importOptions, vm);
 
@@ -415,6 +414,9 @@ namespace AssimilationSoftware.TodoSort.CLI
                     break;
                 case "instapaper":
                     importer = new InstapaperImporter(importOptions.Filename);
+                    break;
+                case "urls":
+                    importer = new RawUrlsImporter(importOptions.Filename);
                     break;
                 default:
                     Console.WriteLine($"Unknown import format: {importOptions.Format}");
@@ -786,52 +788,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             TidyUp(vm, repo);
         }
 
-        public static void Update(UpdateSubOptions updateOptions, ViewModel vm)
-        {
-            // TODO: Refactor into Core to allow reuse from GUI.
-            var itemSource = new CsvReader(updateOptions.Filename, updateOptions.FileSystem);
-            var addCount = 0;
-            var doneCount = 0;
-            IEnumerable<Dictionary<string, string>> items = itemSource.GetAllItems();
-            foreach (var item in items)
-            {
-                if (!item.ContainsKey("URL") || string.IsNullOrWhiteSpace(item["URL"]))
-                {
-                    Console.WriteLine("Skipping item without URL.");
-                    continue; // Skip items without URLs.
-                }
-                if (vm.FindByTag("url", item["URL"]) is ActionItem existingItem)
-                {
-                    if (item.TryGetValue("Folder", out string? folder) && folder.Equals("Archive", StringComparison.CurrentCultureIgnoreCase))
-                    {
-                        if (!existingItem.Done)
-                        {
-                            vm.MarkDone(DateTime.Now, existingItem);
-                            doneCount++;
-                        }
-                    }
-                }
-                else
-                {
-                    bool hasTitle = item.ContainsKey("Title") && !string.IsNullOrWhiteSpace(item["Title"]);
-                    vm.AddItem(new ActionItem
-                    {
-                        ID = Guid.NewGuid(),
-                        Title = hasTitle ? item["Title"] : item["URL"],
-                        Context = string.IsNullOrWhiteSpace(updateOptions.Context) ? "import" : updateOptions.Context,
-                        Tags = new Dictionary<string, string>
-                        {
-                            { "url", item["URL"] },
-                        },
-                        LastModified = DateTime.Now,
-                        RevisionGuid = Guid.NewGuid()
-                    });
-                    addCount++;
-                }
-            }
-            vm.Save();
-            Console.WriteLine($"{"item".ToQuantity(addCount)} added, {"item".ToQuantity(doneCount)} marked done.");
-        }
+        
 
         private static void TagAll(TagAllSubOptions tagAllOptions, ViewModel vm, TodoRepository repo)
         {
@@ -1151,7 +1108,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             return 0;
         }
 
-        private static void TidyUp(ViewModel vm, TodoRepository repo)
+        private static void TidyUp(ViewModel vm, ITodoRepository repo)
         {
             #region Tidy up
             // Delete any items with a context of "delete".
