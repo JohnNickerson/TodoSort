@@ -19,7 +19,7 @@ https://www.justwatch.com/au/movie/thx-1138,THX 1138 - movie: where to watch str
 https://youtube.com/watch?v=Cz1XEWqL-Tc&si=0oFufM4HNW3lTiB8,,,Unread,1748482121,[]
 https://www.youtube.com/watch?v=0b1d9a2f3c8,The 10 Most Dangerous Places on Earth,,Unread,1748482121,[]");
         fileSystem.AddFile(csvPath, new System.IO.Abstractions.TestingHelpers.MockFileData(csvContent.ToString()));
-        var csvReader = new CLI.CsvReader(csvPath, fileSystem);
+        var csvReader = new Core.CsvReader(csvPath, fileSystem);
 
         // Act
         var items = csvReader.GetAllItems();
@@ -44,7 +44,7 @@ https://www.example.com
 
 https://www.example2.com");
         fileSystem.AddFile(csvPath, new System.IO.Abstractions.TestingHelpers.MockFileData(csvContent.ToString()));
-        var csvReader = new CLI.CsvReader(csvPath, fileSystem);
+        var csvReader = new Core.CsvReader(csvPath, fileSystem);
 
         // Act
         var items = csvReader.GetAllItems();
