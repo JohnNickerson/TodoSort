@@ -60,6 +60,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         private bool _isSearchContextSelected;
         private bool _isSearchProjectSelected;
         private string _statusMessage;
+        private DateTime? _lastDeferredCheckDate;
 
         #endregion
 
@@ -229,6 +230,52 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             }
 
             _lastPendingCount = pendingCount;
+        }
+
+        /// <summary>
+        /// Checks for deferred items ready to return to the main list once per day.
+        /// Called automatically when the window gains focus.
+        /// </summary>
+        public void CheckForDeferredItemsOnce()
+        {
+            // Skip if no file is loaded
+            if (_api == null)
+            {
+                return;
+            }
+
+            // Skip if we've already checked today
+            if (_lastDeferredCheckDate.HasValue && _lastDeferredCheckDate.Value.Date == DateTime.Today)
+            {
+                return;
+            }
+
+            // Record that we've checked today
+            _lastDeferredCheckDate = DateTime.Today;
+
+            // Get items ready to return to the main list
+            var readyItems = _api.SomedayItems.Where(s => s.TickleDate <= DateTime.Today).ToArray();
+            
+            if (readyItems.Any())
+            {
+                // Process pending items without showing a confirmation dialog
+                _api.SomedaySearchSpecification = new TickleDateSearchSpecification(null, DateTime.Today);
+                var itemsToUndefer = _api.SomedaySearchResults.ToArray();
+                
+                if (itemsToUndefer.Any())
+                {
+                    // Only process if there are unsaved changes or we need to save new ones
+                    _api.Undefer(_defaultContext, itemsToUndefer);
+                    _api.Save();
+                    
+                    // Refresh the UI
+                    RaisePropertyChanged(nameof(Items));
+                    RaisePropertyChanged(nameof(Contexts));
+
+                    // Notify the user (status message only, no dialog)
+                    StatusMessage = $"Auto-processed {itemsToUndefer.Length} deferred item(s) ready to return.";
+                }
+            }
         }
 
         private void RankItems()

@@ -59,6 +59,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         {
             ((MainViewModel)DataContext).CheckForUpdatedFile();
             ((MainViewModel)DataContext).CheckForCommit();
+            ((MainViewModel)DataContext).CheckForDeferredItemsOnce();
 
             // Check window position and bounds.
             if (ActualWidth > SystemParameters.WorkArea.Width)
