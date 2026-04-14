@@ -1,27 +1,16 @@
 using System.IO.Abstractions;
 using System.Text;
-using AssimilationSoftware.TodoSort.CLI.Options;
-using AssimilationSoftware.TodoSort.Core;
-using Microsoft.VisualStudio.TestPlatform.TestHost;
-using Moq;
-using UnitTests.Scaffolding;
+using AssimilationSoftware.TodoSort.Core.Import;
 
 namespace UnitTests;
 
 public class RawUrlImportTests
 {
     [Fact]
-    public void Test_Update_Existing_Item()
+    public void Test_ImportItems_CreatesActionItemsFromUrls()
     {
         // Arrange
         var mockFileSystem = new System.IO.Abstractions.TestingHelpers.MockFileSystem();
-        UpdateSubOptions options = new()
-        {
-            Context = "inbox",
-            Filename = "c:\\Downloads\\links.csv",
-            Format = "urls",
-            FileSystem = mockFileSystem
-        };
         System.IO.Abstractions.TestingHelpers.MockFileData mockFile = new(
             "\"URL\"\n" +
             "\"https://theoatmeal.com:443/\"\n" +
@@ -29,71 +18,92 @@ public class RawUrlImportTests
             "\"http://www.youtube.com/watch?v=example\"\n"
         );
         mockFileSystem.AddFile("c:\\Downloads\\links.csv", mockFile);
-        MockTodoRepository mockRepository = new(mockFileSystem);
-        mockRepository.Create(new AssimilationSoftware.Maroon.Model.ActionItem
-        {
-            ID = Guid.NewGuid(),
-            Title = "Robert Brockway â Rx - Episode 1: The Blackouts",
-            Tags = new Dictionary<string, string> { { "url", "https://ganxy.com/i/48595/robert-brockway/rx-episode-1-the-blackouts" } },
-            IsDeleted = false
-        });
-        mockRepository.Create(new AssimilationSoftware.Maroon.Model.ActionItem
-        {
-            ID = Guid.NewGuid(),
-            Title = "YouTube Video",
-            Tags = new Dictionary<string, string> { { "url", "http://www.youtube.com/watch?v=example" } },
-            IsDeleted = false,
-            Done = true
-        });
-        ViewModel viewModel = new(mockRepository);
+        
+        var importer = new RawUrlsImporter("c:\\Downloads\\links.csv", mockFileSystem);
 
         // Act
-        AssimilationSoftware.TodoSort.CLI.Program.Update(options, viewModel);
+        var result = importer.GetAllItems().ToList();
 
         // Assert
-        // The Oatmeal entry should be added.
-        Assert.Contains(mockRepository.Items, item =>
+        Assert.Equal(3, result.Count);
+        
+        // Check that URLs are set correctly
+        Assert.Contains(result, item =>
             item.Title == "https://theoatmeal.com:443/" &&
             item.Tags.ContainsKey("url") &&
             item.Tags["url"] == "https://theoatmeal.com:443/"
         );
-        // The Ganxy entry should be unchanged.
-        Assert.Contains(mockRepository.Items, item =>
-            item.Title == "Robert Brockway â Rx - Episode 1: The Blackouts" &&
+        
+        Assert.Contains(result, item =>
+            item.Title == "https://ganxy.com/i/48595/robert-brockway/rx-episode-1-the-blackouts" &&
             item.Tags.ContainsKey("url") &&
             item.Tags["url"] == "https://ganxy.com/i/48595/robert-brockway/rx-episode-1-the-blackouts"
         );
-        // The YouTube entry, already done, should remain unchanged.
-        Assert.Contains(mockRepository.DoneItems, item =>
-            item.Title == "YouTube Video" &&
+        
+        Assert.Contains(result, item =>
+            item.Title == "http://www.youtube.com/watch?v=example" &&
             item.Tags.ContainsKey("url") &&
             item.Tags["url"] == "http://www.youtube.com/watch?v=example"
+        );
+        
+        // Check that all items have import context
+        foreach (var item in result)
+        {
+            Assert.Equal("import", item.Context);
+        }
+    }
+
+    [Fact]
+    public void Test_ImportItems_UsesTitleWhenProvided()
+    {
+        // Arrange
+        var mockFileSystem = new System.IO.Abstractions.TestingHelpers.MockFileSystem();
+        System.IO.Abstractions.TestingHelpers.MockFileData mockFile = new(
+            "\"URL\",\"Title\"\n" +
+            "\"https://theoatmeal.com:443/\",\"The Oatmeal\"\n" +
+            "\"https://example.com\",\"\"\n"
+        );
+        mockFileSystem.AddFile("c:\\Downloads\\links.csv", mockFile);
+        
+        var importer = new RawUrlsImporter("c:\\Downloads\\links.csv", mockFileSystem);
+
+        // Act
+        var result = importer.GetAllItems().ToList();
+
+        // Assert
+        Assert.Equal(2, result.Count);
+        
+        // First item should use title
+        Assert.Contains(result, item =>
+            item.Title == "The Oatmeal" &&
+            item.Tags["url"] == "https://theoatmeal.com:443/"
+        );
+        
+        // Second item should use URL as title
+        Assert.Contains(result, item =>
+            item.Title == "https://example.com" &&
+            item.Tags["url"] == "https://example.com"
         );
     }
 
     [Fact]
-    public void No_Error_On_Missing_Column()
+    public void Test_ImportItems_SkipsMissingUrlColumn()
     {
         // Arrange
         var mockFileSystem = new System.IO.Abstractions.TestingHelpers.MockFileSystem();
-        UpdateSubOptions options = new()
-        {
-            Context = "inbox",
-            Filename = "c:\\Downloads\\links.csv",
-            Format = "urls",
-            FileSystem = mockFileSystem
-        };
         System.IO.Abstractions.TestingHelpers.MockFileData mockFile = new(
             "\"Link\"\n" +
             "\"https://theoatmeal.com:443/\"\n" +
-            "\"https://ganxy.com/i/48595/robert-brockway/rx-episode-1-the-blackouts\"\n" +
-            "\"http://www.youtube.com/watch?v=example\"\n"
+            "\"https://ganxy.com/i/48595\"\n"
         );
         mockFileSystem.AddFile("c:\\Downloads\\links.csv", mockFile);
-        MockTodoRepository mockRepository = new(mockFileSystem);
-        ViewModel viewModel = new(mockRepository);
+        
+        var importer = new RawUrlsImporter("c:\\Downloads\\links.csv", mockFileSystem);
 
-        // Act & Assert
-        AssimilationSoftware.TodoSort.CLI.Program.Update(options, viewModel);
+        // Act
+        var result = importer.GetAllItems().ToList();
+
+        // Assert - should import nothing since URL column is missing
+        Assert.Empty(result);
     }
 }

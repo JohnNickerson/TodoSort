@@ -1,16 +1,21 @@
-using Spectre.Console;
+#nullable enable
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.IO.Abstractions;
+using System.Linq;
 using AssimilationSoftware.Maroon.Mappers.Csv;
 
-namespace AssimilationSoftware.TodoSort.CLI
+namespace AssimilationSoftware.TodoSort.Core
 {
     public class CsvReader
     {
         private string? filename;
-        private System.IO.Abstractions.IFileSystem fileSystem;
+        private IFileSystem fileSystem;
 
-        public CsvReader(string? filename, System.IO.Abstractions.IFileSystem? fileSystem = null)
+        public CsvReader(string? filename, IFileSystem? fileSystem = null)
         {
-            this.fileSystem = fileSystem ?? new System.IO.Abstractions.FileSystem();
+            this.fileSystem = fileSystem ?? new FileSystem();
             if (string.IsNullOrEmpty(filename))
             {
                 throw new ArgumentException("Filename cannot be null or empty.", nameof(filename));
