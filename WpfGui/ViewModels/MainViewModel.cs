@@ -83,50 +83,86 @@ namespace AssimilationSoftware.TodoSort.WpfGui
 
         private async Task OpenFileAsync(string? filename)
         {
-            FileName = filename;
-
-            // Store the file name as the most recent one opened.
-            _recentFilesList = new ObservableCollection<string>(Settings.Default.RecentFiles);
-            if (!string.IsNullOrEmpty(filename))
+            try
             {
-                RecentFileList.Remove(filename);
-                RecentFileList.Insert(0, filename);
-            }
-            while (RecentFileList.Count > 10)
-            {
-                RecentFileList.RemoveAt(10);
-            }
-            Settings.Default.RecentFiles = _recentFilesList.ToArray();
-            _recentFilesList.Clear();
-            SaveSettings();
-
-            await Task.Run(() =>
-            {
-                _repo = new TodoRepository(new ActionItemDiskMapper(FileName), Path.GetDirectoryName(FileName), Environment.MachineName);
-                _api = new ViewModel(_repo);
-            });
-
-            var undefers = _api.SomedayItems.Where(s => s.TickleDate <= DateTime.Today).Select(u => u.Title).ToArray();
-            if (undefers.Any())
-            {
-                var titleList = string.Join(Environment.NewLine, undefers);
-                // Confirm.
-                if (System.Windows.MessageBox.Show(
-                    $"There are deferred items ready to return to the main lists:\n{titleList}\n Do you want to process them now?",
-                        "Auto-undefer", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                // Validate filename
+                if (string.IsNullOrEmpty(filename))
                 {
-                    Cleanup();
+                    StatusMessage = "Error: No file selected.";
+                    return;
                 }
-            }
 
-            RaisePropertyChanged(nameof(Contexts));
-            RaisePropertyChanged(nameof(Items));
-            RaisePropertyChanged(nameof(RecentFileList));
-            RaisePropertyChanged(nameof(Projects));
+                if (!File.Exists(filename))
+                {
+                    StatusMessage = $"Error: File not found: {filename}";
+                    return;
+                }
+
+                FileName = filename;
+
+                // Store the file name as the most recent one opened.
+                _recentFilesList = new ObservableCollection<string>(Settings.Default.RecentFiles);
+                if (!string.IsNullOrEmpty(filename))
+                {
+                    RecentFileList.Remove(filename);
+                    RecentFileList.Insert(0, filename);
+                }
+                while (RecentFileList.Count > 10)
+                {
+                    RecentFileList.RemoveAt(10);
+                }
+                Settings.Default.RecentFiles = _recentFilesList.ToArray();
+                _recentFilesList.Clear();
+                SaveSettings();
+
+                await Task.Run(() =>
+                {
+                    string? directoryName = Path.GetDirectoryName(FileName);
+                    if (string.IsNullOrEmpty(directoryName))
+                    {
+                        throw new InvalidOperationException($"Cannot determine directory for file: {FileName}");
+                    }
+                    _repo = new TodoRepository(new ActionItemDiskMapper(FileName), directoryName, Environment.MachineName);
+                    _api = new ViewModel(_repo);
+                });
+
+                if (_api?.SomedayItems != null)
+                {
+                    var undefers = _api.SomedayItems.Where(s => s.TickleDate <= DateTime.Today).Select(u => u.Title).ToArray();
+                    if (undefers.Any())
+                    {
+                        var titleList = string.Join(Environment.NewLine, undefers);
+                        // Confirm.
+                        if (System.Windows.MessageBox.Show(
+                            $"There are deferred items ready to return to the main lists:\n{titleList}\n Do you want to process them now?",
+                                "Auto-undefer", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                        {
+                            Cleanup();
+                        }
+                    }
+                }
+
+                RaisePropertyChanged(nameof(Contexts));
+                RaisePropertyChanged(nameof(Items));
+                RaisePropertyChanged(nameof(RecentFileList));
+                RaisePropertyChanged(nameof(Projects));
+            }
+            catch (Exception ex)
+            {
+                StatusMessage = $"Error opening file: {ex.Message}";
+                System.Windows.MessageBox.Show($"Failed to open file:\n\n{ex.Message}", "Error Opening File", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+            }
         }
 
         private void Cleanup()
         {
+            // Check that _api and _repo are initialized
+            if (_api == null || _repo == null)
+            {
+                StatusMessage = "Error: No file loaded.";
+                return;
+            }
+
             // Confirm first.
             switch (ConfirmSaveCancel("Save changes before continuing? Unsaved changes will be discarded."))
             {
@@ -183,6 +219,12 @@ namespace AssimilationSoftware.TodoSort.WpfGui
 
         private void CommitChanges()
         {
+            if (_repo == null || _api == null)
+            {
+                StatusMessage = "Error: No file loaded.";
+                return;
+            }
+
             var pendingChanges = _repo.GetPendingChanges();
             if (pendingChanges.Count == 0)
             {
@@ -255,19 +297,19 @@ namespace AssimilationSoftware.TodoSort.WpfGui
 
             // Get items ready to return to the main list
             var readyItems = _api.SomedayItems.Where(s => s.TickleDate <= DateTime.Today).ToArray();
-            
+
             if (readyItems.Any())
             {
                 // Process pending items without showing a confirmation dialog
                 _api.SomedaySearchSpecification = new TickleDateSearchSpecification(null, DateTime.Today);
                 var itemsToUndefer = _api.SomedaySearchResults.ToArray();
-                
+
                 if (itemsToUndefer.Any())
                 {
                     // Only process if there are unsaved changes or we need to save new ones
                     _api.Undefer(_defaultContext, itemsToUndefer);
                     _api.Save();
-                    
+
                     // Refresh the UI
                     RaisePropertyChanged(nameof(Items));
                     RaisePropertyChanged(nameof(Contexts));
@@ -280,6 +322,11 @@ namespace AssimilationSoftware.TodoSort.WpfGui
 
         private void RankItems()
         {
+            if (_api == null)
+            {
+                StatusMessage = "Error: No file loaded.";
+                return;
+            }
             // Open up a ranking window.
             var rv = new RankView();
             var rvm = new RankViewModel(Items, rv, _api);
@@ -375,6 +422,11 @@ namespace AssimilationSoftware.TodoSort.WpfGui
 
         private void BalanceExecuted()
         {
+            if (_api == null)
+            {
+                StatusMessage = "Error: No file loaded.";
+                return;
+            }
             var balanceView = new BalanceView();
             var balanceVm = new BalanceViewModel(balanceView, _api);
             balanceView.DataContext = balanceVm;
@@ -384,6 +436,11 @@ namespace AssimilationSoftware.TodoSort.WpfGui
 
         public void SaveCommandExecuted()
         {
+            if (_api == null)
+            {
+                StatusMessage = "Error: No file loaded.";
+                return;
+            }
             _api.Save();
             SaveLastOpenedFileMetaData(_lastOpenedFile?.FullName);
             RaisePropertyChanged(nameof(Items));
@@ -391,12 +448,14 @@ namespace AssimilationSoftware.TodoSort.WpfGui
 
         public void MarkDone(ActionItem item, DateTime? doneDate = null)
         {
+            if (_api == null) return;
             _api.MarkDone(doneDate, item);
             RaisePropertyChanged(nameof(Items));
         }
 
         public void Undo(ActionItem item, string context = _defaultContext)
         {
+            if (_api == null) return;
             _api.Undo(context, item);
             RaisePropertyChanged(nameof(Items));
         }
@@ -404,19 +463,23 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         private void CloseExecute()
         {
             // Confirm close if unsaved changes.
-            switch (ConfirmSaveCancel("You have unsaved changes. Save before quitting?"))
+            if (_api != null)
             {
-                case null:
-                    return;
-                case true:
-                    _api.Save();
-                    break;
+                switch (ConfirmSaveCancel("You have unsaved changes. Save before quitting?"))
+                {
+                    case null:
+                        return;
+                    case true:
+                        _api.Save();
+                        break;
+                }
             }
             System.Windows.Application.Current.Shutdown();
         }
 
         public void Update(ActionItem item)
         {
+            if (_api == null) return;
             _api.Update(item);
             RaisePropertyChanged(nameof(WindowTitle));
             RaisePropertyChanged(nameof(HasUnsavedChanges));
@@ -424,6 +487,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
 
         public void Move(ActionItem source, string newContext, bool disconnectChildren = true)
         {
+            if (_api == null) return;
             _api.SetContext(source, newContext);
             if (disconnectChildren)
             {
@@ -435,12 +499,14 @@ namespace AssimilationSoftware.TodoSort.WpfGui
 
         public void Defer(ActionItem item)
         {
+            if (_api == null) return;
             _api.Defer(item);
             RaisePropertyChanged(nameof(Items));
         }
 
         public void Undefer(ActionItem item)
         {
+            if (_api == null) return;
             _api.Undefer(_defaultContext, item);
             RaisePropertyChanged(nameof(Items));
             RaisePropertyChanged(nameof(Contexts));
@@ -448,6 +514,11 @@ namespace AssimilationSoftware.TodoSort.WpfGui
 
         private void AddExecuted()
         {
+            if (_api == null)
+            {
+                StatusMessage = "Error: No file loaded.";
+                return;
+            }
             // Show the Edit view.
             var editWindow = new EditItemView();
             var item = new ActionItem
@@ -479,6 +550,11 @@ namespace AssimilationSoftware.TodoSort.WpfGui
 
         private void AddUrlExecuted()
         {
+            if (_api == null)
+            {
+                StatusMessage = "Error: No file loaded.";
+                return;
+            }
             var addWindow = new AddUrlView();
             var item = new ActionItem
             {
@@ -502,6 +578,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
 
         public void MoveAll(string context, string newContext)
         {
+            if (_api == null) return;
             _api.SearchSpecification = new ContextSearchSpecification(context);
             _api.ShowHeadOnly = false;
             foreach (var item in _api.SearchResults.ToList())
@@ -515,6 +592,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
 
         public void Delete(ActionItem source)
         {
+            if (_api == null) return;
             _api.ResetPriorityParents(source);
             _api.Delete(source);
             RaisePropertyChanged(nameof(Items));
@@ -525,11 +603,11 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             // Cached properties.
             if (propertyName == nameof(Items) || propertyName == nameof(ShowHeadOnly))
             {
-                _currentItems.Clear();
+                _currentItems?.Clear();
             }
             else if (propertyName == nameof(Contexts))
             {
-                _contexts.Clear();
+                _contexts?.Clear();
             }
 
             base.OnPropertyChanged(propertyName);
@@ -800,7 +878,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         {
             get
             {
-                if (SelectedContext == null) return new List<ActionViewItem>();
+                if (_api == null || SelectedContext == null) return new List<ActionViewItem>();
                 if (_currentItems != null) return _currentItems;
                 switch (SelectedContext.Title)
                 {

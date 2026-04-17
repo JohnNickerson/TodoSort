@@ -2,19 +2,23 @@
 using Microsoft.Extensions.Configuration;
 using System.IO;
 
-namespace AssimilationSoftware.TodoSort.WpfGui.Properties {
-    
-    
-    internal sealed partial class Settings {
-        
+namespace AssimilationSoftware.TodoSort.WpfGui.Properties
+{
+
+
+    internal sealed partial class Settings
+    {
+
         private static Settings defaultInstance = new Settings();
-        
-        public static Settings Default {
-            get {
+
+        public static Settings Default
+        {
+            get
+            {
                 return defaultInstance;
             }
         }
-        
+
         static Settings()
         {
             Reload();
@@ -26,8 +30,11 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Properties {
             {
                 string settingsFile = "appsettings.json";
                 string machineFile = $"appsettings.{Environment.MachineName}.json";
+                // Use the application's directory instead of current working directory
+                // This ensures settings are found correctly when launched from taskbar or other shortcuts
+                string basePath = AppDomain.CurrentDomain.BaseDirectory;
                 var builder = new ConfigurationBuilder()
-                    .SetBasePath(Directory.GetCurrentDirectory())
+                    .SetBasePath(basePath)
                     .AddJsonFile(settingsFile, optional: true, reloadOnChange: true)
                     .AddJsonFile(machineFile, optional: true, reloadOnChange: true);
                 Debug.WriteLine("Builder initialised.");
@@ -49,7 +56,8 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Properties {
 
         public void Save()
         {
-            string jsonPath = Path.Combine(Directory.GetCurrentDirectory(), $"appsettings.{Environment.MachineName}.json");
+            string basePath = AppDomain.CurrentDomain.BaseDirectory;
+            string jsonPath = Path.Combine(basePath, $"appsettings.{Environment.MachineName}.json");
             System.Text.StringBuilder json = new();
             json.AppendLine("{");
             json.AppendLine("  \"Default\":");
@@ -59,41 +67,53 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Properties {
         }
 
         private string _todo;
-        public string Todo {
-            get {
+        public string Todo
+        {
+            get
+            {
                 return _todo;
             }
-            set {
+            set
+            {
                 _todo = value;
             }
         }
-        
+
         private bool _reconfigure;
-        public bool Reconfigure {
-            get {
+        public bool Reconfigure
+        {
+            get
+            {
                 return _reconfigure;
             }
-            set {
+            set
+            {
                 _reconfigure = value;
             }
         }
-        
-        private string[] _recentFiles = new string[] { } ;
-        public string[] RecentFiles {
-            get {
-                return _recentFiles;
+
+        private string[] _recentFiles = new string[] { };
+        public string[] RecentFiles
+        {
+            get
+            {
+                return _recentFiles ?? new string[] { };
             }
-            set {
+            set
+            {
                 _recentFiles = value;
             }
         }
-        
+
         private bool _maskNsfwItems;
-        public bool MaskNsfwItems {
-            get {
+        public bool MaskNsfwItems
+        {
+            get
+            {
                 return _maskNsfwItems;
             }
-            set {
+            set
+            {
                 _maskNsfwItems = value;
             }
         }
