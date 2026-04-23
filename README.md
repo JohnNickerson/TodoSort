@@ -230,3 +230,9 @@ TodoSort is a task list and reading list app with an emphasis on priority. It st
 - 2026-04-14: Build 1.8.0.0
 	- Target .NET 10.
 	- Use MVVM Toolkit.
+- 2026-04-22: Build 1.9.0.0
+	- Remove CLI 'update' command.
+	- Move 'urls' format to 'import' command.
+	- Auto-return deferred items daily.
+	- Fix configuration saving location.
+	- Prevent crash when opening a file.

@@ -7,11 +7,11 @@
     <IsTestProject>true</IsTestProject>
     <Company>Assimilation Software</Company>
     <Product>TodoSort</Product>
-    <Copyright>Copyright © Assimilation Software 2025</Copyright>
-    <Version>1.8.0.0</Version>
-    <FileVersion>1.8.0.0</FileVersion>
-    <InformationalVersion>1.8.0.0</InformationalVersion>
-    <PackageVersion>1.8.0.0</PackageVersion>
+    <Copyright>Copyright © Assimilation Software 2026</Copyright>
+    <Version>1.9.0.0</Version>
+    <FileVersion>1.9.0.0</FileVersion>
+    <InformationalVersion>1.9.0.0</InformationalVersion>
+    <PackageVersion>1.9.0.0</PackageVersion>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="coverlet.collector" Version="6.0.0" />
