@@ -879,7 +879,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             get
             {
                 if (_api == null || SelectedContext == null) return new List<ActionViewItem>();
-                if (_currentItems != null) return _currentItems;
+                if (_currentItems != null && _currentItems.Any()) return _currentItems;
                 switch (SelectedContext.Title)
                 {
                     case "done":
