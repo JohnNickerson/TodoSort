@@ -781,7 +781,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             get
             {
                 if (_api == null) return new List<Context>();
-                if (_contexts == null)
+                if (_contexts == null || !_contexts.Any())
                 {
                     // Preserve selected context.
                     var saveContext = SelectedContext;
