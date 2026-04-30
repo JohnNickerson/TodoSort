@@ -236,3 +236,7 @@ TodoSort is a task list and reading list app with an emphasis on priority. It st
 	- Auto-return deferred items daily.
 	- Fix configuration saving location.
 	- Prevent crash when opening a file.
+- 2026-04-29: Build 1.9.0.1
+	- Selecting a context should display items.
+- 2026-04-29: Build 1.9.0.2
+	- Saving should retain the context list.

@@ -2,16 +2,16 @@
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>disable</ImplicitUsings>
-    <InformationalVersion>1.9.0.0</InformationalVersion>
-    <PackageVersion>1.9.0.0</PackageVersion>
+    <InformationalVersion>1.9.0.2</InformationalVersion>
+    <PackageVersion>1.9.0.2</PackageVersion>
   </PropertyGroup>
   <PropertyGroup>
     <AssemblyTitle>Core</AssemblyTitle>
     <Company>Assimilation Software</Company>
     <Product>TodoSort</Product>
     <Copyright>Copyright © Assimilation Software 2026</Copyright>
-    <Version>1.9.0.0</Version>
-    <FileVersion>1.9.0.0</FileVersion>
+    <Version>1.9.0.2</Version>
+    <FileVersion>1.9.0.2</FileVersion>
     <RootNamespace>AssimilationSoftware.TodoSort.Core</RootNamespace>
     <AssemblyName>TodoSort.Core</AssemblyName>
   </PropertyGroup>
