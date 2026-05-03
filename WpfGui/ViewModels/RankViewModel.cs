@@ -99,8 +99,13 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         {
             get
             {
-                return _backCommand ?? (_backCommand = new RelayCommand(() => CurrentIndex--, () => CurrentIndex > 0));
+                return _backCommand ?? (_backCommand = new RelayCommand(() => CurrentIndex--, CanGoBack));
             }
+        }
+
+        public bool CanGoBack()
+        {
+            return CurrentIndex > 0;
         }
 
         public ICommand ForwardCommand
