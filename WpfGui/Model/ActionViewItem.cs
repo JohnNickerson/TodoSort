@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Net;
+using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -385,9 +386,9 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
 
         public static string FetchWebTitle(string url)
         {
-            var client = new WebClient();
+            var client = new HttpClient();
             // TODO: Also get the redirected URL, if any.
-            var source = client.DownloadString(url);
+            var source = client.GetStringAsync(url).Result;
             var title = Regex.Match(source, @"\<title\b[^>]*\>\s*(?<Title>[\s\S]*?)\</title\>", RegexOptions.IgnoreCase).Groups["Title"].Value;
             title = WebUtility.HtmlDecode(title);
             return title;
