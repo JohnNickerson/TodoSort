@@ -1,6 +1,5 @@
 using System.Text;
 using AssimilationSoftware.TodoSort.Core.Import;
-using AssimilationSoftware.TodoSort.CLI.Options;
 using AssimilationSoftware.TodoSort.Core;
 using UnitTests.Scaffolding;
 
@@ -74,12 +73,6 @@ public class InstapaperImportTests
     {
         // Arrange
         var mockFileSystem = new System.IO.Abstractions.TestingHelpers.MockFileSystem();
-        ImportSubOptions options = new()
-        {
-            Context = "instapaper",
-            Filename = "c:\\Downloads\\instapaper.csv",
-            Format = "instapaper"
-        };
         System.IO.Abstractions.TestingHelpers.MockFileData mockFile = new(
             "URL,Title,Selection,Folder,Timestamp,Tags\n" +
             "https://theoatmeal.com:443/,Cyberlove,,Unread,1747964343,[]\n" +
@@ -107,7 +100,8 @@ public class InstapaperImportTests
         ViewModel viewModel = new(mockRepository);
 
         // Act
-        AssimilationSoftware.TodoSort.CLI.Program.Import(options, viewModel, mockRepository);
+        var importer = new InstapaperImporter("c:\\Downloads\\instapaper.csv", mockFileSystem);
+        viewModel.AddAllItems("instapaper", false, [.. importer.GetAllItems()]);
 
         // Assert
         // New items should be imported
