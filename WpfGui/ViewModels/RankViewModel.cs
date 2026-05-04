@@ -149,6 +149,9 @@ namespace AssimilationSoftware.TodoSort.WpfGui
                 _currentIndex = value;
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(CurrentPair));
+                // Update command states.
+                ((RelayCommand)BackCommand).NotifyCanExecuteChanged();
+                ((RelayCommand)ForwardCommand).NotifyCanExecuteChanged();
             }
         }
 
