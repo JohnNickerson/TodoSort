@@ -7,6 +7,8 @@ using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Input;
 using AssimilationSoftware.Maroon.Model;
+using AssimilationSoftware.TodoSort.WpfGui.ViewModels;
+using AssimilationSoftware.TodoSort.WpfGui.Views;
 using CommunityToolkit.Mvvm.Input;
 
 namespace AssimilationSoftware.TodoSort.WpfGui.Model

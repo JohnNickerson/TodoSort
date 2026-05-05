@@ -2,8 +2,9 @@
 using System.Windows;
 using System.Windows.Input;
 using AssimilationSoftware.TodoSort.WpfGui.Properties;
+using AssimilationSoftware.TodoSort.WpfGui.ViewModels;
 
-namespace AssimilationSoftware.TodoSort.WpfGui
+namespace AssimilationSoftware.TodoSort.WpfGui.Views
 {
     /// <summary>
     /// Interaction logic for TaskList.xaml

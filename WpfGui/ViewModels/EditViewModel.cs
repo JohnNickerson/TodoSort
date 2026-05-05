@@ -5,7 +5,7 @@ using AssimilationSoftware.Maroon.Model;
 using AssimilationSoftware.TodoSort.WpfGui.Model;
 using CommunityToolkit.Mvvm.Input;
 
-namespace AssimilationSoftware.TodoSort.WpfGui
+namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
 {
     public class EditViewModel : ViewModelBase
     {

@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace AssimilationSoftware.TodoSort.WpfGui
+namespace AssimilationSoftware.TodoSort.WpfGui.Views
 {
     /// <summary>
     /// Interaction logic for ImportView.xaml

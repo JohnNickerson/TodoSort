@@ -1,5 +1,6 @@
 ﻿using System.Windows.Input;
 using AssimilationSoftware.TodoSort.WpfGui.Model;
+using AssimilationSoftware.TodoSort.WpfGui.Views;
 using CommunityToolkit.Mvvm.Input;
 
 namespace AssimilationSoftware.TodoSort.WpfGui

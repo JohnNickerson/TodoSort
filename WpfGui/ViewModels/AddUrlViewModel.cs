@@ -5,7 +5,7 @@ using System.Diagnostics;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
 
-namespace AssimilationSoftware.TodoSort.WpfGui;
+namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels;
 
 public class AddUrlViewModel : ViewModelBase
 {

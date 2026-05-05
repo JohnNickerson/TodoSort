@@ -1,7 +1,7 @@
 ﻿<Application x:Class="AssimilationSoftware.TodoSort.WpfGui.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    StartupUri="TaskList.xaml">
+    StartupUri="Views/TaskList.xaml">
     <Application.Resources>
         <FontFamily x:Key="Rot13Sans">pack://application:,,,/Resources/#Rot13 DejaVu Sans</FontFamily>
     </Application.Resources>
