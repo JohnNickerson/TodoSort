@@ -101,7 +101,7 @@ public class InstapaperImportTests
 
         // Act
         var importer = new InstapaperImporter("c:\\Downloads\\instapaper.csv", mockFileSystem);
-        viewModel.AddAllItems("instapaper", false, [.. importer.GetAllItems()]);
+        viewModel.AddAllItems("instapaper", false, importer.GetAllItems());
 
         // Assert
         // New items should be imported

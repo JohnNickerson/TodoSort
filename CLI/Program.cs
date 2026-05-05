@@ -426,7 +426,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             {
                 // Get everything from the source file.
                 // Exclude anything already seen, according to its import hash field.
-                vm.AddAllItems(importOptions.Context, true, importer.GetAllItems().ToArray());
+                vm.AddAllItems(importOptions.Context, true, importer.GetAllItems());
                 Console.WriteLine(vm.StatusMessage);
             }
 

@@ -233,7 +233,7 @@ namespace AssimilationSoftware.TodoSort.Core
             UnsavedChanges = true;
         }
 
-        public void AddAllItems(string context, bool checkHashes, params ActionItem[] items)
+        public void AddAllItems(string context, bool checkHashes, IEnumerable<ActionItem> items)
         {
             int importedCount = 0;
             var existingHashes = new HashSet<string>();

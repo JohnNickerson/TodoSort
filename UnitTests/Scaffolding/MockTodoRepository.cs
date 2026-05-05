@@ -47,7 +47,7 @@ public class MockTodoRepository : AssimilationSoftware.TodoSort.Core.Data.ITodoR
 
     public IEnumerable<ActionItem> FindAll()
     {
-        throw new NotImplementedException();
+        return _items.Concat(_doneItems).Concat(_somedayItems);
     }
 
     public List<PendingChange<ActionItem>> FindConflicts()
