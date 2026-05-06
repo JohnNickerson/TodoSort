@@ -4,10 +4,12 @@ using System.Windows;
 using System.Diagnostics;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
+using AssimilationSoftware.TodoSort.WpfGui.Interfaces;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels;
 
-public class AddUrlViewModel : ViewModelBase
+public class AddUrlViewModel : ObservableObject
 {
     private string _url;
     private ActionViewItem _sourceItem;
@@ -16,10 +18,11 @@ public class AddUrlViewModel : ViewModelBase
     private ICommand _fetchTitleCommand;
     public List<Context> Contexts { get; }
     private Context _selectedContext;
+    private readonly IDialogWindow _view;
 
-    public AddUrlViewModel(MainViewModel api, ActionViewItem item, Window window)
+    public AddUrlViewModel(MainViewModel api, ActionViewItem item, IDialogWindow window)
     {
-        Window = window;
+        _view = window;
         if (item != null)
         {
             item.Tags.TryGetValue("url", out _url);
@@ -31,8 +34,8 @@ public class AddUrlViewModel : ViewModelBase
 
     private void OkExecuted()
     {
-        Window.DialogResult = true;
-        Window.Close();
+        _view.DialogResult = true;
+        _view.Close();
     }
 
     private void FetchTitleExecuted()
