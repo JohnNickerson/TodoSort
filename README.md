@@ -240,3 +240,7 @@ TodoSort is a task list and reading list app with an emphasis on priority. It st
 	- Selecting a context should display items.
 - 2026-04-29: Build 1.9.0.2
 	- Saving should retain the context list.
+- 2026-05-06: Build 1.9.1.0
+	- Fix RankView back/forward buttons.
+	- Allow free-text editing of context in AddUrlView.
+	- Some test and code refactoring updates.
