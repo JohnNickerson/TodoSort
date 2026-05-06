@@ -1,13 +1,16 @@
 ﻿using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Input;
 using AssimilationSoftware.Maroon.Model;
+using AssimilationSoftware.TodoSort.WpfGui.Interfaces;
 using AssimilationSoftware.TodoSort.WpfGui.Model;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
 namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
 {
-    public class EditViewModel : ViewModelBase
+    public class EditViewModel : ObservableObject
     {
         #region Fields
 
@@ -21,16 +24,17 @@ namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
 
         private ICommand _okCommand;
         private ICommand _addTagCommand;
+        private IDialogWindow _view;
 
         #endregion
 
         #region Constructors
 
-        public EditViewModel(MainViewModel api, ActionViewItem item, Window window)
+        public EditViewModel(MainViewModel api, ActionViewItem item, IDialogWindow view)
         {
             AllContexts = api.Contexts.Where(c => !_excludeContexts.Contains(c.Title)).Select(c => c.Title).OrderBy(c => c).ToList();
             AllProjects = api.Projects.Where(p => p != null).OrderBy(p => p.Title).ToList();
-            Window = window;
+            _view = view;
 
             if (item != null)
             {
@@ -58,8 +62,8 @@ namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
 
         private void OkExecuted()
         {
-            Window.DialogResult = true;
-            Window.Close();
+            _view.DialogResult = true;
+            _view.Close();
         }
 
         private void AddTagExecuted()
