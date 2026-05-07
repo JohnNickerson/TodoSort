@@ -4,6 +4,7 @@ using System.Windows.Input;
 using AssimilationSoftware.TodoSort.Core;
 using AssimilationSoftware.TodoSort.Core.Import;
 using AssimilationSoftware.TodoSort.WpfGui.Annotations;
+using AssimilationSoftware.TodoSort.WpfGui.Interfaces;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
@@ -12,7 +13,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
     public class ImportViewModel : ObservableObject
     {
         private readonly ViewModel _vm;
-        private readonly Window _view;
+        private readonly IDialogWindow _view;
         private string _fileName;
         private ImportFileType _fileType;
         private string _targetContext;
@@ -20,7 +21,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
         private RelayCommand _cancelCommand;
         private RelayCommand _browseCommand;
 
-        public ImportViewModel(Core.ViewModel vm, Window view)
+        public ImportViewModel(Core.ViewModel vm, IDialogWindow view)
         {
             _vm = vm;
             _view = view;
