@@ -9,17 +9,21 @@ using AssimilationSoftware.Maroon.Model;
 using AssimilationSoftware.TodoSort.Core;
 using AssimilationSoftware.TodoSort.Core.Data;
 using AssimilationSoftware.TodoSort.Core.Search;
+using AssimilationSoftware.TodoSort.WpfGui.Interfaces;
 using AssimilationSoftware.TodoSort.WpfGui.Model;
 using AssimilationSoftware.TodoSort.WpfGui.Properties;
 using AssimilationSoftware.TodoSort.WpfGui.Views;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
 namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
 {
-    public class MainViewModel : ViewModelBase
+    public class MainViewModel : ObservableObject
     {
         #region Fields
         const string _defaultContext = "inbox";
+
+        public ITaskListView Window;
         private Context? _selectedContext;
         private Context _searchResultsContext;
         private List<Context> _contexts;
@@ -529,8 +533,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
             var editVm = new EditViewModel(this, new ActionViewItem(item, this), editWindow);
             editWindow.DataContext = editVm;
             editWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-            editWindow.Owner = Window;
-            var result = editWindow.ShowDialog();
+            var result = editWindow.ShowDialog(Window);
             if (result.HasValue && result.Value)
             {
                 // Update the source item.
@@ -564,8 +567,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
             var addVm = new AddUrlViewModel(this, new ActionViewItem(item, this), addWindow);
             addWindow.DataContext = addVm;
             addWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-            addWindow.Owner = Window;
-            var result = addWindow.ShowDialog();
+            var result = addWindow.ShowDialog(Window);
             if (result.HasValue && result.Value)
             {
                 item.Title = string.IsNullOrEmpty(addVm.Title) ? addVm.Url : addVm.Title;
@@ -628,8 +630,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
             if (propertyName == nameof(SelectedContext))
             {
                 // Reset column widths.
-                // TODO: Raise an event that the view can respond to, or depend on this event.
-                (Window as TaskList)?.ResizeColumns();
+                Window.ResizeColumns();
             }
 
             if (propertyName == nameof(Contexts))
@@ -793,7 +794,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
                         {
                             Title = con,
                             SearchSpecification = new ContextSearchSpecification(con),
-                            Window = Window,
+                            View = Window,
                             DateVisible = Visibility.Collapsed,
                             AllOtherContexts = new List<Context>(),
                             ParentVm = this
@@ -805,12 +806,12 @@ namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
                         con.AllOtherContexts = new List<Context>(_contexts);
                         con.AllOtherContexts.Remove(con);
                     }
-                    _contexts.Add(new Context { Title = "done", Window = Window, DateVisible = Visibility.Visible, DateColumnTitle = "Done Date" });
-                    _contexts.Add(new Context { Title = "someday", Window = Window, DateVisible = Visibility.Visible, DateColumnTitle = "Return Date" });
+                    _contexts.Add(new Context { Title = "done", View = Window, DateVisible = Visibility.Visible, DateColumnTitle = "Done Date" });
+                    _contexts.Add(new Context { Title = "someday", View = Window, DateVisible = Visibility.Visible, DateColumnTitle = "Return Date" });
                     _searchResultsContext = new Context
                     {
                         Title = "Search",
-                        Window = Window,
+                        View = Window,
                         DateVisible = Visibility.Collapsed,
                         // TODO: Get full search spec from a new method or property.
                         SearchSpecification = new FullTextSearchSpecification(SearchKeyword),

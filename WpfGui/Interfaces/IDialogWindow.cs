@@ -4,5 +4,6 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Interfaces
     {
         bool? DialogResult { get; set; }
         void Close();
+        bool? ShowDialog(ITaskListView parent);
     }
 }

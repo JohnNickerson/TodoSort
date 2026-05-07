@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Windows;
 using System.Windows.Input;
+using AssimilationSoftware.TodoSort.WpfGui.Interfaces;
 using AssimilationSoftware.TodoSort.WpfGui.Properties;
 using AssimilationSoftware.TodoSort.WpfGui.ViewModels;
 
@@ -9,7 +10,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Views
     /// <summary>
     /// Interaction logic for TaskList.xaml
     /// </summary>
-    public partial class TaskList : Window
+    public partial class TaskList : Window, ITaskListView
     {
         private readonly MainViewModel _vm;
 

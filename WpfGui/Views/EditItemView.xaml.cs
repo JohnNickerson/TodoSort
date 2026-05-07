@@ -12,5 +12,12 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Views
         {
             InitializeComponent();
         }
+
+        public bool? ShowDialog(ITaskListView parent)
+        {
+            Owner = parent as Window;
+            WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            return base.ShowDialog();
+        }
     }
 }

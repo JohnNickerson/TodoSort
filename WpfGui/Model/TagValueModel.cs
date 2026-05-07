@@ -1,10 +1,11 @@
 ﻿using System.Windows.Input;
 using AssimilationSoftware.TodoSort.WpfGui.ViewModels;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
 namespace AssimilationSoftware.TodoSort.WpfGui.Model
 {
-    public class TagValueModel : ViewModelBase
+    public class TagValueModel : ObservableObject
     {
         #region Fields
         private string _tag;

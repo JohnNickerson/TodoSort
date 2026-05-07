@@ -2,14 +2,17 @@
 using System.Windows.Input;
 using AssimilationSoftware.Maroon.Model;
 using AssimilationSoftware.TodoSort.Core.Search;
+using AssimilationSoftware.TodoSort.WpfGui.Interfaces;
 using AssimilationSoftware.TodoSort.WpfGui.ViewModels;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
 namespace AssimilationSoftware.TodoSort.WpfGui.Model
 {
-    public class Context : ViewModelBase
+    public class Context : ObservableObject
     {
         #region Fields
+        public ITaskListView View { get; set; }
         private string _title;
         private ISearchSpecification<ActionItem> _searchSpecification;
         private string _dateColumnTitle;

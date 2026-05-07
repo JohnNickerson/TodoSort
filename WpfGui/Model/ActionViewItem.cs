@@ -9,11 +9,12 @@ using System.Windows.Input;
 using AssimilationSoftware.Maroon.Model;
 using AssimilationSoftware.TodoSort.WpfGui.ViewModels;
 using AssimilationSoftware.TodoSort.WpfGui.Views;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
 namespace AssimilationSoftware.TodoSort.WpfGui.Model
 {
-    public class ActionViewItem : ViewModelBase
+    public class ActionViewItem : ObservableObject
     {
         #region Fields
 
@@ -280,8 +281,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
             var editVm = new EditViewModel(Api, this, editWindow);
             editWindow.DataContext = editVm;
             editWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-            editWindow.Owner = Api.Window;
-            var result = editWindow.ShowDialog();
+            var result = editWindow.ShowDialog(Api.Window);
             var contextChanged = false;
             if (result.HasValue && result.Value)
             {

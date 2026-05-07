@@ -1,16 +1,18 @@
 ﻿using System.Windows.Input;
+using AssimilationSoftware.TodoSort.WpfGui.Interfaces;
 using AssimilationSoftware.TodoSort.WpfGui.Model;
 using AssimilationSoftware.TodoSort.WpfGui.Views;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
 namespace AssimilationSoftware.TodoSort.WpfGui
 {
-    public class RankViewModel : ViewModelBase
+    public class RankViewModel : ObservableObject
     {
         #region Fields
 
         private int _currentIndex;
-        private RankView _view;
+        private IDialogWindow _view;
         private Core.ViewModel _api;
 
         private RelayCommand _backCommand;
@@ -23,7 +25,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
 
         #region Constructors
 
-        public RankViewModel(List<ActionViewItem> items, RankView rv, Core.ViewModel api)
+        public RankViewModel(List<ActionViewItem> items, IDialogWindow rv, Core.ViewModel api)
         {
             _view = rv;
             _api = api;
