@@ -9,7 +9,7 @@ using AssimilationSoftware.Maroon.Model;
 using AssimilationSoftware.TodoSort.Core;
 using AssimilationSoftware.TodoSort.Core.Data;
 using AssimilationSoftware.TodoSort.Core.Search;
-using AssimilationSoftware.TodoSort.WpfGui.Interfaces;
+using AssimilationSoftware.TodoSort.CoreGui.Interfaces;
 using AssimilationSoftware.TodoSort.WpfGui.Model;
 using AssimilationSoftware.TodoSort.WpfGui.Properties;
 using AssimilationSoftware.TodoSort.WpfGui.Views;

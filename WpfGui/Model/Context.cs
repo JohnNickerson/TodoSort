@@ -2,7 +2,7 @@
 using System.Windows.Input;
 using AssimilationSoftware.Maroon.Model;
 using AssimilationSoftware.TodoSort.Core.Search;
-using AssimilationSoftware.TodoSort.WpfGui.Interfaces;
+using AssimilationSoftware.TodoSort.CoreGui.Interfaces;
 using AssimilationSoftware.TodoSort.WpfGui.ViewModels;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;

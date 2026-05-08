@@ -20,6 +20,7 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Core\Core.csproj" />
+    <ProjectReference Include="..\CoreGui\CoreGui.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Maroon, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">

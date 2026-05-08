@@ -4,7 +4,7 @@ using System.Windows;
 using System.Diagnostics;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
-using AssimilationSoftware.TodoSort.WpfGui.Interfaces;
+using AssimilationSoftware.TodoSort.CoreGui.Interfaces;
 using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels;

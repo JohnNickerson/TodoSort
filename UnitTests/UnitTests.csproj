@@ -27,6 +27,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Core\Core.csproj" />
     <ProjectReference Include="..\CLI\CLI.csproj" />
+    <ProjectReference Include="..\CoreGui\CoreGui.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Maroon">
