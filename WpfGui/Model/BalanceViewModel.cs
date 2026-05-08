@@ -2,6 +2,7 @@
 using System.Windows.Input;
 using AssimilationSoftware.TodoSort.Core;
 using AssimilationSoftware.TodoSort.Core.Search;
+using AssimilationSoftware.TodoSort.WpfGui.Interfaces;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
@@ -12,10 +13,10 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
         private List<BranchOption> _branchOptions;
         private RelayCommand _goCommand;
         private RelayCommand _cancelCommand;
-        public Window _view;
+        public IDialogWindow _view;
         private ViewModel _vm;
 
-        public BalanceViewModel(Window view, Core.ViewModel vm)
+        public BalanceViewModel(IDialogWindow view, Core.ViewModel vm)
         {
             _view = view;
             _vm = vm;
