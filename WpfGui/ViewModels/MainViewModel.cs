@@ -795,7 +795,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
                             Title = con,
                             SearchSpecification = new ContextSearchSpecification(con),
                             View = Window,
-                            DateVisible = Visibility.Collapsed,
+                            DateVisible = false,
                             AllOtherContexts = new List<Context>(),
                             ParentVm = this
                         });
@@ -806,13 +806,13 @@ namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
                         con.AllOtherContexts = new List<Context>(_contexts);
                         con.AllOtherContexts.Remove(con);
                     }
-                    _contexts.Add(new Context { Title = "done", View = Window, DateVisible = Visibility.Visible, DateColumnTitle = "Done Date" });
-                    _contexts.Add(new Context { Title = "someday", View = Window, DateVisible = Visibility.Visible, DateColumnTitle = "Return Date" });
+                    _contexts.Add(new Context { Title = "done", View = Window, DateVisible = true, DateColumnTitle = "Done Date" });
+                    _contexts.Add(new Context { Title = "someday", View = Window, DateVisible = true, DateColumnTitle = "Return Date" });
                     _searchResultsContext = new Context
                     {
                         Title = "Search",
                         View = Window,
-                        DateVisible = Visibility.Collapsed,
+                        DateVisible = false,
                         // TODO: Get full search spec from a new method or property.
                         SearchSpecification = new FullTextSearchSpecification(SearchKeyword),
                         CanMoveFrom = false

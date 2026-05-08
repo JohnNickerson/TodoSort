@@ -16,7 +16,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
         private string _title;
         private ISearchSpecification<ActionItem> _searchSpecification;
         private string _dateColumnTitle;
-        private Visibility _dateVisible;
+        private bool _dateVisible;
         private RelayCommand<Context> _moveAllCommand;
         #endregion
 
@@ -40,7 +40,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
             }
         }
 
-        public Visibility DateVisible
+        public bool DateVisible
         {
             get => _dateVisible;
             set

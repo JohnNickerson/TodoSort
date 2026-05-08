@@ -204,7 +204,7 @@
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
                     <GridViewColumn>
-                        <GridViewColumnHeader Content="{Binding Path=SelectedContext.DateColumnTitle}" Visibility="{Binding Path=SelectedContext.DateVisible}"/>
+                        <GridViewColumnHeader Content="{Binding Path=SelectedContext.DateColumnTitle}" Visibility="{Binding Path=SelectedContext.DateVisible, Converter={StaticResource BoolToVis}}"/>
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding ItemDate, StringFormat={}{0:dd/MM/yyyy}}"/>
