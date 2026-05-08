@@ -210,7 +210,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
             }
         }
 
-        public Visibility CanDefer => Source.Context == "someday" ? Visibility.Collapsed : Visibility.Visible;
+        public bool CanDefer => Source.Context != "someday";
 
         public TimeSpan ShortDeferDelay => new TimeSpan(14, 0, 0, 0);
 
