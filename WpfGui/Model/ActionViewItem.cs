@@ -8,7 +8,6 @@ using System.Windows;
 using System.Windows.Input;
 using AssimilationSoftware.Maroon.Model;
 using AssimilationSoftware.TodoSort.WpfGui.ViewModels;
-using AssimilationSoftware.TodoSort.WpfGui.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
@@ -130,6 +129,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
 
         public bool UrlNotNull => !string.IsNullOrEmpty(Url);
 
+        // TODO: Rename to ParentViewModel or something.
         private MainViewModel Api { get; }
 
         public int UpVotes
@@ -276,19 +276,14 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
 
         public void EditExecuted()
         {
-            // Show the Edit view.
-            var editWindow = new EditItemView();
-            var editVm = new EditViewModel(Api, this, editWindow);
-            editWindow.DataContext = editVm;
-            editWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-            var result = editWindow.ShowDialog(Api.Window);
+            var result = Api.NavigationService.ShowEditView(Api);
             var contextChanged = false;
-            if (result.HasValue && result.Value)
+            if (result.DialogResult.HasValue && result.DialogResult.Value)
             {
                 // Update the source item.
-                Title = editVm.Title.Trim();
+                Title = result.Title.Trim();
                 Source.Notes = new List<string>();
-                foreach (var line in editVm.Notes.Split('\n'))
+                foreach (var line in result.Notes.Split('\n'))
                 {
                     if (line.Trim().Length > 0)
                     {
@@ -296,7 +291,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
                     }
                 }
                 Source.Tags = new Dictionary<string, string>();
-                foreach (var tv in editVm.Tags)
+                foreach (var tv in result.Tags)
                 {
                     if (tv?.Tag is not null || tv?.Value is not null)
                     {
@@ -304,14 +299,14 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
                         Source.Tags[tv.Tag ?? string.Empty] = tv.Value ?? string.Empty;
                     }
                 }
-                Source.ProjectId = editVm.Project?.ID;
-                if (editVm.IsDeferred)
+                Source.ProjectId = result.ProjectId;
+                if (result.IsDeferred)
                 {
-                    Source.TickleDate = editVm.TickleDate;
+                    Source.TickleDate = result.TickleDate;
                 }
-                if (Source.Context != editVm.Context)
+                if (Source.Context != result.Context)
                 {
-                    Source.Context = editVm.Context;
+                    Source.Context = result.Context;
                     Api.Api.ResetPriorityParents(Source);
                     contextChanged = true;
                 }

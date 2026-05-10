@@ -10,6 +10,7 @@ using AssimilationSoftware.TodoSort.Core;
 using AssimilationSoftware.TodoSort.Core.Data;
 using AssimilationSoftware.TodoSort.Core.Search;
 using AssimilationSoftware.TodoSort.CoreGui.Interfaces;
+using AssimilationSoftware.TodoSort.WpfGui.Interfaces;
 using AssimilationSoftware.TodoSort.WpfGui.Model;
 using AssimilationSoftware.TodoSort.WpfGui.Properties;
 using AssimilationSoftware.TodoSort.WpfGui.Views;
@@ -66,16 +67,19 @@ namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
         private bool _isSearchProjectSelected;
         private string _statusMessage;
         private DateTime? _lastDeferredCheckDate;
+        private ObservableCollection<string> _recentFilesList;
+        private INavigationService _navigationService;
 
         #endregion
 
         #region Constructors
-        public MainViewModel(string filename)
+        public MainViewModel(string filename, INavigationService navigationService)
         {
             if (filename != null)
             {
                 OpenFile(filename);
             }
+            _navigationService = navigationService;
         }
         #endregion
 
@@ -333,10 +337,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
                 return;
             }
             // Open up a ranking window.
-            var rv = new RankView();
-            var rvm = new RankViewModel(Items, rv, _api);
-            rv.DataContext = rvm;
-            rv.ShowDialog();
+            _navigationService.ShowRankView(Items, _api);
             RaisePropertyChanged(nameof(Items));
         }
 
@@ -352,10 +353,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
 
         private void ImportExecuted()
         {
-            var importView = new ImportView();
-            var importVm = new ImportViewModel(_api, importView);
-            importView.DataContext = importVm;
-            importView.ShowDialog();
+            _navigationService.ShowImportView(_api);
             RaisePropertyChanged(nameof(Contexts));
         }
 
@@ -375,20 +373,10 @@ namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
                     break;
             }
 
-            // Configure open file dialog box
-            Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog
+            var result = _navigationService.ShowOpenFileDialog();
+            if (result.DialogResult == true)
             {
-                FileName = "Document",
-                DefaultExt = ".txt",
-                Filter = "Text documents (.txt)|*.txt|All documents (*.*)|*.*",
-                Title = "Todo file"
-            };
-
-            // Show open file dialog box
-            var result = dlg.ShowDialog();
-            if (result == true)
-            {
-                await OpenFileAsync(dlg.FileName);
+                await OpenFileAsync(result.FileName);
             }
         }
 
@@ -403,25 +391,10 @@ namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
                     break;
             }
 
-            // Configure open file dialog box
-            Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog
+            var result = _navigationService.ShowOpenFileDialog(checkFileExists: false);
+            if (result.DialogResult == true)
             {
-                FileName = "Document",
-                DefaultExt = ".txt",
-                Filter = "Text documents (.txt)|*.txt|All documents (*.*)|*.*",
-                Title = "Todo file",
-                CheckFileExists = false
-            };
-
-            // Show open file dialog box
-            var result = dlg.ShowDialog();
-            if (result == true)
-            {
-                if (File.Exists(dlg.FileName))
-                {
-                    // Replace the file?
-                }
-                await OpenFileAsync(dlg.FileName);
+                await OpenFileAsync(result.FileName);
             }
         }
 
@@ -432,10 +405,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
                 StatusMessage = "Error: No file loaded.";
                 return;
             }
-            var balanceView = new BalanceView();
-            var balanceVm = new BalanceViewModel(balanceView, _api);
-            balanceView.DataContext = balanceVm;
-            balanceView.ShowDialog();
+            _navigationService.ShowBalanceView(_api);
             RaisePropertyChanged(nameof(Items));
         }
 
@@ -525,26 +495,21 @@ namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
                 return;
             }
             // Show the Edit view.
-            var editWindow = new EditItemView();
-            var item = new ActionItem
+            var result = _navigationService.ShowEditView(this);
+            if (result.DialogResult.HasValue && result.DialogResult.Value)
             {
-                Context = SelectedContext?.IsSearch ?? false ? SelectedContext?.Title : _defaultContext
-            };
-            var editVm = new EditViewModel(this, new ActionViewItem(item, this), editWindow);
-            editWindow.DataContext = editVm;
-            editWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-            var result = editWindow.ShowDialog(Window);
-            if (result.HasValue && result.Value)
-            {
-                // Update the source item.
-                item.Title = editVm.Title;
-                item.Notes = editVm.Notes.Split('\n').ToList();
-                item.Tags = editVm.Tags.ToDictionary(k => k.Tag, v => v.Value);
-                item.ProjectId = editVm.Project?.ID;
-                item.Context = editVm.Context;
-                if (editVm.IsDeferred)
+                var item = new ActionItem
                 {
-                    item.TickleDate = editVm.TickleDate;
+                    Title = result.Title,
+                    Context = result.Context ?? _defaultContext,
+                    // Update the source item.
+                    Notes = result.Notes.Split('\n').ToList(),
+                    Tags = result.Tags.ToDictionary(k => k.Tag, v => v.Value),
+                    ProjectId = result.ProjectId
+                };
+                if (result.IsDeferred)
+                {
+                    item.TickleDate = result.TickleDate;
                 }
                 _api.AddItem(item);
                 RaisePropertyChanged(nameof(Items));
@@ -559,20 +524,16 @@ namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
                 StatusMessage = "Error: No file loaded.";
                 return;
             }
-            var addWindow = new AddUrlView();
-            var item = new ActionItem
+
+            var result = _navigationService.ShowAddUrlView(this);
+            if (result.DialogResult.HasValue && result.DialogResult.Value)
             {
-                Context = SelectedContext?.IsSearch ?? false ? SelectedContext?.Title : _defaultContext
-            };
-            var addVm = new AddUrlViewModel(this, new ActionViewItem(item, this), addWindow);
-            addWindow.DataContext = addVm;
-            addWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-            var result = addWindow.ShowDialog(Window);
-            if (result.HasValue && result.Value)
-            {
-                item.Title = string.IsNullOrEmpty(addVm.Title) ? addVm.Url : addVm.Title;
-                item.Tags = new Dictionary<string, string> { { "url", addVm.Url } };
-                item.Context = addVm.SelectedContext?.IsSearch ?? false ? _defaultContext : addVm.SelectedContext?.Title;
+                var item = new ActionItem
+                {
+                    Title = string.IsNullOrEmpty(result.Title) ? result.Url : result.Title,
+                    Tags = new Dictionary<string, string> { { "url", result.Url } },
+                    Context = result.Context == "Search" ? _defaultContext : result.Context
+                };
                 _api.AddItem(item);
                 RaisePropertyChanged(nameof(Items));
                 RaisePropertyChanged(nameof(Contexts));
@@ -778,6 +739,8 @@ namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
 
         #region Properties
 
+        public INavigationService NavigationService => _navigationService;
+
         public List<Context> Contexts
         {
             get
@@ -953,7 +916,6 @@ namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
 
         public string WindowTitle => $"{(HasUnsavedChanges ? "*" : "")}TodoSort - {FileName}";
 
-        private ObservableCollection<string> _recentFilesList;
         public ObservableCollection<string> RecentFileList
         {
             get => _recentFilesList ?? (_recentFilesList = new ObservableCollection<string>(Settings.Default.RecentFiles));

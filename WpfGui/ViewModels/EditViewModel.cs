@@ -30,17 +30,17 @@ namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
 
         #region Constructors
 
-        public EditViewModel(MainViewModel api, ActionViewItem item, IDialogWindow view)
+        public EditViewModel(MainViewModel api, IDialogWindow view, ActionViewItem? item = null)
         {
             AllContexts = api.Contexts.Where(c => !_excludeContexts.Contains(c.Title)).Select(c => c.Title).OrderBy(c => c).ToList();
             AllProjects = api.Projects.Where(p => p != null).OrderBy(p => p.Title).ToList();
             _view = view;
 
+            _tags = new ObservableCollection<TagValueModel>();
             if (item != null)
             {
                 _title = item.Source.Title;
                 _notes = string.Join(Environment.NewLine, item.Notes);
-                _tags = new ObservableCollection<TagValueModel>();
                 foreach (var itemTag in item.Tags)
                 {
                     _tags.Add(new TagValueModel
