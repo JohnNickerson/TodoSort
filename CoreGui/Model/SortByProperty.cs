@@ -1,4 +1,4 @@
-namespace AssimilationSoftware.TodoSort.WpfGui.Model;
+namespace AssimilationSoftware.TodoSort.CoreGui.Model;
 
 public enum SortByProperty
 {

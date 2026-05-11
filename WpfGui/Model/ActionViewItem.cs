@@ -25,7 +25,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
         private RelayCommand _copyUrlCommand;
         private RelayCommand<string> _openUrlCommand;
         private RelayCommand _bumpCommand;
-        private RelayCommand<Context> _moveToContextCommand;
+        private RelayCommand<ContextViewModel> _moveToContextCommand;
         private RelayCommand _maskItemCommand;
 
         #endregion // Fields
@@ -243,7 +243,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
             }
         }
 
-        public List<Context> AllOtherContexts => Api.SelectedContext.AllOtherContexts;
+        public List<ContextViewModel> AllOtherContexts => Api.SelectedContext.AllOtherContexts;
 
         public bool CanMoveFrom => Api.SelectedContext.CanMoveFrom;
 
@@ -267,7 +267,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
 
         public ICommand BumpCommand => _bumpCommand ?? (_bumpCommand = new RelayCommand(BumpExecuted, () => this.Source.GetRankDepth(Api.Repository) > 0));
 
-        public ICommand MoveToContextCommand => _moveToContextCommand ?? (_moveToContextCommand = new RelayCommand<Context>(MoveToContextExecuted));
+        public ICommand MoveToContextCommand => _moveToContextCommand ?? (_moveToContextCommand = new RelayCommand<ContextViewModel>(MoveToContextExecuted));
 
         public ICommand MaskItemCommand => _maskItemCommand ?? (_maskItemCommand = new RelayCommand(MaskItemExecuted));
         #endregion // Command Properties
@@ -447,7 +447,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
             RaisePropertyChanged(nameof(ToolTip));
         }
 
-        private void MoveToContextExecuted(Context toContext)
+        private void MoveToContextExecuted(ContextViewModel toContext)
         {
             if (toContext != null)
                 Api.Move(Source, toContext.Title);

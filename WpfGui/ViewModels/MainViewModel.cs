@@ -10,6 +10,7 @@ using AssimilationSoftware.TodoSort.Core;
 using AssimilationSoftware.TodoSort.Core.Data;
 using AssimilationSoftware.TodoSort.Core.Search;
 using AssimilationSoftware.TodoSort.CoreGui.Interfaces;
+using AssimilationSoftware.TodoSort.CoreGui.Model;
 using AssimilationSoftware.TodoSort.WpfGui.Interfaces;
 using AssimilationSoftware.TodoSort.WpfGui.Model;
 using AssimilationSoftware.TodoSort.WpfGui.Properties;
@@ -24,9 +25,9 @@ namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
         const string _defaultContext = "inbox";
 
         public ITaskListView Window;
-        private Context? _selectedContext;
-        private Context _searchResultsContext;
-        private List<Context> _contexts;
+        private ContextViewModel? _selectedContext;
+        private ContextViewModel _searchResultsContext;
+        private List<ContextViewModel> _contexts;
         private string? _fileName;
         private TodoFileInfo? _lastOpenedFile;
         private List<ActionViewItem> _currentItems;
@@ -60,7 +61,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
         private bool _searchExpanded;
         private ActionItem? _searchProject;
         private SortByProperty _sortBy = SortByProperty.Upvotes;
-        private Context? _searchContext;
+        private ContextViewModel? _searchContext;
         private decimal? _lastPendingCount;
         private bool _isSearchContextSelected;
         private bool _isSearchProjectSelected;
@@ -740,37 +741,37 @@ namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
 
         public INavigationService NavigationService => _navigationService;
 
-        public List<Context> Contexts
+        public List<ContextViewModel> Contexts
         {
             get
             {
-                if (_api == null) return new List<Context>();
+                if (_api == null) return new List<ContextViewModel>();
                 if (_contexts == null || !_contexts.Any())
                 {
                     // Preserve selected context.
                     var saveContext = SelectedContext;
-                    _contexts = new List<Context>();
+                    _contexts = new List<ContextViewModel>();
                     foreach (var con in _api.GetContextNames("done", "someday").OrderBy(c => c))
                     {
-                        _contexts.Add(new Context
+                        _contexts.Add(new ContextViewModel
                         {
                             Title = con,
                             SearchSpecification = new ContextSearchSpecification(con),
                             View = Window,
                             DateVisible = false,
-                            AllOtherContexts = new List<Context>(),
+                            AllOtherContexts = new List<ContextViewModel>(),
                             ParentVm = this
                         });
                     }
 
                     foreach (var con in _contexts)
                     {
-                        con.AllOtherContexts = new List<Context>(_contexts);
+                        con.AllOtherContexts = new List<ContextViewModel>(_contexts);
                         con.AllOtherContexts.Remove(con);
                     }
-                    _contexts.Add(new Context { Title = "done", View = Window, DateVisible = true, DateColumnTitle = "Done Date" });
-                    _contexts.Add(new Context { Title = "someday", View = Window, DateVisible = true, DateColumnTitle = "Return Date" });
-                    _searchResultsContext = new Context
+                    _contexts.Add(new ContextViewModel { Title = "done", View = Window, DateVisible = true, DateColumnTitle = "Done Date" });
+                    _contexts.Add(new ContextViewModel { Title = "someday", View = Window, DateVisible = true, DateColumnTitle = "Return Date" });
+                    _searchResultsContext = new ContextViewModel
                     {
                         Title = "Search",
                         View = Window,
@@ -790,7 +791,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
             }
         }
 
-        public Context? SelectedContext
+        public ContextViewModel? SelectedContext
         {
             get => _selectedContext;
             set
@@ -928,7 +929,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
 
         public List<ActionItem> Projects => _api != null ? _api.GetProjects().OrderBy(p => p?.Title).ToList() : new List<ActionItem> { };
 
-        public List<Context> SearchContexts => Contexts.Where(c => c.Title != "Search").OrderBy(c => c.Title).ToList();
+        public List<ContextViewModel> SearchContexts => Contexts.Where(c => c.Title != "Search").OrderBy(c => c.Title).ToList();
 
         public string VersionNumber => "Version " + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
 
@@ -1015,7 +1016,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
 
         public ViewModel Api => _api;
 
-        public Context? SearchContext
+        public ContextViewModel? SearchContext
         {
             get => _searchContext;
             set
