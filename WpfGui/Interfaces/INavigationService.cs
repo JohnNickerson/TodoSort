@@ -1,7 +1,7 @@
 using AssimilationSoftware.TodoSort.Core;
+using AssimilationSoftware.TodoSort.CoreGui.Model;
 using AssimilationSoftware.TodoSort.WpfGui.Model;
 using AssimilationSoftware.TodoSort.WpfGui.ViewModels;
-using AssimilationSoftware.TodoSort.WpfGui.Views;
 
 namespace AssimilationSoftware.TodoSort.WpfGui.Interfaces;
 

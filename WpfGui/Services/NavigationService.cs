@@ -1,4 +1,5 @@
 using AssimilationSoftware.TodoSort.Core;
+using AssimilationSoftware.TodoSort.CoreGui.Model;
 using AssimilationSoftware.TodoSort.WpfGui.Interfaces;
 using AssimilationSoftware.TodoSort.WpfGui.Model;
 using AssimilationSoftware.TodoSort.WpfGui.ViewModels;
