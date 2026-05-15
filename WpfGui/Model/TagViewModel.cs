@@ -5,7 +5,7 @@ using CommunityToolkit.Mvvm.Input;
 
 namespace AssimilationSoftware.TodoSort.WpfGui.Model
 {
-    public class TagValueModel : ObservableObject
+    public class TagViewModel : ObservableObject
     {
         #region Fields
         private string _tag;
