@@ -16,7 +16,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
 
         private string? _title;
         private string? _notes;
-        private ObservableCollection<TagValueModel> _tags;
+        private ObservableCollection<TagViewModel> _tags;
         private string? _context;
         private ActionItem? _project;
         private DateTime? _tickleDate;
@@ -30,20 +30,20 @@ namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
 
         #region Constructors
 
-        public EditViewModel(MainViewModel api, IDialogWindow view, ActionViewItem? item = null)
+        public EditViewModel(MainViewModel api, IDialogWindow view, ActionViewModel? item = null)
         {
             AllContexts = api.Contexts.Where(c => !_excludeContexts.Contains(c.Title)).Select(c => c.Title).OrderBy(c => c).ToList();
             AllProjects = api.Projects.Where(p => p != null).OrderBy(p => p.Title).ToList();
             _view = view;
 
-            _tags = new ObservableCollection<TagValueModel>();
+            _tags = new ObservableCollection<TagViewModel>();
             if (item != null)
             {
                 _title = item.Source.Title;
                 _notes = string.Join(Environment.NewLine, item.Notes);
                 foreach (var itemTag in item.Tags)
                 {
-                    _tags.Add(new TagValueModel
+                    _tags.Add(new TagViewModel
                     {
                         Tag = itemTag.Key,
                         Value = itemTag.Value,
@@ -68,7 +68,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
 
         private void AddTagExecuted()
         {
-            Tags.Add(new TagValueModel { Item = this });
+            Tags.Add(new TagViewModel { Item = this });
         }
 
         #endregion
@@ -97,7 +97,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
             }
         }
 
-        public ObservableCollection<TagValueModel> Tags
+        public ObservableCollection<TagViewModel> Tags
         {
             get => _tags;
             set

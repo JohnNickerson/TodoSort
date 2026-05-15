@@ -29,7 +29,7 @@ public class NavigationService : INavigationService
     public ItemDialogResult ShowEditView(MainViewModel mainViewModel)
     {
             var editWindow = new EditItemView();
-            var editVm = new EditViewModel(mainViewModel, editWindow);
+            var editVm = new EditViewModel(mainViewModel, editWindow, mainViewModel.SelectedItem);
             editWindow.DataContext = editVm;
             var result = editWindow.ShowDialog(mainViewModel.Window);
             return new ItemDialogResult { DialogResult = result, Title = editVm.Title, Context = editVm.Context, Notes = editVm.Notes, Tags = editVm.Tags, ProjectId = editVm.Project?.ID, IsDeferred = editVm.IsDeferred, TickleDate = editVm.TickleDate };
@@ -58,7 +58,7 @@ public class NavigationService : INavigationService
         return new FileDialogResult { DialogResult = result, FileName = dlg.FileName };
     }
 
-    public void ShowRankView(List<ActionViewItem> items, Core.ViewModel api)
+    public void ShowRankView(List<ActionViewModel> items, Core.ViewModel api)
     {
         var rv = new RankView();
         var rvm = new RankViewModel(items, rv, api);

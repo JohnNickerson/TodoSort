@@ -8,7 +8,7 @@ using AssimilationSoftware.TodoSort.CoreGui.Interfaces;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
-namespace AssimilationSoftware.TodoSort.WpfGui
+namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
 {
     public class ImportViewModel : ObservableObject
     {

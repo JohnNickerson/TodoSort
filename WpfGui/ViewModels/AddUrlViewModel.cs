@@ -37,7 +37,7 @@ public class AddUrlViewModel : ObservableObject
     {
         try
         {
-            Title = ActionViewItem.FetchWebTitle(_url);
+            Title = ActionViewModel.FetchWebTitle(_url);
         }
         catch (Exception ex)
         {

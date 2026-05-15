@@ -6,7 +6,7 @@ using AssimilationSoftware.TodoSort.WpfGui.ViewModels;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
-namespace AssimilationSoftware.TodoSort.WpfGui.Model
+namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
 {
     public class ContextViewModel : ObservableObject
     {

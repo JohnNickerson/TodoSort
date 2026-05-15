@@ -12,5 +12,5 @@ public interface INavigationService
     ItemDialogResult ShowEditView(MainViewModel mainViewModel);
     void ShowImportView(ViewModel api);
     FileDialogResult ShowOpenFileDialog(bool checkFileExists = true);
-    void ShowRankView(List<ActionViewItem> items, ViewModel api);
+    void ShowRankView(List<ActionViewModel> items, ViewModel api);
 }
