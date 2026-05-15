@@ -16,8 +16,8 @@ public class AddUrlViewModel : ObservableObject
 
     private ICommand _okCommand;
     private ICommand _fetchTitleCommand;
-    public List<Context> Contexts { get; }
-    private Context _selectedContext;
+    public List<ContextViewModel> Contexts { get; }
+    private ContextViewModel _selectedContext;
     private readonly IDialogWindow _view;
 
     public AddUrlViewModel(MainViewModel api, ActionViewModel item, IDialogWindow window)
@@ -75,7 +75,7 @@ public class AddUrlViewModel : ObservableObject
         }
     }
 
-    public Context SelectedContext
+    public ContextViewModel SelectedContext
     {
         get => _selectedContext;
         set

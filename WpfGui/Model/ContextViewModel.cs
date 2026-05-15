@@ -9,7 +9,7 @@ using CommunityToolkit.Mvvm.Input;
 
 namespace AssimilationSoftware.TodoSort.WpfGui.Model
 {
-    public class Context : ObservableObject
+    public class ContextViewModel : ObservableObject
     {
         #region Fields
         public ITaskListView View { get; set; }
@@ -17,11 +17,11 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
         private ISearchSpecification<ActionItem> _searchSpecification;
         private string _dateColumnTitle;
         private Visibility _dateVisible;
-        private RelayCommand<Context> _moveAllCommand;
+        private RelayCommand<ContextViewModel> _moveAllCommand;
         #endregion
 
         #region Methods
-        private void MoveAllExecuted(Context fromContext)
+        private void MoveAllExecuted(ContextViewModel fromContext)
         {
             if (fromContext != null)
                 ParentVm.MoveAll(fromContext.Title, _title);
@@ -75,7 +75,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
 
         public bool IsSearch => Title.Equals("Search", StringComparison.CurrentCultureIgnoreCase);
 
-        public List<Context> AllOtherContexts { get; set; }
+        public List<ContextViewModel> AllOtherContexts { get; set; }
 
         public MainViewModel ParentVm { get; set; }
 
@@ -84,7 +84,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
 
         #region Commands
 
-        public ICommand MoveAllCommand => _moveAllCommand ?? (_moveAllCommand = new RelayCommand<Context>(MoveAllExecuted));
+        public ICommand MoveAllCommand => _moveAllCommand ?? (_moveAllCommand = new RelayCommand<ContextViewModel>(MoveAllExecuted));
 
         #endregion
     }
