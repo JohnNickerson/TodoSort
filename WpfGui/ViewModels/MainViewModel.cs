@@ -142,9 +142,9 @@ namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
                     {
                         var titleList = string.Join(Environment.NewLine, undefers);
                         // Confirm.
-                        if (System.Windows.MessageBox.Show(
+                        if (_navigationService.ShowMessageBox(
                             $"There are deferred items ready to return to the main lists:\n{titleList}\n Do you want to process them now?",
-                                "Auto-undefer", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                                "Auto-undefer") ?? true)
                         {
                             Cleanup();
                         }
@@ -159,7 +159,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
             catch (Exception ex)
             {
                 StatusMessage = $"Error opening file: {ex.Message}";
-                System.Windows.MessageBox.Show($"Failed to open file:\n\n{ex.Message}", "Error Opening File", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+                _navigationService.ShowMessageBox($"Failed to open file:\n\n{ex.Message}", "Error Opening File");
             }
         }
 
@@ -272,9 +272,8 @@ namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
             var pendingCount = _repo?.GetPendingChanges().Sum(p => p.Updates.Count);
             if (pendingCount > CommitLimit && _lastPendingCount != pendingCount)
             {
-                var response = System.Windows.MessageBox.Show($"{pendingCount} changes are pending. Commit now?", "Commit Changes",
-                    MessageBoxButton.YesNo);
-                if (response == MessageBoxResult.Yes)
+                var response = _navigationService.ShowMessageBox($"{pendingCount} changes are pending. Commit now?", "Commit Changes");
+                if (response ?? true)
                 {
                     CommitChanges();
                 }
@@ -344,8 +343,8 @@ namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
         private async void ReloadFile()
         {
             if (string.IsNullOrEmpty(FileName)) return;
-            var result = HasUnsavedChanges ? System.Windows.MessageBox.Show("You have unsaved changes in memory. Abandon these changes and reload the file?", "Abandon changes?", MessageBoxButton.YesNoCancel) : MessageBoxResult.None;
-            if (!HasUnsavedChanges || result == MessageBoxResult.Yes)
+            var result = HasUnsavedChanges ? _navigationService.ShowMessageBox("You have unsaved changes in memory. Abandon these changes and reload the file?", "Abandon changes?") : false;
+            if (!HasUnsavedChanges || (result ?? false))
             {
                 await OpenFileAsync(FileName);
             }
@@ -449,7 +448,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
                         break;
                 }
             }
-            System.Windows.Application.Current.Shutdown();
+            _navigationService.CloseApplication();
         }
 
         public void Update(ActionItem item)
@@ -603,18 +602,8 @@ namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
         private bool? ConfirmSaveCancel(string message)
         {
             if (!HasUnsavedChanges) return false;
-            var result = System.Windows.MessageBox.Show(message, "Save changes?", MessageBoxButton.YesNoCancel);
-            switch (result)
-            {
-                case MessageBoxResult.Cancel:
-                    return null;
-                case MessageBoxResult.No:
-                    return false;
-                case MessageBoxResult.Yes:
-                    return true;
-                default:
-                    return null;
-            }
+            var result = _navigationService.ShowMessageBox(message, "Save changes?", allowCancel: true);
+            return result;
         }
 
         private async void OpenRecentFile(string? filename)
@@ -685,9 +674,9 @@ namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
                     bool doOpen;
                     if (HasUnsavedChanges)
                     {
-                        doOpen = System.Windows.MessageBox.Show(
+                        doOpen = _navigationService.ShowMessageBox(
                             "The file on disk has been modified and you have unsaved changes in memory. Abandon changes and reload the file from disk?",
-                            "Abandon changes?", MessageBoxButton.YesNo) == MessageBoxResult.Yes;
+                            "Abandon changes?") ?? false;
                     }
                     else
                     {

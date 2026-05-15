@@ -1,3 +1,4 @@
+using System.Windows;
 using AssimilationSoftware.TodoSort.Core;
 using AssimilationSoftware.TodoSort.CoreGui.Model;
 using AssimilationSoftware.TodoSort.WpfGui.Interfaces;
@@ -9,6 +10,16 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Services;
 
 public class NavigationService : INavigationService
 {
+    public void CloseApplication()
+    {
+        System.Windows.Application.Current.Shutdown();
+    }
+
+    public void CopyToClipboard(string clip)
+    {
+        System.Windows.Clipboard.SetText(clip);
+    }
+
     public AddUrlDialogResult ShowAddUrlView(MainViewModel mainViewModel)
     {
         var addWindow = new AddUrlView();
@@ -41,6 +52,22 @@ public class NavigationService : INavigationService
         var importVm = new ImportViewModel(api, importView);
         importView.DataContext = importVm;
         importView.ShowDialog();
+    }
+
+    public bool? ShowMessageBox(string message, string title, bool allowCancel = false)
+    {
+        var button = allowCancel ? MessageBoxButton.YesNoCancel : MessageBoxButton.YesNo;
+        var result = System.Windows.MessageBox.Show(message, title, button);
+        switch (result)
+        {
+            case MessageBoxResult.No:
+                return false;
+            case MessageBoxResult.Yes:
+                return true;
+            case MessageBoxResult.Cancel:
+            default:
+                return null;
+        }
     }
 
     public FileDialogResult ShowOpenFileDialog(bool checkFileExists = true)

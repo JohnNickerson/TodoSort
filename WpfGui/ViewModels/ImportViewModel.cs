@@ -3,7 +3,6 @@ using System.Windows;
 using System.Windows.Input;
 using AssimilationSoftware.TodoSort.Core;
 using AssimilationSoftware.TodoSort.Core.Import;
-using AssimilationSoftware.TodoSort.WpfGui.Annotations;
 using AssimilationSoftware.TodoSort.CoreGui.Interfaces;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -68,6 +67,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
             else
             {
                 // Configure open file dialog box
+                // TODO: Navigation service should do this.
                 Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog
                 {
                     FileName = "Document",
@@ -119,8 +119,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
             }
         }
 
-        [CanBeNull]
-        public string TargetContext
+        public string? TargetContext
         {
             get => _targetContext;
             set

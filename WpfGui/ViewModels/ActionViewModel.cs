@@ -349,7 +349,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
 
         private void DeleteExecuted()
         {
-            if (System.Windows.MessageBox.Show("Delete this item. Are you sure?", "Delete", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+            if (Api.NavigationService.ShowMessageBox("Delete this item. Are you sure?", "Delete") ?? false)
             {
                 Api.Delete(Source);
             }
@@ -393,7 +393,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
 
         private void CopyUrlExecuted()
         {
-            System.Windows.Clipboard.SetText(Url.Trim());
+            Api.NavigationService.CopyToClipboard(Url.Trim());
         }
 
         /// <summary>
@@ -422,7 +422,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
             }
             catch (Exception ex)
             {
-                System.Windows.MessageBox.Show($"Could not open URL: {ex.Message}");
+                Api.NavigationService.ShowMessageBox($"Could not open URL: {ex.Message}", "Error");
             }
         }
 
