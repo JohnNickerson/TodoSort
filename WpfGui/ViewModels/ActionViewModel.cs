@@ -12,7 +12,7 @@ using AssimilationSoftware.TodoSort.WpfGui.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
-namespace AssimilationSoftware.TodoSort.WpfGui.Model
+namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
 {
     public class ActionViewModel : ObservableObject
     {
