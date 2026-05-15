@@ -19,7 +19,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Views
             InitializeComponent();
             // TODO: This goes in App.xaml.cs
             var recentFile = Settings.Default.Todo;
-            _vm = new MainViewModel(recentFile, new Services.NavigationService());
+            _vm = new MainViewModel(recentFile, new Services.NavigationService(), Settings.Default);
             _vm.Window = this;
             DataContext = _vm;
         }

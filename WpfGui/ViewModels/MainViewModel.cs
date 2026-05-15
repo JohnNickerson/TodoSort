@@ -69,17 +69,19 @@ namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
         private DateTime? _lastDeferredCheckDate;
         private ObservableCollection<string> _recentFilesList;
         private INavigationService _navigationService;
+        private ISettings _settings;
 
         #endregion
 
         #region Constructors
-        public MainViewModel(string filename, INavigationService navigationService)
+        public MainViewModel(string filename, INavigationService navigationService, ISettings settings)
         {
             if (filename != null)
             {
                 OpenFile(filename);
             }
             _navigationService = navigationService;
+            _settings = settings;
         }
         #endregion
 
@@ -110,7 +112,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
                 FileName = filename;
 
                 // Store the file name as the most recent one opened.
-                _recentFilesList = new ObservableCollection<string>(Settings.Default.RecentFiles);
+                _recentFilesList = new ObservableCollection<string>(_settings.RecentFiles);
                 if (!string.IsNullOrEmpty(filename))
                 {
                     RecentFileList.Remove(filename);
@@ -120,7 +122,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
                 {
                     RecentFileList.RemoveAt(10);
                 }
-                Settings.Default.RecentFiles = _recentFilesList.ToArray();
+                _settings.RecentFiles = _recentFilesList.ToArray();
                 _recentFilesList.Clear();
                 SaveSettings();
 
@@ -358,7 +360,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
 
         private void SaveSettings()
         {
-            Settings.Default.Save();
+            _settings.Save();
         }
 
         public async void OpenCommandExecuted()
@@ -715,7 +717,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
             {
                 _lastOpenedFile = null;
             }
-            Settings.Default.Todo = fileName ?? string.Empty;
+            _settings.Todo = fileName ?? string.Empty;
             SaveSettings();
         }
 
@@ -907,11 +909,11 @@ namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
 
         public ObservableCollection<string> RecentFileList
         {
-            get => _recentFilesList ?? (_recentFilesList = new ObservableCollection<string>(Settings.Default.RecentFiles));
+            get => _recentFilesList ?? (_recentFilesList = new ObservableCollection<string>(_settings.RecentFiles));
             set
             {
                 _recentFilesList = value;
-                Settings.Default.RecentFiles = value.ToArray();
+                _settings.RecentFiles = value.ToArray();
                 RaisePropertyChanged();
             }
         }
@@ -991,12 +993,12 @@ namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
 
         public bool Masked
         {
-            get => Settings.Default.MaskNsfwItems;
+            get => _settings.MaskNsfwItems;
             set
             {
-                if (Settings.Default.MaskNsfwItems == value) return;
-                Settings.Default.MaskNsfwItems = value;
-                Settings.Default.Save();
+                if (_settings.MaskNsfwItems == value) return;
+                _settings.MaskNsfwItems = value;
+                _settings.Save();
                 RaisePropertyChanged();
             }
         }

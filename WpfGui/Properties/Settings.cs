@@ -6,9 +6,8 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Properties
 {
 
 
-    internal sealed partial class Settings
+    public class Settings : ISettings
     {
-
         private static Settings defaultInstance = new Settings();
 
         public static Settings Default
