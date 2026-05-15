@@ -30,7 +30,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
 
         #region Constructors
 
-        public EditViewModel(MainViewModel api, ActionViewItem item, IDialogWindow view)
+        public EditViewModel(MainViewModel api, ActionViewModel item, IDialogWindow view)
         {
             AllContexts = api.Contexts.Where(c => !_excludeContexts.Contains(c.Title)).Select(c => c.Title).OrderBy(c => c).ToList();
             AllProjects = api.Projects.Where(p => p != null).OrderBy(p => p.Title).ToList();

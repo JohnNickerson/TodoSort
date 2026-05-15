@@ -29,7 +29,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
         private List<Context> _contexts;
         private string? _fileName;
         private TodoFileInfo? _lastOpenedFile;
-        private List<ActionViewItem> _currentItems;
+        private List<ActionViewModel> _currentItems;
         private const int CommitLimit = 256;
 
         private ITodoRepository _repo;
@@ -56,7 +56,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
         private string _searchKeyword;
         private string _searchTagName;
         private string _searchTagValue;
-        private ActionViewItem _selectedItem;
+        private ActionViewModel _selectedItem;
         private bool _searchExpanded;
         private ActionItem? _searchProject;
         private SortByProperty _sortBy = SortByProperty.Upvotes;
@@ -530,7 +530,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
             {
                 Context = SelectedContext?.IsSearch ?? false ? SelectedContext?.Title : _defaultContext
             };
-            var editVm = new EditViewModel(this, new ActionViewItem(item, this), editWindow);
+            var editVm = new EditViewModel(this, new ActionViewModel(item, this), editWindow);
             editWindow.DataContext = editVm;
             editWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             var result = editWindow.ShowDialog(Window);
@@ -564,7 +564,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
             {
                 Context = SelectedContext?.IsSearch ?? false ? SelectedContext?.Title : _defaultContext
             };
-            var addVm = new AddUrlViewModel(this, new ActionViewItem(item, this), addWindow);
+            var addVm = new AddUrlViewModel(this, new ActionViewModel(item, this), addWindow);
             addWindow.DataContext = addVm;
             addWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             var result = addWindow.ShowDialog(Window);
@@ -851,7 +851,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
             }
         }
 
-        public ActionViewItem SelectedItem
+        public ActionViewModel SelectedItem
         {
             get => _selectedItem;
             set
@@ -876,37 +876,37 @@ namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
 
         public bool HasUnsavedChanges => _api?.UnsavedChanges ?? false;
 
-        public List<ActionViewItem> Items
+        public List<ActionViewModel> Items
         {
             get
             {
-                if (_api == null || SelectedContext == null) return new List<ActionViewItem>();
+                if (_api == null || SelectedContext == null) return new List<ActionViewModel>();
                 if (_currentItems != null && _currentItems.Any()) return _currentItems;
                 switch (SelectedContext.Title)
                 {
                     case "done":
                         _api.DoneSearchSpecification = SelectedContext.SearchSpecification;
-                        _currentItems = _api.DoneSearchResults.Select(s => new ActionViewItem(s, this)).OrderByDescending(i => i.DoneDate).ThenBy(i => i.Title).ToList();
+                        _currentItems = _api.DoneSearchResults.Select(s => new ActionViewModel(s, this)).OrderByDescending(i => i.DoneDate).ThenBy(i => i.Title).ToList();
                         break;
                     case "someday":
                         _api.SomedaySearchSpecification = SelectedContext.SearchSpecification;
-                        _currentItems = _api.SomedaySearchResults.Select(s => new ActionViewItem(s, this)).OrderBy(i => i.TickleDate ?? DateTime.MaxValue).ThenBy(i => i.Title).ToList();
+                        _currentItems = _api.SomedaySearchResults.Select(s => new ActionViewModel(s, this)).OrderBy(i => i.TickleDate ?? DateTime.MaxValue).ThenBy(i => i.Title).ToList();
                         break;
                     case "Search":
                         if (SearchContext != null && SearchContext.Title == "done")
                         {
                             _api.DoneSearchSpecification = SelectedContext.SearchSpecification;
-                            _currentItems = _api.DoneSearchResults.Select(s => new ActionViewItem(s, this)).OrderByDescending(i => i.DoneDate).ThenBy(i => i.Title).ToList();
+                            _currentItems = _api.DoneSearchResults.Select(s => new ActionViewModel(s, this)).OrderByDescending(i => i.DoneDate).ThenBy(i => i.Title).ToList();
                         }
                         else if (SearchContext != null && SearchContext.Title == "someday")
                         {
                             _api.SomedaySearchSpecification = SelectedContext.SearchSpecification;
-                            _currentItems = _api.SomedaySearchResults.Select(s => new ActionViewItem(s, this)).OrderBy(i => i.TickleDate).ThenBy(i => i.Title).ToList();
+                            _currentItems = _api.SomedaySearchResults.Select(s => new ActionViewModel(s, this)).OrderBy(i => i.TickleDate).ThenBy(i => i.Title).ToList();
                         }
                         else
                         {
                             _api.SearchSpecification = SelectedContext.SearchSpecification;
-                            var selectedItems = _api.SearchResults.Select(s => new ActionViewItem(s, this));
+                            var selectedItems = _api.SearchResults.Select(s => new ActionViewModel(s, this));
                             if (SortByUpvotes)
                             {
                                 _currentItems = selectedItems.OrderByDescending(i => i.UpVotes).ThenBy(i => i.Title).ToList();
@@ -928,7 +928,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
                     default:
                         _api.SearchSpecification = SelectedContext.SearchSpecification;
                         // Apply user-specified sorting options.
-                        var defaultItems = _api.SearchResults.Select(s => new ActionViewItem(s, this));
+                        var defaultItems = _api.SearchResults.Select(s => new ActionViewModel(s, this));
                         if (SortByUpvotes)
                         {
                             _currentItems = defaultItems.OrderByDescending(i => i.UpVotes).ThenBy(i => i.Title).ToList();

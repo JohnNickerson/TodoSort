@@ -12,7 +12,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels;
 public class AddUrlViewModel : ObservableObject
 {
     private string _url;
-    private ActionViewItem _sourceItem;
+    private ActionViewModel _sourceItem;
 
     private ICommand _okCommand;
     private ICommand _fetchTitleCommand;
@@ -20,7 +20,7 @@ public class AddUrlViewModel : ObservableObject
     private Context _selectedContext;
     private readonly IDialogWindow _view;
 
-    public AddUrlViewModel(MainViewModel api, ActionViewItem item, IDialogWindow window)
+    public AddUrlViewModel(MainViewModel api, ActionViewModel item, IDialogWindow window)
     {
         _view = window;
         if (item != null)
@@ -43,7 +43,7 @@ public class AddUrlViewModel : ObservableObject
         try
         {
             _sourceItem.Tags["url"] = _url;
-            Title = ActionViewItem.FetchWebTitle(_url);
+            Title = ActionViewModel.FetchWebTitle(_url);
         }
         catch (Exception ex)
         {

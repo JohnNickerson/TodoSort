@@ -14,7 +14,7 @@ using CommunityToolkit.Mvvm.Input;
 
 namespace AssimilationSoftware.TodoSort.WpfGui.Model
 {
-    public class ActionViewItem : ObservableObject
+    public class ActionViewModel : ObservableObject
     {
         #region Fields
 
@@ -33,7 +33,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
 
         #region Constructors
 
-        public ActionViewItem(ActionItem source, MainViewModel api)
+        public ActionViewModel(ActionItem source, MainViewModel api)
         {
             Source = source;
             Api = api;
