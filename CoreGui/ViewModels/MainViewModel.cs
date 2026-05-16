@@ -73,12 +73,12 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
         #region Constructors
         public MainViewModel(string filename, INavigationService navigationService, ISettings settings)
         {
+            _navigationService = navigationService;
+            _settings = settings;
             if (filename != null)
             {
                 OpenFile(filename);
             }
-            _navigationService = navigationService;
-            _settings = settings;
         }
         #endregion
 
@@ -714,7 +714,7 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
             {
                 _lastOpenedFile = null;
             }
-            _settings.Todo = fileName ?? string.Empty;
+            _settings?.Todo = fileName ?? string.Empty;
             SaveSettings();
         }
 
