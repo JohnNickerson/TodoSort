@@ -11,13 +11,10 @@ using AssimilationSoftware.TodoSort.Core.Data;
 using AssimilationSoftware.TodoSort.Core.Search;
 using AssimilationSoftware.TodoSort.CoreGui.Interfaces;
 using AssimilationSoftware.TodoSort.CoreGui.Model;
-using AssimilationSoftware.TodoSort.WpfGui.Interfaces;
-using AssimilationSoftware.TodoSort.WpfGui.Model;
-using AssimilationSoftware.TodoSort.WpfGui.Properties;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
-namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
+namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
 {
     public class MainViewModel : ObservableObject
     {

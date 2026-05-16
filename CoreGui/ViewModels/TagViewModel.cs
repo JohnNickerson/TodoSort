@@ -1,9 +1,9 @@
 ﻿using System.Windows.Input;
-using AssimilationSoftware.TodoSort.WpfGui.ViewModels;
+using AssimilationSoftware.TodoSort.CoreGui.ViewModels;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
-namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
+namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
 {
     public class TagViewModel : ObservableObject
     {

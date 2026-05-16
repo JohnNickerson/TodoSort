@@ -3,7 +3,7 @@ using System.Windows;
 using System.Windows.Input;
 using AssimilationSoftware.TodoSort.CoreGui.Interfaces;
 using AssimilationSoftware.TodoSort.WpfGui.Properties;
-using AssimilationSoftware.TodoSort.WpfGui.ViewModels;
+using AssimilationSoftware.TodoSort.CoreGui.ViewModels;
 
 namespace AssimilationSoftware.TodoSort.WpfGui.Views
 {

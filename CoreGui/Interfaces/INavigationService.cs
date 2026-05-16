@@ -1,9 +1,8 @@
 using AssimilationSoftware.TodoSort.Core;
 using AssimilationSoftware.TodoSort.CoreGui.Model;
-using AssimilationSoftware.TodoSort.WpfGui.Model;
-using AssimilationSoftware.TodoSort.WpfGui.ViewModels;
+using AssimilationSoftware.TodoSort.CoreGui.ViewModels;
 
-namespace AssimilationSoftware.TodoSort.WpfGui.Interfaces;
+namespace AssimilationSoftware.TodoSort.CoreGui.Interfaces;
 
 public interface INavigationService
 {

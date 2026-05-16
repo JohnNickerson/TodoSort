@@ -1,5 +1,5 @@
 using System.Windows.Input;
-using AssimilationSoftware.TodoSort.WpfGui.Model;
+using AssimilationSoftware.TodoSort.CoreGui.Model;
 using System.Windows;
 using System.Diagnostics;
 using CommunityToolkit.Mvvm.Input;
@@ -7,7 +7,7 @@ using System.Collections.ObjectModel;
 using AssimilationSoftware.TodoSort.CoreGui.Interfaces;
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels;
+namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels;
 
 public class AddUrlViewModel : ObservableObject
 {

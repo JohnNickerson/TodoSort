@@ -1,9 +1,8 @@
 using System.Windows;
 using AssimilationSoftware.TodoSort.Core;
 using AssimilationSoftware.TodoSort.CoreGui.Model;
-using AssimilationSoftware.TodoSort.WpfGui.Interfaces;
-using AssimilationSoftware.TodoSort.WpfGui.Model;
-using AssimilationSoftware.TodoSort.WpfGui.ViewModels;
+using AssimilationSoftware.TodoSort.CoreGui.Interfaces;
+using AssimilationSoftware.TodoSort.CoreGui.ViewModels;
 using AssimilationSoftware.TodoSort.WpfGui.Views;
 
 namespace AssimilationSoftware.TodoSort.WpfGui.Services;

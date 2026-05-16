@@ -1,4 +1,4 @@
-namespace AssimilationSoftware.TodoSort.WpfGui.Properties
+namespace AssimilationSoftware.TodoSort.CoreGui.Interfaces
 {
     public interface ISettings
     {

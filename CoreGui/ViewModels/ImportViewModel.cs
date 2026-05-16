@@ -4,11 +4,10 @@ using System.Windows.Input;
 using AssimilationSoftware.TodoSort.Core;
 using AssimilationSoftware.TodoSort.Core.Import;
 using AssimilationSoftware.TodoSort.CoreGui.Interfaces;
-using AssimilationSoftware.TodoSort.WpfGui.Interfaces;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
-namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
+namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
 {
     public class ImportViewModel : ObservableObject
     {

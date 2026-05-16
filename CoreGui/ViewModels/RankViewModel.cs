@@ -1,10 +1,11 @@
 ﻿using System.Windows.Input;
 using AssimilationSoftware.TodoSort.CoreGui.Interfaces;
-using AssimilationSoftware.TodoSort.WpfGui.Model;
+using AssimilationSoftware.TodoSort.CoreGui.ViewModels;
+using AssimilationSoftware.TodoSort.CoreGui.Model;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
-namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
+namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
 {
     public class RankViewModel : ObservableObject
     {

@@ -2,11 +2,11 @@
 using AssimilationSoftware.Maroon.Model;
 using AssimilationSoftware.TodoSort.Core.Search;
 using AssimilationSoftware.TodoSort.CoreGui.Interfaces;
-using AssimilationSoftware.TodoSort.WpfGui.ViewModels;
+using AssimilationSoftware.TodoSort.CoreGui.ViewModels;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
-namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
+namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
 {
     public class ContextViewModel : ObservableObject
     {

@@ -1,6 +1,6 @@
-using AssimilationSoftware.TodoSort.WpfGui.ViewModels;
+using AssimilationSoftware.TodoSort.CoreGui.ViewModels;
 
-namespace AssimilationSoftware.TodoSort.WpfGui.Model;
+namespace AssimilationSoftware.TodoSort.CoreGui.Model;
 
 public class ItemDialogResult
 {
