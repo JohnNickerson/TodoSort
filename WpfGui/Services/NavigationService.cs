@@ -39,17 +39,44 @@ public class NavigationService : INavigationService
 
     public ItemDialogResult ShowEditView(MainViewModel mainViewModel)
     {
-            var editWindow = new EditItemView();
-            var editVm = new EditViewModel(mainViewModel, editWindow, mainViewModel.SelectedItem);
-            editWindow.DataContext = editVm;
-            var result = editWindow.ShowDialog(mainViewModel.Window);
-            return new ItemDialogResult { DialogResult = result, Title = editVm.Title, Context = editVm.Context, Notes = editVm.Notes, Tags = editVm.Tags, ProjectId = editVm.Project?.ID, IsDeferred = editVm.IsDeferred, TickleDate = editVm.TickleDate };
+        var editWindow = new EditItemView();
+        var editVm = new EditViewModel(mainViewModel, editWindow, mainViewModel.SelectedItem);
+        editWindow.DataContext = editVm;
+        var result = editWindow.ShowDialog(mainViewModel.Window);
+        return new ItemDialogResult { DialogResult = result, Title = editVm.Title, Context = editVm.Context, Notes = editVm.Notes, Tags = editVm.Tags, ProjectId = editVm.Project?.ID, IsDeferred = editVm.IsDeferred, TickleDate = editVm.TickleDate };
+    }
+
+    public FileDialogResult ShowImportFileDialog(ImportFileType fileType)
+    {
+        Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog
+        {
+            FileName = "Document",
+            DefaultExt = "txt",
+            Filter = "Text documents (.txt)|*.txt|Instapaper Exports (.csv)|*.html|All documents (*.*)|*.*",
+            Title = "Todo file"
+        };
+        switch (fileType)
+        {
+            case ImportFileType.Instapaper:
+                dlg.FilterIndex = 2;
+                break;
+            case ImportFileType.TodoSort:
+                dlg.FilterIndex = 1;
+                break;
+            default:
+                dlg.FilterIndex = 3;
+                break;
+        }
+
+        // Show open file dialog box
+        var result = dlg.ShowDialog();
+        return new FileDialogResult { DialogResult = result, FileName = dlg.FileName };
     }
 
     public void ShowImportView(ViewModel api)
     {
         var importView = new ImportView();
-        var importVm = new ImportViewModel(api, importView);
+        var importVm = new ImportViewModel(api, importView, this);
         importView.DataContext = importVm;
         importView.ShowDialog();
     }
@@ -83,6 +110,16 @@ public class NavigationService : INavigationService
         };
         var result = dlg.ShowDialog();
         return new FileDialogResult { DialogResult = result, FileName = dlg.FileName };
+    }
+
+    public FolderDialogResult ShowOpenFolderDialog(string folder)
+    {
+        var fdlg = new System.Windows.Forms.FolderBrowserDialog();
+        fdlg.SelectedPath = folder;
+        fdlg.ShowNewFolderButton = true;
+        fdlg.Description = "Import items source";
+        var answer = fdlg.ShowDialog();
+        return new FolderDialogResult { DialogResult = answer == DialogResult.OK, SelectedPath = fdlg.SelectedPath };
     }
 
     public void ShowRankView(List<ActionViewModel> items, Core.ViewModel api)

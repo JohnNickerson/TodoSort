@@ -4,6 +4,7 @@ using System.Windows.Input;
 using AssimilationSoftware.TodoSort.Core;
 using AssimilationSoftware.TodoSort.Core.Import;
 using AssimilationSoftware.TodoSort.CoreGui.Interfaces;
+using AssimilationSoftware.TodoSort.WpfGui.Interfaces;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
@@ -13,6 +14,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
     {
         private readonly ViewModel _vm;
         private readonly IDialogWindow _view;
+        private readonly INavigationService _navigationService;
         private string _fileName;
         private ImportFileType _fileType;
         private string _targetContext;
@@ -20,10 +22,11 @@ namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
         private RelayCommand _cancelCommand;
         private RelayCommand _browseCommand;
 
-        public ImportViewModel(Core.ViewModel vm, IDialogWindow view)
+        public ImportViewModel(Core.ViewModel vm, IDialogWindow view, INavigationService navigationService)
         {
             _vm = vm;
             _view = view;
+            _navigationService = navigationService;
             _targetContext = "import";
         }
 
@@ -54,45 +57,19 @@ namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
             if (FileType == ImportFileType.TodoSortFolder)
             {
                 // Open a folder browse dialogue box.
-                var fdlg = new System.Windows.Forms.FolderBrowserDialog();
-                fdlg.SelectedPath = Filename ?? Directory.GetCurrentDirectory();
-                fdlg.ShowNewFolderButton = true;
-                fdlg.Description = "Import items source";
-                var answer = fdlg.ShowDialog();
-                if (answer == System.Windows.Forms.DialogResult.OK)
+                var answer = _navigationService.ShowOpenFolderDialog(Filename ?? Directory.GetCurrentDirectory());
+                if (answer.DialogResult == true)
                 {
-                    Filename = fdlg.SelectedPath;
+                    Filename = answer.SelectedPath;
                 }
             }
             else
             {
                 // Configure open file dialog box
-                // TODO: Navigation service should do this.
-                Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog
+                var result = _navigationService.ShowImportFileDialog(FileType);
+                if (result.DialogResult == true)
                 {
-                    FileName = "Document",
-                    DefaultExt = "txt",
-                    Filter = "Text documents (.txt)|*.txt|Instapaper Exports (.csv)|*.html|All documents (*.*)|*.*",
-                    Title = "Todo file"
-                };
-                switch (FileType)
-                {
-                    case ImportFileType.Instapaper:
-                        dlg.FilterIndex = 2;
-                        break;
-                    case ImportFileType.TodoSort:
-                        dlg.FilterIndex = 1;
-                        break;
-                    default:
-                        dlg.FilterIndex = 3;
-                        break;
-                }
-
-                // Show open file dialog box
-                var result = dlg.ShowDialog();
-                if (result == true)
-                {
-                    Filename = dlg.FileName;
+                    Filename = result.FileName;
                 }
             }
         }

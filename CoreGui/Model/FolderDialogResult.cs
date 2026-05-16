@@ -1,7 +1,7 @@
 namespace AssimilationSoftware.TodoSort.CoreGui.Model;
 
-public class FileDialogResult
+public class FolderDialogResult
 {
-    public string FileName { get; set; } = string.Empty;
     public bool? DialogResult { get; set; }
+    public string SelectedPath { get; set; } = string.Empty;
 }
