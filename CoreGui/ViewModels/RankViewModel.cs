@@ -1,11 +1,11 @@
 ﻿using System.Windows.Input;
-using AssimilationSoftware.TodoSort.WpfGui.Interfaces;
-using AssimilationSoftware.TodoSort.WpfGui.Model;
-using AssimilationSoftware.TodoSort.WpfGui.Views;
+using AssimilationSoftware.TodoSort.CoreGui.Interfaces;
+using AssimilationSoftware.TodoSort.CoreGui.ViewModels;
+using AssimilationSoftware.TodoSort.CoreGui.Model;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
-namespace AssimilationSoftware.TodoSort.WpfGui
+namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
 {
     public class RankViewModel : ObservableObject
     {
@@ -25,7 +25,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
 
         #region Constructors
 
-        public RankViewModel(List<ActionViewItem> items, IDialogWindow rv, Core.ViewModel api)
+        public RankViewModel(List<ActionViewModel> items, IDialogWindow rv, Core.ViewModel api)
         {
             _view = rv;
             _api = api;
@@ -165,12 +165,12 @@ namespace AssimilationSoftware.TodoSort.WpfGui
 
     public class RankPair
     {
-        public ActionViewItem Action1 { get; set; }
-        public ActionViewItem Action2 { get; set; }
+        public ActionViewModel Action1 { get; set; }
+        public ActionViewModel Action2 { get; set; }
 
         public RankWinner Vote { get; set; }
 
-        public ActionViewItem Winner
+        public ActionViewModel Winner
         {
             get
             {
@@ -186,7 +186,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui
             }
         }
 
-        public ActionViewItem Loser
+        public ActionViewModel Loser
         {
             get
             {

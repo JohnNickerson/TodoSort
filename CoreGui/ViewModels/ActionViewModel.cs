@@ -4,17 +4,15 @@ using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Windows;
 using System.Windows.Input;
 using AssimilationSoftware.Maroon.Model;
-using AssimilationSoftware.TodoSort.WpfGui.ViewModels;
-using AssimilationSoftware.TodoSort.WpfGui.Views;
+using AssimilationSoftware.TodoSort.CoreGui.ViewModels;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
-namespace AssimilationSoftware.TodoSort.WpfGui.Model
+namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
 {
-    public class ActionViewItem : ObservableObject
+    public class ActionViewModel : ObservableObject
     {
         #region Fields
 
@@ -26,14 +24,14 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
         private RelayCommand _copyUrlCommand;
         private RelayCommand<string> _openUrlCommand;
         private RelayCommand _bumpCommand;
-        private RelayCommand<Context> _moveToContextCommand;
+        private RelayCommand<ContextViewModel> _moveToContextCommand;
         private RelayCommand _maskItemCommand;
 
         #endregion // Fields
 
         #region Constructors
 
-        public ActionViewItem(ActionItem source, MainViewModel api)
+        public ActionViewModel(ActionItem source, MainViewModel api)
         {
             Source = source;
             Api = api;
@@ -130,6 +128,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
 
         public bool UrlNotNull => !string.IsNullOrEmpty(Url);
 
+        // TODO: Rename to ParentViewModel or something.
         private MainViewModel Api { get; }
 
         public int UpVotes
@@ -210,7 +209,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
             }
         }
 
-        public Visibility CanDefer => Source.Context == "someday" ? Visibility.Collapsed : Visibility.Visible;
+        public bool CanDefer => Source.Context != "someday";
 
         public TimeSpan ShortDeferDelay => new TimeSpan(14, 0, 0, 0);
 
@@ -243,7 +242,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
             }
         }
 
-        public List<Context> AllOtherContexts => Api.SelectedContext.AllOtherContexts;
+        public List<ContextViewModel> AllOtherContexts => Api.SelectedContext.AllOtherContexts;
 
         public bool CanMoveFrom => Api.SelectedContext.CanMoveFrom;
 
@@ -267,7 +266,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
 
         public ICommand BumpCommand => _bumpCommand ?? (_bumpCommand = new RelayCommand(BumpExecuted, () => this.Source.GetRankDepth(Api.Repository) > 0));
 
-        public ICommand MoveToContextCommand => _moveToContextCommand ?? (_moveToContextCommand = new RelayCommand<Context>(MoveToContextExecuted));
+        public ICommand MoveToContextCommand => _moveToContextCommand ?? (_moveToContextCommand = new RelayCommand<ContextViewModel>(MoveToContextExecuted));
 
         public ICommand MaskItemCommand => _maskItemCommand ?? (_maskItemCommand = new RelayCommand(MaskItemExecuted));
         #endregion // Command Properties
@@ -276,19 +275,14 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
 
         public void EditExecuted()
         {
-            // Show the Edit view.
-            var editWindow = new EditItemView();
-            var editVm = new EditViewModel(Api, this, editWindow);
-            editWindow.DataContext = editVm;
-            editWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-            var result = editWindow.ShowDialog(Api.Window);
+            var result = Api.NavigationService.ShowEditView(Api);
             var contextChanged = false;
-            if (result.HasValue && result.Value)
+            if (result.DialogResult.HasValue && result.DialogResult.Value)
             {
                 // Update the source item.
-                Title = editVm.Title.Trim();
+                Title = result.Title.Trim();
                 Source.Notes = new List<string>();
-                foreach (var line in editVm.Notes.Split('\n'))
+                foreach (var line in result.Notes.Split('\n'))
                 {
                     if (line.Trim().Length > 0)
                     {
@@ -296,7 +290,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
                     }
                 }
                 Source.Tags = new Dictionary<string, string>();
-                foreach (var tv in editVm.Tags)
+                foreach (var tv in result.Tags)
                 {
                     if (tv?.Tag is not null || tv?.Value is not null)
                     {
@@ -304,14 +298,14 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
                         Source.Tags[tv.Tag ?? string.Empty] = tv.Value ?? string.Empty;
                     }
                 }
-                Source.ProjectId = editVm.Project?.ID;
-                if (editVm.IsDeferred)
+                Source.ProjectId = result.ProjectId;
+                if (result.IsDeferred)
                 {
-                    Source.TickleDate = editVm.TickleDate;
+                    Source.TickleDate = result.TickleDate;
                 }
-                if (Source.Context != editVm.Context)
+                if (Source.Context != result.Context)
                 {
-                    Source.Context = editVm.Context;
+                    Source.Context = result.Context;
                     Api.Api.ResetPriorityParents(Source);
                     contextChanged = true;
                 }
@@ -354,7 +348,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
 
         private void DeleteExecuted()
         {
-            if (System.Windows.MessageBox.Show("Delete this item. Are you sure?", "Delete", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+            if (Api.NavigationService.ShowMessageBox("Delete this item. Are you sure?", "Delete") ?? false)
             {
                 Api.Delete(Source);
             }
@@ -398,7 +392,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
 
         private void CopyUrlExecuted()
         {
-            System.Windows.Clipboard.SetText(Url.Trim());
+            Api.NavigationService.CopyToClipboard(Url.Trim());
         }
 
         /// <summary>
@@ -427,7 +421,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
             }
             catch (Exception ex)
             {
-                System.Windows.MessageBox.Show($"Could not open URL: {ex.Message}");
+                Api.NavigationService.ShowMessageBox($"Could not open URL: {ex.Message}", "Error");
             }
         }
 
@@ -452,7 +446,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
             RaisePropertyChanged(nameof(ToolTip));
         }
 
-        private void MoveToContextExecuted(Context toContext)
+        private void MoveToContextExecuted(ContextViewModel toContext)
         {
             if (toContext != null)
                 Api.Move(Source, toContext.Title);

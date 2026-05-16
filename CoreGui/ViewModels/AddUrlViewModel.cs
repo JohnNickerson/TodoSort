@@ -1,33 +1,28 @@
 using System.Windows.Input;
-using AssimilationSoftware.TodoSort.WpfGui.Model;
+using AssimilationSoftware.TodoSort.CoreGui.Model;
 using System.Windows;
 using System.Diagnostics;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
-using AssimilationSoftware.TodoSort.WpfGui.Interfaces;
+using AssimilationSoftware.TodoSort.CoreGui.Interfaces;
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels;
+namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels;
 
 public class AddUrlViewModel : ObservableObject
 {
     private string _url;
-    private ActionViewItem _sourceItem;
+    private string _title;
 
     private ICommand _okCommand;
     private ICommand _fetchTitleCommand;
-    public List<Context> Contexts { get; }
-    private Context _selectedContext;
+    public List<ContextViewModel> Contexts { get; }
+    private ContextViewModel _selectedContext;
     private readonly IDialogWindow _view;
 
-    public AddUrlViewModel(MainViewModel api, ActionViewItem item, IDialogWindow window)
+    public AddUrlViewModel(MainViewModel api, IDialogWindow window)
     {
         _view = window;
-        if (item != null)
-        {
-            item.Tags.TryGetValue("url", out _url);
-        }
-        _sourceItem = item;
         Contexts = api.Contexts;
         _selectedContext = api.SelectedContext;
     }
@@ -42,24 +37,23 @@ public class AddUrlViewModel : ObservableObject
     {
         try
         {
-            _sourceItem.Tags["url"] = _url;
-            Title = ActionViewItem.FetchWebTitle(_url);
+            Title = ActionViewModel.FetchWebTitle(_url);
         }
         catch (Exception ex)
         {
             Debug.WriteLine(ex.Message);
-            _sourceItem.Title = _url;
+            Title = _url;
         }
         OnPropertyChanged(nameof(Title));
     }
 
     public string Title
     {
-        get => _sourceItem.Title;
+        get => _title;
         set
         {
-            if (_sourceItem.Title == value) return;
-            _sourceItem.Title = value;
+            if (_title == value) return;
+            _title = value;
             OnPropertyChanged();
         }
     }
@@ -75,7 +69,7 @@ public class AddUrlViewModel : ObservableObject
         }
     }
 
-    public Context SelectedContext
+    public ContextViewModel SelectedContext
     {
         get => _selectedContext;
         set

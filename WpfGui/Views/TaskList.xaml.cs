@@ -1,9 +1,9 @@
 ﻿using System.ComponentModel;
 using System.Windows;
 using System.Windows.Input;
-using AssimilationSoftware.TodoSort.WpfGui.Interfaces;
+using AssimilationSoftware.TodoSort.CoreGui.Interfaces;
 using AssimilationSoftware.TodoSort.WpfGui.Properties;
-using AssimilationSoftware.TodoSort.WpfGui.ViewModels;
+using AssimilationSoftware.TodoSort.CoreGui.ViewModels;
 
 namespace AssimilationSoftware.TodoSort.WpfGui.Views
 {
@@ -19,7 +19,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Views
             InitializeComponent();
             // TODO: This goes in App.xaml.cs
             var recentFile = Settings.Default.Todo;
-            _vm = new MainViewModel(recentFile);
+            _vm = new MainViewModel(recentFile, new Services.NavigationService(), Settings.Default);
             _vm.Window = this;
             DataContext = _vm;
         }

@@ -2,11 +2,12 @@
 using System.Windows.Input;
 using AssimilationSoftware.TodoSort.Core;
 using AssimilationSoftware.TodoSort.Core.Search;
-using AssimilationSoftware.TodoSort.WpfGui.Interfaces;
+using AssimilationSoftware.TodoSort.CoreGui.Interfaces;
+using AssimilationSoftware.TodoSort.CoreGui.Model;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
-namespace AssimilationSoftware.TodoSort.WpfGui.Model
+namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
 {
     public class BalanceViewModel : ObservableObject
     {

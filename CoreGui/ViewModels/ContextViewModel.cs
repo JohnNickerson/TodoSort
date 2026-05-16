@@ -1,27 +1,26 @@
-﻿using System.Windows;
-using System.Windows.Input;
+﻿using System.Windows.Input;
 using AssimilationSoftware.Maroon.Model;
 using AssimilationSoftware.TodoSort.Core.Search;
-using AssimilationSoftware.TodoSort.WpfGui.Interfaces;
-using AssimilationSoftware.TodoSort.WpfGui.ViewModels;
+using AssimilationSoftware.TodoSort.CoreGui.Interfaces;
+using AssimilationSoftware.TodoSort.CoreGui.ViewModels;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
-namespace AssimilationSoftware.TodoSort.WpfGui.Model
+namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
 {
-    public class Context : ObservableObject
+    public class ContextViewModel : ObservableObject
     {
         #region Fields
         public ITaskListView View { get; set; }
         private string _title;
         private ISearchSpecification<ActionItem> _searchSpecification;
         private string _dateColumnTitle;
-        private Visibility _dateVisible;
-        private RelayCommand<Context> _moveAllCommand;
+        private bool _dateVisible;
+        private RelayCommand<ContextViewModel> _moveAllCommand;
         #endregion
 
         #region Methods
-        private void MoveAllExecuted(Context fromContext)
+        private void MoveAllExecuted(ContextViewModel fromContext)
         {
             if (fromContext != null)
                 ParentVm.MoveAll(fromContext.Title, _title);
@@ -40,7 +39,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
             }
         }
 
-        public Visibility DateVisible
+        public bool DateVisible
         {
             get => _dateVisible;
             set
@@ -75,7 +74,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
 
         public bool IsSearch => Title.Equals("Search", StringComparison.CurrentCultureIgnoreCase);
 
-        public List<Context> AllOtherContexts { get; set; }
+        public List<ContextViewModel> AllOtherContexts { get; set; }
 
         public MainViewModel ParentVm { get; set; }
 
@@ -84,7 +83,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Model
 
         #region Commands
 
-        public ICommand MoveAllCommand => _moveAllCommand ?? (_moveAllCommand = new RelayCommand<Context>(MoveAllExecuted));
+        public ICommand MoveAllCommand => _moveAllCommand ?? (_moveAllCommand = new RelayCommand<ContextViewModel>(MoveAllExecuted));
 
         #endregion
     }

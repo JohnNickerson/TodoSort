@@ -15,6 +15,9 @@
         <KeyBinding Command="{Binding Path=ToggleHeadCommand}" Key="H" Modifiers="Control"/>
         <KeyBinding Command="{Binding Path=SearchCommand}" Key="F3"/>
     </Window.InputBindings>
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis"/>
+    </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -156,9 +159,9 @@
                         </MenuItem.ItemContainerStyle>
                     </MenuItem>
                     <Separator/>
-                    <MenuItem Header="Defer 2 Weeks" Command="{Binding Path=ToggleDeferCommand}" CommandParameter="{Binding Path=ShortDeferDelay}" Visibility="{Binding Path=CanDefer}"/>
-                    <MenuItem Header="Defer 2 Months" Command="{Binding Path=ToggleDeferCommand}" CommandParameter="{Binding Path=LongDeferDelay}" Visibility="{Binding Path=CanDefer}"/>
-                    <MenuItem Header="Defer Until..." Command="{Binding Path=DeferUntilCommand}" Visibility="{Binding Path=CanDefer}" />
+                    <MenuItem Header="Defer 2 Weeks" Command="{Binding Path=ToggleDeferCommand}" CommandParameter="{Binding Path=ShortDeferDelay}" Visibility="{Binding Path=CanDefer, Converter={StaticResource BoolToVis}}"/>
+                    <MenuItem Header="Defer 2 Months" Command="{Binding Path=ToggleDeferCommand}" CommandParameter="{Binding Path=LongDeferDelay}" Visibility="{Binding Path=CanDefer, Converter={StaticResource BoolToVis}}"/>
+                    <MenuItem Header="Defer Until..." Command="{Binding Path=DeferUntilCommand}" Visibility="{Binding Path=CanDefer, Converter={StaticResource BoolToVis}}" />
                     <MenuItem Header="{Binding ToggleDeferTitle}" Command="{Binding Path=ToggleDeferCommand}"/>
                     <Separator/>
                     <MenuItem Header="Delete" Command="{Binding Path=DeleteCommand}"/>
@@ -201,7 +204,7 @@
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
                     <GridViewColumn>
-                        <GridViewColumnHeader Content="{Binding Path=SelectedContext.DateColumnTitle}" Visibility="{Binding Path=SelectedContext.DateVisible}"/>
+                        <GridViewColumnHeader Content="{Binding Path=SelectedContext.DateColumnTitle}" Visibility="{Binding Path=SelectedContext.DateVisible, Converter={StaticResource BoolToVis}}"/>
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding ItemDate, StringFormat={}{0:dd/MM/yyyy}}"/>

@@ -1,4 +1,4 @@
-namespace AssimilationSoftware.TodoSort.WpfGui.Interfaces;
+namespace AssimilationSoftware.TodoSort.CoreGui.Interfaces;
 
 public interface ITaskListView
 {

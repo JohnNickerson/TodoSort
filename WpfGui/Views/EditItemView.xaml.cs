@@ -1,5 +1,5 @@
 ﻿using System.Windows;
-using AssimilationSoftware.TodoSort.WpfGui.Interfaces;
+using AssimilationSoftware.TodoSort.CoreGui.Interfaces;
 
 namespace AssimilationSoftware.TodoSort.WpfGui.Views
 {

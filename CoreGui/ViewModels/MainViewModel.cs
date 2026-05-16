@@ -9,14 +9,12 @@ using AssimilationSoftware.Maroon.Model;
 using AssimilationSoftware.TodoSort.Core;
 using AssimilationSoftware.TodoSort.Core.Data;
 using AssimilationSoftware.TodoSort.Core.Search;
-using AssimilationSoftware.TodoSort.WpfGui.Interfaces;
-using AssimilationSoftware.TodoSort.WpfGui.Model;
-using AssimilationSoftware.TodoSort.WpfGui.Properties;
-using AssimilationSoftware.TodoSort.WpfGui.Views;
+using AssimilationSoftware.TodoSort.CoreGui.Interfaces;
+using AssimilationSoftware.TodoSort.CoreGui.Model;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
-namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
+namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
 {
     public class MainViewModel : ObservableObject
     {
@@ -24,12 +22,12 @@ namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
         const string _defaultContext = "inbox";
 
         public ITaskListView Window;
-        private Context? _selectedContext;
-        private Context _searchResultsContext;
-        private List<Context> _contexts;
+        private ContextViewModel? _selectedContext;
+        private ContextViewModel _searchResultsContext;
+        private List<ContextViewModel> _contexts;
         private string? _fileName;
         private TodoFileInfo? _lastOpenedFile;
-        private List<ActionViewItem> _currentItems;
+        private List<ActionViewModel> _currentItems;
         private const int CommitLimit = 256;
 
         private ITodoRepository _repo;
@@ -56,22 +54,27 @@ namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
         private string _searchKeyword;
         private string _searchTagName;
         private string _searchTagValue;
-        private ActionViewItem _selectedItem;
+        private ActionViewModel _selectedItem;
         private bool _searchExpanded;
         private ActionItem? _searchProject;
         private SortByProperty _sortBy = SortByProperty.Upvotes;
-        private Context? _searchContext;
+        private ContextViewModel? _searchContext;
         private decimal? _lastPendingCount;
         private bool _isSearchContextSelected;
         private bool _isSearchProjectSelected;
         private string _statusMessage;
         private DateTime? _lastDeferredCheckDate;
+        private ObservableCollection<string> _recentFilesList;
+        private INavigationService _navigationService;
+        private ISettings _settings;
 
         #endregion
 
         #region Constructors
-        public MainViewModel(string filename)
+        public MainViewModel(string filename, INavigationService navigationService, ISettings settings)
         {
+            _navigationService = navigationService;
+            _settings = settings;
             if (filename != null)
             {
                 OpenFile(filename);
@@ -106,7 +109,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
                 FileName = filename;
 
                 // Store the file name as the most recent one opened.
-                _recentFilesList = new ObservableCollection<string>(Settings.Default.RecentFiles);
+                _recentFilesList = new ObservableCollection<string>(_settings.RecentFiles);
                 if (!string.IsNullOrEmpty(filename))
                 {
                     RecentFileList.Remove(filename);
@@ -116,7 +119,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
                 {
                     RecentFileList.RemoveAt(10);
                 }
-                Settings.Default.RecentFiles = _recentFilesList.ToArray();
+                _settings.RecentFiles = _recentFilesList.ToArray();
                 _recentFilesList.Clear();
                 SaveSettings();
 
@@ -138,9 +141,9 @@ namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
                     {
                         var titleList = string.Join(Environment.NewLine, undefers);
                         // Confirm.
-                        if (System.Windows.MessageBox.Show(
+                        if (_navigationService.ShowMessageBox(
                             $"There are deferred items ready to return to the main lists:\n{titleList}\n Do you want to process them now?",
-                                "Auto-undefer", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                                "Auto-undefer") ?? true)
                         {
                             Cleanup();
                         }
@@ -155,7 +158,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
             catch (Exception ex)
             {
                 StatusMessage = $"Error opening file: {ex.Message}";
-                System.Windows.MessageBox.Show($"Failed to open file:\n\n{ex.Message}", "Error Opening File", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+                _navigationService.ShowMessageBox($"Failed to open file:\n\n{ex.Message}", "Error Opening File");
             }
         }
 
@@ -268,9 +271,8 @@ namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
             var pendingCount = _repo?.GetPendingChanges().Sum(p => p.Updates.Count);
             if (pendingCount > CommitLimit && _lastPendingCount != pendingCount)
             {
-                var response = System.Windows.MessageBox.Show($"{pendingCount} changes are pending. Commit now?", "Commit Changes",
-                    MessageBoxButton.YesNo);
-                if (response == MessageBoxResult.Yes)
+                var response = _navigationService.ShowMessageBox($"{pendingCount} changes are pending. Commit now?", "Commit Changes");
+                if (response ?? true)
                 {
                     CommitChanges();
                 }
@@ -333,18 +335,15 @@ namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
                 return;
             }
             // Open up a ranking window.
-            var rv = new RankView();
-            var rvm = new RankViewModel(Items, rv, _api);
-            rv.DataContext = rvm;
-            rv.ShowDialog();
+            _navigationService.ShowRankView(Items, _api);
             RaisePropertyChanged(nameof(Items));
         }
 
         private async void ReloadFile()
         {
             if (string.IsNullOrEmpty(FileName)) return;
-            var result = HasUnsavedChanges ? System.Windows.MessageBox.Show("You have unsaved changes in memory. Abandon these changes and reload the file?", "Abandon changes?", MessageBoxButton.YesNoCancel) : MessageBoxResult.None;
-            if (!HasUnsavedChanges || result == MessageBoxResult.Yes)
+            var result = HasUnsavedChanges ? _navigationService.ShowMessageBox("You have unsaved changes in memory. Abandon these changes and reload the file?", "Abandon changes?") : false;
+            if (!HasUnsavedChanges || (result ?? false))
             {
                 await OpenFileAsync(FileName);
             }
@@ -352,16 +351,13 @@ namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
 
         private void ImportExecuted()
         {
-            var importView = new ImportView();
-            var importVm = new ImportViewModel(_api, importView);
-            importView.DataContext = importVm;
-            importView.ShowDialog();
+            _navigationService.ShowImportView(_api);
             RaisePropertyChanged(nameof(Contexts));
         }
 
         private void SaveSettings()
         {
-            Settings.Default.Save();
+            _settings.Save();
         }
 
         public async void OpenCommandExecuted()
@@ -375,20 +371,10 @@ namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
                     break;
             }
 
-            // Configure open file dialog box
-            Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog
+            var result = _navigationService.ShowOpenFileDialog();
+            if (result.DialogResult == true)
             {
-                FileName = "Document",
-                DefaultExt = ".txt",
-                Filter = "Text documents (.txt)|*.txt|All documents (*.*)|*.*",
-                Title = "Todo file"
-            };
-
-            // Show open file dialog box
-            var result = dlg.ShowDialog();
-            if (result == true)
-            {
-                await OpenFileAsync(dlg.FileName);
+                await OpenFileAsync(result.FileName);
             }
         }
 
@@ -403,25 +389,10 @@ namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
                     break;
             }
 
-            // Configure open file dialog box
-            Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog
+            var result = _navigationService.ShowOpenFileDialog(checkFileExists: false);
+            if (result.DialogResult == true)
             {
-                FileName = "Document",
-                DefaultExt = ".txt",
-                Filter = "Text documents (.txt)|*.txt|All documents (*.*)|*.*",
-                Title = "Todo file",
-                CheckFileExists = false
-            };
-
-            // Show open file dialog box
-            var result = dlg.ShowDialog();
-            if (result == true)
-            {
-                if (File.Exists(dlg.FileName))
-                {
-                    // Replace the file?
-                }
-                await OpenFileAsync(dlg.FileName);
+                await OpenFileAsync(result.FileName);
             }
         }
 
@@ -432,10 +403,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
                 StatusMessage = "Error: No file loaded.";
                 return;
             }
-            var balanceView = new BalanceView();
-            var balanceVm = new BalanceViewModel(balanceView, _api);
-            balanceView.DataContext = balanceVm;
-            balanceView.ShowDialog();
+            _navigationService.ShowBalanceView(_api);
             RaisePropertyChanged(nameof(Items));
         }
 
@@ -479,7 +447,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
                         break;
                 }
             }
-            System.Windows.Application.Current.Shutdown();
+            _navigationService.CloseApplication();
         }
 
         public void Update(ActionItem item)
@@ -525,26 +493,21 @@ namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
                 return;
             }
             // Show the Edit view.
-            var editWindow = new EditItemView();
-            var item = new ActionItem
+            var result = _navigationService.ShowEditView(this);
+            if (result.DialogResult.HasValue && result.DialogResult.Value)
             {
-                Context = SelectedContext?.IsSearch ?? false ? SelectedContext?.Title : _defaultContext
-            };
-            var editVm = new EditViewModel(this, new ActionViewItem(item, this), editWindow);
-            editWindow.DataContext = editVm;
-            editWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-            var result = editWindow.ShowDialog(Window);
-            if (result.HasValue && result.Value)
-            {
-                // Update the source item.
-                item.Title = editVm.Title;
-                item.Notes = editVm.Notes.Split('\n').ToList();
-                item.Tags = editVm.Tags.ToDictionary(k => k.Tag, v => v.Value);
-                item.ProjectId = editVm.Project?.ID;
-                item.Context = editVm.Context;
-                if (editVm.IsDeferred)
+                var item = new ActionItem
                 {
-                    item.TickleDate = editVm.TickleDate;
+                    Title = result.Title,
+                    Context = result.Context ?? _defaultContext,
+                    // Update the source item.
+                    Notes = result.Notes.Split('\n').ToList(),
+                    Tags = result.Tags.ToDictionary(k => k.Tag, v => v.Value),
+                    ProjectId = result.ProjectId
+                };
+                if (result.IsDeferred)
+                {
+                    item.TickleDate = result.TickleDate;
                 }
                 _api.AddItem(item);
                 RaisePropertyChanged(nameof(Items));
@@ -559,20 +522,16 @@ namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
                 StatusMessage = "Error: No file loaded.";
                 return;
             }
-            var addWindow = new AddUrlView();
-            var item = new ActionItem
+
+            var result = _navigationService.ShowAddUrlView(this);
+            if (result.DialogResult.HasValue && result.DialogResult.Value)
             {
-                Context = SelectedContext?.IsSearch ?? false ? SelectedContext?.Title : _defaultContext
-            };
-            var addVm = new AddUrlViewModel(this, new ActionViewItem(item, this), addWindow);
-            addWindow.DataContext = addVm;
-            addWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-            var result = addWindow.ShowDialog(Window);
-            if (result.HasValue && result.Value)
-            {
-                item.Title = string.IsNullOrEmpty(addVm.Title) ? addVm.Url : addVm.Title;
-                item.Tags = new Dictionary<string, string> { { "url", addVm.Url } };
-                item.Context = addVm.SelectedContext?.IsSearch ?? false ? _defaultContext : addVm.SelectedContext?.Title;
+                var item = new ActionItem
+                {
+                    Title = string.IsNullOrEmpty(result.Title) ? result.Url : result.Title,
+                    Tags = new Dictionary<string, string> { { "url", result.Url } },
+                    Context = result.Context == "Search" ? _defaultContext : result.Context
+                };
                 _api.AddItem(item);
                 RaisePropertyChanged(nameof(Items));
                 RaisePropertyChanged(nameof(Contexts));
@@ -642,18 +601,8 @@ namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
         private bool? ConfirmSaveCancel(string message)
         {
             if (!HasUnsavedChanges) return false;
-            var result = System.Windows.MessageBox.Show(message, "Save changes?", MessageBoxButton.YesNoCancel);
-            switch (result)
-            {
-                case MessageBoxResult.Cancel:
-                    return null;
-                case MessageBoxResult.No:
-                    return false;
-                case MessageBoxResult.Yes:
-                    return true;
-                default:
-                    return null;
-            }
+            var result = _navigationService.ShowMessageBox(message, "Save changes?", allowCancel: true);
+            return result;
         }
 
         private async void OpenRecentFile(string? filename)
@@ -724,9 +673,9 @@ namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
                     bool doOpen;
                     if (HasUnsavedChanges)
                     {
-                        doOpen = System.Windows.MessageBox.Show(
+                        doOpen = _navigationService.ShowMessageBox(
                             "The file on disk has been modified and you have unsaved changes in memory. Abandon changes and reload the file from disk?",
-                            "Abandon changes?", MessageBoxButton.YesNo) == MessageBoxResult.Yes;
+                            "Abandon changes?") ?? false;
                     }
                     else
                     {
@@ -765,7 +714,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
             {
                 _lastOpenedFile = null;
             }
-            Settings.Default.Todo = fileName ?? string.Empty;
+            _settings?.Todo = fileName ?? string.Empty;
             SaveSettings();
         }
 
@@ -778,41 +727,43 @@ namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
 
         #region Properties
 
-        public List<Context> Contexts
+        public INavigationService NavigationService => _navigationService;
+
+        public List<ContextViewModel> Contexts
         {
             get
             {
-                if (_api == null) return new List<Context>();
+                if (_api == null) return new List<ContextViewModel>();
                 if (_contexts == null || !_contexts.Any())
                 {
                     // Preserve selected context.
                     var saveContext = SelectedContext;
-                    _contexts = new List<Context>();
+                    _contexts = new List<ContextViewModel>();
                     foreach (var con in _api.GetContextNames("done", "someday").OrderBy(c => c))
                     {
-                        _contexts.Add(new Context
+                        _contexts.Add(new ContextViewModel
                         {
                             Title = con,
                             SearchSpecification = new ContextSearchSpecification(con),
                             View = Window,
-                            DateVisible = Visibility.Collapsed,
-                            AllOtherContexts = new List<Context>(),
+                            DateVisible = false,
+                            AllOtherContexts = new List<ContextViewModel>(),
                             ParentVm = this
                         });
                     }
 
                     foreach (var con in _contexts)
                     {
-                        con.AllOtherContexts = new List<Context>(_contexts);
+                        con.AllOtherContexts = new List<ContextViewModel>(_contexts);
                         con.AllOtherContexts.Remove(con);
                     }
-                    _contexts.Add(new Context { Title = "done", View = Window, DateVisible = Visibility.Visible, DateColumnTitle = "Done Date" });
-                    _contexts.Add(new Context { Title = "someday", View = Window, DateVisible = Visibility.Visible, DateColumnTitle = "Return Date" });
-                    _searchResultsContext = new Context
+                    _contexts.Add(new ContextViewModel { Title = "done", View = Window, DateVisible = true, DateColumnTitle = "Done Date" });
+                    _contexts.Add(new ContextViewModel { Title = "someday", View = Window, DateVisible = true, DateColumnTitle = "Return Date" });
+                    _searchResultsContext = new ContextViewModel
                     {
                         Title = "Search",
                         View = Window,
-                        DateVisible = Visibility.Collapsed,
+                        DateVisible = false,
                         // TODO: Get full search spec from a new method or property.
                         SearchSpecification = new FullTextSearchSpecification(SearchKeyword),
                         CanMoveFrom = false
@@ -828,7 +779,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
             }
         }
 
-        public Context? SelectedContext
+        public ContextViewModel? SelectedContext
         {
             get => _selectedContext;
             set
@@ -851,7 +802,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
             }
         }
 
-        public ActionViewItem SelectedItem
+        public ActionViewModel SelectedItem
         {
             get => _selectedItem;
             set
@@ -876,37 +827,37 @@ namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
 
         public bool HasUnsavedChanges => _api?.UnsavedChanges ?? false;
 
-        public List<ActionViewItem> Items
+        public List<ActionViewModel> Items
         {
             get
             {
-                if (_api == null || SelectedContext == null) return new List<ActionViewItem>();
+                if (_api == null || SelectedContext == null) return new List<ActionViewModel>();
                 if (_currentItems != null && _currentItems.Any()) return _currentItems;
                 switch (SelectedContext.Title)
                 {
                     case "done":
                         _api.DoneSearchSpecification = SelectedContext.SearchSpecification;
-                        _currentItems = _api.DoneSearchResults.Select(s => new ActionViewItem(s, this)).OrderByDescending(i => i.DoneDate).ThenBy(i => i.Title).ToList();
+                        _currentItems = _api.DoneSearchResults.Select(s => new ActionViewModel(s, this)).OrderByDescending(i => i.DoneDate).ThenBy(i => i.Title).ToList();
                         break;
                     case "someday":
                         _api.SomedaySearchSpecification = SelectedContext.SearchSpecification;
-                        _currentItems = _api.SomedaySearchResults.Select(s => new ActionViewItem(s, this)).OrderBy(i => i.TickleDate ?? DateTime.MaxValue).ThenBy(i => i.Title).ToList();
+                        _currentItems = _api.SomedaySearchResults.Select(s => new ActionViewModel(s, this)).OrderBy(i => i.TickleDate ?? DateTime.MaxValue).ThenBy(i => i.Title).ToList();
                         break;
                     case "Search":
                         if (SearchContext != null && SearchContext.Title == "done")
                         {
                             _api.DoneSearchSpecification = SelectedContext.SearchSpecification;
-                            _currentItems = _api.DoneSearchResults.Select(s => new ActionViewItem(s, this)).OrderByDescending(i => i.DoneDate).ThenBy(i => i.Title).ToList();
+                            _currentItems = _api.DoneSearchResults.Select(s => new ActionViewModel(s, this)).OrderByDescending(i => i.DoneDate).ThenBy(i => i.Title).ToList();
                         }
                         else if (SearchContext != null && SearchContext.Title == "someday")
                         {
                             _api.SomedaySearchSpecification = SelectedContext.SearchSpecification;
-                            _currentItems = _api.SomedaySearchResults.Select(s => new ActionViewItem(s, this)).OrderBy(i => i.TickleDate).ThenBy(i => i.Title).ToList();
+                            _currentItems = _api.SomedaySearchResults.Select(s => new ActionViewModel(s, this)).OrderBy(i => i.TickleDate).ThenBy(i => i.Title).ToList();
                         }
                         else
                         {
                             _api.SearchSpecification = SelectedContext.SearchSpecification;
-                            var selectedItems = _api.SearchResults.Select(s => new ActionViewItem(s, this));
+                            var selectedItems = _api.SearchResults.Select(s => new ActionViewModel(s, this));
                             if (SortByUpvotes)
                             {
                                 _currentItems = selectedItems.OrderByDescending(i => i.UpVotes).ThenBy(i => i.Title).ToList();
@@ -928,7 +879,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
                     default:
                         _api.SearchSpecification = SelectedContext.SearchSpecification;
                         // Apply user-specified sorting options.
-                        var defaultItems = _api.SearchResults.Select(s => new ActionViewItem(s, this));
+                        var defaultItems = _api.SearchResults.Select(s => new ActionViewModel(s, this));
                         if (SortByUpvotes)
                         {
                             _currentItems = defaultItems.OrderByDescending(i => i.UpVotes).ThenBy(i => i.Title).ToList();
@@ -953,21 +904,20 @@ namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
 
         public string WindowTitle => $"{(HasUnsavedChanges ? "*" : "")}TodoSort - {FileName}";
 
-        private ObservableCollection<string> _recentFilesList;
         public ObservableCollection<string> RecentFileList
         {
-            get => _recentFilesList ?? (_recentFilesList = new ObservableCollection<string>(Settings.Default.RecentFiles));
+            get => _recentFilesList ?? (_recentFilesList = new ObservableCollection<string>(_settings.RecentFiles));
             set
             {
                 _recentFilesList = value;
-                Settings.Default.RecentFiles = value.ToArray();
+                _settings.RecentFiles = value.ToArray();
                 RaisePropertyChanged();
             }
         }
 
         public List<ActionItem> Projects => _api != null ? _api.GetProjects().OrderBy(p => p?.Title).ToList() : new List<ActionItem> { };
 
-        public List<Context> SearchContexts => Contexts.Where(c => c.Title != "Search").OrderBy(c => c.Title).ToList();
+        public List<ContextViewModel> SearchContexts => Contexts.Where(c => c.Title != "Search").OrderBy(c => c.Title).ToList();
 
         public string VersionNumber => "Version " + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
 
@@ -1040,12 +990,12 @@ namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
 
         public bool Masked
         {
-            get => Settings.Default.MaskNsfwItems;
+            get => _settings.MaskNsfwItems;
             set
             {
-                if (Settings.Default.MaskNsfwItems == value) return;
-                Settings.Default.MaskNsfwItems = value;
-                Settings.Default.Save();
+                if (_settings.MaskNsfwItems == value) return;
+                _settings.MaskNsfwItems = value;
+                _settings.Save();
                 RaisePropertyChanged();
             }
         }
@@ -1054,7 +1004,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.ViewModels
 
         public ViewModel Api => _api;
 
-        public Context? SearchContext
+        public ContextViewModel? SearchContext
         {
             get => _searchContext;
             set
