@@ -184,7 +184,7 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
                 toolTip.AppendLine(Title + (Tags.ContainsKey("type") ? $" [{Tags["type"].ToUpper()}]" : string.Empty));
                 foreach (var note in Notes)
                 {
-                    toolTip.AppendLine(note);
+                    toolTip.AppendLine(note.Trim());
                 }
 
                 foreach (var tag in Tags)
@@ -281,14 +281,7 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
             {
                 // Update the source item.
                 Title = result.Title.Trim();
-                Source.Notes = new List<string>();
-                foreach (var line in result.Notes.Split('\n'))
-                {
-                    if (line.Trim().Length > 0)
-                    {
-                        Source.Notes.Add(line);
-                    }
-                }
+                Source.Notes = [.. result.Notes.Split('\n').Select(l => l.Trim()).Where(l => l.Length > 0)];
                 Source.Tags = new Dictionary<string, string>();
                 foreach (var tv in result.Tags)
                 {

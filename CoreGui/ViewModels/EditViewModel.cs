@@ -40,7 +40,7 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
             if (item != null)
             {
                 _title = item.Source.Title;
-                _notes = string.Join(Environment.NewLine, item.Notes);
+                _notes = string.Join(Environment.NewLine, item.Notes.Select(n => n.Trim()));
                 foreach (var itemTag in item.Tags)
                 {
                     _tags.Add(new TagViewModel
