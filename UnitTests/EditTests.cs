@@ -68,6 +68,7 @@ public class EditTests
         actionViewModel.EditExecuted();
 
         // Assert
+        Assert.Equal(2, originalItem.Notes.Count);
         Assert.Equal(new[] { "First line", "Second line" }, originalItem.Notes);
         Assert.DoesNotContain(string.Empty, originalItem.Notes);
     }
