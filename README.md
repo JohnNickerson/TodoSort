@@ -244,3 +244,5 @@ TodoSort is a task list and reading list app with an emphasis on priority. It st
 	- Fix RankView back/forward buttons.
 	- Allow free-text editing of context in AddUrlView.
 	- Some test and code refactoring updates.
+- 2026-05-20: Build 1.10.0.0
+	- Move ViewModels into a separate project for unit testing.
