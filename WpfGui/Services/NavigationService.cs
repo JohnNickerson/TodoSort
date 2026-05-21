@@ -25,7 +25,7 @@ public class NavigationService : INavigationService
         var addVm = new AddUrlViewModel(mainViewModel, addWindow);
         addWindow.DataContext = addVm;
         var result = addWindow.ShowDialog(mainViewModel.Window);
-        return new AddUrlDialogResult { DialogResult = result, Url = addVm.Url, Title = addVm.Title, Context = addVm.SelectedContext.Title };
+        return new AddUrlDialogResult { DialogResult = result, Url = addVm.Url, Title = addVm.Title, Context = addVm.SelectedContext };
     }
 
     public void ShowBalanceView(ViewModel api)

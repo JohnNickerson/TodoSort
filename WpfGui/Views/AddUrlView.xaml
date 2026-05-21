@@ -38,7 +38,7 @@
         <TextBox Grid.Row="1" Grid.Column="2" Text="{Binding Title}"/>
 
         <TextBlock Grid.Row="2" Grid.Column="0" Text="Context"/>
-        <ComboBox Grid.Row="2" Grid.Column="2" ItemsSource="{Binding Contexts}" SelectedItem="{Binding SelectedContext}" DisplayMemberPath="Title" IsEditable="True"/>
+        <ComboBox Grid.Row="2" Grid.Column="2" ItemsSource="{Binding Contexts}" Text="{Binding SelectedContext}" DisplayMemberPath="Title" IsEditable="True"/>
 
         <StackPanel Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3" Orientation="Horizontal" HorizontalAlignment="Right">
             <Button Content="OK" Command="{Binding OkCommand}" IsDefault="True"/>

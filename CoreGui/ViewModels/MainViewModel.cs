@@ -524,7 +524,7 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
             }
 
             var result = _navigationService.ShowAddUrlView(this);
-            if (result.DialogResult.HasValue && result.DialogResult.Value)
+            if (result.DialogResult.HasValue && result.DialogResult.Value && !string.IsNullOrEmpty(result.Url))
             {
                 var item = new ActionItem
                 {

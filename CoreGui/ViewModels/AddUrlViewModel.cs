@@ -16,15 +16,15 @@ public class AddUrlViewModel : ObservableObject
 
     private ICommand? _okCommand;
     private ICommand? _fetchTitleCommand;
-    public List<ContextViewModel> Contexts { get; }
-    private ContextViewModel? _selectedContext;
+    public List<string> Contexts { get; }
+    private string _selectedContext;
     private readonly IDialogWindow _view;
 
     public AddUrlViewModel(MainViewModel api, IDialogWindow window)
     {
         _view = window;
-        Contexts = api.Contexts;
-        _selectedContext = api.SelectedContext;
+        Contexts = api.Contexts.Select(c => c.Title).ToList();
+        _selectedContext = api.SelectedContext?.Title ?? "inbox";
     }
 
     private void OkExecuted()
@@ -69,7 +69,7 @@ public class AddUrlViewModel : ObservableObject
         }
     }
 
-    public ContextViewModel SelectedContext
+    public string SelectedContext
     {
         get => _selectedContext;
         set
