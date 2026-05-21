@@ -21,40 +21,40 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
         #region Fields
         const string _defaultContext = "inbox";
 
-        public ITaskListView Window;
+        public ITaskListView? Window;
         private ContextViewModel? _selectedContext;
-        private ContextViewModel _searchResultsContext;
-        private List<ContextViewModel> _contexts;
+        private ContextViewModel? _searchResultsContext;
+        private List<ContextViewModel>? _contexts;
         private string? _fileName;
         private TodoFileInfo? _lastOpenedFile;
-        private List<ActionViewModel> _currentItems;
+        private List<ActionViewModel>? _currentItems;
         private const int CommitLimit = 256;
 
-        private ITodoRepository _repo;
-        private ViewModel _api;
+        private ITodoRepository? _repo;
+        private ViewModel? _api;
 
-        private RelayCommand<string> _openRecentCommand;
-        private RelayCommand _rankCommand;
-        private RelayCommand _reloadCommand;
-        private RelayCommand _importCommand;
-        private RelayCommand _closeCommand;
-        private RelayCommand _addItemCommand;
-        private RelayCommand _addUrlCommand;
-        private RelayCommand _openFileCommand;
-        private RelayCommand _saveFileCommand;
-        private RelayCommand _applySearchCommand;
-        private RelayCommand _cleanupCommand;
-        private RelayCommand _commitCommand;
-        private RelayCommand _maskTextCommand;
-        private RelayCommand _toggleHeadCommand;
-        private RelayCommand _searchCommand;
-        private RelayCommand _newFileCommand;
-        private RelayCommand _balanceCommand;
+        private RelayCommand<string>? _openRecentCommand;
+        private RelayCommand? _rankCommand;
+        private RelayCommand? _reloadCommand;
+        private RelayCommand? _importCommand;
+        private RelayCommand? _closeCommand;
+        private RelayCommand? _addItemCommand;
+        private RelayCommand? _addUrlCommand;
+        private RelayCommand? _openFileCommand;
+        private RelayCommand? _saveFileCommand;
+        private RelayCommand? _applySearchCommand;
+        private RelayCommand? _cleanupCommand;
+        private RelayCommand? _commitCommand;
+        private RelayCommand? _maskTextCommand;
+        private RelayCommand? _toggleHeadCommand;
+        private RelayCommand? _searchCommand;
+        private RelayCommand? _newFileCommand;
+        private RelayCommand? _balanceCommand;
 
-        private string _searchKeyword;
-        private string _searchTagName;
-        private string _searchTagValue;
-        private ActionViewModel _selectedItem;
+        private string? _searchKeyword;
+        private string? _searchTagName;
+        private string? _searchTagValue;
+        private ActionViewModel? _selectedItem;
         private bool _searchExpanded;
         private ActionItem? _searchProject;
         private SortByProperty _sortBy = SortByProperty.Upvotes;
@@ -62,11 +62,11 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
         private decimal? _lastPendingCount;
         private bool _isSearchContextSelected;
         private bool _isSearchProjectSelected;
-        private string _statusMessage;
+        private string? _statusMessage;
         private DateTime? _lastDeferredCheckDate;
-        private ObservableCollection<string> _recentFilesList;
-        private INavigationService _navigationService;
-        private ISettings _settings;
+        private ObservableCollection<string>? _recentFilesList;
+        private INavigationService? _navigationService;
+        private ISettings? _settings;
 
         #endregion
 

@@ -12,14 +12,14 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
         #region Fields
 
         private int _currentIndex;
-        private IDialogWindow _view;
-        private Core.ViewModel _api;
+        private IDialogWindow? _view;
+        private Core.ViewModel? _api;
 
-        private RelayCommand _backCommand;
-        private RelayCommand _forwardCommand;
-        private RelayCommand _vote1Command;
-        private RelayCommand _vote2Command;
-        private RelayCommand _okCommand;
+        private RelayCommand? _backCommand;
+        private RelayCommand? _forwardCommand;
+        private RelayCommand? _vote1Command;
+        private RelayCommand? _vote2Command;
+        private RelayCommand? _okCommand;
 
         #endregion
 
@@ -165,12 +165,12 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
 
     public class RankPair
     {
-        public ActionViewModel Action1 { get; set; }
-        public ActionViewModel Action2 { get; set; }
+        public ActionViewModel? Action1 { get; set; }
+        public ActionViewModel? Action2 { get; set; }
 
         public RankWinner Vote { get; set; }
 
-        public ActionViewModel Winner
+        public ActionViewModel? Winner
         {
             get
             {
@@ -186,7 +186,7 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
             }
         }
 
-        public ActionViewModel Loser
+        public ActionViewModel? Loser
         {
             get
             {

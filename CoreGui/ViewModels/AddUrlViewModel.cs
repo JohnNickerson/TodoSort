@@ -11,13 +11,13 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels;
 
 public class AddUrlViewModel : ObservableObject
 {
-    private string _url;
-    private string _title;
+    private string? _url;
+    private string? _title;
 
-    private ICommand _okCommand;
-    private ICommand _fetchTitleCommand;
+    private ICommand? _okCommand;
+    private ICommand? _fetchTitleCommand;
     public List<ContextViewModel> Contexts { get; }
-    private ContextViewModel _selectedContext;
+    private ContextViewModel? _selectedContext;
     private readonly IDialogWindow _view;
 
     public AddUrlViewModel(MainViewModel api, IDialogWindow window)

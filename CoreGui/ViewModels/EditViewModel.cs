@@ -22,9 +22,9 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
         private DateTime? _tickleDate;
         private readonly string[] _excludeContexts = { "done", "someday", "Search" };
 
-        private ICommand _okCommand;
-        private ICommand _addTagCommand;
-        private IDialogWindow _view;
+        private ICommand? _okCommand;
+        private ICommand? _addTagCommand;
+        private IDialogWindow? _view;
 
         #endregion
 

@@ -6,8 +6,8 @@ namespace AssimilationSoftware.TodoSort.CoreGui.Model
     {
         private int _branchFactor;
         private bool _isSelected;
-        private string _contextName;
-        private string _resultCount;
+        private string? _contextName;
+        private string? _resultCount;
 
         public string ContextName
         {

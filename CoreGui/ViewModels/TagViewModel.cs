@@ -8,9 +8,9 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
     public class TagViewModel : ObservableObject
     {
         #region Fields
-        private string _tag;
-        private string _value;
-        private ICommand _deleteTagCommand;
+        private string? _tag;
+        private string? _value;
+        private ICommand? _deleteTagCommand;
         #endregion
 
         #region Methods
@@ -44,9 +44,9 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
             }
         }
 
-        public ICommand DeleteTagCommand => _deleteTagCommand ?? (_deleteTagCommand = new RelayCommand(DeleteTagExecuted));
+        public ICommand? DeleteTagCommand => _deleteTagCommand ?? (_deleteTagCommand = new RelayCommand(DeleteTagExecuted));
 
-        public EditViewModel Item { get; set; }
+        public EditViewModel? Item { get; set; }
 
         #endregion
     }

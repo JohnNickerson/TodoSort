@@ -14,12 +14,12 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
         private readonly ViewModel _vm;
         private readonly IDialogWindow _view;
         private readonly INavigationService _navigationService;
-        private string _fileName;
+        private string? _fileName;
         private ImportFileType _fileType;
-        private string _targetContext;
-        private RelayCommand _importCommand;
-        private RelayCommand _cancelCommand;
-        private RelayCommand _browseCommand;
+        private string? _targetContext;
+        private RelayCommand? _importCommand;
+        private RelayCommand? _cancelCommand;
+        private RelayCommand? _browseCommand;
 
         public ImportViewModel(Core.ViewModel vm, IDialogWindow view, INavigationService navigationService)
         {

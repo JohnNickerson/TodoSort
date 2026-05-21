@@ -11,11 +11,11 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
 {
     public class BalanceViewModel : ObservableObject
     {
-        private List<BranchOption> _branchOptions;
-        private RelayCommand _goCommand;
-        private RelayCommand _cancelCommand;
-        public IDialogWindow _view;
-        private ViewModel _vm;
+        private List<BranchOption>? _branchOptions;
+        private RelayCommand? _goCommand;
+        private RelayCommand? _cancelCommand;
+        public IDialogWindow? _view;
+        private ViewModel? _vm;
 
         public BalanceViewModel(IDialogWindow view, Core.ViewModel vm)
         {

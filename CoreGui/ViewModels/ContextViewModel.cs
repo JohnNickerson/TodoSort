@@ -11,19 +11,19 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
     public class ContextViewModel : ObservableObject
     {
         #region Fields
-        public ITaskListView View { get; set; }
-        private string _title;
-        private ISearchSpecification<ActionItem> _searchSpecification;
-        private string _dateColumnTitle;
+        public ITaskListView? View { get; set; }
+        private string? _title;
+        private ISearchSpecification<ActionItem>? _searchSpecification;
+        private string? _dateColumnTitle;
         private bool _dateVisible;
-        private RelayCommand<ContextViewModel> _moveAllCommand;
+        private RelayCommand<ContextViewModel>? _moveAllCommand;
         #endregion
 
         #region Methods
-        private void MoveAllExecuted(ContextViewModel fromContext)
+        private void MoveAllExecuted(ContextViewModel? fromContext)
         {
             if (fromContext != null)
-                ParentVm.MoveAll(fromContext.Title, _title);
+                ParentVm?.MoveAll(fromContext.Title, _title);
         }
         #endregion
 
@@ -74,9 +74,9 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
 
         public bool IsSearch => Title.Equals("Search", StringComparison.CurrentCultureIgnoreCase);
 
-        public List<ContextViewModel> AllOtherContexts { get; set; }
+        public List<ContextViewModel>? AllOtherContexts { get; set; }
 
-        public MainViewModel ParentVm { get; set; }
+        public MainViewModel? ParentVm { get; set; }
 
         public bool CanMoveFrom { get; set; } = true;
         #endregion

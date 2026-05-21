@@ -16,16 +16,16 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
     {
         #region Fields
 
-        private RelayCommand _editCommand;
-        private RelayCommand<TimeSpan?> _deferCommand;
-        private RelayCommand _deferUntilCommand;
-        private RelayCommand _deleteCommand;
-        private RelayCommand _fixTitleCommand;
-        private RelayCommand _copyUrlCommand;
-        private RelayCommand<string> _openUrlCommand;
-        private RelayCommand _bumpCommand;
-        private RelayCommand<ContextViewModel> _moveToContextCommand;
-        private RelayCommand _maskItemCommand;
+        private RelayCommand? _editCommand;
+        private RelayCommand<TimeSpan?>? _deferCommand;
+        private RelayCommand? _deferUntilCommand;
+        private RelayCommand? _deleteCommand;
+        private RelayCommand? _fixTitleCommand;
+        private RelayCommand? _copyUrlCommand;
+        private RelayCommand<string>? _openUrlCommand;
+        private RelayCommand? _bumpCommand;
+        private RelayCommand<ContextViewModel>? _moveToContextCommand;
+        private RelayCommand? _maskItemCommand;
 
         #endregion // Fields
 
@@ -41,7 +41,7 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
 
         #region Methods
 
-        protected void RaisePropertyChanged([CallerMemberName] string propertyName = null)
+        protected void RaisePropertyChanged([CallerMemberName] string? propertyName = null)
         {
             base.OnPropertyChanged(propertyName);
 
