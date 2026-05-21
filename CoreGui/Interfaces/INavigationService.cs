@@ -10,7 +10,7 @@ public interface INavigationService
     void CopyToClipboard(string v);
     AddUrlDialogResult ShowAddUrlView(MainViewModel mainViewModel);
     void ShowBalanceView(ViewModel api);
-    ItemDialogResult ShowEditView(MainViewModel mainViewModel);
+    ItemDialogResult ShowEditView(MainViewModel mainViewModel, ActionViewModel? item);
     FileDialogResult ShowImportFileDialog(ImportFileType fileType);
     void ShowImportView(ViewModel api);
     bool? ShowMessageBox(string message, string title, bool allowCancel = false);

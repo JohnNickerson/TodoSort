@@ -65,8 +65,8 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
         private string? _statusMessage;
         private DateTime? _lastDeferredCheckDate;
         private ObservableCollection<string>? _recentFilesList;
-        private INavigationService? _navigationService;
-        private ISettings? _settings;
+        private INavigationService _navigationService;
+        private ISettings _settings;
 
         #endregion
 
@@ -493,7 +493,7 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
                 return;
             }
             // Show the Edit view.
-            var result = _navigationService.ShowEditView(this);
+            var result = _navigationService.ShowEditView(this, null);
             if (result.DialogResult.HasValue && result.DialogResult.Value)
             {
                 var item = new ActionItem

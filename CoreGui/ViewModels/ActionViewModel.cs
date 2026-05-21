@@ -275,7 +275,7 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
 
         public void EditExecuted()
         {
-            var result = Api.NavigationService.ShowEditView(Api);
+            var result = Api.NavigationService.ShowEditView(Api, this);
             var contextChanged = false;
             if (result.DialogResult.HasValue && result.DialogResult.Value)
             {

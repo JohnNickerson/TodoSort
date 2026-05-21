@@ -36,10 +36,10 @@ public class NavigationService : INavigationService
         balanceView.ShowDialog();
     }
 
-    public ItemDialogResult ShowEditView(MainViewModel mainViewModel)
+    public ItemDialogResult ShowEditView(MainViewModel mainViewModel, ActionViewModel? item)
     {
         var editWindow = new EditItemView();
-        var editVm = new EditViewModel(mainViewModel, editWindow, mainViewModel.SelectedItem);
+        var editVm = new EditViewModel(mainViewModel, editWindow, item);
         editWindow.DataContext = editVm;
         var result = editWindow.ShowDialog(mainViewModel.Window);
         return new ItemDialogResult { DialogResult = result, Title = editVm.Title, Context = editVm.Context, Notes = editVm.Notes, Tags = editVm.Tags, ProjectId = editVm.Project?.ID, IsDeferred = editVm.IsDeferred, TickleDate = editVm.TickleDate };
