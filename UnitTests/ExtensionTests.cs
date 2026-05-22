@@ -19,6 +19,7 @@ public class ExtensionTests
         Assert.Equal("token3", tokens[2]);
     }
 
+    [Fact]
     public void Test_Tokenise_With_Quotes_ReturnsTokens()
     {
         // Arrange

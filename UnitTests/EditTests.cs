@@ -51,7 +51,7 @@ public class EditTests
 
         var editedNotes = string.Join(Environment.NewLine, new[] { "First line", "Second line" });
         navigationServiceMock
-            .Setup(n => n.ShowEditView(fakeMainViewModel))
+            .Setup(n => n.ShowEditView(fakeMainViewModel, actionViewModel))
             .Returns(new ItemDialogResult
             {
                 DialogResult = true,
