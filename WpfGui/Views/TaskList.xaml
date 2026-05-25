@@ -135,10 +135,14 @@
                 <Button Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2" Content="Go" Margin="3" MaxWidth="50" Command="{Binding ApplySearchCommand}" IsDefault="{Binding Path=SearchExpanded}"/>
             </Grid>
         </Expander>
-        <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal">
-            <TextBlock Text="Count: "/>
-            <TextBlock Text="{Binding Path=Items.Count}"/>
-        </StackPanel>
+        <Border Grid.Row="2"
+                Grid.Column="1"
+                Padding="3">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Count: "/>
+                <TextBlock Text="{Binding Path=Items.Count}"/>
+            </StackPanel>
+        </Border>
         <ListView Grid.Row="3" Grid.Column="1" ItemsSource="{Binding Path=Items}" SelectedItem="{Binding Path=SelectedItem}" MouseDoubleClick="OnMouseDoubleClick">
             <ListView.Resources>
                 <ContextMenu x:Key="ItemContextMenu">
