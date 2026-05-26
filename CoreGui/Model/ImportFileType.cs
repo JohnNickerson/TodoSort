@@ -5,6 +5,7 @@ namespace AssimilationSoftware.TodoSort.CoreGui.Model
         TodoSort,
         Instapaper,
         TodoSortFolder,
+        URLs,
         Unknown
     }
 }

@@ -44,6 +44,9 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
                 case ImportFileType.Instapaper:
                     importer = new InstapaperImporter(Filename);
                     break;
+                case ImportFileType.URLs:
+                    importer = new RawUrlsImporter(Filename);
+                    break;
             }
             if (importer != null && importer.IsValid)
             {
