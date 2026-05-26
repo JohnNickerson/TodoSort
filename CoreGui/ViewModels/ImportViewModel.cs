@@ -4,6 +4,7 @@ using System.Windows.Input;
 using AssimilationSoftware.TodoSort.Core;
 using AssimilationSoftware.TodoSort.Core.Import;
 using AssimilationSoftware.TodoSort.CoreGui.Interfaces;
+using AssimilationSoftware.TodoSort.CoreGui.Model;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
@@ -111,13 +112,5 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
         public ICommand CancelCommand => _cancelCommand ?? (_cancelCommand = new RelayCommand(() => _view.Close()));
 
         public ICommand BrowseCommand => _browseCommand ?? (_browseCommand = new RelayCommand(BrowseExecuted));
-    }
-
-    public enum ImportFileType
-    {
-        TodoSort,
-        Instapaper,
-        TodoSortFolder,
-        Unknown
     }
 }

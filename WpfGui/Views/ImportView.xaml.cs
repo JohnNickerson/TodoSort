@@ -1,5 +1,7 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using AssimilationSoftware.TodoSort.CoreGui.Interfaces;
+using AssimilationSoftware.TodoSort.CoreGui.Model;
 
 namespace AssimilationSoftware.TodoSort.WpfGui.Views
 {
@@ -11,6 +13,7 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Views
         public ImportView()
         {
             InitializeComponent();
+            FormatComboBox.ItemsSource = Enum.GetValues(typeof(ImportFileType));
         }
 
         public bool? ShowDialog(ITaskListView parent)
