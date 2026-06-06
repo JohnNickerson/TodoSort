@@ -5,7 +5,7 @@ TodoSort is a task list and reading list app with an emphasis on priority. It st
 # Features
 
 - Organise items by category and mark with "type" icons.
-- Sort by title, upvotes, or "order" tag.
+- Sort by title, upvotes, created date, or "order" tag.
 - Arrange items into ordered projects.
 - Prioritise items by comparing two at a time.
 - Search by combinations of keyword, tag, project, and category.
@@ -246,3 +246,6 @@ TodoSort is a task list and reading list app with an emphasis on priority. It st
 	- Some test and code refactoring updates.
 - 2026-05-20: Build 1.10.0.0
 	- Move ViewModels into a separate project for unit testing.
+- 2026-05-27: Build 1.10.1.0
+	- Fix import view.
+	- Fix context entry in Add URL view.
