@@ -136,17 +136,13 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
 
                 if (_api?.SomedayItems != null)
                 {
-                    var undefers = _api.SomedayItems.Where(s => s.TickleDate <= DateTime.Today).Select(u => u.Title).ToArray();
+                    var undefers = _api.SomedayItems.Where(s => s.TickleDate <= DateTime.Today).ToArray();
                     if (undefers.Any())
                     {
-                        var titleList = string.Join(Environment.NewLine, undefers);
-                        // Confirm.
-                        if (_navigationService.ShowMessageBox(
-                            $"There are deferred items ready to return to the main lists:\n{titleList}\n Do you want to process them now?",
-                                "Auto-undefer") ?? true)
-                        {
-                            Cleanup();
-                        }
+                        // Just undefer them without asking, but display the titles of the items that were undeferred in the status message.
+                        var titleList = string.Join(", ", undefers.Select(u => u.Title));
+                        _api.Undefer(_defaultContext, undefers);
+                        StatusMessage = $"Undeferred items: {titleList}";
                     }
                 }
 
