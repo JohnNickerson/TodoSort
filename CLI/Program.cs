@@ -347,7 +347,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             SetUniversalOptions(fixOptions, vm);
 
             vm.SearchSpecification = fixOptions.GetSearchSpecification(repo);
-            var client = new WebClient(); // new RedirectWebClient();
+            var client = new HttpClient(); // new RedirectWebClient();
 
             var totalCount = 0;
             decimal progress = 0;
@@ -357,7 +357,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                 progress++;
                 try
                 {
-                    var source = client.DownloadString(tem.Tags["url"]);
+                    var source = client.GetStringAsync(tem.Tags["url"]).Result;
                     //// Get the redirected URL, if any.
                     //Debug.WriteLine(client.ResponseUri.OriginalString);
                     //if (client.ResponseUri?.OriginalString != tem.Tags["url"])
@@ -442,9 +442,10 @@ namespace AssimilationSoftware.TodoSort.CLI
 
             // Save settings.
             FolderSettings.SaveTo(settingsPath, initSettings);
-            if (!Directory.Exists(Path.GetDirectoryName(initOpts.TodoFile)) && AnsiConsole.Confirm($"{initOpts.TodoFile} does not exist. Create it?", false))
+            var dirName = Path.GetDirectoryName(initOpts.TodoFile);
+            if (dirName is not null && !Directory.Exists(dirName) && AnsiConsole.Confirm($"{initOpts.TodoFile} does not exist. Create it?", false))
             {
-                Directory.CreateDirectory(Path.GetDirectoryName(initOpts.TodoFile));
+                Directory.CreateDirectory(dirName);
             }
         }
 
