@@ -138,15 +138,15 @@ namespace AssimilationSoftware.TodoSort.CLI
             TidyUp(vm, repo);
         }
 
-        private static void Dedupe(DedupeOptions ddup, ViewModel vm, TodoRepository repo)
+        private static void Dedupe(DedupeOptions dupe, ViewModel vm, TodoRepository repo)
         {
-            SetUniversalOptions(ddup, vm);
+            SetUniversalOptions(dupe, vm);
 
             vm.SearchSpecification = new TrueSpecification<ActionItem>();
-            foreach (var duptit in vm.GetDuplicateTitles())
+            foreach (var duplicate in vm.GetDuplicateTitles())
             {
                 // Search by title
-                vm.SearchSpecification = new ExactPropertyValueSpecification<ActionItem, string>(i => i.Title, duptit);
+                vm.SearchSpecification = new ExactPropertyValueSpecification<ActionItem, string>(i => i.Title, duplicate);
                 // Quick hack: If we have two items with the same title but different type tags, skip them.
                 if (vm.SearchResults.Count() == 2 &&
                     vm.SearchResults.All(i => i.Tags.ContainsKey("type")) &&
@@ -169,12 +169,12 @@ namespace AssimilationSoftware.TodoSort.CLI
                     }
                 }
             }
-            if (!string.IsNullOrEmpty(ddup.Tag))
+            if (!string.IsNullOrEmpty(dupe.Tag))
             {
-                foreach (var duptag in vm.GetDuplicateTags(ddup.Tag))
+                foreach (var dupeTag in vm.GetDuplicateTags(dupe.Tag))
                 {
                     // Search by tag
-                    vm.SearchSpecification = new TagValueSpecification(ddup.Tag, duptag);
+                    vm.SearchSpecification = new TagValueSpecification(dupe.Tag, dupeTag);
                     // Present options for merging
                     // Get user input.
                     Console.WriteLine();
@@ -210,17 +210,17 @@ namespace AssimilationSoftware.TodoSort.CLI
             TidyUp(vm, repo);
         }
 
-        private static void Defer(DeferSubOptions deferopts, ViewModel vm, TodoRepository repo)
+        private static void Defer(DeferSubOptions deferOpts, ViewModel vm, TodoRepository repo)
         {
-            SetUniversalOptions(deferopts, vm);
+            SetUniversalOptions(deferOpts, vm);
 
-            vm.SearchSpecification = deferopts.SearchSpecification;
-            selected = Disambiguate(vm.SearchResults, repo, !string.IsNullOrEmpty(deferopts.ItemId));
+            vm.SearchSpecification = deferOpts.SearchSpecification;
+            selected = Disambiguate(vm.SearchResults, repo, !string.IsNullOrEmpty(deferOpts.ItemId));
             if (selected != null)
             {
-                if (deferopts.TickleDate.HasValue)
+                if (deferOpts.TickleDate.HasValue)
                 {
-                    vm.Defer(selected, deferopts.TickleDate.Value);
+                    vm.Defer(selected, deferOpts.TickleDate.Value);
                 }
                 else
                 {
@@ -241,13 +241,13 @@ namespace AssimilationSoftware.TodoSort.CLI
             //TidyUp(vm, repo);
         }
 
-        private static void Delete(DeleteOptions argsubs, ViewModel vm, TodoRepository repo)
+        private static void Delete(DeleteOptions delOpts, ViewModel vm, TodoRepository repo)
         {
-            SetUniversalOptions(argsubs, vm);
+            SetUniversalOptions(delOpts, vm);
 
             // Find a matching item to delete.
-            vm.SearchSpecification = argsubs.SearchSpecification;
-            selected = Disambiguate(vm.SearchResults, repo, !string.IsNullOrEmpty(argsubs.ItemId));
+            vm.SearchSpecification = delOpts.SearchSpecification;
+            selected = Disambiguate(vm.SearchResults, repo, !string.IsNullOrEmpty(delOpts.ItemId));
             if (selected != null) vm.Delete(selected);
 
             TidyUp(vm, repo);
@@ -270,16 +270,16 @@ namespace AssimilationSoftware.TodoSort.CLI
             TidyUp(vm, repo);
         }
 
-        private static void Done(DoneSubOptions doneopts, ViewModel vm, TodoRepository repo)
+        private static void Done(DoneSubOptions doneOpts, ViewModel vm, TodoRepository repo)
         {
-            SetUniversalOptions(doneopts, vm);
+            SetUniversalOptions(doneOpts, vm);
 
             // If there is a next action, create a new item and add it to the correct context.
-            vm.SearchSpecification = doneopts.SearchSpecification;
-            selected = Disambiguate(vm.SearchResults, repo, !string.IsNullOrEmpty(doneopts.ItemId));
+            vm.SearchSpecification = doneOpts.SearchSpecification;
+            selected = Disambiguate(vm.SearchResults, repo, !string.IsNullOrEmpty(doneOpts.ItemId));
             if (selected != null)
             {
-                vm.MarkDone(doneopts.DoneDate, selected);
+                vm.MarkDone(doneOpts.DoneDate, selected);
             }
 
             TidyUp(vm, repo);
@@ -433,18 +433,18 @@ namespace AssimilationSoftware.TodoSort.CLI
             TidyUp(vm, repo);
         }
 
-        private static void Init(InitSubOptions initty)
+        private static void Init(InitSubOptions initOpts)
         {
-            var initsettings = new FolderSettings
+            var initSettings = new FolderSettings
             {
-                TodoPath = initty.TodoFile
+                TodoPath = initOpts.TodoFile
             };
 
             // Save settings.
-            FolderSettings.SaveTo(settingsPath, initsettings);
-            if (!Directory.Exists(Path.GetDirectoryName(initty.TodoFile)) && AnsiConsole.Confirm($"{initty.TodoFile} does not exist. Create it?", false))
+            FolderSettings.SaveTo(settingsPath, initSettings);
+            if (!Directory.Exists(Path.GetDirectoryName(initOpts.TodoFile)) && AnsiConsole.Confirm($"{initOpts.TodoFile} does not exist. Create it?", false))
             {
-                Directory.CreateDirectory(Path.GetDirectoryName(initty.TodoFile));
+                Directory.CreateDirectory(Path.GetDirectoryName(initOpts.TodoFile));
             }
         }
 
@@ -553,7 +553,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                             vm.Rename(selected, newTitle);
                         }
                     }
-                    if (openTagOptions.Retag)
+                    if (openTagOptions.ReTag)
                     {
                         TagItem(vm, selected);
                     }
@@ -650,7 +650,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             {
                 vm.Rename(selected, renameOptions.NewTitle);
                 Console.WriteLine("Item renamed.");
-                if (renameOptions.Retag)
+                if (renameOptions.ReTag)
                 {
                     TagItem(vm, selected);
                 }
@@ -754,29 +754,29 @@ namespace AssimilationSoftware.TodoSort.CLI
             TidyUp(vm, repo);
         }
 
-        private static void Someday(SomedaySubOptions somesub, ViewModel vm, TodoRepository repo)
+        private static void Someday(SomedaySubOptions someSub, ViewModel vm, TodoRepository repo)
         {
-            SetUniversalOptions(somesub, vm);
+            SetUniversalOptions(someSub, vm);
 
-            verbose = somesub.Verbose;
-            // Display the whole Someday file, [somesub.PageSize] items at a time, and either delete or do one per listing.
+            verbose = someSub.Verbose;
+            // Display the whole Someday file, [someSub.PageSize] items at a time, and either delete or do one per listing.
             ActionItem? undefer = null;
-            if (somesub.PageSize <= 0) somesub.PageSize = 1;
-            if (somesub.PageSize > 10) somesub.PageSize = 10;
-            var someitems = from s in vm.SomedayItems where !s.TickleDate.HasValue || somesub.IncludeTickle select s;
-            for (var offset = 0; offset <= someitems.Count(); offset += somesub.PageSize)
+            if (someSub.PageSize <= 0) someSub.PageSize = 1;
+            if (someSub.PageSize > 10) someSub.PageSize = 10;
+            var someItems = from s in vm.SomedayItems where !s.TickleDate.HasValue || someSub.IncludeTickle select s;
+            for (var offset = 0; offset <= someItems.Count(); offset += someSub.PageSize)
             {
                 Console.Clear();
-                for (var index = 0; index < somesub.PageSize && offset + index < someitems.Count(); index++)
+                for (var index = 0; index < someSub.PageSize && offset + index < someItems.Count(); index++)
                 {
-                    PrintItem(someitems.ElementAt(offset + index), index, repo, somesub.NSFW);
+                    PrintItem(someItems.ElementAt(offset + index), index, repo, someSub.NSFW);
                 }
                 var choice = Console.ReadKey().KeyChar;
                 Console.WriteLine();
                 int dex;
                 if (Int32.TryParse(choice.ToString(), out dex))
                 {
-                    undefer = someitems.ElementAt(offset + dex);
+                    undefer = someItems.ElementAt(offset + dex);
                 }
                 if (undefer != null)
                 {
@@ -788,7 +788,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             TidyUp(vm, repo);
         }
 
-        
+
 
         private static void TagAll(TagAllSubOptions tagAllOptions, ViewModel vm, TodoRepository repo)
         {
@@ -1016,13 +1016,13 @@ namespace AssimilationSoftware.TodoSort.CLI
             TidyUp(vm, repo);
         }
 
-        private static void SetUniversalOptions(object argsubs, ViewModel vm)
+        private static void SetUniversalOptions(object argSubs, ViewModel vm)
         {
             // Set universal options.
-            if (argsubs is UniversalOptions options)
+            if (argSubs is UniversalOptions options)
             {
                 verbose = options.Verbose;
-                if (!(argsubs is MultiSearchSubOptions))
+                if (!(argSubs is MultiSearchSubOptions))
                 {
                     vm.ShowHeadOnly = !options.ShowAllItems;
                 }
@@ -1033,9 +1033,9 @@ namespace AssimilationSoftware.TodoSort.CLI
             }
         }
 
-        private static int Process(ProcessOptions argsubs, ViewModel vm, TodoRepository repo)
+        private static int Process(ProcessOptions argSubs, ViewModel vm, TodoRepository repo)
         {
-            SetUniversalOptions(argsubs, vm);
+            SetUniversalOptions(argSubs, vm);
 
             // Assign revision IDs where none are found.
             repo.FindAll();
@@ -1049,7 +1049,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             repo.SaveChanges();
 
             // Go over the @someday items and look for tickle dates.
-            forceSave = argsubs.Force;
+            forceSave = argSubs.Force;
             vm.SomedaySearchSpecification = new TickleDateSearchSpecification(null, DateTime.Today);
             vm.Undefer("inbox", vm.SomedaySearchResults.ToArray());
 
@@ -1063,8 +1063,8 @@ namespace AssimilationSoftware.TodoSort.CLI
                 PrintItem(first, null, repo);
                 Console.WriteLine();
                 PrintContexts(vm);
-                var newcontext = Console.ReadLine();
-                vm.SetContext(first, newcontext);
+                var newContext = Console.ReadLine();
+                vm.SetContext(first, newContext);
                 Console.WriteLine();
             }
 
@@ -1081,21 +1081,21 @@ namespace AssimilationSoftware.TodoSort.CLI
                     Console.WriteLine("What is the next action required on this project?");
                     var first = projects[i];
                     PrintItem(first, null, repo);
-                    var nextaction = Console.ReadLine();
+                    var nextAction = Console.ReadLine();
                     Console.WriteLine("...and to what context does it belong?");
                     PrintContexts(vm);
-                    var newcontext = Console.ReadLine();
-                    if (nextaction == newcontext)
+                    var newContext = Console.ReadLine();
+                    if (nextAction == newContext)
                     {
                         // Wrote something like "someday"/"someday". Assume it is a new context.
-                        vm.SetContext(first, newcontext);
+                        vm.SetContext(first, newContext);
                     }
                     else
                     {
                         var next = new ActionItem
                         {
-                            Context = newcontext,
-                            Title = nextaction,
+                            Context = newContext,
+                            Title = nextAction,
                             ProjectId = first.ID
                         };
                         vm.AddItem(next);
@@ -1142,32 +1142,32 @@ namespace AssimilationSoftware.TodoSort.CLI
             TidyUp(vm, repo);
         }
 
-        private static void AdvancedSearch(AdvancedSearchOptions argsubs, ViewModel vm, TodoRepository repo)
+        private static void AdvancedSearch(AdvancedSearchOptions argSubs, ViewModel vm, TodoRepository repo)
         {
-            SetUniversalOptions(argsubs, vm);
+            SetUniversalOptions(argSubs, vm);
 
-            vm.SearchSpecification = argsubs.SearchSpecification;
-            PrintItems("title", vm.SearchResults, repo, argsubs.NSFW);
+            vm.SearchSpecification = argSubs.SearchSpecification;
+            PrintItems("title", vm.SearchResults, repo, argSubs.NSFW);
 
             TidyUp(vm, repo);
         }
 
-        private static void Balance(BalanceOptions balopts, ViewModel vm, TodoRepository repo)
+        private static void Balance(BalanceOptions balanceOpts, ViewModel vm, TodoRepository repo)
         {
-            SetUniversalOptions(balopts, vm);
-            if (balopts.Verbose)
+            SetUniversalOptions(balanceOpts, vm);
+            if (balanceOpts.Verbose)
             {
                 // Show progress percentage if in verbose mode.
                 vm.PropertyChanged += VmOnPropertyChanged;
             }
             // Validate the branching factor: must be greater than zero.
-            if (balopts.BranchFactor > 0)
+            if (balanceOpts.BranchFactor > 0)
             {
-                vm.SearchSpecification = balopts.GetSearchSpecification(repo);
+                vm.SearchSpecification = balanceOpts.GetSearchSpecification(repo);
                 var depths = vm.GetDepthsView();
                 var vine = vm.SearchResults.OrderBy(i => depths[i.ID]).ThenByDescending(i => i.Upvotes).ToArray();
-                vm.Balance(vine, balopts.BranchFactor);
-                if (balopts.Commit)
+                vm.Balance(vine, balanceOpts.BranchFactor);
+                if (balanceOpts.Commit)
                 {
                     // In large lists, rather than writing out thousands of changes, then reading them again to commit, just commit everything now.
                     var commitCount = repo.CommitChanges();
@@ -1283,8 +1283,8 @@ namespace AssimilationSoftware.TodoSort.CLI
                             Console.WriteLine("To which context should this item go?");
                             // List contexts.
                             PrintContexts(vm);
-                            var newcontext = Console.ReadLine();
-                            vm.Undefer(newcontext, item);
+                            var newContext = Console.ReadLine();
+                            vm.Undefer(newContext, item);
                         }
                         return;
                     case '2':
@@ -1309,11 +1309,11 @@ namespace AssimilationSoftware.TodoSort.CLI
                         break;
                     case '4':
                         Console.WriteLine("When should this item reappear in the inbox?");
-                        var dateinput = Console.ReadLine();
-                        DateTime parseddate;
-                        if (DateTime.TryParse(dateinput, out parseddate))
+                        var dateInput = Console.ReadLine();
+                        DateTime parsedDate;
+                        if (DateTime.TryParse(dateInput, out parsedDate))
                         {
-                            vm.Defer(item, parseddate);
+                            vm.Defer(item, parsedDate);
                         }
                         break;
                     case '6':
@@ -1346,52 +1346,52 @@ namespace AssimilationSoftware.TodoSort.CLI
             } while (!string.IsNullOrEmpty(tagName));
         }
 
-        private static IOrderedEnumerable<ActionItem> ApplySort(string sorttag, IEnumerable<ActionItem> list, SortOrder sort = SortOrder.Ascending)
+        private static IOrderedEnumerable<ActionItem> ApplySort(string sortTag, IEnumerable<ActionItem> list, SortOrder sort = SortOrder.Ascending)
         {
-            var sortedlist = sort == SortOrder.Descending ? list.OrderByDescending(a => a.Context) : from a in list orderby a.Context select a;
-            if (sorttag == "done-date")
+            var sortedList = sort == SortOrder.Descending ? list.OrderByDescending(a => a.Context) : from a in list orderby a.Context select a;
+            if (sortTag == "done-date")
             {
                 if (sort == SortOrder.Descending)
-                    sortedlist = sortedlist.ThenByDescending(i => i.DoneDate ?? DateTime.Now);
+                    sortedList = sortedList.ThenByDescending(i => i.DoneDate ?? DateTime.Now);
                 else
-                    sortedlist = sortedlist.ThenBy(i => i.DoneDate ?? DateTime.Now);
+                    sortedList = sortedList.ThenBy(i => i.DoneDate ?? DateTime.Now);
             }
-            else if (sorttag == "tickle-date")
+            else if (sortTag == "tickle-date")
             {
                 if (sort == SortOrder.Descending)
-                    sortedlist = sortedlist.ThenByDescending(i => i.TickleDate ?? DateTime.Now);
+                    sortedList = sortedList.ThenByDescending(i => i.TickleDate ?? DateTime.Now);
                 else
-                    sortedlist = sortedlist.ThenBy(i => i.TickleDate ?? DateTime.Now);
+                    sortedList = sortedList.ThenBy(i => i.TickleDate ?? DateTime.Now);
             }
-            else if (sorttag == "upvotes")
+            else if (sortTag == "upvotes")
             {
                 if (sort == SortOrder.Descending)
-                    sortedlist = sortedlist.ThenByDescending(i => i.Upvotes);
+                    sortedList = sortedList.ThenByDescending(i => i.Upvotes);
                 else
-                    sortedlist = sortedlist.ThenBy(i => i.Upvotes);
+                    sortedList = sortedList.ThenBy(i => i.Upvotes);
             }
-            else if (sorttag == "title" || string.IsNullOrEmpty(sorttag))
+            else if (sortTag == "title" || string.IsNullOrEmpty(sortTag))
             {
                 if (sort == SortOrder.Descending)
-                    sortedlist = sortedlist.ThenByDescending(i => i.Title);
+                    sortedList = sortedList.ThenByDescending(i => i.Title);
                 else
-                    sortedlist = sortedlist.ThenBy(i => i.Title);
+                    sortedList = sortedList.ThenBy(i => i.Title);
             }
             else
             {
                 if (sort == SortOrder.Descending)
-                    sortedlist = sortedlist.ThenByDescending(a => a.Tags.ContainsKey(sorttag) ? a.Tags[sorttag] : "0", new SemiNumericComparer());
+                    sortedList = sortedList.ThenByDescending(a => a.Tags.ContainsKey(sortTag) ? a.Tags[sortTag] : "0", new SemiNumericComparer());
                 else
-                    sortedlist = sortedlist.ThenBy(a => a.Tags.ContainsKey(sorttag) ? a.Tags[sorttag] : "0", new SemiNumericComparer());
+                    sortedList = sortedList.ThenBy(a => a.Tags.ContainsKey(sortTag) ? a.Tags[sortTag] : "0", new SemiNumericComparer());
             }
-            return sortedlist;
+            return sortedList;
         }
 
-        private static void PrintItems(string sorttag, IEnumerable<ActionItem> list, ITodoRepository repo, bool nsfw = false)
+        private static void PrintItems(string sortTag, IEnumerable<ActionItem> list, ITodoRepository repo, bool nsfw = false)
         {
             var last_context = string.Empty;
-            var sortedlist = ApplySort(sorttag, list);
-            foreach (var i in sortedlist)
+            var sortedList = ApplySort(sortTag, list);
+            foreach (var i in sortedList)
             {
                 if (i.Context != last_context)
                 {
@@ -1524,7 +1524,7 @@ namespace AssimilationSoftware.TodoSort.CLI
         /// </remarks>
         private static void PrintItem(ActionItem i, int? index, ITodoRepository repo, bool nsfw = false)
         {
-            var wrapwidth = Console.WindowWidth - 1;
+            var wrapWidth = Console.WindowWidth - 1;
             var title = FormatTitle(i, nsfw);
             if (i.DoneDate.HasValue)
             {
@@ -1546,11 +1546,11 @@ namespace AssimilationSoftware.TodoSort.CLI
                 prefix.Append(index);
                 prefix.Append(':');
                 prefix.Append(' ', Math.Max(4 - prefix.Length, 0));
-                WrapOutput(prefix.ToString(), title, wrapwidth);
+                WrapOutput(prefix.ToString(), title, wrapWidth);
             }
             else
             {
-                WrapOutput("-   ", title, wrapwidth);
+                WrapOutput("-   ", title, wrapWidth);
             }
             if (verbose)
             {
@@ -1558,47 +1558,47 @@ namespace AssimilationSoftware.TodoSort.CLI
                 {
                     foreach (var n in i.Notes)
                     {
-                        WrapOutput("        - ", n, wrapwidth);
+                        WrapOutput("        - ", n, wrapWidth);
                     }
                 }
                 if (i.Tags?.Count > 0)
                 {
                     foreach (var k in i.Tags)
                     {
-                        WrapOutput($"        #{k.Key}:", k.Value, wrapwidth);
+                        WrapOutput($"        #{k.Key}:", k.Value, wrapWidth);
                     }
                 }
                 if (i.Upvotes > 0)
                 {
-                    WrapOutput("        #upvotes:", i.Upvotes.ToString(), wrapwidth);
+                    WrapOutput("        #upvotes:", i.Upvotes.ToString(), wrapWidth);
                 }
                 if (i.DoneDate.HasValue)
                 {
-                    WrapOutput("        #done-date:", i.DoneDate.Value.ToString("yyyy-MM-dd"), wrapwidth);
+                    WrapOutput("        #done-date:", i.DoneDate.Value.ToString("yyyy-MM-dd"), wrapWidth);
                 }
                 if (i.TickleDate.HasValue)
                 {
-                    WrapOutput("        #tickle-date:", i.TickleDate.Value.ToString("yyyy-MM-dd"), wrapwidth);
+                    WrapOutput("        #tickle-date:", i.TickleDate.Value.ToString("yyyy-MM-dd"), wrapWidth);
                 }
-                WrapOutput("        #ID:", i.ID.ToString(), wrapwidth);
+                WrapOutput("        #ID:", i.ID.ToString(), wrapWidth);
                 if (i.ProjectId != null)
                 {
-                    WrapOutput("        #project:", string.Format("{0} - {1}", i.ProjectId, i.GetProject(repo).Title), wrapwidth);
+                    WrapOutput("        #project:", string.Format("{0} - {1}", i.ProjectId, i.GetProject(repo).Title), wrapWidth);
                 }
-                WrapOutput("        #context:", i.Context, wrapwidth);
-                WrapOutput("        #last-modified:", i.LastModified.ToString("yyyy-MM-dd"), wrapwidth);
+                WrapOutput("        #context:", i.Context, wrapWidth);
+                WrapOutput("        #last-modified:", i.LastModified.ToString("yyyy-MM-dd"), wrapWidth);
             }
         }
 
         private static void WrapOutput(string indent, string content, int width)
         {
-            var printwidth = width - indent.Length;
+            var printWidth = width - indent.Length;
             var breaks = " \t-/=&+_";
             var line = new StringBuilder();
             line.Append(indent);
-            while (content.Length > printwidth)
+            while (content.Length > printWidth)
             {
-                var snip = Math.Min(printwidth, content.Length);
+                var snip = Math.Min(printWidth, content.Length);
                 for (var i = snip; i > 0; i--)
                 {
                     if (breaks.Contains(content[i]))
@@ -1617,28 +1617,28 @@ namespace AssimilationSoftware.TodoSort.CLI
             AnsiConsole.MarkupLine(content);
         }
 
-        private static ActionItem? Disambiguate(IEnumerable<ActionItem> todolist, ITodoRepository repo, bool autoAcceptOne = false, bool nsfw = false, bool includeCancel = false)
+        private static ActionItem? Disambiguate(IEnumerable<ActionItem> todoList, ITodoRepository repo, bool autoAcceptOne = false, bool nsfw = false, bool includeCancel = false)
         {
             ActionItem? selected = null;
 
             // Disambiguate or verify search results.
-            if (todolist.Count() == 0)
+            if (todoList.Count() == 0)
             {
                 Console.WriteLine("No search matches. No action will be taken.");
             }
-            else if (todolist.Count() == 1 && autoAcceptOne)
+            else if (todoList.Count() == 1 && autoAcceptOne)
             {
-                PrintItem(todolist.ElementAt(0), null, repo, nsfw);
+                PrintItem(todoList.ElementAt(0), null, repo, nsfw);
                 Console.WriteLine("Auto-accepting...");
-                selected = todolist.ElementAt(0);
+                selected = todoList.ElementAt(0);
             }
             else
             {
                 var prompt = new SelectionPrompt<ActionItem>()
-                    .Title($"{"search result".ToQuantity(todolist.Count())}. Choose one:")
+                    .Title($"{"search result".ToQuantity(todoList.Count())}. Choose one:")
                     .PageSize(10)
                     .MoreChoicesText("[grey](Move up and down to reveal more items)[/]")
-                    .AddChoices(todolist)
+                    .AddChoices(todoList)
                     .UseConverter(a => FormatTitle(a));
                 if (includeCancel)
                 {

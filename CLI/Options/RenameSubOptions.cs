@@ -9,6 +9,6 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
         public string? NewTitle { get; set; }
 
         [Option("retag", HelpText = "Apply new tags after opening.", Default = false)]
-        public bool Retag { get; set; }
+        public bool ReTag { get; set; }
     }
 }
