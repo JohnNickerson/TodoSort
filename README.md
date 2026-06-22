@@ -15,7 +15,7 @@ TodoSort is a task list and reading list app with an emphasis on priority. It st
 
 - 2018: Builds 0.9.10 to 1.0.7
   - GUI with live list updates, item editing, and "Recent Files" list.
-  - Ranking functionality, "Done/Someday" views, and improved import/export workflows.
+  - Ranking functionality, "Done/Snoozed" views, and improved import/export workflows.
 - 2019-01-24: Build 1.1.3 
   - Title fixing and search improvements.
 - 2019-01-31: Build 1.1.3 
@@ -40,7 +40,7 @@ TodoSort is a task list and reading list app with an emphasis on priority. It st
   - Double-click to edit.
   - Display item count.
   - Maroon back-end (v0.1.2.1)
-  - Fix for done items deferring with projects.
+  - Fix for done items snoozing with projects.
 - 2019-04-25: Build 1.2.1.2
   - Maroon 0.1.3.2 back-end
   - Fix for rapid-clicking crashes.
@@ -59,7 +59,7 @@ TodoSort is a task list and reading list app with an emphasis on priority. It st
   - Patched to Maroon 0.2.0.3 for commit performance.
 - 2019-06-20: Build 1.3.2
   - Search by project and context.
-  - Fix for editing deferred items.
+  - Fix for editing snoozed items.
 - 2019-07-04: Build 1.3.3
   - UI and bug fixes.
 - 2019-08-14: Build 1.3.4
@@ -88,7 +88,7 @@ TodoSort is a task list and reading list app with an emphasis on priority. It st
   - Show deep results automatically in Search.
 - 2020-02-06: Build 1.3.10
   - Search from the keyword box by pressing "Enter".
-  - Removed obsolete "someday" and "done" arguments from CLI "init" command.
+  - Removed obsolete "snoozed" and "done" arguments from CLI "init" command.
 - 2020-02-27: Build 1.3.11
   - Added a default import context.
   - Changed to a folder browser when TodoSortFolder import type is selected.
@@ -124,7 +124,7 @@ TodoSort is a task list and reading list app with an emphasis on priority. It st
 - 2021-03-03: Build 1.4.3.1
   - Patched to fix null reference exception on bump operation.
 - 2021-03-18: Build 1.4.4.1
-  - Added "Defer Until..." context menu command for arbitrary defer dates.
+  - Added "Snooze Until..." context menu command for arbitrary snooze dates.
   - Added check for uncommitted changes when looking for data to reload.
 - 2021-04-06: Build 1.4.4.2
   - Fixed: changes were detected as new when saved, prompting reload.
@@ -171,7 +171,7 @@ TodoSort is a task list and reading list app with an emphasis on priority. It st
   - Added upvotes for zero-depth bump targets.
   - Fixed import bug for split-line titles.
 - 2024-02-01: Build 1.5.4.5
-  - Changed Someday context to show items with return dates first.
+  - Changed Snoozed context to show items with return dates first.
   - Disabled the GUI Rebalance command.
   - Moved item count under the search block for better visibility on long lists.
 - 2024-08-15: Build 1.6.0
@@ -203,7 +203,7 @@ TodoSort is a task list and reading list app with an emphasis on priority. It st
 - 2025-08-06: Build 1.7.2.0
 	- Use Spectre prompt for disambiguation.
 	- Add emoji for item types to console display.
-	- Colour-code tickle and done dates.
+	- Colour-code return and done dates.
 - 2025-08-07: Build 1.7.2.1
 	- Fix a Spectre display bug in ranking items.
 	- Use Spectre prompt for ranking in CLI.
@@ -233,7 +233,7 @@ TodoSort is a task list and reading list app with an emphasis on priority. It st
 - 2026-04-22: Build 1.9.0.0
 	- Remove CLI 'update' command.
 	- Move 'urls' format to 'import' command.
-	- Auto-return deferred items daily.
+	- Auto-return snoozed items daily.
 	- Fix configuration saving location.
 	- Prevent crash when opening a file.
 - 2026-04-29: Build 1.9.0.1

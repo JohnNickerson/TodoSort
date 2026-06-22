@@ -42,7 +42,7 @@ namespace AssimilationSoftware.TodoSort.Core.Export
                 }
                 if (n.TickleDate.HasValue)
                 {
-                    result.AppendLine(string.Format("\t\t\"tickleDate\": \"{0:yyyy-MM-dd}\",", n.TickleDate.Value));
+                    result.AppendLine(string.Format("\t\t\"returnDate\": \"{0:yyyy-MM-dd}\",", n.TickleDate.Value));
                 }
                 var actualNotes = n.Notes.Where(l => l.Length > 0);
                 if (actualNotes.Any())

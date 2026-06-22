@@ -22,7 +22,7 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
             _view = view;
             _vm = vm;
             var contexts = new List<BranchOption>();
-            foreach (var contextName in _vm.GetContextNames("Search", "someday", "done"))
+            foreach (var contextName in _vm.GetContextNames("Search", "snoozed", "done"))
             {
                 contexts.Add(new BranchOption
                 {

@@ -2,6 +2,6 @@
 
 namespace AssimilationSoftware.TodoSort.CLI.Options
 {
-    [Verb("undefer", HelpText = "Move an item from the Someday list to the main list.")]
-    public class UndeferOptions : SingleSearchSubOptions { }
+    [Verb("unsnooze", HelpText = "Move an item from the Snoozed list to the main list.")]
+    public class UnsnoozeOptions : SingleSearchSubOptions { }
 }

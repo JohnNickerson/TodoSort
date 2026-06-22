@@ -5,7 +5,7 @@ namespace UnitTests.Scaffolding;
 public class MockTodoRepository : AssimilationSoftware.TodoSort.Core.Data.ITodoRepository
 {
     private IFileSystem mockFileSystem;
-    private List<ActionItem> _somedayItems = new();
+    private List<ActionItem> _snoozedItems = new();
     private List<ActionItem> _doneItems = new();
     private List<ActionItem> _items = new();
 
@@ -15,7 +15,7 @@ public class MockTodoRepository : AssimilationSoftware.TodoSort.Core.Data.ITodoR
         this.mockFileSystem = mockFileSystem;
     }
 
-    public IEnumerable<ActionItem> SomedayItems => _somedayItems;
+    public IEnumerable<ActionItem> SnoozedItems => _snoozedItems;
 
     public IEnumerable<ActionItem> DoneItems => _doneItems;
 
@@ -47,7 +47,7 @@ public class MockTodoRepository : AssimilationSoftware.TodoSort.Core.Data.ITodoR
 
     public IEnumerable<ActionItem> FindAll()
     {
-        return _items.Concat(_doneItems).Concat(_somedayItems);
+        return _items.Concat(_doneItems).Concat(_snoozedItems);
     }
 
     public List<PendingChange<ActionItem>> FindConflicts()

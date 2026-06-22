@@ -19,7 +19,7 @@ namespace AssimilationSoftware.TodoSort.Core
         private bool _unsavedChanges;
 
         private ISearchSpecification<ActionItem> _todoSearchSpec;
-        private ISearchSpecification<ActionItem> _somedaySearchSpec;
+        private ISearchSpecification<ActionItem> _snoozedSearchSpec;
         private ISearchSpecification<ActionItem> _doneSearchSpec;
         private int _progressPercent;
 
@@ -56,7 +56,7 @@ namespace AssimilationSoftware.TodoSort.Core
 
         #region Properties
 
-        public List<ActionItem> SomedayItems => _repository.SomedayItems.ToList();
+        public List<ActionItem> SnoozedItems => _repository.SnoozedItems.ToList();
 
         public string SearchTerm
         {
@@ -110,33 +110,33 @@ namespace AssimilationSoftware.TodoSort.Core
             get => _todoSearchSpec ?? new TrueSpecification<ActionItem>();
             set
             {
-                // Always exclude "done" and "someday" contexts, now that we're working with just one list.
-                _todoSearchSpec = value.And(new NotSpecification<ActionItem>(new ContextSearchSpecification("done"), new ContextSearchSpecification("someday")));
+                // Always exclude "done" and "snoozed" contexts, now that we're working with just one list.
+                _todoSearchSpec = value.And(new NotSpecification<ActionItem>(new ContextSearchSpecification("done"), new ContextSearchSpecification("snoozed")));
                 RaisePropertyChanged("SearchSpecification", "SearchResults");
             }
         }
 
         /// <summary>
-        /// A search specification for someday items.
+        /// A search specification for snoozed items.
         /// </summary>
-        public ISearchSpecification<ActionItem> SomedaySearchSpecification
+        public ISearchSpecification<ActionItem> SnoozedSearchSpecification
         {
-            get => _somedaySearchSpec ?? new TrueSpecification<ActionItem>();
+            get => _snoozedSearchSpec ?? new TrueSpecification<ActionItem>();
             set
             {
-                _somedaySearchSpec = value;
-                RaisePropertyChanged("SomedaySearchSpecification", "SomedaySearchResults");
+                _snoozedSearchSpec = value;
+                RaisePropertyChanged("SnoozedSearchSpecification", "SnoozedSearchResults");
             }
         }
 
         /// <summary>
-        /// Results of searching the Someday collection.
+        /// Results of searching the Snoozed collection.
         /// </summary>
-        public IEnumerable<ActionItem> SomedaySearchResults
+        public IEnumerable<ActionItem> SnoozedSearchResults
         {
             get
             {
-                return SomedayItems.Where(s => SomedaySearchSpecification.IsSatisfiedBy(s));
+                return SnoozedItems.Where(s => SnoozedSearchSpecification.IsSatisfiedBy(s));
             }
         }
 
@@ -319,45 +319,45 @@ namespace AssimilationSoftware.TodoSort.Core
         }
 
         /// <summary>
-        /// Moves a list of items to the Someday list.
+        /// Moves a list of items to the Snoozed list.
         /// </summary>
         /// <param name="selected"></param>
-        public void Defer(params ActionItem[] selected)
+        public void Snooze(params ActionItem[] selected)
         {
-            Queue<ActionItem> toDefer = new Queue<ActionItem>(selected);
-            while (toDefer.Count > 0)
+            Queue<ActionItem> toSnooze = new Queue<ActionItem>(selected);
+            while (toSnooze.Count > 0)
             {
-                ActionItem i = toDefer.Dequeue();
-                if (i.Context != "someday")
+                ActionItem i = toSnooze.Dequeue();
+                if (i.Context != "snoozed")
                 {
                     i.Tags["previous-context"] = i.Context;
-                    i.Context = "someday";
+                    i.Context = "snoozed";
                 }
-                ResetPriorityParents(i); // To avoid hiding children while deferred.
+                ResetPriorityParents(i); // To avoid hiding children while snoozed.
                 _repository.Update(i);
 
-                // If this item was the project for another, defer that one too.
+                // If this item was the project for another, snooze that one too.
                 foreach (ActionItem c in _repository.GetProjectItems(i))
                 {
                     if (c.Context != "done")
                     {
-                        toDefer.Enqueue(c);
+                        toSnooze.Enqueue(c);
                     }
                 }
             }
-            RaisePropertyChanged("SearchResults", "SomedaySearchResults");
+            RaisePropertyChanged("SearchResults", "SnoozedSearchResults");
             UnsavedChanges = true;
         }
 
         /// <summary>
-        /// Moves an item from the Someday list to the main list.
+        /// Moves an item from the Snoozed list to the main list.
         /// </summary>
-        public void Undefer(string context, params ActionItem[] selection)
+        public void Unsnooze(string context, params ActionItem[] selection)
         {
-            Queue<ActionItem> toUndefer = new Queue<ActionItem>(selection);
-            while (toUndefer.Count > 0)
+            Queue<ActionItem> toUnsnooze = new Queue<ActionItem>(selection);
+            while (toUnsnooze.Count > 0)
             {
-                ActionItem i = toUndefer.Dequeue();
+                ActionItem i = toUnsnooze.Dequeue();
                 if (context == "inbox" && i.Tags.ContainsKey("previous-context"))
                 {
                     i.Context = i.Tags["previous-context"] != i.Context ? i.Tags["previous-context"] : context;
@@ -371,10 +371,10 @@ namespace AssimilationSoftware.TodoSort.Core
                 _repository.Update(i);
                 UnsavedChanges = true;
 
-                // If this item was the project for another, undefer that one, too.
-                foreach (var c in SomedayItems.Where(a => a.ProjectId != null && a.ProjectId == i.ID))
+                // If this item was the project for another, unsnooze that one, too.
+                foreach (var c in SnoozedItems.Where(a => a.ProjectId != null && a.ProjectId == i.ID))
                 {
-                    toUndefer.Enqueue(c);
+                    toUnsnooze.Enqueue(c);
                 }
             }
         }
@@ -514,10 +514,10 @@ namespace AssimilationSoftware.TodoSort.Core
             UnsavedChanges = true;
         }
 
-        public void Defer(ActionItem deferItem, DateTime tickleDate)
+        public void Snooze(ActionItem snoozeItem, DateTime returnDate)
         {
-            deferItem.TickleDate = tickleDate;
-            Defer(deferItem);
+            snoozeItem.TickleDate = returnDate;
+            Snooze(snoozeItem);
             UnsavedChanges = true;
         }
 

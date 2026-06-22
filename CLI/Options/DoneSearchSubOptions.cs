@@ -8,10 +8,10 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
     [Verb("search-done", HelpText = "Search through the collection of Done items.")]
     public class DoneSearchSubOptions : MultiSearchSubOptions
     {
-        [Option("mindate", HelpText = "The minimum tickle date to look for.")]
+        [Option("mindate", HelpText = "The minimum done date to look for.")]
         public DateTime? FromDoneDate { get; set; }
 
-        [Option("maxdate", HelpText = "The maximum tickle date to look for.")]
+        [Option("maxdate", HelpText = "The maximum done date to look for.")]
         public DateTime? ToDoneDate { get; set; }
 
         public override ISearchSpecification<ActionItem> GetSearchSpecification(ITodoRepository repo)

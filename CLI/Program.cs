@@ -55,8 +55,8 @@ namespace AssimilationSoftware.TodoSort.CLI
                     .WithParsed<CheckChainOptions>(opts => CheckChain(opts, vm, repo))
                     .WithParsed<CommitOptions>(opts => Commit(opts, vm, repo))
                     .WithParsed<DedupeOptions>(opts => Dedupe(opts, vm, repo))
-                    .WithParsed<DeferAllOptions>(opts => DeferAll(opts, vm, repo))
-                    .WithParsed<DeferSubOptions>(opts => Defer(opts, vm, repo))
+                    .WithParsed<SnoozeAllOptions>(opts => SnoozeAll(opts, vm, repo))
+                    .WithParsed<SnoozeSubOptions>(opts => Snooze(opts, vm, repo))
                     .WithParsed<DeleteDoneOptions>(opts => DeleteDone(opts, vm, repo))
                     .WithParsed<DeleteOptions>(opts => Delete(opts, vm, repo))
                     .WithParsed<DoneSearchSubOptions>(opts => SearchDone(opts, vm, repo))
@@ -76,11 +76,11 @@ namespace AssimilationSoftware.TodoSort.CLI
                     .WithParsed<SearchOptions>(opts => Search(opts, vm, repo))
                     .WithParsed<SetParentSubOptions>(opts => SetParent(opts, vm, repo))
                     .WithParsed<SetProjectSubOptions>(opts => SetProject(opts, vm, repo))
-                    .WithParsed<SomedaySearchSubOptions>(opts => SearchSomeday(opts, vm, repo))
-                    .WithParsed<SomedaySubOptions>(opts => Someday(opts, vm, repo))
+                    .WithParsed<SnoozedSearchSubOptions>(opts => SearchSnoozed(opts, vm, repo))
+                    .WithParsed<SnoozedSubOptions>(opts => Snoozed(opts, vm, repo))
                     .WithParsed<TagAllSubOptions>(opts => TagAll(opts, vm, repo))
                     .WithParsed<TagOptions>(opts => Tag(opts, vm, repo))
-                    .WithParsed<UndeferOptions>(opts => Undefer(opts, vm, repo))
+                    .WithParsed<UnsnoozeOptions>(opts => Unsnooze(opts, vm, repo))
                     .WithParsed<UndoSubOptions>(opts => Undo(opts, vm, repo))
                     .WithParsed<SummaryOptions>(opts => Summary(opts, vm, repo))
                     .WithParsed<UnrankAllOptions>(opts => UnrankAll(opts, vm, repo))
@@ -195,36 +195,36 @@ namespace AssimilationSoftware.TodoSort.CLI
             TidyUp(vm, repo);
         }
 
-        private static void DeferAll(DeferAllOptions pruneOptions, ViewModel vm, TodoRepository repo)
+        private static void SnoozeAll(SnoozeAllOptions pruneOptions, ViewModel vm, TodoRepository repo)
         {
             SetUniversalOptions(pruneOptions, vm);
 
             vm.SearchSpecification = pruneOptions.GetSearchSpecification(repo);
-            Console.WriteLine("About to defer {0} items. Continue [Y/N]?", vm.SearchResults.Count());
+            Console.WriteLine("About to snooze {0} items. Continue [Y/N]?", vm.SearchResults.Count());
             var k = Console.ReadKey();
             if (k.KeyChar.ToString().ToLower() == "y")
             {
-                vm.Defer(vm.SearchResults.ToArray());
+                vm.Snooze(vm.SearchResults.ToArray());
             }
 
             TidyUp(vm, repo);
         }
 
-        private static void Defer(DeferSubOptions deferOpts, ViewModel vm, TodoRepository repo)
+        private static void Snooze(SnoozeSubOptions snoozeOpts, ViewModel vm, TodoRepository repo)
         {
-            SetUniversalOptions(deferOpts, vm);
+            SetUniversalOptions(snoozeOpts, vm);
 
-            vm.SearchSpecification = deferOpts.SearchSpecification;
-            selected = Disambiguate(vm.SearchResults, repo, !string.IsNullOrEmpty(deferOpts.ItemId));
+            vm.SearchSpecification = snoozeOpts.SearchSpecification;
+            selected = Disambiguate(vm.SearchResults, repo, !string.IsNullOrEmpty(snoozeOpts.ItemId));
             if (selected != null)
             {
-                if (deferOpts.TickleDate.HasValue)
+                if (snoozeOpts.ReturnDate.HasValue)
                 {
-                    vm.Defer(selected, deferOpts.TickleDate.Value);
+                    vm.Snooze(selected, snoozeOpts.ReturnDate.Value);
                 }
                 else
                 {
-                    vm.Defer(selected);
+                    vm.Snooze(selected);
                 }
             }
 
@@ -738,33 +738,33 @@ namespace AssimilationSoftware.TodoSort.CLI
             TidyUp(vm, repo);
         }
 
-        private static void SearchSomeday(SomedaySearchSubOptions search, ViewModel vm, TodoRepository repo)
+        private static void SearchSnoozed(SnoozedSearchSubOptions search, ViewModel vm, TodoRepository repo)
         {
             SetUniversalOptions(search, vm);
 
             // Construct a search specification.
             // Set the ViewModel property.
-            vm.SomedaySearchSpecification = search.GetSearchSpecification(repo);
+            vm.SnoozedSearchSpecification = search.GetSearchSpecification(repo);
             // Report the results.
-            PrintItems(search.SortTag ?? "tickle-date", vm.SomedaySearchResults, repo, search.NSFW);
+            PrintItems(search.SortTag ?? "return-date", vm.SnoozedSearchResults, repo, search.NSFW);
             if (!search.NoCount)
             {
-                Console.WriteLine("{0} item(s) found.", vm.SomedaySearchResults.Count());
+                Console.WriteLine("{0} item(s) found.", vm.SnoozedSearchResults.Count());
             }
 
             TidyUp(vm, repo);
         }
 
-        private static void Someday(SomedaySubOptions someSub, ViewModel vm, TodoRepository repo)
+        private static void Snoozed(SnoozedSubOptions someSub, ViewModel vm, TodoRepository repo)
         {
             SetUniversalOptions(someSub, vm);
 
             verbose = someSub.Verbose;
-            // Display the whole Someday file, [someSub.PageSize] items at a time, and either delete or do one per listing.
-            ActionItem? undefer = null;
+            // Display the whole Snoozed file, [someSub.PageSize] items at a time, and either delete or do one per listing.
+            ActionItem? unsnooze = null;
             if (someSub.PageSize <= 0) someSub.PageSize = 1;
             if (someSub.PageSize > 10) someSub.PageSize = 10;
-            var someItems = from s in vm.SomedayItems where !s.TickleDate.HasValue || someSub.IncludeTickle select s;
+            var someItems = from s in vm.SnoozedItems where !s.TickleDate.HasValue || someSub.IncludeReturn select s;
             for (var offset = 0; offset <= someItems.Count(); offset += someSub.PageSize)
             {
                 Console.Clear();
@@ -777,12 +777,12 @@ namespace AssimilationSoftware.TodoSort.CLI
                 int dex;
                 if (Int32.TryParse(choice.ToString(), out dex))
                 {
-                    undefer = someItems.ElementAt(offset + dex);
+                    unsnooze = someItems.ElementAt(offset + dex);
                 }
-                if (undefer != null)
+                if (unsnooze != null)
                 {
-                    EditSomedayItem(vm, undefer, repo);
-                    undefer = null;
+                    EditSnoozedItem(vm, unsnooze, repo);
+                    unsnooze = null;
                 }
             }
 
@@ -828,15 +828,15 @@ namespace AssimilationSoftware.TodoSort.CLI
             TidyUp(vm, repo);
         }
 
-        private static void Undefer(UndeferOptions undeferOptions, ViewModel vm, TodoRepository repo)
+        private static void Unsnooze(UnsnoozeOptions unsnoozeOptions, ViewModel vm, TodoRepository repo)
         {
-            SetUniversalOptions(undeferOptions, vm);
+            SetUniversalOptions(unsnoozeOptions, vm);
 
-            vm.SomedaySearchSpecification = undeferOptions.SearchSpecification;
-            selected = Disambiguate(vm.SomedaySearchResults, repo, !string.IsNullOrEmpty(undeferOptions.ItemId));
+            vm.SnoozedSearchSpecification = unsnoozeOptions.SearchSpecification;
+            selected = Disambiguate(vm.SnoozedSearchResults, repo, !string.IsNullOrEmpty(unsnoozeOptions.ItemId));
             if (selected != null)
             {
-                vm.Undefer("inbox", selected);
+                vm.Unsnooze("inbox", selected);
             }
 
             TidyUp(vm, repo);
@@ -1049,10 +1049,10 @@ namespace AssimilationSoftware.TodoSort.CLI
             }
             repo.SaveChanges();
 
-            // Go over the @someday items and look for tickle dates.
+            // Go over the @snoozed items and look for return dates.
             forceSave = argSubs.Force;
-            vm.SomedaySearchSpecification = new TickleDateSearchSpecification(null, DateTime.Today);
-            vm.Undefer("inbox", vm.SomedaySearchResults.ToArray());
+            vm.SnoozedSearchSpecification = new ReturnDateSearchSpecification(null, DateTime.Today);
+            vm.Unsnooze("inbox", vm.SnoozedSearchResults.ToArray());
 
             vm.SearchSpecification = new ContextSearchSpecification("inbox");
             var inbox = vm.SearchResults.ToList();
@@ -1088,7 +1088,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                     var newContext = Console.ReadLine();
                     if (nextAction == newContext)
                     {
-                        // Wrote something like "someday"/"someday". Assume it is a new context.
+                        // Wrote something like "snoozed"/"snoozed". Assume it is a new context.
                         vm.SetContext(first, newContext);
                     }
                     else
@@ -1258,16 +1258,16 @@ namespace AssimilationSoftware.TodoSort.CLI
             p.Start();
         }
 
-        private static void EditSomedayItem(ViewModel vm, ActionItem item, ITodoRepository repo, bool nsfw = false)
+        private static void EditSnoozedItem(ViewModel vm, ActionItem item, ITodoRepository repo, bool nsfw = false)
         {
             while (true)
             {
                 PrintItem(item, null, repo, nsfw);
                 // Write menu.
-                Console.WriteLine("1. Undefer (and go to next item)");
+                Console.WriteLine("1. Unsnooze (and go to next item)");
                 Console.WriteLine("2. Rename");
                 Console.WriteLine("3. Open Tag");
-                Console.WriteLine("4. Assign tickler date");
+                Console.WriteLine("4. Assign return date");
                 Console.WriteLine("5. Assign tags");
                 Console.WriteLine("6. Finished (next item)");
                 var k = Console.ReadKey();
@@ -1277,7 +1277,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                     case '1':
                         if (item.Tags.ContainsKey("previous-context") && item.Context != item.Tags["previous-context"])
                         {
-                            vm.Undefer(item.Tags["previous-context"], item);
+                            vm.Unsnooze(item.Tags["previous-context"], item);
                         }
                         else
                         {
@@ -1285,7 +1285,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                             // List contexts.
                             PrintContexts(vm);
                             var newContext = Console.ReadLine();
-                            vm.Undefer(newContext, item);
+                            vm.Unsnooze(newContext, item);
                         }
                         return;
                     case '2':
@@ -1314,7 +1314,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                         DateTime parsedDate;
                         if (DateTime.TryParse(dateInput, out parsedDate))
                         {
-                            vm.Defer(item, parsedDate);
+                            vm.Snooze(item, parsedDate);
                         }
                         break;
                     case '6':
@@ -1357,7 +1357,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                 else
                     sortedList = sortedList.ThenBy(i => i.DoneDate ?? DateTime.Now);
             }
-            else if (sortTag == "tickle-date")
+            else if (sortTag == "return-date")
             {
                 if (sort == SortOrder.Descending)
                     sortedList = sortedList.ThenByDescending(i => i.TickleDate ?? DateTime.Now);
@@ -1579,7 +1579,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                 }
                 if (i.TickleDate.HasValue)
                 {
-                    WrapOutput("        #tickle-date:", i.TickleDate.Value.ToString("yyyy-MM-dd"), wrapWidth);
+                    WrapOutput("        #return-date:", i.TickleDate.Value.ToString("yyyy-MM-dd"), wrapWidth);
                 }
                 WrapOutput("        #ID:", i.ID.ToString(), wrapWidth);
                 if (i.ProjectId != null)

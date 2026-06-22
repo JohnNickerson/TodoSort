@@ -9,7 +9,7 @@
 -n, --name			Name
 -o, --note			Note
 -p, --project		Project
--r, --tickledate	TickleDate
+-r, --returndate	ReturnDate
 -s, --search		Search
 -t, --tag			TagName
 -u, --value			TagValue

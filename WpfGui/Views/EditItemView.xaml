@@ -80,13 +80,13 @@
         </ListView>
 
         <TextBlock Grid.Row="3" Grid.Column="0" Text="Context"/>
-        <ComboBox Grid.Row="3" Grid.Column="1" ItemsSource="{Binding AllContexts}" Text="{Binding Context}" Margin="5" IsEnabled="{Binding IsNotDeferred}" IsEditable="True"/>
+        <ComboBox Grid.Row="3" Grid.Column="1" ItemsSource="{Binding AllContexts}" Text="{Binding Context}" Margin="5" IsEnabled="{Binding IsNotSnoozed}" IsEditable="True"/>
 
         <CheckBox Grid.Row="4" Grid.Column="0" Content="Project" Margin="5" IsChecked="{Binding HasProject}"/>
         <ComboBox Grid.Row="4" Grid.Column="1" ItemsSource="{Binding AllProjects}" DisplayMemberPath="Title" SelectedItem="{Binding Project}" Margin="5"/>
 
-        <CheckBox Grid.Row="5" Grid.Column="0" Content="Return date" Margin="5" IsChecked="{Binding HasTickleDate}" IsEnabled="{Binding IsDeferred}"/>
-        <DatePicker Grid.Row="5" Grid.Column="1" SelectedDate="{Binding TickleDate}" Margin="5" IsEnabled="{Binding IsDeferred}"/>
+        <CheckBox Grid.Row="5" Grid.Column="0" Content="Return date" Margin="5" IsChecked="{Binding HasReturnDate}" IsEnabled="{Binding IsSnoozed}"/>
+        <DatePicker Grid.Row="5" Grid.Column="1" SelectedDate="{Binding ReturnDate}" Margin="5" IsEnabled="{Binding IsSnoozed}"/>
 
         <StackPanel Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right">
             <Button Content="OK" Command="{Binding OkCommand}" IsDefault="True"/>

@@ -6,7 +6,7 @@ namespace AssimilationSoftware.TodoSort.Core.Data
 {
     public interface ITodoRepository : IMergeRepository<ActionItem>
     {
-        IEnumerable<ActionItem> SomedayItems { get; }
+        IEnumerable<ActionItem> SnoozedItems { get; }
         IEnumerable<ActionItem> DoneItems { get; }
 
         IEnumerable<ActionItem> GetProjectItems(ActionItem i);

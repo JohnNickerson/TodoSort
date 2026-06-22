@@ -42,7 +42,7 @@ public class NavigationService : INavigationService
         var editVm = new EditViewModel(mainViewModel, editWindow, item);
         editWindow.DataContext = editVm;
         var result = editWindow.ShowDialog(mainViewModel.Window);
-        return new ItemDialogResult { DialogResult = result, Title = editVm.Title, Context = editVm.Context, Notes = editVm.Notes, Tags = editVm.Tags, ProjectId = editVm.Project?.ID, IsDeferred = editVm.IsDeferred, TickleDate = editVm.TickleDate };
+        return new ItemDialogResult { DialogResult = result, Title = editVm.Title, Context = editVm.Context, Notes = editVm.Notes, Tags = editVm.Tags, ProjectId = editVm.Project?.ID, IsSnoozed = editVm.IsSnoozed, ReturnDate = editVm.ReturnDate };
     }
 
     public FileDialogResult ShowImportFileDialog(ImportFileType fileType)

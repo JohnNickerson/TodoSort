@@ -10,6 +10,6 @@ public class ItemDialogResult
     public string? Notes { get; set; }
     public IEnumerable<TagViewModel>? Tags { get; set; }
     public Guid? ProjectId { get; set; }
-    public bool IsDeferred { get; set; }
-    public DateTime? TickleDate { get; set; }
+    public bool IsSnoozed { get; set; }
+    public DateTime? ReturnDate { get; set; }
 }

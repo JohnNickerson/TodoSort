@@ -63,7 +63,7 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
         private bool _isSearchContextSelected;
         private bool _isSearchProjectSelected;
         private string? _statusMessage;
-        private DateTime? _lastDeferredCheckDate;
+        private DateTime? _lastSnoozedCheckDate;
         private ObservableCollection<string>? _recentFilesList;
         private INavigationService _navigationService;
         private ISettings _settings;
@@ -134,15 +134,15 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
                     _api = new ViewModel(_repo);
                 });
 
-                if (_api?.SomedayItems != null)
+                if (_api?.SnoozedItems != null)
                 {
-                    var undefers = _api.SomedayItems.Where(s => s.TickleDate <= DateTime.Today).ToArray();
-                    if (undefers.Any())
+                    var unsnoozes = _api.SnoozedItems.Where(s => s.TickleDate <= DateTime.Today).ToArray();
+                    if (unsnoozes.Any())
                     {
-                        // Just undefer them without asking, but display the titles of the items that were undeferred in the status message.
-                        var titleList = string.Join(", ", undefers.Select(u => u.Title));
-                        _api.Undefer(_defaultContext, undefers);
-                        StatusMessage = $"Undeferred items: {titleList}";
+                        // Just unsnooze them without asking, but display the titles of the items that were unsnoozed in the status message.
+                        var titleList = string.Join(", ", unsnoozes.Select(u => u.Title));
+                        _api.Unsnooze(_defaultContext, unsnoozes);
+                        StatusMessage = $"Unsnoozed items: {titleList}";
                     }
                 }
 
@@ -188,8 +188,8 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
             }
 
             // Process pending items for any to return to the main list.
-            _api.SomedaySearchSpecification = new TickleDateSearchSpecification(null, DateTime.Today);
-            _api.Undefer(_defaultContext, _api.SomedaySearchResults.ToArray());
+            _api.SnoozedSearchSpecification = new ReturnDateSearchSpecification(null, DateTime.Today);
+            _api.Unsnooze(_defaultContext, _api.SnoozedSearchResults.ToArray());
 
             // Check for out-of-order chain items.
             foreach (var headItem in Items.ToArray())
@@ -278,10 +278,10 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
         }
 
         /// <summary>
-        /// Checks for deferred items ready to return to the main list once per day.
+        /// Checks for snoozed items ready to return to the main list once per day.
         /// Called automatically when the window gains focus.
         /// </summary>
-        public void CheckForDeferredItemsOnce()
+        public void CheckForSnoozedItemsOnce()
         {
             // Skip if no file is loaded
             if (_api == null)
@@ -290,27 +290,27 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
             }
 
             // Skip if we've already checked today
-            if (_lastDeferredCheckDate.HasValue && _lastDeferredCheckDate.Value.Date == DateTime.Today)
+            if (_lastSnoozedCheckDate.HasValue && _lastSnoozedCheckDate.Value.Date == DateTime.Today)
             {
                 return;
             }
 
             // Record that we've checked today
-            _lastDeferredCheckDate = DateTime.Today;
+            _lastSnoozedCheckDate = DateTime.Today;
 
             // Get items ready to return to the main list
-            var readyItems = _api.SomedayItems.Where(s => s.TickleDate <= DateTime.Today).ToArray();
+            var readyItems = _api.SnoozedItems.Where(s => s.TickleDate <= DateTime.Today).ToArray();
 
             if (readyItems.Any())
             {
                 // Process pending items without showing a confirmation dialog
-                _api.SomedaySearchSpecification = new TickleDateSearchSpecification(null, DateTime.Today);
-                var itemsToUndefer = _api.SomedaySearchResults.ToArray();
+                _api.SnoozedSearchSpecification = new ReturnDateSearchSpecification(null, DateTime.Today);
+                var itemsToUnsnooze = _api.SnoozedSearchResults.ToArray();
 
-                if (itemsToUndefer.Any())
+                if (itemsToUnsnooze.Any())
                 {
                     // Only process if there are unsaved changes or we need to save new ones
-                    _api.Undefer(_defaultContext, itemsToUndefer);
+                    _api.Unsnooze(_defaultContext, itemsToUnsnooze);
                     _api.Save();
 
                     // Refresh the UI
@@ -318,7 +318,7 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
                     RaisePropertyChanged(nameof(Contexts));
 
                     // Notify the user (status message only, no dialog)
-                    StatusMessage = $"Auto-processed {itemsToUndefer.Length} deferred item(s) ready to return.";
+                    StatusMessage = $"Auto-processed {itemsToUnsnooze.Length} snoozed item(s) ready to return.";
                 }
             }
         }
@@ -466,17 +466,17 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
             RaisePropertyChanged(nameof(Items));
         }
 
-        public void Defer(ActionItem item)
+        public void Snooze(ActionItem item)
         {
             if (_api == null) return;
-            _api.Defer(item);
+            _api.Snooze(item);
             RaisePropertyChanged(nameof(Items));
         }
 
-        public void Undefer(ActionItem item)
+        public void Unsnooze(ActionItem item)
         {
             if (_api == null) return;
-            _api.Undefer(_defaultContext, item);
+            _api.Unsnooze(_defaultContext, item);
             RaisePropertyChanged(nameof(Items));
             RaisePropertyChanged(nameof(Contexts));
         }
@@ -501,9 +501,9 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
                     Tags = result.Tags.ToDictionary(k => k.Tag, v => v.Value),
                     ProjectId = result.ProjectId
                 };
-                if (result.IsDeferred)
+                if (result.IsSnoozed)
                 {
-                    item.TickleDate = result.TickleDate;
+                    item.TickleDate = result.ReturnDate;
                 }
                 _api.AddItem(item);
                 RaisePropertyChanged(nameof(Items));
@@ -735,7 +735,7 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
                     // Preserve selected context.
                     var saveContext = SelectedContext;
                     _contexts = new List<ContextViewModel>();
-                    foreach (var con in _api.GetContextNames("done", "someday").OrderBy(c => c))
+                    foreach (var con in _api.GetContextNames("done", "snoozed").OrderBy(c => c))
                     {
                         _contexts.Add(new ContextViewModel
                         {
@@ -754,7 +754,7 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
                         con.AllOtherContexts.Remove(con);
                     }
                     _contexts.Add(new ContextViewModel { Title = "done", View = Window, DateVisible = true, DateColumnTitle = "Done Date" });
-                    _contexts.Add(new ContextViewModel { Title = "someday", View = Window, DateVisible = true, DateColumnTitle = "Return Date" });
+                    _contexts.Add(new ContextViewModel { Title = "snoozed", View = Window, DateVisible = true, DateColumnTitle = "Return Date" });
                     _searchResultsContext = new ContextViewModel
                     {
                         Title = "Search",
@@ -835,9 +835,9 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
                         _api.DoneSearchSpecification = SelectedContext.SearchSpecification;
                         _currentItems = _api.DoneSearchResults.Select(s => new ActionViewModel(s, this)).OrderByDescending(i => i.DoneDate).ThenBy(i => i.Title).ToList();
                         break;
-                    case "someday":
-                        _api.SomedaySearchSpecification = SelectedContext.SearchSpecification;
-                        _currentItems = _api.SomedaySearchResults.Select(s => new ActionViewModel(s, this)).OrderBy(i => i.TickleDate ?? DateTime.MaxValue).ThenBy(i => i.Title).ToList();
+                    case "snoozed":
+                        _api.SnoozedSearchSpecification = SelectedContext.SearchSpecification;
+                        _currentItems = _api.SnoozedSearchResults.Select(s => new ActionViewModel(s, this)).OrderBy(i => i.ReturnDate ?? DateTime.MaxValue).ThenBy(i => i.Title).ToList();
                         break;
                     case "Search":
                         if (SearchContext != null && SearchContext.Title == "done")
@@ -845,10 +845,10 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
                             _api.DoneSearchSpecification = SelectedContext.SearchSpecification;
                             _currentItems = _api.DoneSearchResults.Select(s => new ActionViewModel(s, this)).OrderByDescending(i => i.DoneDate).ThenBy(i => i.Title).ToList();
                         }
-                        else if (SearchContext != null && SearchContext.Title == "someday")
+                        else if (SearchContext != null && SearchContext.Title == "snoozed")
                         {
-                            _api.SomedaySearchSpecification = SelectedContext.SearchSpecification;
-                            _currentItems = _api.SomedaySearchResults.Select(s => new ActionViewModel(s, this)).OrderBy(i => i.TickleDate).ThenBy(i => i.Title).ToList();
+                            _api.SnoozedSearchSpecification = SelectedContext.SearchSpecification;
+                            _currentItems = _api.SnoozedSearchResults.Select(s => new ActionViewModel(s, this)).OrderBy(i => i.ReturnDate).ThenBy(i => i.Title).ToList();
                         }
                         else
                         {

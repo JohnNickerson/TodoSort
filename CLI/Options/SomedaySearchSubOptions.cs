@@ -5,38 +5,38 @@ using AssimilationSoftware.TodoSort.Core.Data;
 
 namespace AssimilationSoftware.TodoSort.CLI.Options
 {
-    [Verb("search-someday", HelpText = "Search through the collection of Someday/Deferred items.")]
-    public class SomedaySearchSubOptions : MultiSearchSubOptions
+    [Verb("search-snoozed", HelpText = "Search through the collection of snoozed items.")]
+    public class SnoozedSearchSubOptions : MultiSearchSubOptions
     {
-        [Option("mindate", HelpText = "The minimum tickle date to look for.")]
-        public DateTime? FromTickleDate { get; set; }
+        [Option("mindate", HelpText = "The minimum return date to look for.")]
+        public DateTime? FromReturnDate { get; set; }
 
-        [Option("maxdate", HelpText = "The maximum tickle date to look for.")]
-        public DateTime? ToTickleDate { get; set; }
+        [Option("maxdate", HelpText = "The maximum return date to look for.")]
+        public DateTime? ToReturnDate { get; set; }
 
         public override ISearchSpecification<ActionItem> GetSearchSpecification(ITodoRepository repo)
         {
             {
-                if (FromTickleDate.HasValue)
+                if (FromReturnDate.HasValue)
                 {
-                    if (ToTickleDate.HasValue)
+                    if (ToReturnDate.HasValue)
                     {
                         return base.GetSearchSpecification(repo)
-                            .And(new TickleDateLessThanSpecification(ToTickleDate))
-                            .And(new TickleDateGreaterThanSpecification(FromTickleDate));
+                            .And(new ReturnDateLessThanSpecification(ToReturnDate))
+                            .And(new ReturnDateGreaterThanSpecification(FromReturnDate));
                     }
                     else
                     {
                         return base.GetSearchSpecification(repo)
-                            .And(new TickleDateGreaterThanSpecification(FromTickleDate));
+                            .And(new ReturnDateGreaterThanSpecification(FromReturnDate));
                     }
                 }
                 else
                 {
-                    if (ToTickleDate.HasValue)
+                    if (ToReturnDate.HasValue)
                     {
                         return base.GetSearchSpecification(repo)
-                            .And(new TickleDateLessThanSpecification(ToTickleDate));
+                            .And(new ReturnDateLessThanSpecification(ToReturnDate));
                     }
                     else
                     {

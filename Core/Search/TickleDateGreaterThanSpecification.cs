@@ -3,18 +3,18 @@ using System;
 
 namespace AssimilationSoftware.TodoSort.Core.Search
 {
-    public class TickleDateGreaterThanSpecification : ISearchSpecification<ActionItem>
+    public class ReturnDateGreaterThanSpecification : ISearchSpecification<ActionItem>
     {
-        private DateTime? FromTickleDate;
+        private DateTime? FromReturnDate;
 
-        public TickleDateGreaterThanSpecification(DateTime? FromTickleDate)
+        public ReturnDateGreaterThanSpecification(DateTime? FromReturnDate)
         {
-            this.FromTickleDate = FromTickleDate;
+            this.FromReturnDate = FromReturnDate;
         }
 
         public bool IsSatisfiedBy(ActionItem b)
         {
-            return FromTickleDate.HasValue && b.TickleDate >= FromTickleDate;
+            return FromReturnDate.HasValue && b.TickleDate >= FromReturnDate;
         }
     }
 }

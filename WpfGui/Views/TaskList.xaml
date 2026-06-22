@@ -59,7 +59,7 @@
                 <MenuItem Header="_Add Item" Command="{Binding AddItemCommand}"/>
                 <MenuItem Header="Add URL" Command="{Binding AddUrlCommand}" />
                 <MenuItem Header="_Rank" Command="{Binding RankCommand}" />
-                <MenuItem Header="_Clean up" Command="{Binding CleanupCommand}" ToolTip="Assign missing contexts, undefer due someday items, fix chains, etc."/>
+                <MenuItem Header="_Clean up" Command="{Binding CleanupCommand}" ToolTip="Assign missing contexts, unsnooze items, fix chains, etc."/>
             </MenuItem>
             <MenuItem Header="_View">
                 <MenuItem Header="_Mask NSFW items" Command="{Binding MaskTextCommand}" IsChecked="{Binding Path=Masked}" InputGestureText="Ctrl+M"/>
@@ -163,10 +163,10 @@
                         </MenuItem.ItemContainerStyle>
                     </MenuItem>
                     <Separator/>
-                    <MenuItem Header="Defer 2 Weeks" Command="{Binding Path=ToggleDeferCommand}" CommandParameter="{Binding Path=ShortDeferDelay}" Visibility="{Binding Path=CanDefer, Converter={StaticResource BoolToVis}}"/>
-                    <MenuItem Header="Defer 2 Months" Command="{Binding Path=ToggleDeferCommand}" CommandParameter="{Binding Path=LongDeferDelay}" Visibility="{Binding Path=CanDefer, Converter={StaticResource BoolToVis}}"/>
-                    <MenuItem Header="Defer Until..." Command="{Binding Path=DeferUntilCommand}" Visibility="{Binding Path=CanDefer, Converter={StaticResource BoolToVis}}" />
-                    <MenuItem Header="{Binding ToggleDeferTitle}" Command="{Binding Path=ToggleDeferCommand}"/>
+                    <MenuItem Header="Snooze 2 Weeks" Command="{Binding Path=ToggleSnoozeCommand}" CommandParameter="{Binding Path=ShortSnoozeDelay}" Visibility="{Binding Path=CanSnooze, Converter={StaticResource BoolToVis}}"/>
+                    <MenuItem Header="Snooze 2 Months" Command="{Binding Path=ToggleSnoozeCommand}" CommandParameter="{Binding Path=LongSnoozeDelay}" Visibility="{Binding Path=CanSnooze, Converter={StaticResource BoolToVis}}"/>
+                    <MenuItem Header="Snooze Until..." Command="{Binding Path=SnoozeUntilCommand}" Visibility="{Binding Path=CanSnooze, Converter={StaticResource BoolToVis}}" />
+                    <MenuItem Header="{Binding ToggleSnoozeTitle}" Command="{Binding Path=ToggleSnoozeCommand}"/>
                     <Separator/>
                     <MenuItem Header="Delete" Command="{Binding Path=DeleteCommand}"/>
                 </ContextMenu>

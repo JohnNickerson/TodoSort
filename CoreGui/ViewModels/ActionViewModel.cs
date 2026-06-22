@@ -17,8 +17,8 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
         #region Fields
 
         private RelayCommand? _editCommand;
-        private RelayCommand<TimeSpan?>? _deferCommand;
-        private RelayCommand? _deferUntilCommand;
+        private RelayCommand<TimeSpan?>? _snoozeCommand;
+        private RelayCommand? _snoozeUntilCommand;
         private RelayCommand? _deleteCommand;
         private RelayCommand? _fixTitleCommand;
         private RelayCommand? _copyUrlCommand;
@@ -156,7 +156,7 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
             }
         }
 
-        public DateTime? TickleDate
+        public DateTime? ReturnDate
         {
             get => Source.TickleDate;
             set
@@ -168,13 +168,13 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
             }
         }
 
-        public DateTime? ItemDate => DoneDate ?? TickleDate;
+        public DateTime? ItemDate => DoneDate ?? ReturnDate;
 
         public List<string> Notes => Source.Notes;
 
         public Dictionary<string, string> Tags => Source.Tags;
 
-        public string ToggleDeferTitle => Source.Context == "someday" ? "Undefer" : "Defer Indefinitely";
+        public string ToggleSnoozeTitle => Source.Context == "snoozed" ? "Unsnooze" : "Snooze Indefinitely";
 
         public string ToolTip
         {
@@ -209,11 +209,11 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
             }
         }
 
-        public bool CanDefer => Source.Context != "someday";
+        public bool CanSnooze => Source.Context != "snoozed";
 
-        public TimeSpan ShortDeferDelay => new TimeSpan(14, 0, 0, 0);
+        public TimeSpan ShortSnoozeDelay => new TimeSpan(14, 0, 0, 0);
 
-        public TimeSpan LongDeferDelay => new TimeSpan(60, 0, 0, 0);
+        public TimeSpan LongSnoozeDelay => new TimeSpan(60, 0, 0, 0);
 
         public bool IsInChain => Tags.ContainsKey("order") && (Tags.ContainsKey("series") || Source.ProjectId != null);
 
@@ -252,9 +252,9 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
 
         public ICommand EditCommand => _editCommand ?? (_editCommand = new RelayCommand(EditExecuted));
 
-        public ICommand ToggleDeferCommand => _deferCommand ?? (_deferCommand = new RelayCommand<TimeSpan?>(DeferExecuted));
+        public ICommand ToggleSnoozeCommand => _snoozeCommand ?? (_snoozeCommand = new RelayCommand<TimeSpan?>(SnoozeExecuted));
 
-        public ICommand DeferUntilCommand => _deferUntilCommand ?? (_deferUntilCommand = new RelayCommand(DeferUntilExecuted));
+        public ICommand SnoozeUntilCommand => _snoozeUntilCommand ?? (_snoozeUntilCommand = new RelayCommand(SnoozeUntilExecuted));
 
         public ICommand DeleteCommand => _deleteCommand ?? (_deleteCommand = new RelayCommand(DeleteExecuted));
 
@@ -292,9 +292,9 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
                     }
                 }
                 Source.ProjectId = result.ProjectId;
-                if (result.IsDeferred)
+                if (result.IsSnoozed)
                 {
-                    Source.TickleDate = result.TickleDate;
+                    Source.TickleDate = result.ReturnDate;
                 }
                 if (Source.Context != result.Context)
                 {
@@ -316,11 +316,11 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
                 Api.RefreshContexts();
         }
 
-        private void DeferExecuted(TimeSpan? delay)
+        private void SnoozeExecuted(TimeSpan? delay)
         {
-            if (Source.Context == "someday")
+            if (Source.Context == "snoozed")
             {
-                Api.Undefer(Source);
+                Api.Unsnooze(Source);
             }
             else
             {
@@ -328,14 +328,14 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
                 {
                     Source.TickleDate = DateTime.Today.Add(delay.Value);
                 }
-                Api.Defer(Source);
+                Api.Snooze(Source);
             }
         }
 
-        private void DeferUntilExecuted()
+        private void SnoozeUntilExecuted()
         {
             Source.TickleDate = DateTime.Today.AddDays(2);
-            Api.Defer(Source);
+            Api.Snooze(Source);
             EditExecuted();
         }
 

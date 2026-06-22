@@ -19,7 +19,7 @@
 		#priority-parent:f10b1166-8dff-432b-869f-4cc29dccef22
 	Recurring reminders and items
 		- Serialise with "repeats" tags? Need to prototype it.
-		- When a recurring item is marked as done, instead of moving, one copy goes to the "done" list and one to the "someday" list.
+		- When a recurring item is marked as done, instead of moving, one copy goes to the "done" list and one to the "snooze" list.
 		- Might benefit from an "IRepeatable" interface in PimData.
 		#id:8da843b9-8dc7-47c7-9db3-e7209b1068fe
 		#priority-parent:f10b1166-8dff-432b-869f-4cc29dccef22
@@ -32,7 +32,7 @@
 		#id:bcac196a-52cf-4e95-8491-3cc5eafbe98b
 		#priority-parent:8da843b9-8dc7-47c7-9db3-e7209b1068fe
 @cli
-	Export iCal format for Someday items
+	Export iCal format for Snoozed items
 		- Might comprise two new features.
 		- Useful for my upcoming movies list. (2015-03-16)
 		#type:feature
@@ -83,8 +83,8 @@
 		- Might be easiest to specify with advanced search.
 		#type:feature
 		#id:314d8cbb-f519-4b49-bd2c-b3ceeb05a912
-	Last page of Someday processing is blank
-		- When processing Someday items and the last item is at the end of a page (eg --pagesize 1) there will be a blank set displayed at the end.
+	Last page of Snoozed processing is blank
+		- When processing Snoozed items and the last item is at the end of a page (eg --pagesize 1) there will be a blank set displayed at the end.
 		#type:bug
 		#id:22ea6512-fd50-4714-8f20-ce7107edca63
 		#priority-parent:b9e5e549-15cd-4732-a5ef-fef435e27e6b
@@ -121,7 +121,7 @@
 		#id:05e78d12-11a3-4a31-9906-d0ca2ca3b0c1
 		#priority-parent:37ed25d1-cd26-4ad0-b86b-896cca3f783c
 @done
-	Sort Someday results by tickle date
+	Sort Snoozed results by return date
 		#type:feature
 		#done-date:2017-11-21
 		#id:650e2c9b-784d-4687-9d62-1d8d950c3989
@@ -146,13 +146,13 @@
 	Add follow-up actions via GUI
 		#id:bdf4dbf2-cc3c-4004-811b-1d8371c37d3f
 		#priority-parent:eac9e80b-2f1b-4fb6-bb79-75c8d850a07f
-@someday
+@snoozed
 	Import from RSS
 		- Can be used for just about anything, then.
 		#type:feature
 		#id:3d069478-d751-492c-8ca0-6fdd551f31eb
 	Detect "[x]" marks as completed items
-		#tickle-date:2014-04-16
+		#return-date:2014-04-16
 		#id:aa8b5a86-32d5-4445-a90e-ed517b77c292
 	Sync with external services
 		- Outlook, Google Tasks, Wunderlist, Google Keep?

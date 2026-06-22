@@ -19,8 +19,8 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
         private ObservableCollection<TagViewModel> _tags;
         private string? _context;
         private ActionItem? _project;
-        private DateTime? _tickleDate;
-        private readonly string[] _excludeContexts = { "done", "someday", "Search" };
+        private DateTime? _returnDate;
+        private readonly string[] _excludeContexts = { "done", "snoozed", "Search" };
 
         private ICommand? _okCommand;
         private ICommand? _addTagCommand;
@@ -52,7 +52,7 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
                 }
                 _context = item.Source.Context;
                 _project = item.Source.GetProject(api.Repository);
-                _tickleDate = item.Source.TickleDate;
+                _returnDate = item.Source.TickleDate;
             }
         }
 
@@ -150,30 +150,30 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
 
         public ICommand AddTagCommand => _addTagCommand ?? (_addTagCommand = new RelayCommand(AddTagExecuted));
 
-        public bool HasTickleDate
+        public bool HasReturnDate
         {
-            get => TickleDate != null;
+            get => ReturnDate != null;
             set
             {
-                if (!value) TickleDate = null;
+                if (!value) ReturnDate = null;
             }
         }
 
-        public DateTime? TickleDate
+        public DateTime? ReturnDate
         {
-            get => _tickleDate;
+            get => _returnDate;
             set
             {
-                if (_tickleDate == value) return;
-                _tickleDate = value;
+                if (_returnDate == value) return;
+                _returnDate = value;
                 OnPropertyChanged();
-                OnPropertyChanged(nameof(HasTickleDate));
+                OnPropertyChanged(nameof(HasReturnDate));
             }
         }
 
-        public bool IsDeferred => Context == "someday";
+        public bool IsSnoozed => Context == "snoozed";
 
-        public bool IsNotDeferred => Context != "someday";
+        public bool IsNotSnoozed => Context != "snoozed";
 
         #endregion
     }

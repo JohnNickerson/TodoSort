@@ -12,11 +12,11 @@ namespace AssimilationSoftware.TodoSort.Core.Data
 			FindAll();
         }
 
-        public IEnumerable<ActionItem> SomedayItems
+        public IEnumerable<ActionItem> SnoozedItems
         {
             get
             {
-                return Items.Where(i => i.Context == "someday");
+                return Items.Where(i => i.Context == "snoozed");
             }
         }
 

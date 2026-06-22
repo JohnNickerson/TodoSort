@@ -3,12 +3,12 @@ using System;
 
 namespace AssimilationSoftware.TodoSort.Core.Search
 {
-    public class TickleDateSearchSpecification : ISearchSpecification<ActionItem>
+    public class ReturnDateSearchSpecification : ISearchSpecification<ActionItem>
     {
         private DateTime? _maxDate;
         private DateTime? _minDate;
         
-        public TickleDateSearchSpecification(DateTime? mindate, DateTime? maxdate)
+        public ReturnDateSearchSpecification(DateTime? mindate, DateTime? maxdate)
         {
             _minDate = mindate;
             _maxDate = maxdate;
