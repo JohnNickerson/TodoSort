@@ -14,6 +14,7 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
         {
             get
             {
+                if (string.IsNullOrWhiteSpace(Expression)) return new TrueSpecification<ActionItem>();
                 return ExpressionParser.Parse(Expression);
             }
         }
