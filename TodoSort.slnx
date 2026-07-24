@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="WpfGui/WpfGui.csproj" />
+  <Project Path="CLI/CLI.csproj" />
+  <Project Path="Core/Core.csproj" />
+  <Project Path="UnitTests/UnitTests.csproj" />
+  <Project Path="CoreGui/CoreGui.csproj" />
+</Solution>
