@@ -109,7 +109,6 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
                 FileName = filename;
 
                 // Store the file name as the most recent one opened.
-                _recentFilesList = new ObservableCollection<string>(_settings.RecentFiles);
                 if (!string.IsNullOrEmpty(filename))
                 {
                     RecentFileList.Remove(filename);
@@ -119,8 +118,7 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
                 {
                     RecentFileList.RemoveAt(10);
                 }
-                _settings.RecentFiles = _recentFilesList.ToArray();
-                _recentFilesList.Clear();
+                _settings.RecentFiles = RecentFileList.ToArray();
                 SaveSettings();
 
                 await Task.Run(() =>
