@@ -783,11 +783,6 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
                 if (_selectedContext == _searchResultsContext && value != _searchResultsContext)
                 {
                     ShowHeadOnly = true;
-                    SearchExpanded = false;
-                }
-                else if (value == _searchResultsContext)
-                {
-                    SearchExpanded = true;
                 }
                 _selectedContext = value;
                 RaisePropertyChanged();
