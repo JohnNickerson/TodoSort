@@ -22,7 +22,6 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
@@ -97,7 +96,7 @@
             </ListBox.ItemTemplate>
         </ListBox>
 
-        <Expander Grid.Row="1" Grid.Column="1" Header="Search" IsExpanded="{Binding SearchExpanded}">
+        <Expander Grid.Row="1" Grid.Column="1" IsExpanded="{Binding SearchExpanded}">
             <Expander.Resources>
                 <Style TargetType="Label">
                     <Setter Property="HorizontalAlignment" Value="Right"/>
@@ -106,44 +105,47 @@
                     <Setter Property="Margin" Value="2"/>
                 </Style>
             </Expander.Resources>
+            <Expander.Header>
+                <Grid MinWidth="400">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" VerticalAlignment="Center" Margin="0,0,5,0" Text="Search:"/>
+
+                    <TextBox Grid.Column="1" MinWidth="200" Text="{Binding SearchKeyword, UpdateSourceTrigger=PropertyChanged}" />
+    
+                    <Button Grid.Column="2" Content="Go" Margin="3" MaxWidth="50" MinWidth="30" Command="{Binding ApplySearchCommand}" IsDefault="{Binding Path=SearchExpanded}"/>
+
+                    <TextBlock Grid.Column="3" Margin="10,0,10,0" VerticalAlignment="Center" FontWeight="SemiBold" Text="{Binding Path=Items.Count, StringFormat={}{0} items}"/>
+                </Grid>
+            </Expander.Header>
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="1*"/>
-                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
-                <Label Grid.Row="0" Grid.Column="0" Content="Keyword"/>
-                <TextBox Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Text="{Binding SearchKeyword, UpdateSourceTrigger=PropertyChanged}" Name="KeywordSearchBox" IsVisibleChanged="SearchVisibleChanged"/>
 
-                <Label Grid.Row="1" Grid.Column="0" Content="Tag/Value"/>
-                <TextBox Grid.Row="1" Grid.Column="1" MinWidth="100" Text="{Binding SearchTagName, UpdateSourceTrigger=PropertyChanged}"/>
-                <TextBox Grid.Row="1" Grid.Column="2" MinWidth="100" Text="{Binding SearchTagValue, UpdateSourceTrigger=PropertyChanged}"/>
+                <Label Grid.Row="0" Grid.Column="0" Content="Tag/Value"/>
+                <TextBox Grid.Row="0" Grid.Column="1" MinWidth="100" Text="{Binding SearchTagName, UpdateSourceTrigger=PropertyChanged}"/>
+                <TextBox Grid.Row="0" Grid.Column="2" MinWidth="100" Text="{Binding SearchTagValue, UpdateSourceTrigger=PropertyChanged}"/>
 
-                <CheckBox Grid.Row="2" Grid.Column="0" Content="Project" VerticalAlignment="Center" IsChecked="{Binding Path=IsSearchProjectSelected}"/>
-                <ComboBox Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" ItemsSource="{Binding Projects}" DisplayMemberPath="Title" SelectedItem="{Binding SearchProject}" Margin="5"/>
+                <CheckBox Grid.Row="1" Grid.Column="0" Content="Project" VerticalAlignment="Center" IsChecked="{Binding Path=IsSearchProjectSelected}"/>
+                <ComboBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" ItemsSource="{Binding Projects}" DisplayMemberPath="Title" SelectedItem="{Binding SearchProject}" Margin="5"/>
 
-                <CheckBox Grid.Row="3" Grid.Column="0" Content="Context" VerticalAlignment="Center" IsChecked="{Binding Path=IsSearchContextSelected}"/>
-                <ComboBox Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" ItemsSource="{Binding SearchContexts}" DisplayMemberPath="Title" SelectedItem="{Binding SearchContext}" Margin="5"/>
-
-                <Button Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2" Content="Go" Margin="3" MaxWidth="50" Command="{Binding ApplySearchCommand}" IsDefault="{Binding Path=SearchExpanded}"/>
+                <CheckBox Grid.Row="2" Grid.Column="0" Content="Context" VerticalAlignment="Center" IsChecked="{Binding Path=IsSearchContextSelected}"/>
+                <ComboBox Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" ItemsSource="{Binding SearchContexts}" DisplayMemberPath="Title" SelectedItem="{Binding SearchContext}" Margin="5"/>
             </Grid>
         </Expander>
-        <Border Grid.Row="2"
-                Grid.Column="1"
-                Padding="3">
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="Count: "/>
-                <TextBlock Text="{Binding Path=Items.Count}"/>
-            </StackPanel>
-        </Border>
-        <ListView Grid.Row="3" Grid.Column="1" ItemsSource="{Binding Path=Items}" SelectedItem="{Binding Path=SelectedItem}" MouseDoubleClick="OnMouseDoubleClick">
+        <ListView Grid.Row="2" Grid.Column="1" ItemsSource="{Binding Path=Items}" SelectedItem="{Binding Path=SelectedItem}" MouseDoubleClick="OnMouseDoubleClick">
             <ListView.Resources>
                 <ContextMenu x:Key="ItemContextMenu">
                     <MenuItem Header="Edit" Command="{Binding Path=EditCommand}"/>
@@ -218,7 +220,7 @@
                 </GridView>
             </ListView.View>
         </ListView>
-        <StatusBar Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2">
+        <StatusBar Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2">
             <TextBlock Text="{Binding Path=StatusMessage}"/>
         </StatusBar>
     </Grid>

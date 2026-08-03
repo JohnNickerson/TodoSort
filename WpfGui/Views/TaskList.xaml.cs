@@ -83,10 +83,5 @@ namespace AssimilationSoftware.TodoSort.WpfGui.Views
                 Top = Math.Max(0, SystemParameters.WorkArea.Height - ActualHeight);
             }
         }
-
-        private void SearchVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
-        {
-            KeywordSearchBox.Focus();
-        }
     }
 }
