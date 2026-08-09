@@ -170,7 +170,7 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
 
         public DateTime? ItemDate => DoneDate ?? TickleDate;
 
-        public List<string> Notes => Source.Notes;
+        public List<string> Notes => Source.Notes ?? new List<string>();
 
         public Dictionary<string, string> Tags => Source.Tags;
 
@@ -281,7 +281,7 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
             {
                 // Update the source item.
                 Title = result.Title.Trim();
-                Source.Notes = [.. result.Notes.Split('\n').Select(l => l.Trim()).Where(l => l.Length > 0)];
+                Source.Notes = result.Notes?.Split('\n').Select(l => l.Trim()).Where(l => l.Length > 0).ToList();
                 Source.Tags = new Dictionary<string, string>();
                 foreach (var tv in result.Tags)
                 {

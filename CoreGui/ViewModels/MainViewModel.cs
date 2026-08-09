@@ -479,7 +479,7 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
             RaisePropertyChanged(nameof(Contexts));
         }
 
-        private void AddExecuted()
+        public void AddExecuted()
         {
             if (_api == null)
             {
@@ -495,8 +495,8 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
                     Title = result.Title,
                     Context = result.Context ?? _defaultContext,
                     // Update the source item.
-                    Notes = result.Notes.Split('\n').ToList(),
-                    Tags = result.Tags.ToDictionary(k => k.Tag, v => v.Value),
+                    Notes = result.Notes?.Split('\n').ToList(),
+                    Tags = result.Tags?.ToDictionary(k => k.Tag, v => v.Value),
                     ProjectId = result.ProjectId
                 };
                 if (result.IsDeferred)
