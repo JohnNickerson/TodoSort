@@ -253,3 +253,5 @@ TodoSort is a task list and reading list app with an emphasis on priority. It st
 	- Auto-return deferred items on file load.
 - 2026-07-29: Build 1.11.1.0
 	- Fix Recent Files menu.
+- 2026-08-05: Build 1.12.0.0
+	- Arrange basic search and item count into expander header.
