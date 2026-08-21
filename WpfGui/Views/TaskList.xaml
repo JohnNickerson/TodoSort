@@ -111,15 +111,16 @@
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     <TextBlock Grid.Column="0" VerticalAlignment="Center" Margin="0,0,5,0" Text="Search:"/>
 
-                    <TextBox Grid.Column="1" MinWidth="200" Text="{Binding SearchKeyword, UpdateSourceTrigger=PropertyChanged}" />
-    
-                    <Button Grid.Column="2" Content="Go" Margin="3" MaxWidth="50" MinWidth="30" Command="{Binding ApplySearchCommand}" IsDefault="{Binding Path=SearchExpanded}"/>
+                    <TextBox Grid.Column="1" MinWidth="200" Text="{Binding SearchKeyword, UpdateSourceTrigger=PropertyChanged}">
+                        <TextBox.InputBindings>
+                            <KeyBinding Key="Enter" Command="{Binding ApplySearchCommand}" />
+                        </TextBox.InputBindings>
+                    </TextBox>
 
-                    <TextBlock Grid.Column="3" Margin="10,0,10,0" VerticalAlignment="Center" FontWeight="SemiBold" Text="{Binding Path=Items.Count, StringFormat={}{0} items}"/>
+                    <TextBlock Grid.Column="2" Margin="10,0,10,0" VerticalAlignment="Center" FontWeight="SemiBold" Text="{Binding Path=Items.Count, StringFormat={}{0} items}"/>
                 </Grid>
             </Expander.Header>
             <Grid>
@@ -135,8 +136,16 @@
                 </Grid.RowDefinitions>
 
                 <Label Grid.Row="0" Grid.Column="0" Content="Tag/Value"/>
-                <TextBox Grid.Row="0" Grid.Column="1" MinWidth="100" Text="{Binding SearchTagName, UpdateSourceTrigger=PropertyChanged}"/>
-                <TextBox Grid.Row="0" Grid.Column="2" MinWidth="100" Text="{Binding SearchTagValue, UpdateSourceTrigger=PropertyChanged}"/>
+                <TextBox Grid.Row="0" Grid.Column="1" MinWidth="100" Text="{Binding SearchTagName, UpdateSourceTrigger=PropertyChanged}">
+                    <TextBox.InputBindings>
+                        <KeyBinding Key="Enter" Command="{Binding ApplySearchCommand}" />
+                    </TextBox.InputBindings>
+                </TextBox>
+                <TextBox Grid.Row="0" Grid.Column="2" MinWidth="100" Text="{Binding SearchTagValue, UpdateSourceTrigger=PropertyChanged}">
+                    <TextBox.InputBindings>
+                        <KeyBinding Key="Enter" Command="{Binding ApplySearchCommand}" />
+                    </TextBox.InputBindings>
+                </TextBox>
 
                 <CheckBox Grid.Row="1" Grid.Column="0" Content="Project" VerticalAlignment="Center" IsChecked="{Binding Path=IsSearchProjectSelected}"/>
                 <ComboBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" ItemsSource="{Binding Projects}" DisplayMemberPath="Title" SelectedItem="{Binding SearchProject}" Margin="5"/>

@@ -717,6 +717,14 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
             RaisePropertyChanged(nameof(Contexts));
         }
 
+        private void ClearSearch()
+        {
+            SearchTagName = string.Empty;
+            SearchTagValue = string.Empty;
+            SearchProject = null;
+            SearchContext = null;
+        }
+
         #endregion
 
         #region Properties
@@ -963,6 +971,7 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
                 _searchProject = value;
                 if (value != null) IsSearchProjectSelected = true;
                 RaisePropertyChanged();
+                ApplySearchExecuted();
             }
         }
 
@@ -973,6 +982,10 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
             {
                 if (_searchExpanded == value) return;
                 _searchExpanded = value;
+                if (!value)
+                {
+                    ClearSearch();
+                }
                 RaisePropertyChanged();
             }
         }
@@ -1002,6 +1015,7 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
                 _searchContext = value;
                 if (value != null) IsSearchContextSelected = true;
                 RaisePropertyChanged();
+                ApplySearchExecuted();
             }
         }
 
@@ -1067,6 +1081,7 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
                 _isSearchProjectSelected = value;
                 if (!value) SearchProject = null;
                 RaisePropertyChanged();
+                ApplySearchExecuted();
             }
         }
 
@@ -1079,6 +1094,7 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
                 _isSearchContextSelected = value;
                 if (!value) SearchContext = null;
                 RaisePropertyChanged();
+                ApplySearchExecuted();
             }
         }
 
