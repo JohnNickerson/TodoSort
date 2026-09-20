@@ -47,7 +47,8 @@ namespace AssimilationSoftware.TodoSort.CLI
 
             var types = Assembly.GetExecutingAssembly().GetTypes().Where(t => t.GetCustomAttribute<VerbAttribute>() != null).ToArray();
 
-            Parser.Default.ParseArguments(args, types)
+            var parser = new Parser(with => { with.CaseInsensitiveEnumValues = true; with.HelpWriter = Console.Error; });
+            parser.ParseArguments(args, types)
                     .WithParsed<AddSubOptions>(opts => AddItem(opts, vm, repo))
                     .WithParsed<AdvancedSearchOptions>(opts => AdvancedSearch(opts, vm, repo))
                     .WithParsed<BalanceOptions>(opts => Balance(opts, vm, repo))
