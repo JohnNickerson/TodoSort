@@ -403,7 +403,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             IImporter? importer = null;
             switch (importOptions.Format)
             {
-                case "todosort":
+                case ImportFormat.todosort:
                     if (Directory.Exists(importOptions.Filename))
                     {
                         importer = new TextFolderImporter { Folder = importOptions.Filename };
@@ -413,10 +413,10 @@ namespace AssimilationSoftware.TodoSort.CLI
                         importer = new TextImporter { Filename = importOptions.Filename };
                     }
                     break;
-                case "instapaper":
+                case ImportFormat.instapaper:
                     importer = new InstapaperImporter(importOptions.Filename);
                     break;
-                case "urls":
+                case ImportFormat.urls:
                     importer = new RawUrlsImporter(importOptions.Filename);
                     break;
                 default:
