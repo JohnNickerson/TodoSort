@@ -15,6 +15,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Spectre.Console;
 using Humanizer;
+using AssimilationSoftware.TodoSort.CLI.Enums;
 
 namespace AssimilationSoftware.TodoSort.CLI
 {
@@ -47,7 +48,8 @@ namespace AssimilationSoftware.TodoSort.CLI
 
             var types = Assembly.GetExecutingAssembly().GetTypes().Where(t => t.GetCustomAttribute<VerbAttribute>() != null).ToArray();
 
-            Parser.Default.ParseArguments(args, types)
+            var parser = new Parser(with => { with.CaseInsensitiveEnumValues = true; with.HelpWriter = Console.Error; });
+            parser.ParseArguments(args, types)
                     .WithParsed<AddSubOptions>(opts => AddItem(opts, vm, repo))
                     .WithParsed<AdvancedSearchOptions>(opts => AdvancedSearch(opts, vm, repo))
                     .WithParsed<BalanceOptions>(opts => Balance(opts, vm, repo))
@@ -303,18 +305,18 @@ namespace AssimilationSoftware.TodoSort.CLI
             }
             else
             {
-                switch (exportOptions.Format?.ToLower())
+                switch (exportOptions.Format)
                 {
-                    case "html":
+                    case ExportFormat.html:
                         exporter = new HtmlExporter { Filename = exportOptions.Filename };
                         break;
-                    case "graphviz":
+                    case ExportFormat.graphviz:
                         exporter = new GraphVizExporter { Filename = exportOptions.Filename };
                         break;
-                    case "text":
+                    case ExportFormat.text:
                         exporter = new TextExporter { Filename = exportOptions.Filename };
                         break;
-                    case "json":
+                    case ExportFormat.json:
                         exporter = new JsonExporter { Filename = exportOptions.Filename };
                         break;
                     default:
@@ -402,7 +404,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             IImporter? importer = null;
             switch (importOptions.Format)
             {
-                case "todosort":
+                case ImportFormat.todosort:
                     if (Directory.Exists(importOptions.Filename))
                     {
                         importer = new TextFolderImporter { Folder = importOptions.Filename };
@@ -412,10 +414,10 @@ namespace AssimilationSoftware.TodoSort.CLI
                         importer = new TextImporter { Filename = importOptions.Filename };
                     }
                     break;
-                case "instapaper":
+                case ImportFormat.instapaper:
                     importer = new InstapaperImporter(importOptions.Filename);
                     break;
-                case "urls":
+                case ImportFormat.urls:
                     importer = new RawUrlsImporter(importOptions.Filename);
                     break;
                 default:
@@ -442,7 +444,8 @@ namespace AssimilationSoftware.TodoSort.CLI
 
             // Save settings.
             FolderSettings.SaveTo(settingsPath, initSettings);
-            var dirName = Path.GetDirectoryName(initOpts.TodoFile);
+            string rawDirectory = Path.GetDirectoryName(initOpts.TodoFile) ?? ".";
+            var dirName = Path.GetFullPath(string.IsNullOrEmpty(rawDirectory) ? "." : rawDirectory);
             if (dirName is not null && !Directory.Exists(dirName) && AnsiConsole.Confirm($"{initOpts.TodoFile} does not exist. Create it?", false))
             {
                 Directory.CreateDirectory(dirName);
