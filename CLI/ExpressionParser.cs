@@ -118,7 +118,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             else if (parsedexp is List<object>)
             {
                 List<object> exlist = (List<object>)parsedexp;
-                ISearchSpecification<ActionItem> result = null;
+                ISearchSpecification<ActionItem> result;
 				switch ((string)exlist[0])
 				{
 					case "and":
