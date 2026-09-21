@@ -1,4 +1,5 @@
-﻿using CommandLine;
+﻿using AssimilationSoftware.TodoSort.CLI.Enums;
+using CommandLine;
 
 namespace AssimilationSoftware.TodoSort.CLI.Options
 {
@@ -16,13 +17,5 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
 
         [Option("sort-desc", HelpText = "Specifies a tag by which to sort in descending order. Will not be used if 'sort' is present.")]
         public string? SortDescTag { get; set; }
-    }
-
-    public enum ExportFormat
-    {
-        graphviz,
-        html,
-        json,
-        text
     }
 }

@@ -15,6 +15,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Spectre.Console;
 using Humanizer;
+using AssimilationSoftware.TodoSort.CLI.Enums;
 
 namespace AssimilationSoftware.TodoSort.CLI
 {

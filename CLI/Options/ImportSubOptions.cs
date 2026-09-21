@@ -1,4 +1,5 @@
-﻿using CommandLine;
+﻿using AssimilationSoftware.TodoSort.CLI.Enums;
+using CommandLine;
 
 namespace AssimilationSoftware.TodoSort.CLI.Options
 {
@@ -13,12 +14,5 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
 
         [Option('c', "context", HelpText = "The context to assign to imported items.")]
         public string? Context { get; set; }
-    }
-
-    public enum ImportFormat
-    {
-        todosort,
-        instapaper,
-        urls
     }
 }
