@@ -304,18 +304,18 @@ namespace AssimilationSoftware.TodoSort.CLI
             }
             else
             {
-                switch (exportOptions.Format?.ToLower())
+                switch (exportOptions.Format)
                 {
-                    case "html":
+                    case ExportFormat.html:
                         exporter = new HtmlExporter { Filename = exportOptions.Filename };
                         break;
-                    case "graphviz":
+                    case ExportFormat.graphviz:
                         exporter = new GraphVizExporter { Filename = exportOptions.Filename };
                         break;
-                    case "text":
+                    case ExportFormat.text:
                         exporter = new TextExporter { Filename = exportOptions.Filename };
                         break;
-                    case "json":
+                    case ExportFormat.json:
                         exporter = new JsonExporter { Filename = exportOptions.Filename };
                         break;
                     default:
@@ -443,7 +443,8 @@ namespace AssimilationSoftware.TodoSort.CLI
 
             // Save settings.
             FolderSettings.SaveTo(settingsPath, initSettings);
-            var dirName = Path.GetDirectoryName(initOpts.TodoFile);
+            string rawDirectory = Path.GetDirectoryName(initOpts.TodoFile) ?? ".";
+            var dirName = Path.GetFullPath(string.IsNullOrEmpty(rawDirectory) ? "." : rawDirectory);
             if (dirName is not null && !Directory.Exists(dirName) && AnsiConsole.Confirm($"{initOpts.TodoFile} does not exist. Create it?", false))
             {
                 Directory.CreateDirectory(dirName);
