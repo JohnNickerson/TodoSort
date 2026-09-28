@@ -313,11 +313,14 @@ namespace AssimilationSoftware.TodoSort.CLI
                     case ExportFormat.graphviz:
                         exporter = new GraphVizExporter { Filename = exportOptions.Filename };
                         break;
-                    case ExportFormat.text:
+                    case ExportFormat.todosort:
                         exporter = new TextExporter { Filename = exportOptions.Filename };
                         break;
                     case ExportFormat.json:
                         exporter = new JsonExporter { Filename = exportOptions.Filename };
+                        break;
+                    case ExportFormat.todotxt:
+                        exporter = new TodoTxtExporter {Filename = exportOptions.Filename };
                         break;
                     default:
                         Console.WriteLine("Unknown output file format.");
