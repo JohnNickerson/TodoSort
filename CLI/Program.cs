@@ -19,12 +19,6 @@ using AssimilationSoftware.TodoSort.CLI.Enums;
 
 namespace AssimilationSoftware.TodoSort.CLI
 {
-    enum SortOrder
-    {
-        Ascending,
-        Descending
-    }
-
     public class Program
     {
         private static bool verbose = false;
