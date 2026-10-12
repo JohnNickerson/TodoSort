@@ -282,4 +282,9 @@ public class ConsoleItemDisplay : IItemDisplay
         AnsiConsole.Markup(line.ToString());
         AnsiConsole.MarkupLine(content);
     }
+
+    public void WriteLine(string? message = "", params object?[]? args)
+    {
+        Console.WriteLine(message ?? "", args);
+    }
 }

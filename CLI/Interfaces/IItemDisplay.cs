@@ -11,4 +11,5 @@ public interface IItemDisplay
     void PrintItem(ActionItem i, int? index, ITodoRepository repo, bool nsfw = false, bool verbose = false);
     void PrintItems(string sortTag, IEnumerable<ActionItem> list, ITodoRepository repo, bool nsfw = false, bool verbose = false);
     void PrintTree(List<ActionItem> bold, List<ActionItem> strike, ITodoRepository repo, bool nsfw = false, bool verbose = false);
+    void WriteLine(string message = "", params object?[]? args);
 }

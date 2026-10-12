@@ -95,17 +95,17 @@ namespace AssimilationSoftware.TodoSort.CLI
             {
                 // Present conflicts for resolution.
                 var i = 0;
-                Console.WriteLine("Updates:");
+                view.WriteLine("Updates:");
                 foreach (var edit in conflictSet.Updates)
                 {
                     view.PrintItem(edit, i, repo, opts.NSFW, opts.Verbose);
                     i++;
                 }
                 // Present options: Delete, Update (one particular version), Revert.
-                Console.WriteLine("Options:");
-                Console.WriteLine("R: Revert all pending changes to this record");
-                Console.WriteLine("D: Delete this item, including any pending changes");
-                Console.WriteLine("[number]: Accept a specific revision above");
+                view.WriteLine("Options:");
+                view.WriteLine("R: Revert all pending changes to this record");
+                view.WriteLine("D: Delete this item, including any pending changes");
+                view.WriteLine("[number]: Accept a specific revision above");
                 var optKey = Console.ReadKey();
                 switch (optKey.KeyChar.ToString().ToLower())
                 {
@@ -127,10 +127,10 @@ namespace AssimilationSoftware.TodoSort.CLI
                         break;
                 }
 
-                Console.WriteLine(Environment.NewLine);
+                view.WriteLine(Environment.NewLine);
             }
             var commitCount = repo.CommitChanges();
-            Console.WriteLine($"{commitCount} pending changes committed.");
+            view.WriteLine($"{commitCount} pending changes committed.");
             repo.SaveChanges();
 
             TidyUp(vm, repo, view);
@@ -155,8 +155,8 @@ namespace AssimilationSoftware.TodoSort.CLI
                 }
                 // Present options for merging
                 // Get user input
-                Console.WriteLine();
-                Console.WriteLine("Select one item to merge all others into (or Cancel to stop):");
+                view.WriteLine();
+                view.WriteLine("Select one item to merge all others into (or Cancel to stop):");
                 var survivor = Disambiguate(vm.SearchResults, repo, view, includeCancel: true);
                 if (survivor != null)
                 {
@@ -175,8 +175,8 @@ namespace AssimilationSoftware.TodoSort.CLI
                     vm.SearchSpecification = new TagValueSpecification(dupe.Tag, dupeTag);
                     // Present options for merging
                     // Get user input.
-                    Console.WriteLine();
-                    Console.WriteLine("Select one item to merge all others into (i = ignore):");
+                    view.WriteLine();
+                    view.WriteLine("Select one item to merge all others into (i = ignore):");
                     var survivor = Disambiguate(vm.SearchResults, repo, view);
                     if (survivor != null)
                     {
@@ -198,7 +198,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             SetUniversalOptions(pruneOptions, vm);
 
             vm.SearchSpecification = pruneOptions.GetSearchSpecification(repo);
-            Console.WriteLine("About to defer {0} items. Continue [Y/N]?", vm.SearchResults.Count());
+            view.WriteLine("About to defer {0} items. Continue [Y/N]?", vm.SearchResults.Count());
             var k = Console.ReadKey();
             if (k.KeyChar.ToString().ToLower() == "y")
             {
@@ -262,7 +262,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             view.PrintItems(search.SortTag ?? "done-date", vm.DoneSearchResults, repo, search.NSFW, search.Verbose);
             if (!search.NoCount)
             {
-                Console.WriteLine("{0} item(s) found.", vm.DoneSearchResults.Count());
+                view.WriteLine("{0} item(s) found.", vm.DoneSearchResults.Count());
             }
 
             TidyUp(vm, repo, view);
@@ -291,7 +291,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             // Write to the console if the filename is empty.
             if (string.IsNullOrEmpty(exportOptions.Filename))
             {
-                Console.WriteLine("Target filename is empty. You must specify a file name to write to.");
+                view.WriteLine("Target filename is empty. You must specify a file name to write to.");
                 return;
             }
             IExporter? exporter = null;
@@ -319,7 +319,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                         exporter = new TodoTxtExporter {Filename = exportOptions.Filename };
                         break;
                     default:
-                        Console.WriteLine("Unknown output file format.");
+                        view.WriteLine("Unknown output file format.");
                         break;
                 }
             }
@@ -370,7 +370,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                     title = WebUtility.HtmlDecode(title);
                     if (!String.IsNullOrWhiteSpace(title) && title != tem.Title)
                     {
-                        Console.WriteLine("Renaming:\n\t{0}\n\t{1}", tem.Title, title);
+                        view.WriteLine("Renaming:\n\t{0}\n\t{1}", tem.Title, title);
                         totalCount++;
                         tem.Title = title;
                         if (!string.IsNullOrEmpty(fixOptions.MoveTo))
@@ -379,7 +379,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                         }
 
                         vm.Update(tem);
-                        Console.WriteLine("{0:0}% complete", 100m * progress / progressTotal);
+                        view.WriteLine("{0:0}% complete", 100m * progress / progressTotal);
                     }
                 }
                 catch (Exception e)
@@ -390,7 +390,7 @@ namespace AssimilationSoftware.TodoSort.CLI
 
             if (totalCount > 0)
             {
-                Console.WriteLine("{0} items updated.", totalCount);
+                view.WriteLine("{0} items updated.", totalCount);
             }
 
             TidyUp(vm, repo, view);
@@ -420,7 +420,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                     importer = new RawUrlsImporter(importOptions.Filename);
                     break;
                 default:
-                    Console.WriteLine($"Unknown import format: {importOptions.Format}");
+                    view.WriteLine($"Unknown import format: {importOptions.Format}");
                     break;
             }
             if (importer != null)
@@ -428,7 +428,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                 // Get everything from the source file.
                 // Exclude anything already seen, according to its import hash field.
                 vm.AddAllItems(importOptions.Context, true, importer.GetAllItems());
-                Console.WriteLine(vm.StatusMessage);
+                view.WriteLine(vm.StatusMessage);
             }
 
             TidyUp(vm, repo, view);
@@ -455,12 +455,12 @@ namespace AssimilationSoftware.TodoSort.CLI
         {
             SetUniversalOptions(mergeOptions, vm);
 
-            Console.WriteLine("Confirm child item:");
+            view.WriteLine("Confirm child item:");
             vm.SearchTerm = mergeOptions.ChildSearchTerm ?? mergeOptions.TargetSearchTerm;
             var mergeVictim = Disambiguate(vm.SearchResults, repo, view);
             if (mergeVictim != null)
             {
-                Console.WriteLine("Confirm item to merge into:");
+                view.WriteLine("Confirm item to merge into:");
                 vm.SearchTerm = mergeOptions.TargetSearchTerm;
                 var combined = Disambiguate(vm.SearchResults.Where(x => x.ID != mergeVictim.ID), repo, view);
                 if (mergeVictim != null && combined != null)
@@ -487,7 +487,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                 items.RemoveAt(0);
                 counter++;
             }
-            Console.WriteLine(string.Format("{0} items moved to @{1}", counter, moveAllOptions.NewContext));
+            view.WriteLine(string.Format("{0} items moved to @{1}", counter, moveAllOptions.NewContext));
 
             TidyUp(vm, repo, view);
         }
@@ -547,7 +547,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                     }
                     if (openTagOptions.Rename)
                     {
-                        Console.WriteLine("What new title should this item have?");
+                        view.WriteLine("What new title should this item have?");
                         var newTitle = Console.ReadLine();
                         if (!string.IsNullOrWhiteSpace(newTitle))
                         {
@@ -556,7 +556,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                     }
                     if (openTagOptions.ReTag)
                     {
-                        TagItem(vm, selected);
+                        TagItem(vm, selected, view);
                     }
                     if (openTagOptions.MarkAsDone)
                     {
@@ -565,7 +565,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                 }
                 else
                 {
-                    Console.WriteLine("Tag not found: {0}", openTagOptions.Tag);
+                    view.WriteLine("Tag not found: {0}", openTagOptions.Tag);
                 }
             }
 
@@ -604,13 +604,13 @@ namespace AssimilationSoftware.TodoSort.CLI
                 // show pairs of items
                 if (items.Count() > 1)
                 {
-                    Console.WriteLine(string.Format("{1}{1}@{0}", con, Environment.NewLine));
+                    view.WriteLine(string.Format("{1}{1}@{0}", con, Environment.NewLine));
                 }
                 for (var x = 0; x < items.Count() - 1; x += 2)
                 {
                     if (quitAndSave) break;
                     // get vote
-                    Console.WriteLine("{0}/{1} ({2}%) complete", x, items.Count(), 100 * x / items.Count());
+                    view.WriteLine("{0}/{1} ({2}%) complete", x, items.Count(), 100 * x / items.Count());
                     view.PrintItem(items.ElementAt(index[x]), 1, repo, rankOptions.NSFW, rankOptions.Verbose);
                     view.PrintItem(items.ElementAt(index[x + 1]), 2, repo, rankOptions.NSFW, rankOptions.Verbose);
                     var choice = AnsiConsole.Prompt(new Spectre.Console.TextPrompt<string>("Which of these is more important? (q=quit and save, c=cancel)")
@@ -626,15 +626,15 @@ namespace AssimilationSoftware.TodoSort.CLI
                             break;
                         case "q":
                             quitAndSave = true;
-                            Console.WriteLine();
-                            Console.WriteLine("Saving changes.");
+                            view.WriteLine();
+                            view.WriteLine("Saving changes.");
                             break;
                         case "c":
-                            Console.WriteLine();
-                            Console.WriteLine("Cancelling. No changes saved.");
+                            view.WriteLine();
+                            view.WriteLine("Cancelling. No changes saved.");
                             return;
                     }
-                    Console.WriteLine();
+                    view.WriteLine();
                 }
             }
 
@@ -650,10 +650,10 @@ namespace AssimilationSoftware.TodoSort.CLI
             if (selected != null)
             {
                 vm.Rename(selected, renameOptions.NewTitle);
-                Console.WriteLine("Item renamed.");
+                view.WriteLine("Item renamed.");
                 if (renameOptions.ReTag)
                 {
-                    TagItem(vm, selected);
+                    TagItem(vm, selected, view);
                 }
             }
 
@@ -667,7 +667,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             vm.SearchSpecification = searchOptions.GetSearchSpecification(repo);
             if (vm.SearchResults.Count() == 0)
             {
-                Console.WriteLine("No results found.");
+                view.WriteLine("No results found.");
             }
             else if (searchOptions.PrintTree)
             {
@@ -678,7 +678,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                 view.PrintItems(searchOptions.SortTag ?? string.Empty, vm.SearchResults, repo, searchOptions.NSFW, searchOptions.Verbose);
                 if (!searchOptions.NoCount)
                 {
-                    Console.WriteLine("{0} item(s) found.", vm.SearchResults.Count());
+                    view.WriteLine("{0} item(s) found.", vm.SearchResults.Count());
                 }
             }
 
@@ -689,10 +689,10 @@ namespace AssimilationSoftware.TodoSort.CLI
         {
             SetUniversalOptions(setParentOptions, vm);
 
-            Console.WriteLine("Confirm child item:");
+            view.WriteLine("Confirm child item:");
             vm.SearchSpecification = setParentOptions.GetChildSearchSpecification(repo);
             var child = Disambiguate(vm.SearchResults, repo, view);
-            Console.WriteLine("Confirm parent item:");
+            view.WriteLine("Confirm parent item:");
             vm.SearchSpecification = setParentOptions.GetParentSearchSpecification(repo);
             if (child != null)
             {
@@ -700,18 +700,18 @@ namespace AssimilationSoftware.TodoSort.CLI
                 if (parent != null)
                 {
                     vm.SetParent(child, parent);
-                    Console.WriteLine();
+                    view.WriteLine();
                     view.PrintTree(new List<ActionItem> { { child }, { parent } }, new List<ActionItem>(), repo, setParentOptions.NSFW, setParentOptions.Verbose);
                 }
                 else
                 {
                     // Null parent. Confirm to set to nothing.
-                    Console.WriteLine("No parent selected. Remove current priority parent? [Y/N]");
+                    view.WriteLine("No parent selected. Remove current priority parent? [Y/N]");
                     var k = Console.ReadKey();
                     if (k.KeyChar.ToString().ToLower() == "y")
                     {
                         vm.SetParent(child, null);
-                        Console.WriteLine();
+                        view.WriteLine();
                         view.PrintTree(new List<ActionItem> { child }, new List<ActionItem>(), repo, setParentOptions.NSFW, setParentOptions.Verbose);
                     }
                 }
@@ -724,10 +724,10 @@ namespace AssimilationSoftware.TodoSort.CLI
         {
             SetUniversalOptions(commandOptions, vm);
 
-            Console.WriteLine("Confirm child item:");
+            view.WriteLine("Confirm child item:");
             vm.SearchTerm = commandOptions.ChildSearchTerm;
             var child = Disambiguate(vm.SearchResults, repo, view);
-            Console.WriteLine("Confirm project:");
+            view.WriteLine("Confirm project:");
             vm.SearchTerm = commandOptions.ProjectSearchTerm ?? commandOptions.ChildSearchTerm;
             var project = Disambiguate(vm.SearchResults, repo, view);
             if (child != null && project != null)
@@ -749,7 +749,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             view.PrintItems(search.SortTag ?? "tickle-date", vm.SomedaySearchResults, repo, search.NSFW, search.Verbose);
             if (!search.NoCount)
             {
-                Console.WriteLine("{0} item(s) found.", vm.SomedaySearchResults.Count());
+                view.WriteLine("{0} item(s) found.", vm.SomedaySearchResults.Count());
             }
 
             TidyUp(vm, repo, view);
@@ -772,7 +772,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                     view.PrintItem(someItems.ElementAt(offset + index), index, repo, someSub.NSFW, someSub.Verbose);
                 }
                 var choice = Console.ReadKey().KeyChar;
-                Console.WriteLine();
+                view.WriteLine();
                 int dex;
                 if (Int32.TryParse(choice.ToString(), out dex))
                 {
@@ -820,7 +820,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             selected = Disambiguate(vm.SearchResults, repo, view, !string.IsNullOrEmpty(tagOptions.ItemId));
             if (selected != null)
             {
-                TagItem(vm, selected);
+                TagItem(vm, selected, view);
             }
 
             TidyUp(vm, repo, view, true);
@@ -928,7 +928,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             SetUniversalOptions(unrankAllOptions, vm);
 
             vm.SearchSpecification = unrankAllOptions.GetSearchSpecification(repo);
-            Console.WriteLine("About to delete all ranking data for {0} items. Continue [Y/N]?", vm.SearchResults.Count());
+            view.WriteLine("About to delete all ranking data for {0} items. Continue [Y/N]?", vm.SearchResults.Count());
             if (Console.ReadKey().KeyChar.ToString().ToLower() == "y")
             {
                 vm.ResetPriorityParents(vm.SearchResults.ToArray());
@@ -960,7 +960,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             // 1. Make sure there is at least one item.
             if (!vm.SearchResults.Any())
             {
-                Console.WriteLine("No items found in the chain.");
+                view.WriteLine("No items found in the chain.");
                 problemsFound++;
             }
             else
@@ -983,32 +983,32 @@ namespace AssimilationSoftware.TodoSort.CLI
                     var count = vm.SearchResults.Count(j => j.GetIntTag("order", 0) == i);
                     if (count == 0)
                     {
-                        Console.WriteLine($"Item missing at index {i}");
+                        view.WriteLine($"Item missing at index {i}");
                         problemsFound++;
                     }
                     else if (count > 1)
                     {
-                        Console.WriteLine($"Too many items with index {i}");
+                        view.WriteLine($"Too many items with index {i}");
                         problemsFound++;
                     }
                 }
 
                 if (min == max)
                 {
-                    Console.WriteLine("Only one item in chain.");
+                    view.WriteLine("Only one item in chain.");
                     problemsFound++;
                 }
                 // 3. Find and add items that might belong in the chain.
                 foreach (var excluded in vm.SearchResults.Where(i => !i.Tags.ContainsKey("order") || (!i.Tags.ContainsKey("series") && !i.ProjectId.HasValue)))
                 {
-                    Console.WriteLine("Item potentially excluded:");
+                    view.WriteLine("Item potentially excluded:");
                     view.PrintItem(excluded, null, repo, chainOptions.NSFW, chainOptions.Verbose);
                     problemsFound++;
                 }
             }
             if (chainOptions.PauseOnProblems && problemsFound > 0)
             {
-                Console.WriteLine("Press a key to continue...");
+                view.WriteLine("Press a key to continue...");
                 Console.ReadKey();
             }
 
@@ -1056,14 +1056,14 @@ namespace AssimilationSoftware.TodoSort.CLI
             for (var i = 0; i < inbox.Count; i++)
             {
                 // Assign the @inbox items to contexts.
-                Console.WriteLine("To which context should this item go?");
+                view.WriteLine("To which context should this item go?");
                 var first = inbox[i];
                 view.PrintItem(first, null, repo);
-                Console.WriteLine();
-                PrintContexts(vm);
+                view.WriteLine();
+                PrintContexts(vm, view);
                 var newContext = Console.ReadLine();
                 vm.SetContext(first, newContext);
-                Console.WriteLine();
+                view.WriteLine();
             }
 
             // Need to find projects for which there is no next action.
@@ -1076,12 +1076,12 @@ namespace AssimilationSoftware.TodoSort.CLI
                 if (!vm.SearchResults.Any())
                 {
                     // Add next actions for projects.
-                    Console.WriteLine("What is the next action required on this project?");
+                    view.WriteLine("What is the next action required on this project?");
                     var first = projects[i];
                     view.PrintItem(first, null, repo);
                     var nextAction = Console.ReadLine();
-                    Console.WriteLine("...and to what context does it belong?");
-                    PrintContexts(vm);
+                    view.WriteLine("...and to what context does it belong?");
+                    PrintContexts(vm, view);
                     var newContext = Console.ReadLine();
                     if (nextAction == newContext)
                     {
@@ -1098,7 +1098,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                         };
                         vm.AddItem(next);
                     }
-                    Console.WriteLine();
+                    view.WriteLine();
                 }
             }
 
@@ -1132,10 +1132,10 @@ namespace AssimilationSoftware.TodoSort.CLI
             {
                 selected.Notes.Add(a.Note);
             }
-            Console.WriteLine("Adding action '{0}' to context @{1}", a.ActionTitle, a.Context);
+            view.WriteLine("Adding action '{0}' to context @{1}", a.ActionTitle, a.Context);
             vm.AddItem(selected);
             // Allow tagging right away.
-            TagItem(vm, selected);
+            TagItem(vm, selected, view);
             TidyUp(vm, repo, view, true);
         }
 
@@ -1168,13 +1168,13 @@ namespace AssimilationSoftware.TodoSort.CLI
                 {
                     // In large lists, rather than writing out thousands of changes, then reading them again to commit, just commit everything now.
                     var commitCount = repo.CommitChanges();
-                    Console.WriteLine($"{commitCount} pending changes committed.");
+                    view.WriteLine($"{commitCount} pending changes committed.");
                     repo.SaveChanges();
                 }
             }
             else
             {
-                Console.WriteLine("Branching factor must be greater than zero.");
+                view.WriteLine("Branching factor must be greater than zero.");
             }
 
             TidyUp(vm, repo, view);
@@ -1231,6 +1231,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             return 1;
         }
 
+        // TODO: Remove this and do better.
         private static void VmOnPropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(ViewModel.ProgressPercent))
@@ -1239,11 +1240,11 @@ namespace AssimilationSoftware.TodoSort.CLI
             }
         }
 
-        private static void PrintContexts(ViewModel vm)
+        private static void PrintContexts(ViewModel vm, IItemDisplay view)
         {
             foreach (var c in vm.GetContextNames())
             {
-                Console.WriteLine(c);
+                view.WriteLine(c);
             }
         }
 
@@ -1260,14 +1261,14 @@ namespace AssimilationSoftware.TodoSort.CLI
             {
                 view.PrintItem(item, null, repo, nsfw, verbose);
                 // Write menu.
-                Console.WriteLine("1. Undefer (and go to next item)");
-                Console.WriteLine("2. Rename");
-                Console.WriteLine("3. Open Tag");
-                Console.WriteLine("4. Assign tickler date");
-                Console.WriteLine("5. Assign tags");
-                Console.WriteLine("6. Finished (next item)");
+                view.WriteLine("1. Undefer (and go to next item)");
+                view.WriteLine("2. Rename");
+                view.WriteLine("3. Open Tag");
+                view.WriteLine("4. Assign tickler date");
+                view.WriteLine("5. Assign tags");
+                view.WriteLine("6. Finished (next item)");
                 var k = Console.ReadKey();
-                Console.WriteLine();
+                view.WriteLine();
                 switch (k.KeyChar)
                 {
                     case '1':
@@ -1277,20 +1278,20 @@ namespace AssimilationSoftware.TodoSort.CLI
                         }
                         else
                         {
-                            Console.WriteLine("To which context should this item go?");
+                            view.WriteLine("To which context should this item go?");
                             // List contexts.
-                            PrintContexts(vm);
+                            PrintContexts(vm, view);
                             var newContext = Console.ReadLine();
                             vm.Undefer(newContext, item);
                         }
                         return;
                     case '2':
-                        Console.WriteLine("What new name should this item have?");
+                        view.WriteLine("What new name should this item have?");
                         var name = Console.ReadLine();
                         vm.Rename(item, name);
                         break;
                     case '3':
-                        Console.WriteLine("What tag to open?");
+                        view.WriteLine("What tag to open?");
                         var tag = Console.ReadLine();
                         if (item.Tags.TryGetValue(tag ?? string.Empty, out string? tagValue))
                         {
@@ -1298,14 +1299,14 @@ namespace AssimilationSoftware.TodoSort.CLI
                         }
                         else
                         {
-                            Console.WriteLine("Tag not found on this item.");
+                            view.WriteLine("Tag not found on this item.");
                         }
                         break;
                     case '5':
-                        TagItem(vm, item);
+                        TagItem(vm, item, view);
                         break;
                     case '4':
-                        Console.WriteLine("When should this item reappear in the inbox?");
+                        view.WriteLine("When should this item reappear in the inbox?");
                         var dateInput = Console.ReadLine();
                         DateTime parsedDate;
                         if (DateTime.TryParse(dateInput, out parsedDate))
@@ -1319,16 +1320,16 @@ namespace AssimilationSoftware.TodoSort.CLI
             }
         }
 
-        private static void TagItem(ViewModel vm, ActionItem selected)
+        private static void TagItem(ViewModel vm, ActionItem selected, IItemDisplay view)
         {
             string? tagName;
             do
             {
-                Console.WriteLine("What should this new tag be called? (ENTER to quit)");
+                view.WriteLine("What should this new tag be called? (ENTER to quit)");
                 tagName = Console.ReadLine()?.ToLower()?.Trim();
                 if (!string.IsNullOrEmpty(tagName))
                 {
-                    Console.WriteLine("What is the value of the tag?");
+                    view.WriteLine("What is the value of the tag?");
                     var value = Console.ReadLine();
                     if (!string.IsNullOrWhiteSpace(value))
                     {
@@ -1338,7 +1339,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                     {
                         vm.RemoveTag(selected, tagName);
                     }
-                    Console.WriteLine();
+                    view.WriteLine();
                 }
             } while (!string.IsNullOrEmpty(tagName));
         }
@@ -1374,12 +1375,12 @@ namespace AssimilationSoftware.TodoSort.CLI
             // Disambiguate or verify search results.
             if (todoList.Count() == 0)
             {
-                Console.WriteLine("No search matches. No action will be taken.");
+                view.WriteLine("No search matches. No action will be taken.");
             }
             else if (todoList.Count() == 1 && autoAcceptOne)
             {
                 view.PrintItem(todoList.ElementAt(0), null, repo, nsfw, verbose);
-                Console.WriteLine("Auto-accepting...");
+                view.WriteLine("Auto-accepting...");
                 selected = todoList.ElementAt(0);
             }
             else
@@ -1401,7 +1402,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                 selected = AnsiConsole.Prompt(prompt);
                 if (selected.Context == "cancel")
                 {
-                    Console.WriteLine("Cancelled.");
+                    view.WriteLine("Cancelled.");
                     return null;
                 }
             }
