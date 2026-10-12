@@ -1,5 +1,6 @@
 using System.Text;
 using AssimilationSoftware.Maroon.Model;
+using AssimilationSoftware.TodoSort.CLI.Enums;
 using AssimilationSoftware.TodoSort.CLI.Interfaces;
 using AssimilationSoftware.TodoSort.Core;
 using AssimilationSoftware.TodoSort.Core.Data;
@@ -14,6 +15,47 @@ public class ConsoleItemDisplay : IItemDisplay
     public ConsoleItemDisplay(bool verbose = false)
     {
         _verbose = verbose;
+    }
+
+    public IOrderedEnumerable<ActionItem> ApplySort(string sortTag, IEnumerable<ActionItem> list, SortOrder sort = SortOrder.Ascending)
+    {
+        var sortedList = sort == SortOrder.Descending ? list.OrderByDescending(a => a.Context) : from a in list orderby a.Context select a;
+        if (sortTag == "done-date")
+        {
+            if (sort == SortOrder.Descending)
+                sortedList = sortedList.ThenByDescending(i => i.DoneDate ?? DateTime.Now);
+            else
+                sortedList = sortedList.ThenBy(i => i.DoneDate ?? DateTime.Now);
+        }
+        else if (sortTag == "tickle-date")
+        {
+            if (sort == SortOrder.Descending)
+                sortedList = sortedList.ThenByDescending(i => i.TickleDate ?? DateTime.Now);
+            else
+                sortedList = sortedList.ThenBy(i => i.TickleDate ?? DateTime.Now);
+        }
+        else if (sortTag == "upvotes")
+        {
+            if (sort == SortOrder.Descending)
+                sortedList = sortedList.ThenByDescending(i => i.Upvotes);
+            else
+                sortedList = sortedList.ThenBy(i => i.Upvotes);
+        }
+        else if (sortTag == "title" || string.IsNullOrEmpty(sortTag))
+        {
+            if (sort == SortOrder.Descending)
+                sortedList = sortedList.ThenByDescending(i => i.Title);
+            else
+                sortedList = sortedList.ThenBy(i => i.Title);
+        }
+        else
+        {
+            if (sort == SortOrder.Descending)
+                sortedList = sortedList.ThenByDescending(a => a.Tags.ContainsKey(sortTag) ? a.Tags[sortTag] : "0", new SemiNumericComparer());
+            else
+                sortedList = sortedList.ThenBy(a => a.Tags.ContainsKey(sortTag) ? a.Tags[sortTag] : "0", new SemiNumericComparer());
+        }
+        return sortedList;
     }
 
     public string FormatTitle(ActionItem i, bool nsfw = false)
@@ -106,6 +148,21 @@ public class ConsoleItemDisplay : IItemDisplay
             }
             WrapOutput("        #context:", i.Context, wrapWidth);
             WrapOutput("        #last-modified:", i.LastModified.ToString("yyyy-MM-dd"), wrapWidth);
+        }
+    }
+
+    public void PrintItems(string sortTag, IEnumerable<ActionItem> list, ITodoRepository repo, bool nsfw = false, bool verbose = false)
+    {
+        var last_context = string.Empty;
+        var sortedList = ApplySort(sortTag, list);
+        foreach (var i in sortedList)
+        {
+            if (i.Context != last_context)
+            {
+                Console.WriteLine("@{0}", i.Context);
+            }
+            PrintItem(i, null, repo, nsfw, verbose);
+            last_context = i.Context;
         }
     }
 

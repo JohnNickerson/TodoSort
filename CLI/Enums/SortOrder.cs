@@ -1,6 +1,6 @@
 namespace AssimilationSoftware.TodoSort.CLI.Enums
 {
-    enum SortOrder
+    public enum SortOrder
     {
         Ascending,
         Descending

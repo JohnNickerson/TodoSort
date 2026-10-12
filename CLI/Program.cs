@@ -260,7 +260,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             // Set the ViewModel property.
             vm.DoneSearchSpecification = search.GetSearchSpecification(repo);
             // Report the results.
-            PrintItems(search.SortTag ?? "done-date", vm.DoneSearchResults, repo, view, search.NSFW);
+            view.PrintItems(search.SortTag ?? "done-date", vm.DoneSearchResults, repo, search.NSFW);
             if (!search.NoCount)
             {
                 Console.WriteLine("{0} item(s) found.", vm.DoneSearchResults.Count());
@@ -329,11 +329,11 @@ namespace AssimilationSoftware.TodoSort.CLI
                 vm.SearchSpecification = exportOptions.GetSearchSpecification(repo);
                 if (!string.IsNullOrEmpty(exportOptions.SortTag))
                 {
-                    exporter.Export(ApplySort(exportOptions.SortTag, vm.SearchResults).ToList());
+                    exporter.Export(view.ApplySort(exportOptions.SortTag, vm.SearchResults).ToList());
                 }
                 else if (!string.IsNullOrEmpty(exportOptions.SortDescTag))
                 {
-                    exporter.Export(ApplySort(exportOptions.SortDescTag, vm.SearchResults, SortOrder.Descending).ToList());
+                    exporter.Export(view.ApplySort(exportOptions.SortDescTag, vm.SearchResults, SortOrder.Descending).ToList());
                 }
                 else
                 {
@@ -678,7 +678,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             }
             else
             {
-                PrintItems(searchOptions.SortTag ?? string.Empty, vm.SearchResults, repo, view, searchOptions.NSFW);
+                view.PrintItems(searchOptions.SortTag ?? string.Empty, vm.SearchResults, repo, searchOptions.NSFW);
                 if (!searchOptions.NoCount)
                 {
                     Console.WriteLine("{0} item(s) found.", vm.SearchResults.Count());
@@ -749,7 +749,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             // Set the ViewModel property.
             vm.SomedaySearchSpecification = search.GetSearchSpecification(repo);
             // Report the results.
-            PrintItems(search.SortTag ?? "tickle-date", vm.SomedaySearchResults, repo, view, search.NSFW);
+            view.PrintItems(search.SortTag ?? "tickle-date", vm.SomedaySearchResults, repo, search.NSFW);
             if (!search.NoCount)
             {
                 Console.WriteLine("{0} item(s) found.", vm.SomedaySearchResults.Count());
@@ -1151,7 +1151,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             SetUniversalOptions(argSubs, vm);
 
             vm.SearchSpecification = argSubs.SearchSpecification;
-            PrintItems("title", vm.SearchResults, repo, view, argSubs.NSFW);
+            view.PrintItems("title", vm.SearchResults, repo, argSubs.NSFW);
 
             TidyUp(vm, repo, view);
         }
@@ -1201,11 +1201,11 @@ namespace AssimilationSoftware.TodoSort.CLI
             else if (!string.IsNullOrEmpty(bumpOpts.SortTag))
             {
                 // First items.
-                bumpItems.AddRange(ApplySort(bumpOpts.SortTag, vm.SearchResults).Take(bumpOpts.Top));
+                bumpItems.AddRange(view.ApplySort(bumpOpts.SortTag, vm.SearchResults).Take(bumpOpts.Top));
             }
             else if (!string.IsNullOrEmpty(bumpOpts.SortDescTag))
             {
-                bumpItems.AddRange(ApplySort(bumpOpts.SortTag ?? string.Empty, vm.SearchResults, SortOrder.Descending).Take(bumpOpts.Top));
+                bumpItems.AddRange(view.ApplySort(bumpOpts.SortTag ?? string.Empty, vm.SearchResults, SortOrder.Descending).Take(bumpOpts.Top));
             }
             else
             {
@@ -1348,63 +1348,6 @@ namespace AssimilationSoftware.TodoSort.CLI
                     Console.WriteLine();
                 }
             } while (!string.IsNullOrEmpty(tagName));
-        }
-
-        private static IOrderedEnumerable<ActionItem> ApplySort(string sortTag, IEnumerable<ActionItem> list, SortOrder sort = SortOrder.Ascending)
-        {
-            var sortedList = sort == SortOrder.Descending ? list.OrderByDescending(a => a.Context) : from a in list orderby a.Context select a;
-            if (sortTag == "done-date")
-            {
-                if (sort == SortOrder.Descending)
-                    sortedList = sortedList.ThenByDescending(i => i.DoneDate ?? DateTime.Now);
-                else
-                    sortedList = sortedList.ThenBy(i => i.DoneDate ?? DateTime.Now);
-            }
-            else if (sortTag == "tickle-date")
-            {
-                if (sort == SortOrder.Descending)
-                    sortedList = sortedList.ThenByDescending(i => i.TickleDate ?? DateTime.Now);
-                else
-                    sortedList = sortedList.ThenBy(i => i.TickleDate ?? DateTime.Now);
-            }
-            else if (sortTag == "upvotes")
-            {
-                if (sort == SortOrder.Descending)
-                    sortedList = sortedList.ThenByDescending(i => i.Upvotes);
-                else
-                    sortedList = sortedList.ThenBy(i => i.Upvotes);
-            }
-            else if (sortTag == "title" || string.IsNullOrEmpty(sortTag))
-            {
-                if (sort == SortOrder.Descending)
-                    sortedList = sortedList.ThenByDescending(i => i.Title);
-                else
-                    sortedList = sortedList.ThenBy(i => i.Title);
-            }
-            else
-            {
-                if (sort == SortOrder.Descending)
-                    sortedList = sortedList.ThenByDescending(a => a.Tags.ContainsKey(sortTag) ? a.Tags[sortTag] : "0", new SemiNumericComparer());
-                else
-                    sortedList = sortedList.ThenBy(a => a.Tags.ContainsKey(sortTag) ? a.Tags[sortTag] : "0", new SemiNumericComparer());
-            }
-            return sortedList;
-        }
-
-        // TODO: Refactor this into IItemDisplay as well.
-        private static void PrintItems(string sortTag, IEnumerable<ActionItem> list, ITodoRepository repo, IItemDisplay view, bool nsfw = false)
-        {
-            var last_context = string.Empty;
-            var sortedList = ApplySort(sortTag, list);
-            foreach (var i in sortedList)
-            {
-                if (i.Context != last_context)
-                {
-                    Console.WriteLine("@{0}", i.Context);
-                }
-                view.PrintItem(i, null, repo, nsfw, verbose);
-                last_context = i.Context;
-            }
         }
 
         private static void PrintTreeSpectre(List<ActionItem> bold, List<ActionItem> strike, ITodoRepository repo, bool nsfw = false)
