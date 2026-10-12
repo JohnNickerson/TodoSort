@@ -24,7 +24,6 @@ namespace AssimilationSoftware.TodoSort.CLI
     public class Program
     {
         private static ActionItem? selected = null;
-        private static bool forceSave = false;
 
         static void Main(string[] args)
         {
@@ -1047,7 +1046,6 @@ namespace AssimilationSoftware.TodoSort.CLI
             repo.SaveChanges();
 
             // Go over the @someday items and look for tickle dates.
-            forceSave = argSubs.Force;
             vm.SomedaySearchSpecification = new TickleDateSearchSpecification(null, DateTime.Today);
             vm.Undefer("inbox", vm.SomedaySearchResults.ToArray());
 
@@ -1102,11 +1100,11 @@ namespace AssimilationSoftware.TodoSort.CLI
                 }
             }
 
-            TidyUp(vm, repo, view);
+            TidyUp(vm, repo, view, forceSave: argSubs.Force);
             return 0;
         }
 
-        private static void TidyUp(ViewModel vm, ITodoRepository repo, IItemDisplay view, bool verbose = false)
+        private static void TidyUp(ViewModel vm, ITodoRepository repo, IItemDisplay view, bool verbose = false, bool forceSave = false)
         {
             #region Tidy up
             // Delete any items with a context of "delete".
