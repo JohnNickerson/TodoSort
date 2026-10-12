@@ -24,7 +24,6 @@ namespace AssimilationSoftware.TodoSort.CLI
     public class Program
     {
         private static ActionItem? selected = null;
-        private static string settingsPath = Path.Combine(Directory.GetCurrentDirectory(), ".todosort");
         private static bool forceSave = false;
 
         static void Main(string[] args)
@@ -34,6 +33,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             Trace.AutoFlush = true;
 #endif
             var argVerb = string.Empty;
+            var settingsPath = Path.Combine(Directory.GetCurrentDirectory(), ".todosort");
             var f = FolderSettings.LoadFrom(settingsPath);
             var todoMapper = new ActionItemDiskMapper(f.TodoPath);
             var repo = new TodoRepository(todoMapper, Path.GetDirectoryName(f.TodoPath), Environment.MachineName);
@@ -62,7 +62,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                     .WithParsed<ExportSubOptions>(opts => Export(opts, vm, repo, consoleView))
                     .WithParsed<FixTitlesOptions>(opts => FixTitles(opts, vm, repo, consoleView))
                     .WithParsed<ImportSubOptions>(opts => Import(opts, vm, repo, consoleView))
-                    .WithParsed<InitSubOptions>(opts => Init(opts))
+                    .WithParsed<InitSubOptions>(opts => Init(opts, settingsPath))
                     .WithParsed<MergeSubOptions>(opts => Merge(opts, vm, repo, consoleView))
                     .WithParsed<MoveAllSubOptions>(opts => MoveAll(opts, vm, repo, consoleView))
                     .WithParsed<MoveSubOptions>(opts => Move(opts, vm, repo, consoleView))
@@ -434,7 +434,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             TidyUp(vm, repo, view);
         }
 
-        private static void Init(InitSubOptions initOpts)
+        private static void Init(InitSubOptions initOpts, string settingsPath)
         {
             var initSettings = new FolderSettings
             {
