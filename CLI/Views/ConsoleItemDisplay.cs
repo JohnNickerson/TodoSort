@@ -82,6 +82,26 @@ public class ConsoleItemDisplay : IItemDisplay
         }
     }
 
+    Markup MarkupTitle(ActionItem item, bool bold, bool strikethrough, bool verbose)
+    {
+        var rawTitle = item.Title.EscapeMarkup();
+        // TODO: Figure out why I would not mask the title in verbose mode. Must have been some reason.
+        if (item.Tags.ContainsKey("nsfw") && !verbose)
+        {
+            rawTitle = "(nsfw) " + Rot13.Transform(rawTitle);
+        }
+        Markup title = new Markup(rawTitle);
+        if (bold)
+        {
+            title = new Markup($"[yellow]{rawTitle}[/]");
+        }
+        else if (strikethrough)
+        {
+            title = new Markup($"[red][strikethrough]{rawTitle}[/][/]");
+        }
+        return title;
+    }
+
     public void PrintItem(ActionItem i, int? index, ITodoRepository repo, bool nsfw = false, bool verbose = false)
     {
         _verbose = verbose;
@@ -163,6 +183,76 @@ public class ConsoleItemDisplay : IItemDisplay
             }
             PrintItem(i, null, repo, nsfw, verbose);
             last_context = i.Context;
+        }
+    }
+
+    public void PrintTree(List<ActionItem> bold, List<ActionItem> strike, ITodoRepository repo, bool nsfw = false, bool verbose = false)
+    {
+        var ancestors = new List<ActionItem>();
+        ancestors.AddRange(bold);
+        ancestors.AddRange(strike);
+        var boldNodes = bold.Select(i => i.ID).ToHashSet();
+        var strikeNodes = strike.Select(i => i.ID).ToHashSet();
+        var roots = new Dictionary<Guid, Tree>();
+        var treeNodes = new Dictionary<Guid, TreeNode>();
+        // Fill out the results.
+        for (var i = 0; i < ancestors.Count; i++)
+        {
+            if (ancestors[i] == null) continue; // Skip null or empty items (should not happen).
+
+            if (ancestors[i].ParentId != null)
+            {
+                var parent = ancestors[i].GetParent(repo);
+                if (!ancestors.Contains(parent))
+                {
+                    ancestors.Add(parent);
+                }
+            }
+
+            // Construct the tree nodes.
+            if (ancestors[i].ParentId == null)
+            {
+                // This is a root node.
+                if (!roots.ContainsKey(ancestors[i].ID))
+                {
+                    roots[ancestors[i].ID] = new Tree(MarkupTitle(ancestors[i], boldNodes.Contains(ancestors[i].ID), strikeNodes.Contains(ancestors[i].ID), verbose));
+                }
+            }
+            else
+            {
+                var newNode = new TreeNode(MarkupTitle(ancestors[i], boldNodes.Contains(ancestors[i].ID), strikeNodes.Contains(ancestors[i].ID), verbose));
+                treeNodes[ancestors[i].ID] = newNode; // Add the new node to the dictionary.
+            }
+        }
+
+        // Link to parents.
+        foreach (var a in ancestors)
+        {
+            // If a.ParentId is null, it is a root. It should already be in the roots dictionary.
+            if (a == null || a.ID == Guid.Empty || a.ParentId is null) continue; // Skip null or empty items.
+            if (roots.ContainsKey(a.ParentId ?? Guid.Empty))
+            {
+                // Parent is a root node.
+                roots[a.ParentId ?? Guid.Empty].AddNode(treeNodes[a.ID]);
+            }
+            else if (treeNodes.ContainsKey(a.ParentId ?? Guid.Empty))
+            {
+                // Parent is not a root, so it should be in the treeNodes list.
+                treeNodes[a.ParentId ?? Guid.Empty].AddNode(treeNodes[a.ID]);
+            }
+            else
+            {
+                // Parent is not found, but we have the node itself.
+                roots[a.ID] = new Tree(MarkupTitle(a, boldNodes.Contains(a.ID), strikeNodes.Contains(a.ID), verbose));
+            }
+        }
+
+        foreach (var r in roots)
+        {
+            // Print the tree.
+            AnsiConsole.Write(r.Value);
+            Console.WriteLine();
+            Console.WriteLine();
         }
     }
 

@@ -260,7 +260,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             // Set the ViewModel property.
             vm.DoneSearchSpecification = search.GetSearchSpecification(repo);
             // Report the results.
-            view.PrintItems(search.SortTag ?? "done-date", vm.DoneSearchResults, repo, search.NSFW);
+            view.PrintItems(search.SortTag ?? "done-date", vm.DoneSearchResults, repo, search.NSFW, search.Verbose);
             if (!search.NoCount)
             {
                 Console.WriteLine("{0} item(s) found.", vm.DoneSearchResults.Count());
@@ -674,11 +674,11 @@ namespace AssimilationSoftware.TodoSort.CLI
             }
             else if (searchOptions.PrintTree)
             {
-                PrintTreeSpectre(vm.SearchResults.ToList(), new List<ActionItem>(), repo, searchOptions.NSFW);
+                view.PrintTree(vm.SearchResults.ToList(), new List<ActionItem>(), repo, searchOptions.NSFW, searchOptions.Verbose);
             }
             else
             {
-                view.PrintItems(searchOptions.SortTag ?? string.Empty, vm.SearchResults, repo, searchOptions.NSFW);
+                view.PrintItems(searchOptions.SortTag ?? string.Empty, vm.SearchResults, repo, searchOptions.NSFW, searchOptions.Verbose);
                 if (!searchOptions.NoCount)
                 {
                     Console.WriteLine("{0} item(s) found.", vm.SearchResults.Count());
@@ -704,7 +704,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                 {
                     vm.SetParent(child, parent);
                     Console.WriteLine();
-                    PrintTreeSpectre(new List<ActionItem> { { child }, { parent } }, new List<ActionItem>(), repo, setParentOptions.NSFW);
+                    view.PrintTree(new List<ActionItem> { { child }, { parent } }, new List<ActionItem>(), repo, setParentOptions.NSFW, setParentOptions.Verbose);
                 }
                 else
                 {
@@ -715,7 +715,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                     {
                         vm.SetParent(child, null);
                         Console.WriteLine();
-                        PrintTreeSpectre(new List<ActionItem> { child }, new List<ActionItem>(), repo, setParentOptions.NSFW);
+                        view.PrintTree(new List<ActionItem> { child }, new List<ActionItem>(), repo, setParentOptions.NSFW, setParentOptions.Verbose);
                     }
                 }
             }
@@ -749,7 +749,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             // Set the ViewModel property.
             vm.SomedaySearchSpecification = search.GetSearchSpecification(repo);
             // Report the results.
-            view.PrintItems(search.SortTag ?? "tickle-date", vm.SomedaySearchResults, repo, search.NSFW);
+            view.PrintItems(search.SortTag ?? "tickle-date", vm.SomedaySearchResults, repo, search.NSFW, search.Verbose);
             if (!search.NoCount)
             {
                 Console.WriteLine("{0} item(s) found.", vm.SomedaySearchResults.Count());
@@ -1151,7 +1151,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             SetUniversalOptions(argSubs, vm);
 
             vm.SearchSpecification = argSubs.SearchSpecification;
-            view.PrintItems("title", vm.SearchResults, repo, argSubs.NSFW);
+            view.PrintItems("title", vm.SearchResults, repo, argSubs.NSFW, argSubs.Verbose);
 
             TidyUp(vm, repo, view);
         }
@@ -1214,7 +1214,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             // TODO: Display the before and after positions together.
             // Before: red and strike-through.
             // After: yellow and bold.
-            PrintTreeSpectre(new List<ActionItem>(), bumpItems, repo, bumpOpts.NSFW);
+            view.PrintTree(new List<ActionItem>(), bumpItems, repo, bumpOpts.NSFW, bumpOpts.Verbose);
             foreach (var target in bumpItems)
             {
                 var depth = target.GetRankDepth(repo) / 2;
@@ -1229,7 +1229,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                 }
             }
             // After
-            PrintTreeSpectre(bumpItems, new List<ActionItem>(), repo, bumpOpts.NSFW);
+            view.PrintTree(bumpItems, new List<ActionItem>(), repo, bumpOpts.NSFW, bumpOpts.Verbose);
             TidyUp(vm, repo, view);
         }
 
@@ -1348,95 +1348,6 @@ namespace AssimilationSoftware.TodoSort.CLI
                     Console.WriteLine();
                 }
             } while (!string.IsNullOrEmpty(tagName));
-        }
-
-        private static void PrintTreeSpectre(List<ActionItem> bold, List<ActionItem> strike, ITodoRepository repo, bool nsfw = false)
-        {
-            var ancestors = new List<ActionItem>();
-            ancestors.AddRange(bold);
-            ancestors.AddRange(strike);
-            var boldNodes = bold.Select(i => i.ID).ToHashSet();
-            var strikeNodes = strike.Select(i => i.ID).ToHashSet();
-            var roots = new Dictionary<Guid, Tree>();
-            var treeNodes = new Dictionary<Guid, TreeNode>();
-            // Fill out the results.
-            for (var i = 0; i < ancestors.Count; i++)
-            {
-                if (ancestors[i] == null) continue; // Skip null or empty items (should not happen).
-
-                if (ancestors[i].ParentId != null)
-                {
-                    var parent = ancestors[i].GetParent(repo);
-                    if (!ancestors.Contains(parent))
-                    {
-                        ancestors.Add(parent);
-                    }
-                }
-
-                // Construct the tree nodes.
-                if (ancestors[i].ParentId == null)
-                {
-                    // This is a root node.
-                    if (!roots.ContainsKey(ancestors[i].ID))
-                    {
-                        roots[ancestors[i].ID] = new Tree(MarkupTitle(ancestors[i], boldNodes.Contains(ancestors[i].ID), strikeNodes.Contains(ancestors[i].ID)));
-                    }
-                }
-                else
-                {
-                    var newNode = new TreeNode(MarkupTitle(ancestors[i], boldNodes.Contains(ancestors[i].ID), strikeNodes.Contains(ancestors[i].ID)));
-                    treeNodes[ancestors[i].ID] = newNode; // Add the new node to the dictionary.
-                }
-            }
-
-            // Link to parents.
-            foreach (var a in ancestors)
-            {
-                // If a.ParentId is null, it is a root. It should already be in the roots dictionary.
-                if (a == null || a.ID == Guid.Empty || a.ParentId is null) continue; // Skip null or empty items.
-                if (roots.ContainsKey(a.ParentId ?? Guid.Empty))
-                {
-                    // Parent is a root node.
-                    roots[a.ParentId ?? Guid.Empty].AddNode(treeNodes[a.ID]);
-                }
-                else if (treeNodes.ContainsKey(a.ParentId ?? Guid.Empty))
-                {
-                    // Parent is not a root, so it should be in the treeNodes list.
-                    treeNodes[a.ParentId ?? Guid.Empty].AddNode(treeNodes[a.ID]);
-                }
-                else
-                {
-                    // Parent is not found, but we have the node itself.
-                    roots[a.ID] = new Tree(MarkupTitle(a, boldNodes.Contains(a.ID), strikeNodes.Contains(a.ID)));
-                }
-            }
-
-            foreach (var r in roots)
-            {
-                // Print the tree.
-                AnsiConsole.Write(r.Value);
-                Console.WriteLine();
-                Console.WriteLine();
-            }
-        }
-
-        private static Markup MarkupTitle(ActionItem item, bool bold, bool strikethrough)
-        {
-            var rawTitle = item.Title.EscapeMarkup();
-            if (item.Tags.ContainsKey("nsfw") && !verbose)
-            {
-                rawTitle = "(nsfw) " + Rot13.Transform(rawTitle);
-            }
-            Markup title = new Markup(rawTitle);
-            if (bold)
-            {
-                title = new Markup($"[yellow]{rawTitle}[/]");
-            }
-            else if (strikethrough)
-            {
-                title = new Markup($"[red][strikethrough]{rawTitle}[/][/]");
-            }
-            return title;
         }
 
         private static string FormatTitle(ActionItem i, bool nsfw = false)
