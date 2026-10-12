@@ -6,7 +6,7 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
     [Verb("export", HelpText = "Save a formatted copy of a list to file.")]
     public class ExportSubOptions : MultiSearchSubOptions
     {
-        [Option('e', "format", HelpText = "The export format to use: HTML, graphviz, JSON or text.", Default = ExportFormat.html)]
+        [Option('e', "format", HelpText = "The export format to use: HTML, graphviz, JSON, todotxt or todosort.", Default = ExportFormat.html)]
         public ExportFormat? Format { get; set; }
 
         [Option('f', "file", HelpText = "The filename to write to.", Required = true)]

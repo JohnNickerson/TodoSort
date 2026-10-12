@@ -5,6 +5,7 @@ namespace AssimilationSoftware.TodoSort.CLI.Enums
         graphviz,
         html,
         json,
-        text
+        todosort,
+        todotxt
     }
 }
