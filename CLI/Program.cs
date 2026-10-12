@@ -23,7 +23,6 @@ namespace AssimilationSoftware.TodoSort.CLI
 {
     public class Program
     {
-        private static bool verbose = false;
         private static ActionItem? selected = null;
         private static string settingsPath = Path.Combine(Directory.GetCurrentDirectory(), ".todosort");
         private static bool forceSave = false;
@@ -520,12 +519,10 @@ namespace AssimilationSoftware.TodoSort.CLI
             selected = Disambiguate(vm.SearchResults, repo, view, !string.IsNullOrEmpty(noteOptions.ItemId));
             if (selected != null)
             {
-                // Force verbose mode to display all notes and tags.
                 vm.AddNote(selected, noteOptions.NewNote);
-                verbose = true;
             }
 
-            TidyUp(vm, repo, view);
+            TidyUp(vm, repo, view, true);
         }
 
         private static void OpenTag(OpenTagSubOptions openTagOptions, ViewModel vm, TodoRepository repo, IItemDisplay view)
@@ -762,7 +759,6 @@ namespace AssimilationSoftware.TodoSort.CLI
         {
             SetUniversalOptions(someSub, vm);
 
-            verbose = someSub.Verbose;
             // Display the whole Someday file, [someSub.PageSize] items at a time, and either delete or do one per listing.
             ActionItem? undefer = null;
             if (someSub.PageSize <= 0) someSub.PageSize = 1;
@@ -826,9 +822,8 @@ namespace AssimilationSoftware.TodoSort.CLI
             {
                 TagItem(vm, selected);
             }
-            verbose = true; // Display the newly-added tags.
 
-            TidyUp(vm, repo, view);
+            TidyUp(vm, repo, view, true);
         }
 
         private static void Undefer(UndeferOptions undeferOptions, ViewModel vm, TodoRepository repo, IItemDisplay view)
@@ -1025,7 +1020,6 @@ namespace AssimilationSoftware.TodoSort.CLI
             // Set universal options.
             if (argSubs is UniversalOptions options)
             {
-                verbose = options.Verbose;
                 if (!(argSubs is MultiSearchSubOptions))
                 {
                     vm.ShowHeadOnly = !options.ShowAllItems;
@@ -1112,7 +1106,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             return 0;
         }
 
-        private static void TidyUp(ViewModel vm, ITodoRepository repo, IItemDisplay view)
+        private static void TidyUp(ViewModel vm, ITodoRepository repo, IItemDisplay view, bool verbose = false)
         {
             #region Tidy up
             // Delete any items with a context of "delete".
@@ -1123,7 +1117,7 @@ namespace AssimilationSoftware.TodoSort.CLI
 
             if (selected != null)
             {
-                view.PrintItem(selected, null, repo);
+                view.PrintItem(selected, null, repo, false, verbose);
             }
 
             // Rewrite the files
@@ -1142,8 +1136,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             vm.AddItem(selected);
             // Allow tagging right away.
             TagItem(vm, selected);
-            verbose = true;
-            TidyUp(vm, repo, view);
+            TidyUp(vm, repo, view, true);
         }
 
         private static void AdvancedSearch(AdvancedSearchOptions argSubs, ViewModel vm, TodoRepository repo, IItemDisplay view)
@@ -1153,7 +1146,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             vm.SearchSpecification = argSubs.SearchSpecification;
             view.PrintItems("title", vm.SearchResults, repo, argSubs.NSFW, argSubs.Verbose);
 
-            TidyUp(vm, repo, view);
+            TidyUp(vm, repo, view, argSubs.Verbose);
         }
 
         private static void Balance(BalanceOptions balanceOpts, ViewModel vm, TodoRepository repo, IItemDisplay view)
@@ -1261,7 +1254,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             p.Start();
         }
 
-        private static void EditSomedayItem(ViewModel vm, ActionItem item, ITodoRepository repo, IItemDisplay view, bool nsfw = false)
+        private static void EditSomedayItem(ViewModel vm, ActionItem item, ITodoRepository repo, IItemDisplay view, bool nsfw = false, bool verbose = false)
         {
             while (true)
             {
@@ -1374,7 +1367,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             }
         }
 
-        private static ActionItem? Disambiguate(IEnumerable<ActionItem> todoList, ITodoRepository repo, IItemDisplay view, bool autoAcceptOne = false, bool nsfw = false, bool includeCancel = false)
+        private static ActionItem? Disambiguate(IEnumerable<ActionItem> todoList, ITodoRepository repo, IItemDisplay view, bool autoAcceptOne = false, bool nsfw = false, bool verbose = false, bool includeCancel = false)
         {
             ActionItem? selected = null;
 
