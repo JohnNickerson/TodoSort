@@ -67,7 +67,6 @@ namespace AssimilationSoftware.TodoSort.CLI
                     .WithParsed<MoveSubOptions>(opts => new ItemController().Move(opts, vm, repo, consoleView))
                     .WithParsed<NoteSubOptions>(opts => new ItemController().Note(opts, vm, repo, consoleView))
                     .WithParsed<OpenTagSubOptions>(opts => OpenTag(opts, vm, repo, consoleView))
-                    .WithParsed<ProcessOptions>(opts => Process(opts, vm, repo, consoleView))
                     .WithParsed<RankOptions>(opts => Rank(opts, vm, repo, consoleView))
                     .WithParsed<RenameSubOptions>(opts => new ItemController().Rename(opts, vm, repo, consoleView))
                     .WithParsed<SearchOptions>(opts => new SearchController().Search(opts, vm, repo, consoleView))
@@ -685,80 +684,6 @@ namespace AssimilationSoftware.TodoSort.CLI
                     vm.ShowHeadOnly = !options.ShowAllItems;
                 }
             }
-        }
-
-        private static int Process(ProcessOptions argSubs, ViewModel vm, TodoRepository repo, IItemDisplay view)
-        {
-            SetUniversalOptions(argSubs, vm);
-
-            // Assign revision IDs where none are found.
-            repo.FindAll();
-            foreach (var item in repo.Items)
-            {
-                if (item.RevisionGuid == Guid.Empty)
-                {
-                    item.RevisionGuid = Guid.NewGuid();
-                }
-            }
-            repo.SaveChanges();
-
-            // Go over the @someday items and look for tickle dates.
-            vm.SomedaySearchSpecification = new TickleDateSearchSpecification(null, DateTime.Today);
-            vm.Undefer("inbox", vm.SomedaySearchResults.ToArray());
-
-            vm.SearchSpecification = new ContextSearchSpecification("inbox");
-            var inbox = vm.SearchResults.ToList();
-            for (var i = 0; i < inbox.Count; i++)
-            {
-                // Assign the @inbox items to contexts.
-                view.WriteLine("To which context should this item go?");
-                var first = inbox[i];
-                view.PrintItem(first, null, repo);
-                view.WriteLine();
-                PrintContexts(vm, view);
-                var newContext = Console.ReadLine();
-                vm.SetContext(first, newContext);
-                view.WriteLine();
-            }
-
-            // Need to find projects for which there is no next action.
-            vm.SearchSpecification = new ContextSearchSpecification("projects");
-            var projects = vm.SearchResults.ToList();
-            for (var i = 0; i < projects.Count; i++)
-            {
-                vm.ShowHeadOnly = false;
-                vm.SearchSpecification = new ProjectChildrenSearchSpecification(projects[i]);
-                if (!vm.SearchResults.Any())
-                {
-                    // Add next actions for projects.
-                    view.WriteLine("What is the next action required on this project?");
-                    var first = projects[i];
-                    view.PrintItem(first, null, repo);
-                    var nextAction = Console.ReadLine();
-                    view.WriteLine("...and to what context does it belong?");
-                    PrintContexts(vm, view);
-                    var newContext = Console.ReadLine();
-                    if (nextAction == newContext)
-                    {
-                        // Wrote something like "someday"/"someday". Assume it is a new context.
-                        vm.SetContext(first, newContext);
-                    }
-                    else
-                    {
-                        var next = new ActionItem
-                        {
-                            Context = newContext,
-                            Title = nextAction,
-                            ProjectId = first.ID
-                        };
-                        vm.AddItem(next);
-                    }
-                    view.WriteLine();
-                }
-            }
-
-            TidyUp(vm, repo, view, forceSave: argSubs.Force);
-            return 0;
         }
 
         private static void TidyUp(ViewModel vm, ITodoRepository repo, IItemDisplay view, bool verbose = false, bool forceSave = false)
