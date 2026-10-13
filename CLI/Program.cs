@@ -74,7 +74,6 @@ namespace AssimilationSoftware.TodoSort.CLI
                     .WithParsed<SetParentSubOptions>(opts => SetParent(opts, vm, repo, consoleView))
                     .WithParsed<SetProjectSubOptions>(opts => SetProject(opts, vm, repo, consoleView))
                     .WithParsed<SomedaySearchSubOptions>(opts => new SearchController().SearchSomeday(opts, vm, repo, consoleView))
-                    .WithParsed<SomedaySubOptions>(opts => Someday(opts, vm, repo, consoleView))
                     .WithParsed<TagAllSubOptions>(opts => new ItemController().TagAll(opts, vm, repo, consoleView))
                     .WithParsed<TagOptions>(opts => new ItemController().Tag(opts, vm, repo, consoleView))
                     .WithParsed<UndeferOptions>(opts => new WorkflowController().Undefer(opts, vm, repo, consoleView))
@@ -580,39 +579,6 @@ namespace AssimilationSoftware.TodoSort.CLI
             TidyUp(vm, repo, view);
         }
 
-        private static void Someday(SomedaySubOptions someSub, ViewModel vm, TodoRepository repo, IItemDisplay view)
-        {
-            SetUniversalOptions(someSub, vm);
-
-            // Display the whole Someday file, [someSub.PageSize] items at a time, and either delete or do one per listing.
-            ActionItem? undefer = null;
-            if (someSub.PageSize <= 0) someSub.PageSize = 1;
-            if (someSub.PageSize > 10) someSub.PageSize = 10;
-            var someItems = from s in vm.SomedayItems where !s.TickleDate.HasValue || someSub.IncludeTickle select s;
-            for (var offset = 0; offset <= someItems.Count(); offset += someSub.PageSize)
-            {
-                Console.Clear();
-                for (var index = 0; index < someSub.PageSize && offset + index < someItems.Count(); index++)
-                {
-                    view.PrintItem(someItems.ElementAt(offset + index), index, repo, someSub.NSFW, someSub.Verbose);
-                }
-                var choice = Console.ReadKey().KeyChar;
-                view.WriteLine();
-                int dex;
-                if (Int32.TryParse(choice.ToString(), out dex))
-                {
-                    undefer = someItems.ElementAt(offset + dex);
-                }
-                if (undefer != null)
-                {
-                    EditSomedayItem(vm, undefer, repo, view);
-                    undefer = null;
-                }
-            }
-
-            TidyUp(vm, repo, view);
-        }
-
         private static void UnrankAll(UnrankAllOptions unrankAllOptions, ViewModel vm, TodoRepository repo, IItemDisplay view)
         {
             SetUniversalOptions(unrankAllOptions, vm);
@@ -910,71 +876,6 @@ namespace AssimilationSoftware.TodoSort.CLI
             var p = new System.Diagnostics.Process();
             p.StartInfo.FileName = tagValue;
             p.Start();
-        }
-
-        private static void EditSomedayItem(ViewModel vm, ActionItem item, ITodoRepository repo, IItemDisplay view, bool nsfw = false, bool verbose = false)
-        {
-            while (true)
-            {
-                view.PrintItem(item, null, repo, nsfw, verbose);
-                // Write menu.
-                view.WriteLine("1. Undefer (and go to next item)");
-                view.WriteLine("2. Rename");
-                view.WriteLine("3. Open Tag");
-                view.WriteLine("4. Assign tickler date");
-                view.WriteLine("5. Assign tags");
-                view.WriteLine("6. Finished (next item)");
-                var k = Console.ReadKey();
-                view.WriteLine();
-                switch (k.KeyChar)
-                {
-                    case '1':
-                        if (item.Tags.ContainsKey("previous-context") && item.Context != item.Tags["previous-context"])
-                        {
-                            vm.Undefer(item.Tags["previous-context"], item);
-                        }
-                        else
-                        {
-                            view.WriteLine("To which context should this item go?");
-                            // List contexts.
-                            PrintContexts(vm, view);
-                            var newContext = Console.ReadLine();
-                            vm.Undefer(newContext, item);
-                        }
-                        return;
-                    case '2':
-                        view.WriteLine("What new name should this item have?");
-                        var name = Console.ReadLine();
-                        vm.Rename(item, name);
-                        break;
-                    case '3':
-                        view.WriteLine("What tag to open?");
-                        var tag = Console.ReadLine();
-                        if (item.Tags.TryGetValue(tag ?? string.Empty, out string? tagValue))
-                        {
-                            OpenItemTag(tagValue);
-                        }
-                        else
-                        {
-                            view.WriteLine("Tag not found on this item.");
-                        }
-                        break;
-                    case '5':
-                        TagItem(vm, item, view);
-                        break;
-                    case '4':
-                        view.WriteLine("When should this item reappear in the inbox?");
-                        var dateInput = Console.ReadLine();
-                        DateTime parsedDate;
-                        if (DateTime.TryParse(dateInput, out parsedDate))
-                        {
-                            vm.Defer(item, parsedDate);
-                        }
-                        break;
-                    case '6':
-                        return;
-                }
-            }
         }
 
         private static void TagItem(ViewModel vm, ActionItem selected, IItemDisplay view)
