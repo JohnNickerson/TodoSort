@@ -105,6 +105,27 @@ public class ItemController
         }
     }
 
+    public void TagAll(TagAllSubOptions tagAllOptions, ViewModel vm, TodoRepository repo, IItemDisplay view)
+    {
+        vm.ShowHeadOnly = !tagAllOptions.ShowAllItems;
+
+        vm.SearchSpecification = tagAllOptions.SearchSpecification;
+        var items = vm.SearchResults.ToArray();
+        foreach (var i in items)
+        {
+            if (string.IsNullOrWhiteSpace(tagAllOptions.TagValue))
+            {
+                vm.RemoveTag(i, tagAllOptions.TagName);
+            }
+            else
+            {
+                vm.SetTag(i, tagAllOptions.TagName, tagAllOptions.TagValue);
+            }
+        }
+
+        vm.Save();
+    }
+
     private void TagItem(ViewModel vm, ActionItem selected, IItemDisplay view)
     {
         string? tagName;

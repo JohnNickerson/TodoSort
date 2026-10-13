@@ -76,7 +76,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                     .WithParsed<SetProjectSubOptions>(opts => SetProject(opts, vm, repo, consoleView))
                     .WithParsed<SomedaySearchSubOptions>(opts => SearchSomeday(opts, vm, repo, consoleView))
                     .WithParsed<SomedaySubOptions>(opts => Someday(opts, vm, repo, consoleView))
-                    .WithParsed<TagAllSubOptions>(opts => TagAll(opts, vm, repo, consoleView))
+                    .WithParsed<TagAllSubOptions>(opts => new ItemController().TagAll(opts, vm, repo, consoleView))
                     .WithParsed<TagOptions>(opts => new ItemController().Tag(opts, vm, repo, consoleView))
                     .WithParsed<UndeferOptions>(opts => Undefer(opts, vm, repo, consoleView))
                     .WithParsed<UndoSubOptions>(opts => Undo(opts, vm, repo, consoleView))
@@ -718,27 +718,6 @@ namespace AssimilationSoftware.TodoSort.CLI
                 {
                     EditSomedayItem(vm, undefer, repo, view);
                     undefer = null;
-                }
-            }
-
-            TidyUp(vm, repo, view);
-        }
-
-        private static void TagAll(TagAllSubOptions tagAllOptions, ViewModel vm, TodoRepository repo, IItemDisplay view)
-        {
-            SetUniversalOptions(tagAllOptions, vm);
-
-            vm.SearchSpecification = tagAllOptions.SearchSpecification;
-            var items = vm.SearchResults.ToArray();
-            foreach (var i in items)
-            {
-                if (string.IsNullOrWhiteSpace(tagAllOptions.TagValue))
-                {
-                    vm.RemoveTag(i, tagAllOptions.TagName);
-                }
-                else
-                {
-                    vm.SetTag(i, tagAllOptions.TagName, tagAllOptions.TagValue);
                 }
             }
 
