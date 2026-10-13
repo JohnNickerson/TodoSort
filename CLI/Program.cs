@@ -65,7 +65,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                     .WithParsed<InitSubOptions>(opts => Init(opts, settingsPath))
                     .WithParsed<MergeSubOptions>(opts => Merge(opts, vm, repo, consoleView))
                     .WithParsed<MoveAllSubOptions>(opts => MoveAll(opts, vm, repo, consoleView))
-                    .WithParsed<MoveSubOptions>(opts => Move(opts, vm, repo, consoleView))
+                    .WithParsed<MoveSubOptions>(opts => new ItemController().Move(opts, vm, repo, consoleView))
                     .WithParsed<NoteSubOptions>(opts => Note(opts, vm, repo, consoleView))
                     .WithParsed<OpenTagSubOptions>(opts => OpenTag(opts, vm, repo, consoleView))
                     .WithParsed<ProcessOptions>(opts => Process(opts, vm, repo, consoleView))
@@ -476,24 +476,6 @@ namespace AssimilationSoftware.TodoSort.CLI
                 counter++;
             }
             view.WriteLine(string.Format("{0} items moved to @{1}", counter, moveAllOptions.NewContext));
-
-            TidyUp(vm, repo, view);
-        }
-
-        private static void Move(MoveSubOptions moveOptions, ViewModel vm, TodoRepository repo, IItemDisplay view)
-        {
-            SetUniversalOptions(moveOptions, vm);
-
-            vm.SearchSpecification = moveOptions.SearchSpecification;
-            selected = view.Disambiguate(vm.SearchResults, repo, view, !string.IsNullOrEmpty(moveOptions.ItemId));
-            if (selected != null)
-            {
-                vm.SetContext(selected, moveOptions.NewContext);
-                if (moveOptions.Unrank)
-                {
-                    vm.ResetPriorityParents(selected);
-                }
-            }
 
             TidyUp(vm, repo, view);
         }

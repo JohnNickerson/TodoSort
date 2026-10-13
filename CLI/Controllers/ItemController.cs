@@ -38,6 +38,24 @@ public class ItemController
         }
     }
 
+    public void Move(MoveSubOptions moveOptions, ViewModel vm, TodoRepository repo, IItemDisplay view)
+    {
+        vm.ShowHeadOnly = !moveOptions.ShowAllItems;
+
+        vm.SearchSpecification = moveOptions.SearchSpecification;
+        var selected = view.Disambiguate(vm.SearchResults, repo, view, !string.IsNullOrEmpty(moveOptions.ItemId));
+        if (selected != null)
+        {
+            vm.SetContext(selected, moveOptions.NewContext);
+            if (moveOptions.Unrank)
+            {
+                vm.ResetPriorityParents(selected);
+            }
+            view.PrintItem(selected, null, repo, false, moveOptions.Verbose);
+            vm.Save();
+        }
+    }
+
     public void Rename(RenameSubOptions renameOptions, ViewModel vm, TodoRepository repo, IItemDisplay view)
         {
             vm.ShowHeadOnly = !renameOptions.ShowAllItems;
