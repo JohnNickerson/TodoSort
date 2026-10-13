@@ -77,7 +77,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                     .WithParsed<SomedaySearchSubOptions>(opts => SearchSomeday(opts, vm, repo, consoleView))
                     .WithParsed<SomedaySubOptions>(opts => Someday(opts, vm, repo, consoleView))
                     .WithParsed<TagAllSubOptions>(opts => TagAll(opts, vm, repo, consoleView))
-                    .WithParsed<TagOptions>(opts => Tag(opts, vm, repo, consoleView))
+                    .WithParsed<TagOptions>(opts => new ItemController().Tag(opts, vm, repo, consoleView))
                     .WithParsed<UndeferOptions>(opts => Undefer(opts, vm, repo, consoleView))
                     .WithParsed<UndoSubOptions>(opts => Undo(opts, vm, repo, consoleView))
                     .WithParsed<SummaryOptions>(opts => Summary(opts, vm, repo, consoleView))
@@ -743,21 +743,6 @@ namespace AssimilationSoftware.TodoSort.CLI
             }
 
             TidyUp(vm, repo, view);
-        }
-
-        private static void Tag(SingleSearchSubOptions tagOptions, ViewModel vm, TodoRepository repo, IItemDisplay view)
-        {
-            SetUniversalOptions(tagOptions, vm);
-
-            // Search for a matching item.
-            vm.SearchSpecification = tagOptions.SearchSpecification;
-            selected = view.Disambiguate(vm.SearchResults, repo, view, !string.IsNullOrEmpty(tagOptions.ItemId));
-            if (selected != null)
-            {
-                TagItem(vm, selected, view);
-            }
-
-            TidyUp(vm, repo, view, true);
         }
 
         private static void Undefer(UndeferOptions undeferOptions, ViewModel vm, TodoRepository repo, IItemDisplay view)

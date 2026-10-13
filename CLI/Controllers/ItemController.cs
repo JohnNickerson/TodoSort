@@ -72,23 +72,38 @@ public class ItemController
     }
 
     public void Rename(RenameSubOptions renameOptions, ViewModel vm, TodoRepository repo, IItemDisplay view)
-        {
-            vm.ShowHeadOnly = !renameOptions.ShowAllItems;
+    {
+        vm.ShowHeadOnly = !renameOptions.ShowAllItems;
 
-            vm.SearchSpecification = renameOptions.SearchSpecification;
-            var selected = view.Disambiguate(vm.SearchResults, repo, view, !string.IsNullOrEmpty(renameOptions.ItemId));
-            if (selected != null)
+        vm.SearchSpecification = renameOptions.SearchSpecification;
+        var selected = view.Disambiguate(vm.SearchResults, repo, view, !string.IsNullOrEmpty(renameOptions.ItemId));
+        if (selected != null)
+        {
+            vm.Rename(selected, renameOptions.NewTitle);
+            view.WriteLine("Item renamed.");
+            if (renameOptions.ReTag)
             {
-                vm.Rename(selected, renameOptions.NewTitle);
-                view.WriteLine("Item renamed.");
-                if (renameOptions.ReTag)
-                {
-                    TagItem(vm, selected, view);
-                }
-                view.PrintItem(selected, null, repo, false, renameOptions.Verbose);
-                vm.Save();
+                TagItem(vm, selected, view);
             }
+            view.PrintItem(selected, null, repo, false, renameOptions.Verbose);
+            vm.Save();
         }
+    }
+
+    public void Tag(SingleSearchSubOptions tagOptions, ViewModel vm, TodoRepository repo, IItemDisplay view)
+    {
+        vm.ShowHeadOnly = !tagOptions.ShowAllItems;
+
+        // Search for a matching item.
+        vm.SearchSpecification = tagOptions.SearchSpecification;
+        var selected = view.Disambiguate(vm.SearchResults, repo, view, !string.IsNullOrEmpty(tagOptions.ItemId));
+        if (selected != null)
+        {
+            TagItem(vm, selected, view);
+            view.PrintItem(selected, null, repo, false, tagOptions.Verbose);
+            vm.Save();
+        }
+    }
 
     private void TagItem(ViewModel vm, ActionItem selected, IItemDisplay view)
     {
