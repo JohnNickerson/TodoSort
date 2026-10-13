@@ -23,6 +23,20 @@ public class ItemController
         vm.Save();
     }
 
+    public void Delete(DeleteOptions delOpts, ViewModel vm, TodoRepository repo, IItemDisplay view)
+    {
+        vm.ShowHeadOnly = !delOpts.ShowAllItems;
+
+        // Find a matching item to delete.
+        vm.SearchSpecification = delOpts.SearchSpecification;
+        var selected = view.Disambiguate(vm.SearchResults, repo, view, !string.IsNullOrEmpty(delOpts.ItemId));
+        if (selected != null)
+        {
+            vm.Delete(selected);
+            view.PrintItem(selected, null, repo, false, delOpts.Verbose);
+            vm.Save();
+        }
+    }
 
     private void TagItem(ViewModel vm, ActionItem selected, IItemDisplay view)
     {

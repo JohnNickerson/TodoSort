@@ -4,6 +4,7 @@ using AssimilationSoftware.TodoSort.CLI.Enums;
 using AssimilationSoftware.TodoSort.CLI.Interfaces;
 using AssimilationSoftware.TodoSort.Core;
 using AssimilationSoftware.TodoSort.Core.Data;
+using Humanizer;
 using Spectre.Console;
 
 namespace AssimilationSoftware.TodoSort.CLI.Views;
@@ -56,6 +57,47 @@ public class ConsoleItemDisplay : IItemDisplay
                 sortedList = sortedList.ThenBy(a => a.Tags.ContainsKey(sortTag) ? a.Tags[sortTag] : "0", new SemiNumericComparer());
         }
         return sortedList;
+    }
+
+    public ActionItem? Disambiguate(IEnumerable<ActionItem> todoList, ITodoRepository repo, IItemDisplay view, bool autoAcceptOne = false, bool nsfw = false, bool verbose = false, bool includeCancel = false)
+    {
+        ActionItem? selected = null;
+
+        // Disambiguate or verify search results.
+        if (todoList.Count() == 0)
+        {
+            view.WriteLine("No search matches. No action will be taken.");
+        }
+        else if (todoList.Count() == 1 && autoAcceptOne)
+        {
+            view.PrintItem(todoList.ElementAt(0), null, repo, nsfw, verbose);
+            view.WriteLine("Auto-accepting...");
+            selected = todoList.ElementAt(0);
+        }
+        else
+        {
+            var prompt = new SelectionPrompt<ActionItem>()
+                .Title($"{"search result".ToQuantity(todoList.Count())}. Choose one:")
+                .PageSize(10)
+                .MoreChoicesText("[grey](Move up and down to reveal more items)[/]")
+                .AddChoices(todoList)
+                .UseConverter(a => FormatTitle(a));
+            if (includeCancel)
+            {
+                prompt.AddChoice(new ActionItem
+                {
+                    Title = "Cancel",
+                    Context = "cancel"
+                });
+            }
+            selected = AnsiConsole.Prompt(prompt);
+            if (selected.Context == "cancel")
+            {
+                view.WriteLine("Cancelled.");
+                return null;
+            }
+        }
+        return selected;
     }
 
     public string FormatTitle(ActionItem i, bool nsfw = false)

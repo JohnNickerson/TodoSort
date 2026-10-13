@@ -56,7 +56,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                     .WithParsed<DeferAllOptions>(opts => DeferAll(opts, vm, repo, consoleView))
                     .WithParsed<DeferSubOptions>(opts => Defer(opts, vm, repo, consoleView))
                     .WithParsed<DeleteDoneOptions>(opts => DeleteDone(opts, vm, repo))
-                    .WithParsed<DeleteOptions>(opts => Delete(opts, vm, repo, consoleView))
+                    .WithParsed<DeleteOptions>(opts => new ItemController().Delete(opts, vm, repo, consoleView))
                     .WithParsed<DoneSearchSubOptions>(opts => SearchDone(opts, vm, repo, consoleView))
                     .WithParsed<DoneSubOptions>(opts => Done(opts, vm, repo, consoleView))
                     .WithParsed<ExportSubOptions>(opts => Export(opts, vm, repo, consoleView))
@@ -157,7 +157,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                 // Get user input
                 view.WriteLine();
                 view.WriteLine("Select one item to merge all others into (or Cancel to stop):");
-                var survivor = Disambiguate(vm.SearchResults, repo, view, includeCancel: true);
+                var survivor = view.Disambiguate(vm.SearchResults, repo, view, includeCancel: true);
                 if (survivor != null)
                 {
                     // Merge all into survivor.
@@ -177,7 +177,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                     // Get user input.
                     view.WriteLine();
                     view.WriteLine("Select one item to merge all others into (i = ignore):");
-                    var survivor = Disambiguate(vm.SearchResults, repo, view);
+                    var survivor = view.Disambiguate(vm.SearchResults, repo, view);
                     if (survivor != null)
                     {
                         // Merge into survivor.
@@ -213,7 +213,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             SetUniversalOptions(deferOpts, vm);
 
             vm.SearchSpecification = deferOpts.SearchSpecification;
-            selected = Disambiguate(vm.SearchResults, repo, view, !string.IsNullOrEmpty(deferOpts.ItemId));
+            selected = view.Disambiguate(vm.SearchResults, repo, view, !string.IsNullOrEmpty(deferOpts.ItemId));
             if (selected != null)
             {
                 if (deferOpts.TickleDate.HasValue)
@@ -239,18 +239,6 @@ namespace AssimilationSoftware.TodoSort.CLI
             //TidyUp(vm, repo);
         }
 
-        private static void Delete(DeleteOptions delOpts, ViewModel vm, TodoRepository repo, IItemDisplay view)
-        {
-            SetUniversalOptions(delOpts, vm);
-
-            // Find a matching item to delete.
-            vm.SearchSpecification = delOpts.SearchSpecification;
-            selected = Disambiguate(vm.SearchResults, repo, view, !string.IsNullOrEmpty(delOpts.ItemId));
-            if (selected != null) vm.Delete(selected);
-
-            TidyUp(vm, repo, view);
-        }
-
         private static void SearchDone(DoneSearchSubOptions search, ViewModel vm, TodoRepository repo, IItemDisplay view)
         {
             SetUniversalOptions(search, vm);
@@ -274,7 +262,7 @@ namespace AssimilationSoftware.TodoSort.CLI
 
             // If there is a next action, create a new item and add it to the correct context.
             vm.SearchSpecification = doneOpts.SearchSpecification;
-            selected = Disambiguate(vm.SearchResults, repo, view, !string.IsNullOrEmpty(doneOpts.ItemId));
+            selected = view.Disambiguate(vm.SearchResults, repo, view, !string.IsNullOrEmpty(doneOpts.ItemId));
             if (selected != null)
             {
                 vm.MarkDone(doneOpts.DoneDate, selected);
@@ -457,12 +445,12 @@ namespace AssimilationSoftware.TodoSort.CLI
 
             view.WriteLine("Confirm child item:");
             vm.SearchTerm = mergeOptions.ChildSearchTerm ?? mergeOptions.TargetSearchTerm;
-            var mergeVictim = Disambiguate(vm.SearchResults, repo, view);
+            var mergeVictim = view.Disambiguate(vm.SearchResults, repo, view);
             if (mergeVictim != null)
             {
                 view.WriteLine("Confirm item to merge into:");
                 vm.SearchTerm = mergeOptions.TargetSearchTerm;
-                var combined = Disambiguate(vm.SearchResults.Where(x => x.ID != mergeVictim.ID), repo, view);
+                var combined = view.Disambiguate(vm.SearchResults.Where(x => x.ID != mergeVictim.ID), repo, view);
                 if (mergeVictim != null && combined != null)
                 {
                     vm.Merge(mergeVictim, combined);
@@ -497,7 +485,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             SetUniversalOptions(moveOptions, vm);
 
             vm.SearchSpecification = moveOptions.SearchSpecification;
-            selected = Disambiguate(vm.SearchResults, repo, view, !string.IsNullOrEmpty(moveOptions.ItemId));
+            selected = view.Disambiguate(vm.SearchResults, repo, view, !string.IsNullOrEmpty(moveOptions.ItemId));
             if (selected != null)
             {
                 vm.SetContext(selected, moveOptions.NewContext);
@@ -516,7 +504,7 @@ namespace AssimilationSoftware.TodoSort.CLI
 
             // Add a note to a task.
             vm.SearchSpecification = noteOptions.SearchSpecification;
-            selected = Disambiguate(vm.SearchResults, repo, view, !string.IsNullOrEmpty(noteOptions.ItemId));
+            selected = view.Disambiguate(vm.SearchResults, repo, view, !string.IsNullOrEmpty(noteOptions.ItemId));
             if (selected != null)
             {
                 vm.AddNote(selected, noteOptions.NewNote);
@@ -531,7 +519,7 @@ namespace AssimilationSoftware.TodoSort.CLI
 
             // Read a tag and pass it through to the "start" argVerb. Intended for URLs and file names.
             vm.SearchSpecification = openTagOptions.SearchSpecification;
-            selected = Disambiguate(vm.SearchResults, repo, view, !string.IsNullOrEmpty(openTagOptions.ItemId));
+            selected = view.Disambiguate(vm.SearchResults, repo, view, !string.IsNullOrEmpty(openTagOptions.ItemId));
             if (selected != null)
             {
                 if (selected.Tags.TryGetValue(openTagOptions.Tag ?? string.Empty, out string? tagValue))
@@ -646,7 +634,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             SetUniversalOptions(renameOptions, vm);
 
             vm.SearchSpecification = renameOptions.SearchSpecification;
-            selected = Disambiguate(vm.SearchResults, repo, view, !string.IsNullOrEmpty(renameOptions.ItemId));
+            selected = view.Disambiguate(vm.SearchResults, repo, view, !string.IsNullOrEmpty(renameOptions.ItemId));
             if (selected != null)
             {
                 vm.Rename(selected, renameOptions.NewTitle);
@@ -691,12 +679,12 @@ namespace AssimilationSoftware.TodoSort.CLI
 
             view.WriteLine("Confirm child item:");
             vm.SearchSpecification = setParentOptions.GetChildSearchSpecification(repo);
-            var child = Disambiguate(vm.SearchResults, repo, view);
+            var child = view.Disambiguate(vm.SearchResults, repo, view);
             view.WriteLine("Confirm parent item:");
             vm.SearchSpecification = setParentOptions.GetParentSearchSpecification(repo);
             if (child != null)
             {
-                var parent = Disambiguate(vm.SearchResults.Where(x => x.ID != child.ID), repo, view);
+                var parent = view.Disambiguate(vm.SearchResults.Where(x => x.ID != child.ID), repo, view);
                 if (parent != null)
                 {
                     vm.SetParent(child, parent);
@@ -726,10 +714,10 @@ namespace AssimilationSoftware.TodoSort.CLI
 
             view.WriteLine("Confirm child item:");
             vm.SearchTerm = commandOptions.ChildSearchTerm;
-            var child = Disambiguate(vm.SearchResults, repo, view);
+            var child = view.Disambiguate(vm.SearchResults, repo, view);
             view.WriteLine("Confirm project:");
             vm.SearchTerm = commandOptions.ProjectSearchTerm ?? commandOptions.ChildSearchTerm;
-            var project = Disambiguate(vm.SearchResults, repo, view);
+            var project = view.Disambiguate(vm.SearchResults, repo, view);
             if (child != null && project != null)
             {
                 vm.SetProject(child, project);
@@ -788,8 +776,6 @@ namespace AssimilationSoftware.TodoSort.CLI
             TidyUp(vm, repo, view);
         }
 
-
-
         private static void TagAll(TagAllSubOptions tagAllOptions, ViewModel vm, TodoRepository repo, IItemDisplay view)
         {
             SetUniversalOptions(tagAllOptions, vm);
@@ -817,7 +803,7 @@ namespace AssimilationSoftware.TodoSort.CLI
 
             // Search for a matching item.
             vm.SearchSpecification = tagOptions.SearchSpecification;
-            selected = Disambiguate(vm.SearchResults, repo, view, !string.IsNullOrEmpty(tagOptions.ItemId));
+            selected = view.Disambiguate(vm.SearchResults, repo, view, !string.IsNullOrEmpty(tagOptions.ItemId));
             if (selected != null)
             {
                 TagItem(vm, selected, view);
@@ -831,7 +817,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             SetUniversalOptions(undeferOptions, vm);
 
             vm.SomedaySearchSpecification = undeferOptions.SearchSpecification;
-            selected = Disambiguate(vm.SomedaySearchResults, repo, view, !string.IsNullOrEmpty(undeferOptions.ItemId));
+            selected = view.Disambiguate(vm.SomedaySearchResults, repo, view, !string.IsNullOrEmpty(undeferOptions.ItemId));
             if (selected != null)
             {
                 vm.Undefer("inbox", selected);
@@ -845,7 +831,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             SetUniversalOptions(undoOptions, vm);
 
             vm.DoneSearchSpecification = undoOptions.SearchSpecification;
-            selected = Disambiguate(vm.DoneSearchResults, repo, view, !string.IsNullOrEmpty(undoOptions.ItemId));
+            selected = view.Disambiguate(vm.DoneSearchResults, repo, view, !string.IsNullOrEmpty(undoOptions.ItemId));
             if (selected != null)
             {
                 vm.Undo(undoOptions.NewContext, selected);
@@ -942,7 +928,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             SetUniversalOptions(unrankOptions, vm);
 
             vm.SearchSpecification = unrankOptions.SearchSpecification;
-            selected = Disambiguate(vm.SearchResults, repo, view, !string.IsNullOrEmpty(unrankOptions.ItemId));
+            selected = view.Disambiguate(vm.SearchResults, repo, view, !string.IsNullOrEmpty(unrankOptions.ItemId));
             if (selected != null)
             {
                 vm.ResetPriorityParents(selected);
@@ -1165,7 +1151,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             if (bumpOpts.Top == 0)
             {
                 // Manually pick one item.
-                var chosen = Disambiguate(vm.SearchResults, repo, view, true);
+                var chosen = view.Disambiguate(vm.SearchResults, repo, view, true);
                 if (chosen != null) bumpItems.Add(chosen);
             }
             else if (!string.IsNullOrEmpty(bumpOpts.SortTag))
@@ -1319,71 +1305,6 @@ namespace AssimilationSoftware.TodoSort.CLI
                     view.WriteLine();
                 }
             } while (!string.IsNullOrEmpty(tagName));
-        }
-
-        private static string FormatTitle(ActionItem i, bool nsfw = false)
-        {
-            var maskTitle = (i.Tags?.ContainsKey("nsfw") ?? false && !nsfw) ? $"(nsfw) {Rot13.Transform(i.Title)}" : i.Title;
-            maskTitle = maskTitle.EscapeMarkup();
-            if (i.Tags?.TryGetValue("type", out var itemType) ?? false)
-            {
-                var typeIcon = i.Tags["type"].ToUpper() switch
-                {
-                    // These don't seem to display on Windows by default, so commented out. :(
-                    // TODO: Use ascii art or something?
-                    // "MOVIE" => ":movie_camera:", // [ ]<
-                    // "TV" => ":television:", // [_]
-                    // "BOOK" => ":open_book:", // \/
-                    // "GAME" => ":video_game:", // <+>
-                    _ => $"[[{i.Tags["type"].ToUpper()}]]"
-                };
-                return string.Format("{0} {1}", typeIcon, maskTitle);
-            }
-            else
-            {
-                return maskTitle;
-            }
-        }
-
-        private static ActionItem? Disambiguate(IEnumerable<ActionItem> todoList, ITodoRepository repo, IItemDisplay view, bool autoAcceptOne = false, bool nsfw = false, bool verbose = false, bool includeCancel = false)
-        {
-            ActionItem? selected = null;
-
-            // Disambiguate or verify search results.
-            if (todoList.Count() == 0)
-            {
-                view.WriteLine("No search matches. No action will be taken.");
-            }
-            else if (todoList.Count() == 1 && autoAcceptOne)
-            {
-                view.PrintItem(todoList.ElementAt(0), null, repo, nsfw, verbose);
-                view.WriteLine("Auto-accepting...");
-                selected = todoList.ElementAt(0);
-            }
-            else
-            {
-                var prompt = new SelectionPrompt<ActionItem>()
-                    .Title($"{"search result".ToQuantity(todoList.Count())}. Choose one:")
-                    .PageSize(10)
-                    .MoreChoicesText("[grey](Move up and down to reveal more items)[/]")
-                    .AddChoices(todoList)
-                    .UseConverter(a => FormatTitle(a));
-                if (includeCancel)
-                {
-                    prompt.AddChoice(new ActionItem
-                    {
-                        Title = "Cancel",
-                        Context = "cancel"
-                    });
-                }
-                selected = AnsiConsole.Prompt(prompt);
-                if (selected.Context == "cancel")
-                {
-                    view.WriteLine("Cancelled.");
-                    return null;
-                }
-            }
-            return selected;
         }
     }
 }
