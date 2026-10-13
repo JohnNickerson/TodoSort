@@ -66,7 +66,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                     .WithParsed<MergeSubOptions>(opts => Merge(opts, vm, repo, consoleView))
                     .WithParsed<MoveAllSubOptions>(opts => MoveAll(opts, vm, repo, consoleView))
                     .WithParsed<MoveSubOptions>(opts => new ItemController().Move(opts, vm, repo, consoleView))
-                    .WithParsed<NoteSubOptions>(opts => Note(opts, vm, repo, consoleView))
+                    .WithParsed<NoteSubOptions>(opts => new ItemController().Note(opts, vm, repo, consoleView))
                     .WithParsed<OpenTagSubOptions>(opts => OpenTag(opts, vm, repo, consoleView))
                     .WithParsed<ProcessOptions>(opts => Process(opts, vm, repo, consoleView))
                     .WithParsed<RankOptions>(opts => Rank(opts, vm, repo, consoleView))
@@ -478,21 +478,6 @@ namespace AssimilationSoftware.TodoSort.CLI
             view.WriteLine(string.Format("{0} items moved to @{1}", counter, moveAllOptions.NewContext));
 
             TidyUp(vm, repo, view);
-        }
-
-        private static void Note(NoteSubOptions noteOptions, ViewModel vm, TodoRepository repo, IItemDisplay view)
-        {
-            SetUniversalOptions(noteOptions, vm);
-
-            // Add a note to a task.
-            vm.SearchSpecification = noteOptions.SearchSpecification;
-            selected = view.Disambiguate(vm.SearchResults, repo, view, !string.IsNullOrEmpty(noteOptions.ItemId));
-            if (selected != null)
-            {
-                vm.AddNote(selected, noteOptions.NewNote);
-            }
-
-            TidyUp(vm, repo, view, true);
         }
 
         private static void OpenTag(OpenTagSubOptions openTagOptions, ViewModel vm, TodoRepository repo, IItemDisplay view)

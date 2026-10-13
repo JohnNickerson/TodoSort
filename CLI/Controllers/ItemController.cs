@@ -56,6 +56,21 @@ public class ItemController
         }
     }
 
+    public void Note(NoteSubOptions noteOptions, ViewModel vm, TodoRepository repo, IItemDisplay view)
+    {
+        vm.ShowHeadOnly = !noteOptions.ShowAllItems;
+
+        // Add a note to a task.
+        vm.SearchSpecification = noteOptions.SearchSpecification;
+        var selected = view.Disambiguate(vm.SearchResults, repo, view, !string.IsNullOrEmpty(noteOptions.ItemId));
+        if (selected != null)
+        {
+            vm.AddNote(selected, noteOptions.NewNote);
+            view.PrintItem(selected, null, repo, false, noteOptions.Verbose);
+            vm.Save();
+        }
+    }
+
     public void Rename(RenameSubOptions renameOptions, ViewModel vm, TodoRepository repo, IItemDisplay view)
         {
             vm.ShowHeadOnly = !renameOptions.ShowAllItems;
