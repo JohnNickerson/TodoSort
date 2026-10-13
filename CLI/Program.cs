@@ -56,7 +56,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                     .WithParsed<DeferSubOptions>(opts => Defer(opts, vm, repo, consoleView))
                     .WithParsed<DeleteDoneOptions>(opts => DeleteDone(opts, vm, repo))
                     .WithParsed<DeleteOptions>(opts => new ItemController().Delete(opts, vm, repo, consoleView))
-                    .WithParsed<DoneSearchSubOptions>(opts => SearchDone(opts, vm, repo, consoleView))
+                    .WithParsed<DoneSearchSubOptions>(opts => new SearchController().SearchDone(opts, vm, repo, consoleView))
                     .WithParsed<DoneSubOptions>(opts => Done(opts, vm, repo, consoleView))
                     .WithParsed<ExportSubOptions>(opts => Export(opts, vm, repo, consoleView))
                     .WithParsed<FixTitlesOptions>(opts => FixTitles(opts, vm, repo, consoleView))
@@ -236,23 +236,6 @@ namespace AssimilationSoftware.TodoSort.CLI
             throw new NotImplementedException("The delete-done command was never implemented.");
 
             //TidyUp(vm, repo);
-        }
-
-        private static void SearchDone(DoneSearchSubOptions search, ViewModel vm, TodoRepository repo, IItemDisplay view)
-        {
-            SetUniversalOptions(search, vm);
-
-            // Construct a search specification.
-            // Set the ViewModel property.
-            vm.DoneSearchSpecification = search.GetSearchSpecification(repo);
-            // Report the results.
-            view.PrintItems(search.SortTag ?? "done-date", vm.DoneSearchResults, repo, search.NSFW, search.Verbose);
-            if (!search.NoCount)
-            {
-                view.WriteLine("{0} item(s) found.", vm.DoneSearchResults.Count());
-            }
-
-            TidyUp(vm, repo, view);
         }
 
         private static void Done(DoneSubOptions doneOpts, ViewModel vm, TodoRepository repo, IItemDisplay view)

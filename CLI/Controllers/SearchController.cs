@@ -38,4 +38,19 @@ public class SearchController
             }
         }
     }
+
+    public void SearchDone(DoneSearchSubOptions search, ViewModel vm, TodoRepository repo, IItemDisplay view)
+    {
+        vm.ShowHeadOnly = false;
+
+        // Construct a search specification.
+        // Set the ViewModel property.
+        vm.DoneSearchSpecification = search.GetSearchSpecification(repo);
+        // Report the results.
+        view.PrintItems(search.SortTag ?? "done-date", vm.DoneSearchResults, repo, search.NSFW, search.Verbose);
+        if (!search.NoCount)
+        {
+            view.WriteLine("{0} item(s) found.", vm.DoneSearchResults.Count());
+        }
+    }
 }
