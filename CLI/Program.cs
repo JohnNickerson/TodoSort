@@ -46,7 +46,7 @@ namespace AssimilationSoftware.TodoSort.CLI
 
             var parser = new Parser(with => { with.CaseInsensitiveEnumValues = true; with.HelpWriter = Console.Error; });
             parser.ParseArguments(args, types)
-                    .WithParsed<AddSubOptions>(opts => new EditController().AddItem(opts, vm, repo, consoleView))
+                    .WithParsed<AddSubOptions>(opts => new ItemController().AddItem(opts, vm, repo, consoleView))
                     .WithParsed<AdvancedSearchOptions>(opts => AdvancedSearch(opts, vm, repo, consoleView))
                     .WithParsed<BalanceOptions>(opts => Balance(opts, vm, repo, consoleView))
                     .WithParsed<BumpOptions>(opts => Bump(opts, vm, repo, consoleView))

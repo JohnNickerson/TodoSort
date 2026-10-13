@@ -5,7 +5,7 @@ using AssimilationSoftware.TodoSort.Core.Data;
 
 namespace AssimilationSoftware.TodoSort.Core.Controllers;
 
-public class EditController
+public class ItemController
 {
     public void AddItem(AddSubOptions a, ViewModel vm, TodoRepository repo, IItemDisplay view)
     {
