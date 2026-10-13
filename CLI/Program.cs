@@ -59,7 +59,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                     .WithParsed<DoneSubOptions>(opts => new WorkflowController().Done(opts, vm, repo, consoleView))
                     .WithParsed<ExportSubOptions>(opts => new ImportExportController().Export(opts, vm, repo, consoleView))
                     .WithParsed<FixTitlesOptions>(opts => FixTitles(opts, vm, repo, consoleView))
-                    .WithParsed<ImportSubOptions>(opts => Import(opts, vm, repo, consoleView))
+                    .WithParsed<ImportSubOptions>(opts => new ImportExportController().Import(opts, vm, repo, consoleView))
                     .WithParsed<InitSubOptions>(opts => Init(opts, settingsPath))
                     .WithParsed<MergeSubOptions>(opts => Merge(opts, vm, repo, consoleView))
                     .WithParsed<MoveAllSubOptions>(opts => MoveAll(opts, vm, repo, consoleView))
@@ -237,44 +237,6 @@ namespace AssimilationSoftware.TodoSort.CLI
             if (totalCount > 0)
             {
                 view.WriteLine("{0} items updated.", totalCount);
-            }
-
-            TidyUp(vm, repo, view);
-        }
-
-        public static void Import(ImportSubOptions importOptions, ViewModel vm, ITodoRepository repo, IItemDisplay view)
-        {
-            SetUniversalOptions(importOptions, vm);
-
-            IImporter? importer = null;
-            switch (importOptions.Format)
-            {
-                case ImportFormat.todosort:
-                    if (Directory.Exists(importOptions.Filename))
-                    {
-                        importer = new TextFolderImporter { Folder = importOptions.Filename };
-                    }
-                    else
-                    {
-                        importer = new TextImporter { Filename = importOptions.Filename };
-                    }
-                    break;
-                case ImportFormat.instapaper:
-                    importer = new InstapaperImporter(importOptions.Filename);
-                    break;
-                case ImportFormat.urls:
-                    importer = new RawUrlsImporter(importOptions.Filename);
-                    break;
-                default:
-                    view.WriteLine($"Unknown import format: {importOptions.Format}");
-                    break;
-            }
-            if (importer != null)
-            {
-                // Get everything from the source file.
-                // Exclude anything already seen, according to its import hash field.
-                vm.AddAllItems(importOptions.Context, true, importer.GetAllItems());
-                view.WriteLine(vm.StatusMessage);
             }
 
             TidyUp(vm, repo, view);

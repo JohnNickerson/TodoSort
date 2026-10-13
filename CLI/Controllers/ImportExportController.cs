@@ -4,6 +4,7 @@ using AssimilationSoftware.TodoSort.CLI.Options;
 using AssimilationSoftware.TodoSort.Core;
 using AssimilationSoftware.TodoSort.Core.Data;
 using AssimilationSoftware.TodoSort.Core.Export;
+using AssimilationSoftware.TodoSort.Core.Import;
 
 namespace AssimilationSoftware.TodoSort.CLI.Controllers;
 
@@ -64,6 +65,42 @@ public class ImportExportController
             {
                 exporter.Export(vm.SearchResults.ToList());
             }
+        }
+
+        vm.Save();
+    }
+
+    public void Import(ImportSubOptions importOptions, ViewModel vm, ITodoRepository repo, IItemDisplay view)
+    {
+        IImporter? importer = null;
+        switch (importOptions.Format)
+        {
+            case ImportFormat.todosort:
+                if (Directory.Exists(importOptions.Filename))
+                {
+                    importer = new TextFolderImporter { Folder = importOptions.Filename };
+                }
+                else
+                {
+                    importer = new TextImporter { Filename = importOptions.Filename };
+                }
+                break;
+            case ImportFormat.instapaper:
+                importer = new InstapaperImporter(importOptions.Filename);
+                break;
+            case ImportFormat.urls:
+                importer = new RawUrlsImporter(importOptions.Filename);
+                break;
+            default:
+                view.WriteLine($"Unknown import format: {importOptions.Format}");
+                break;
+        }
+        if (importer != null)
+        {
+            // Get everything from the source file.
+            // Exclude anything already seen, according to its import hash field.
+            vm.AddAllItems(importOptions.Context, true, importer.GetAllItems());
+            view.WriteLine(vm.StatusMessage);
         }
 
         vm.Save();
