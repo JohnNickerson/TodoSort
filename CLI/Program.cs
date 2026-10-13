@@ -61,7 +61,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                     .WithParsed<FixTitlesOptions>(opts => new IntegrityController().FixTitles(opts, vm, repo, consoleView))
                     .WithParsed<ImportSubOptions>(opts => new ImportExportController().Import(opts, vm, repo, consoleView))
                     .WithParsed<InitSubOptions>(opts => Init(opts, settingsPath))
-                    .WithParsed<MergeSubOptions>(opts => Merge(opts, vm, repo, consoleView))
+                    .WithParsed<MergeSubOptions>(opts => new ItemController().Merge(opts, vm, repo, consoleView))
                     .WithParsed<MoveAllSubOptions>(opts => new ItemController().MoveAll(opts, vm, repo, consoleView))
                     .WithParsed<MoveSubOptions>(opts => new ItemController().Move(opts, vm, repo, consoleView))
                     .WithParsed<NoteSubOptions>(opts => new ItemController().Note(opts, vm, repo, consoleView))
@@ -147,28 +147,6 @@ namespace AssimilationSoftware.TodoSort.CLI
             {
                 Directory.CreateDirectory(dirName);
             }
-        }
-
-        private static void Merge(MergeSubOptions mergeOptions, ViewModel vm, TodoRepository repo, IItemDisplay view)
-        {
-            SetUniversalOptions(mergeOptions, vm);
-
-            view.WriteLine("Confirm child item:");
-            vm.SearchTerm = mergeOptions.ChildSearchTerm ?? mergeOptions.TargetSearchTerm;
-            var mergeVictim = view.Disambiguate(vm.SearchResults, repo, view);
-            if (mergeVictim != null)
-            {
-                view.WriteLine("Confirm item to merge into:");
-                vm.SearchTerm = mergeOptions.TargetSearchTerm;
-                var combined = view.Disambiguate(vm.SearchResults.Where(x => x.ID != mergeVictim.ID), repo, view);
-                if (mergeVictim != null && combined != null)
-                {
-                    vm.Merge(mergeVictim, combined);
-                    selected = combined;
-                }
-            }
-
-            TidyUp(vm, repo, view);
         }
 
         private static void OpenTag(OpenTagSubOptions openTagOptions, ViewModel vm, TodoRepository repo, IItemDisplay view)

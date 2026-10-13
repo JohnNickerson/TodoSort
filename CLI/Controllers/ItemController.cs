@@ -39,6 +39,25 @@ public class ItemController
         }
     }
 
+    public void Merge(MergeSubOptions mergeOptions, ViewModel vm, TodoRepository repo, IItemDisplay view)
+        {
+            view.WriteLine("Confirm child item:");
+            vm.SearchTerm = mergeOptions.ChildSearchTerm ?? mergeOptions.TargetSearchTerm;
+            var mergeVictim = view.Disambiguate(vm.SearchResults, repo, view);
+            if (mergeVictim != null)
+            {
+                view.WriteLine("Confirm item to merge into:");
+                vm.SearchTerm = mergeOptions.TargetSearchTerm;
+                var combined = view.Disambiguate(vm.SearchResults.Where(x => x.ID != mergeVictim.ID), repo, view);
+                if (mergeVictim != null && combined != null)
+                {
+                    vm.Merge(mergeVictim, combined);
+                    view.PrintItem(combined, null, repo, false, mergeOptions.Verbose);
+                    vm.Save();
+                }
+            }
+        }
+
     public void Move(MoveSubOptions moveOptions, ViewModel vm, TodoRepository repo, IItemDisplay view)
     {
         vm.ShowHeadOnly = !moveOptions.ShowAllItems;
