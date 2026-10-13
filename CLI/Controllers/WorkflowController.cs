@@ -58,6 +58,20 @@ public class WorkflowController
         }
     }
 
+    public void Undefer(UndeferOptions undeferOptions, ViewModel vm, TodoRepository repo, IItemDisplay view)
+    {
+        vm.ShowHeadOnly = !undeferOptions.ShowAllItems;
+
+        vm.SomedaySearchSpecification = undeferOptions.SearchSpecification;
+        var selected = view.Disambiguate(vm.SomedaySearchResults, repo, view, !string.IsNullOrEmpty(undeferOptions.ItemId));
+        if (selected != null)
+        {
+            vm.Undefer("inbox", selected);
+            view.PrintItem(selected, null, repo, false, undeferOptions.Verbose);
+            vm.Save();
+        }
+    }
+
     public void Undo(UndoSubOptions undoOptions, ViewModel vm, TodoRepository repo, IItemDisplay view)
     {
         vm.ShowHeadOnly = !undoOptions.ShowAllItems;

@@ -77,7 +77,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                     .WithParsed<SomedaySubOptions>(opts => Someday(opts, vm, repo, consoleView))
                     .WithParsed<TagAllSubOptions>(opts => new ItemController().TagAll(opts, vm, repo, consoleView))
                     .WithParsed<TagOptions>(opts => new ItemController().Tag(opts, vm, repo, consoleView))
-                    .WithParsed<UndeferOptions>(opts => Undefer(opts, vm, repo, consoleView))
+                    .WithParsed<UndeferOptions>(opts => new WorkflowController().Undefer(opts, vm, repo, consoleView))
                     .WithParsed<UndoSubOptions>(opts => new WorkflowController().Undo(opts, vm, repo, consoleView))
                     .WithParsed<SummaryOptions>(opts => new SearchController().Summary(opts, vm, repo, consoleView))
                     .WithParsed<UnrankAllOptions>(opts => UnrankAll(opts, vm, repo, consoleView))
@@ -608,20 +608,6 @@ namespace AssimilationSoftware.TodoSort.CLI
                     EditSomedayItem(vm, undefer, repo, view);
                     undefer = null;
                 }
-            }
-
-            TidyUp(vm, repo, view);
-        }
-
-        private static void Undefer(UndeferOptions undeferOptions, ViewModel vm, TodoRepository repo, IItemDisplay view)
-        {
-            SetUniversalOptions(undeferOptions, vm);
-
-            vm.SomedaySearchSpecification = undeferOptions.SearchSpecification;
-            selected = view.Disambiguate(vm.SomedaySearchResults, repo, view, !string.IsNullOrEmpty(undeferOptions.ItemId));
-            if (selected != null)
-            {
-                vm.Undefer("inbox", selected);
             }
 
             TidyUp(vm, repo, view);
