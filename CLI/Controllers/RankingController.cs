@@ -75,4 +75,18 @@ public class RankingController
 
         vm.Save();
     }
+
+    public void Unrank(UnRankOptions unrankOptions, ViewModel vm, TodoRepository repo, IItemDisplay view)
+    {
+        vm.ShowHeadOnly = !unrankOptions.ShowAllItems;
+
+        vm.SearchSpecification = unrankOptions.SearchSpecification;
+        var selected = view.Disambiguate(vm.SearchResults, repo, view, !string.IsNullOrEmpty(unrankOptions.ItemId));
+        if (selected != null)
+        {
+            vm.ResetPriorityParents(selected);
+            view.PrintItem(selected, null, repo, false, unrankOptions.Verbose);
+            vm.Save();
+        }
+    }
 }

@@ -79,7 +79,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                     .WithParsed<UndoSubOptions>(opts => new WorkflowController().Undo(opts, vm, repo, consoleView))
                     .WithParsed<SummaryOptions>(opts => new SearchController().Summary(opts, vm, repo, consoleView))
                     .WithParsed<UnrankAllOptions>(opts => UnrankAll(opts, vm, repo, consoleView))
-                    .WithParsed<UnRankOptions>(opts => Unrank(opts, vm, repo, consoleView))
+                    .WithParsed<UnRankOptions>(opts => new RankingController().Unrank(opts, vm, repo, consoleView))
                     .WithNotParsed(errs => HandleErrors(errs));
         }
 
@@ -518,20 +518,6 @@ namespace AssimilationSoftware.TodoSort.CLI
             if (Console.ReadKey().KeyChar.ToString().ToLower() == "y")
             {
                 vm.ResetPriorityParents(vm.SearchResults.ToArray());
-            }
-
-            TidyUp(vm, repo, view);
-        }
-
-        private static void Unrank(UnRankOptions unrankOptions, ViewModel vm, TodoRepository repo, IItemDisplay view)
-        {
-            SetUniversalOptions(unrankOptions, vm);
-
-            vm.SearchSpecification = unrankOptions.SearchSpecification;
-            selected = view.Disambiguate(vm.SearchResults, repo, view, !string.IsNullOrEmpty(unrankOptions.ItemId));
-            if (selected != null)
-            {
-                vm.ResetPriorityParents(selected);
             }
 
             TidyUp(vm, repo, view);
