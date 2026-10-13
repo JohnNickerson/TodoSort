@@ -58,7 +58,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                     .WithParsed<DoneSearchSubOptions>(opts => new SearchController().SearchDone(opts, vm, repo, consoleView))
                     .WithParsed<DoneSubOptions>(opts => new WorkflowController().Done(opts, vm, repo, consoleView))
                     .WithParsed<ExportSubOptions>(opts => new ImportExportController().Export(opts, vm, repo, consoleView))
-                    .WithParsed<FixTitlesOptions>(opts => FixTitles(opts, vm, repo, consoleView))
+                    .WithParsed<FixTitlesOptions>(opts => new IntegrityController().FixTitles(opts, vm, repo, consoleView))
                     .WithParsed<ImportSubOptions>(opts => new ImportExportController().Import(opts, vm, repo, consoleView))
                     .WithParsed<InitSubOptions>(opts => Init(opts, settingsPath))
                     .WithParsed<MergeSubOptions>(opts => Merge(opts, vm, repo, consoleView))
@@ -128,59 +128,6 @@ namespace AssimilationSoftware.TodoSort.CLI
             var commitCount = repo.CommitChanges();
             view.WriteLine($"{commitCount} pending changes committed.");
             repo.SaveChanges();
-
-            TidyUp(vm, repo, view);
-        }
-
-        private static void FixTitles(FixTitlesOptions fixOptions, ViewModel vm, TodoRepository repo, IItemDisplay view)
-        {
-            SetUniversalOptions(fixOptions, vm);
-
-            vm.SearchSpecification = fixOptions.GetSearchSpecification(repo);
-            var client = new HttpClient(); // new RedirectWebClient();
-
-            var totalCount = 0;
-            decimal progress = 0;
-            decimal progressTotal = vm.SearchResults.Count();
-            foreach (var tem in vm.SearchResults.ToArray())
-            {
-                progress++;
-                try
-                {
-                    var source = client.GetStringAsync(tem.Tags["url"]).Result;
-                    //// Get the redirected URL, if any.
-                    //Debug.WriteLine(client.ResponseUri.OriginalString);
-                    //if (client.ResponseUri?.OriginalString != tem.Tags["url"])
-                    //{
-                    //    source = client.DownloadString(client.ResponseUri);
-                    //}
-
-                    var title = Regex.Match(source, @"\<title\b[^>]*\>\s*(?<Title>[\s\S]*?)\</title\>", RegexOptions.IgnoreCase).Groups["Title"].Value;
-                    title = WebUtility.HtmlDecode(title);
-                    if (!String.IsNullOrWhiteSpace(title) && title != tem.Title)
-                    {
-                        view.WriteLine("Renaming:\n\t{0}\n\t{1}", tem.Title, title);
-                        totalCount++;
-                        tem.Title = title;
-                        if (!string.IsNullOrEmpty(fixOptions.MoveTo))
-                        {
-                            tem.Context = fixOptions.MoveTo;
-                        }
-
-                        vm.Update(tem);
-                        view.WriteLine("{0:0}% complete", 100m * progress / progressTotal);
-                    }
-                }
-                catch (Exception e)
-                {
-                    Debug.WriteLine(e.Message);
-                }
-            }
-
-            if (totalCount > 0)
-            {
-                view.WriteLine("{0} items updated.", totalCount);
-            }
 
             TidyUp(vm, repo, view);
         }
