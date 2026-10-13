@@ -11,14 +11,13 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Net;
 using System.Reflection;
-using System.Text;
 using System.Text.RegularExpressions;
 using Spectre.Console;
 using Humanizer;
 using AssimilationSoftware.TodoSort.CLI.Enums;
 using AssimilationSoftware.TodoSort.CLI.Views;
 using AssimilationSoftware.TodoSort.CLI.Interfaces;
-using AssimilationSoftware.TodoSort.Core.Controllers;
+using AssimilationSoftware.TodoSort.CLI.Controllers;
 
 namespace AssimilationSoftware.TodoSort.CLI
 {
@@ -47,7 +46,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             var parser = new Parser(with => { with.CaseInsensitiveEnumValues = true; with.HelpWriter = Console.Error; });
             parser.ParseArguments(args, types)
                     .WithParsed<AddSubOptions>(opts => new ItemController().AddItem(opts, vm, repo, consoleView))
-                    .WithParsed<AdvancedSearchOptions>(opts => AdvancedSearch(opts, vm, repo, consoleView))
+                    .WithParsed<AdvancedSearchOptions>(opts => new SearchController().AdvancedSearch(opts, vm, repo, consoleView))
                     .WithParsed<BalanceOptions>(opts => Balance(opts, vm, repo, consoleView))
                     .WithParsed<BumpOptions>(opts => Bump(opts, vm, repo, consoleView))
                     .WithParsed<CheckChainOptions>(opts => CheckChain(opts, vm, repo, consoleView))
@@ -1012,16 +1011,6 @@ namespace AssimilationSoftware.TodoSort.CLI
 
             // Rewrite the files
             vm.Save(forceSave);
-        }
-
-        private static void AdvancedSearch(AdvancedSearchOptions argSubs, ViewModel vm, TodoRepository repo, IItemDisplay view)
-        {
-            SetUniversalOptions(argSubs, vm);
-
-            vm.SearchSpecification = argSubs.SearchSpecification;
-            view.PrintItems("title", vm.SearchResults, repo, argSubs.NSFW, argSubs.Verbose);
-
-            TidyUp(vm, repo, view, argSubs.Verbose);
         }
 
         private static void Balance(BalanceOptions balanceOpts, ViewModel vm, TodoRepository repo, IItemDisplay view)
