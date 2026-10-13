@@ -79,7 +79,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                     .WithParsed<TagOptions>(opts => new ItemController().Tag(opts, vm, repo, consoleView))
                     .WithParsed<UndeferOptions>(opts => Undefer(opts, vm, repo, consoleView))
                     .WithParsed<UndoSubOptions>(opts => Undo(opts, vm, repo, consoleView))
-                    .WithParsed<SummaryOptions>(opts => Summary(opts, vm, repo, consoleView))
+                    .WithParsed<SummaryOptions>(opts => new SearchController().Summary(opts, vm, repo, consoleView))
                     .WithParsed<UnrankAllOptions>(opts => UnrankAll(opts, vm, repo, consoleView))
                     .WithParsed<UnRankOptions>(opts => Unrank(opts, vm, repo, consoleView))
                     .WithNotParsed(errs => HandleErrors(errs));
@@ -688,75 +688,6 @@ namespace AssimilationSoftware.TodoSort.CLI
             {
                 vm.Undo(undoOptions.NewContext, selected);
             }
-
-            TidyUp(vm, repo, view);
-        }
-
-        private static void Summary(UniversalOptions summaryArgs, ViewModel vm, TodoRepository repo, IItemDisplay view)
-        {
-            SetUniversalOptions(summaryArgs, vm);
-
-            if (summaryArgs.Verbose && !summaryArgs.ShowAllItems)
-            {
-                vm.ShowHeadOnly = false;
-            }
-            vm.SearchSpecification = new TrueSpecification<ActionItem>();
-            var summaryData = from i in vm.SearchResults group i by i.Context into c select new { Context = c.Key, Count = c.Count() };
-
-            var table = new Table();
-            table.AddColumn(new TableColumn("Context").Padding(2, 0));
-            table.AddColumn(new TableColumn("Count").RightAligned().Padding(2, 0));
-            var total = 0;
-            var secondOrLaterContext = false;
-            foreach (var c in summaryData)
-            {
-                total += c.Count;
-                if (secondOrLaterContext && summaryArgs.Verbose)
-                {
-                    table.AddEmptyRow();
-                }
-                table.AddRow($"@{c.Context}", "item".ToQuantity(c.Count));
-                secondOrLaterContext = true;
-                if (summaryArgs.Verbose)
-                {
-                    // Show a summary of numbers at each depth.
-                    vm.SearchSpecification = new ContextSearchSpecification(c.Context);
-                    var depths = vm.GetDepthsView();
-
-                    var detailed = new Dictionary<int, int>();
-                    var unknownCount = 0;
-                    foreach (var i in vm.SearchResults)
-                    {
-                        if (depths.ContainsKey(i.ID))
-                        {
-                            var deep = depths[i.ID];
-                            if (detailed.ContainsKey(deep))
-                            {
-                                detailed[deep]++;
-                            }
-                            else
-                            {
-                                detailed[deep] = 1;
-                            }
-                        }
-                        else
-                        {
-                            unknownCount++;
-                        }
-                    }
-                    foreach (var d in detailed.OrderBy(r => r.Key))
-                    {
-                        table.AddRow(new TableRow([new Markup(d.Key.ToString()).RightJustified(), new Markup("item".ToQuantity(d.Value))]));
-                    }
-                    if (unknownCount > 0)
-                    {
-                        table.AddRow("-", "item".ToQuantity(unknownCount));
-                    }
-                }
-            }
-            table.AddEmptyRow();
-            table.AddRow("Total", "item".ToQuantity(total));
-            AnsiConsole.Write(table);
 
             TidyUp(vm, repo, view);
         }

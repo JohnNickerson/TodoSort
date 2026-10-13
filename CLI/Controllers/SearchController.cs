@@ -3,6 +3,9 @@ using AssimilationSoftware.TodoSort.CLI.Interfaces;
 using AssimilationSoftware.TodoSort.CLI.Options;
 using AssimilationSoftware.TodoSort.Core;
 using AssimilationSoftware.TodoSort.Core.Data;
+using AssimilationSoftware.TodoSort.Core.Search;
+using Humanizer;
+using Spectre.Console;
 
 namespace AssimilationSoftware.TodoSort.CLI.Controllers;
 
@@ -67,5 +70,71 @@ public class SearchController
         {
             view.WriteLine("{0} item(s) found.", vm.SomedaySearchResults.Count());
         }
+    }
+
+    public void Summary(UniversalOptions summaryArgs, ViewModel vm, TodoRepository repo, IItemDisplay view)
+    {
+        if (!summaryArgs.ShowAllItems)
+        {
+            vm.ShowHeadOnly = !summaryArgs.Verbose;
+        }
+
+        vm.SearchSpecification = new TrueSpecification<ActionItem>();
+        var summaryData = from i in vm.SearchResults group i by i.Context into c select new { Context = c.Key, Count = c.Count() };
+
+        var table = new Table();
+        table.AddColumn(new TableColumn("Context").Padding(2, 0));
+        table.AddColumn(new TableColumn("Count").RightAligned().Padding(2, 0));
+        var total = 0;
+        var secondOrLaterContext = false;
+        foreach (var c in summaryData)
+        {
+            total += c.Count;
+            if (secondOrLaterContext && summaryArgs.Verbose)
+            {
+                table.AddEmptyRow();
+            }
+            table.AddRow($"@{c.Context}", "item".ToQuantity(c.Count));
+            secondOrLaterContext = true;
+            if (summaryArgs.Verbose)
+            {
+                // Show a summary of numbers at each depth.
+                vm.SearchSpecification = new ContextSearchSpecification(c.Context);
+                var depths = vm.GetDepthsView();
+
+                var detailed = new Dictionary<int, int>();
+                var unknownCount = 0;
+                foreach (var i in vm.SearchResults)
+                {
+                    if (depths.ContainsKey(i.ID))
+                    {
+                        var deep = depths[i.ID];
+                        if (detailed.ContainsKey(deep))
+                        {
+                            detailed[deep]++;
+                        }
+                        else
+                        {
+                            detailed[deep] = 1;
+                        }
+                    }
+                    else
+                    {
+                        unknownCount++;
+                    }
+                }
+                foreach (var d in detailed.OrderBy(r => r.Key))
+                {
+                    table.AddRow(new TableRow([new Markup(d.Key.ToString()).RightJustified(), new Markup("item".ToQuantity(d.Value))]));
+                }
+                if (unknownCount > 0)
+                {
+                    table.AddRow("-", "item".ToQuantity(unknownCount));
+                }
+            }
+        }
+        table.AddEmptyRow();
+        table.AddRow("Total", "item".ToQuantity(total));
+        AnsiConsole.Write(table);
     }
 }
