@@ -44,50 +44,50 @@ public class RankingController
     }
 
     public void Bump(BumpOptions bumpOpts, ViewModel vm, TodoRepository repo, IItemDisplay view)
+    {
+        vm.ShowHeadOnly = !bumpOpts.ShowAllItems;
+        vm.SearchSpecification = bumpOpts.SearchSpecification;
+        var bumpItems = new List<ActionItem>();
+        if (bumpOpts.Top == 0)
         {
-                    vm.ShowHeadOnly = !bumpOpts.ShowAllItems;
-            vm.SearchSpecification = bumpOpts.SearchSpecification;
-            var bumpItems = new List<ActionItem>();
-            if (bumpOpts.Top == 0)
-            {
-                // Manually pick one item.
-                var chosen = view.Disambiguate(vm.SearchResults, repo, view, true);
-                if (chosen != null) bumpItems.Add(chosen);
-            }
-            else if (!string.IsNullOrEmpty(bumpOpts.SortTag))
-            {
-                // First items.
-                bumpItems.AddRange(view.ApplySort(bumpOpts.SortTag, vm.SearchResults).Take(bumpOpts.Top));
-            }
-            else if (!string.IsNullOrEmpty(bumpOpts.SortDescTag))
-            {
-                bumpItems.AddRange(view.ApplySort(bumpOpts.SortTag ?? string.Empty, vm.SearchResults, SortOrder.Descending).Take(bumpOpts.Top));
-            }
-            else
-            {
-                bumpItems.AddRange(vm.SearchResults.Take(bumpOpts.Top));
-            }
-            // TODO: Display the before and after positions together.
-            // Before: red and strike-through.
-            // After: yellow and bold.
-            view.PrintTree(new List<ActionItem>(), bumpItems, repo, bumpOpts.NSFW, bumpOpts.Verbose);
-            foreach (var target in bumpItems)
-            {
-                var depth = target.GetRankDepth(repo) / 2;
-                if (depth == 0)
-                {
-                    target.Upvotes++;
-                    vm.Update(target);
-                }
-                while (target.GetRankDepth(repo) > depth && target.ParentId != null)
-                {
-                    vm.SetParent(target, target.GetParent(repo)?.GetParent(repo));
-                }
-            }
-            // After
-            view.PrintTree(bumpItems, new List<ActionItem>(), repo, bumpOpts.NSFW, bumpOpts.Verbose);
-            vm.Save();
+            // Manually pick one item.
+            var chosen = view.Disambiguate(vm.SearchResults, repo, view, true);
+            if (chosen != null) bumpItems.Add(chosen);
         }
+        else if (!string.IsNullOrEmpty(bumpOpts.SortTag))
+        {
+            // First items.
+            bumpItems.AddRange(view.ApplySort(bumpOpts.SortTag, vm.SearchResults).Take(bumpOpts.Top));
+        }
+        else if (!string.IsNullOrEmpty(bumpOpts.SortDescTag))
+        {
+            bumpItems.AddRange(view.ApplySort(bumpOpts.SortTag ?? string.Empty, vm.SearchResults, SortOrder.Descending).Take(bumpOpts.Top));
+        }
+        else
+        {
+            bumpItems.AddRange(vm.SearchResults.Take(bumpOpts.Top));
+        }
+        // TODO: Display the before and after positions together.
+        // Before: red and strike-through.
+        // After: yellow and bold.
+        view.PrintTree(new List<ActionItem>(), bumpItems, repo, bumpOpts.NSFW, bumpOpts.Verbose);
+        foreach (var target in bumpItems)
+        {
+            var depth = target.GetRankDepth(repo) / 2;
+            if (depth == 0)
+            {
+                target.Upvotes++;
+                vm.Update(target);
+            }
+            while (target.GetRankDepth(repo) > depth && target.ParentId != null)
+            {
+                vm.SetParent(target, target.GetParent(repo)?.GetParent(repo));
+            }
+        }
+        // After
+        view.PrintTree(bumpItems, new List<ActionItem>(), repo, bumpOpts.NSFW, bumpOpts.Verbose);
+        vm.Save();
+    }
 
     public void Rank(MultiSearchSubOptions rankOptions, ViewModel vm, TodoRepository repo, IItemDisplay view)
     {
