@@ -53,4 +53,19 @@ public class SearchController
             view.WriteLine("{0} item(s) found.", vm.DoneSearchResults.Count());
         }
     }
+
+    public void SearchSomeday(SomedaySearchSubOptions search, ViewModel vm, TodoRepository repo, IItemDisplay view)
+    {
+        vm.ShowHeadOnly = false;
+
+        // Construct a search specification.
+        // Set the ViewModel property.
+        vm.SomedaySearchSpecification = search.GetSearchSpecification(repo);
+        // Report the results.
+        view.PrintItems(search.SortTag ?? "tickle-date", vm.SomedaySearchResults, repo, search.NSFW, search.Verbose);
+        if (!search.NoCount)
+        {
+            view.WriteLine("{0} item(s) found.", vm.SomedaySearchResults.Count());
+        }
+    }
 }

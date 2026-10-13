@@ -73,7 +73,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                     .WithParsed<SearchOptions>(opts => new SearchController().Search(opts, vm, repo, consoleView))
                     .WithParsed<SetParentSubOptions>(opts => SetParent(opts, vm, repo, consoleView))
                     .WithParsed<SetProjectSubOptions>(opts => SetProject(opts, vm, repo, consoleView))
-                    .WithParsed<SomedaySearchSubOptions>(opts => SearchSomeday(opts, vm, repo, consoleView))
+                    .WithParsed<SomedaySearchSubOptions>(opts => new SearchController().SearchSomeday(opts, vm, repo, consoleView))
                     .WithParsed<SomedaySubOptions>(opts => Someday(opts, vm, repo, consoleView))
                     .WithParsed<TagAllSubOptions>(opts => new ItemController().TagAll(opts, vm, repo, consoleView))
                     .WithParsed<TagOptions>(opts => new ItemController().Tag(opts, vm, repo, consoleView))
@@ -626,23 +626,6 @@ namespace AssimilationSoftware.TodoSort.CLI
             if (child != null && project != null)
             {
                 vm.SetProject(child, project);
-            }
-
-            TidyUp(vm, repo, view);
-        }
-
-        private static void SearchSomeday(SomedaySearchSubOptions search, ViewModel vm, TodoRepository repo, IItemDisplay view)
-        {
-            SetUniversalOptions(search, vm);
-
-            // Construct a search specification.
-            // Set the ViewModel property.
-            vm.SomedaySearchSpecification = search.GetSearchSpecification(repo);
-            // Report the results.
-            view.PrintItems(search.SortTag ?? "tickle-date", vm.SomedaySearchResults, repo, search.NSFW, search.Verbose);
-            if (!search.NoCount)
-            {
-                view.WriteLine("{0} item(s) found.", vm.SomedaySearchResults.Count());
             }
 
             TidyUp(vm, repo, view);
