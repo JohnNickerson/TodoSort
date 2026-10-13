@@ -62,7 +62,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                     .WithParsed<ImportSubOptions>(opts => new ImportExportController().Import(opts, vm, repo, consoleView))
                     .WithParsed<InitSubOptions>(opts => Init(opts, settingsPath))
                     .WithParsed<MergeSubOptions>(opts => Merge(opts, vm, repo, consoleView))
-                    .WithParsed<MoveAllSubOptions>(opts => MoveAll(opts, vm, repo, consoleView))
+                    .WithParsed<MoveAllSubOptions>(opts => new ItemController().MoveAll(opts, vm, repo, consoleView))
                     .WithParsed<MoveSubOptions>(opts => new ItemController().Move(opts, vm, repo, consoleView))
                     .WithParsed<NoteSubOptions>(opts => new ItemController().Note(opts, vm, repo, consoleView))
                     .WithParsed<OpenTagSubOptions>(opts => OpenTag(opts, vm, repo, consoleView))
@@ -167,25 +167,6 @@ namespace AssimilationSoftware.TodoSort.CLI
                     selected = combined;
                 }
             }
-
-            TidyUp(vm, repo, view);
-        }
-
-        private static void MoveAll(MoveAllSubOptions moveAllOptions, ViewModel vm, TodoRepository repo, IItemDisplay view)
-        {
-            SetUniversalOptions(moveAllOptions, vm);
-
-            vm.ShowHeadOnly = false; // Make sure we move all items in the context, not just the head.
-            vm.SearchSpecification = moveAllOptions.GetSearchSpecification(repo);
-            var items = vm.SearchResults.ToList();
-            var counter = 0;
-            while (items.Count > 0)
-            {
-                vm.SetContext(items[0], moveAllOptions.NewContext);
-                items.RemoveAt(0);
-                counter++;
-            }
-            view.WriteLine(string.Format("{0} items moved to @{1}", counter, moveAllOptions.NewContext));
 
             TidyUp(vm, repo, view);
         }
