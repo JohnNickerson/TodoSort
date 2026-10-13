@@ -70,7 +70,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                     .WithParsed<OpenTagSubOptions>(opts => OpenTag(opts, vm, repo, consoleView))
                     .WithParsed<ProcessOptions>(opts => Process(opts, vm, repo, consoleView))
                     .WithParsed<RankOptions>(opts => Rank(opts, vm, repo, consoleView))
-                    .WithParsed<RenameSubOptions>(opts => Rename(opts, vm, repo, consoleView))
+                    .WithParsed<RenameSubOptions>(opts => new ItemController().Rename(opts, vm, repo, consoleView))
                     .WithParsed<SearchOptions>(opts => Search(opts, vm, repo, consoleView))
                     .WithParsed<SetParentSubOptions>(opts => SetParent(opts, vm, repo, consoleView))
                     .WithParsed<SetProjectSubOptions>(opts => SetProject(opts, vm, repo, consoleView))
@@ -629,25 +629,6 @@ namespace AssimilationSoftware.TodoSort.CLI
             TidyUp(vm, repo, view);
         }
 
-        private static void Rename(RenameSubOptions renameOptions, ViewModel vm, TodoRepository repo, IItemDisplay view)
-        {
-            SetUniversalOptions(renameOptions, vm);
-
-            vm.SearchSpecification = renameOptions.SearchSpecification;
-            selected = view.Disambiguate(vm.SearchResults, repo, view, !string.IsNullOrEmpty(renameOptions.ItemId));
-            if (selected != null)
-            {
-                vm.Rename(selected, renameOptions.NewTitle);
-                view.WriteLine("Item renamed.");
-                if (renameOptions.ReTag)
-                {
-                    TagItem(vm, selected, view);
-                }
-            }
-
-            TidyUp(vm, repo, view);
-        }
-
         private static void Search(SearchOptions searchOptions, ViewModel vm, TodoRepository repo, IItemDisplay view)
         {
             SetUniversalOptions(searchOptions, vm);
@@ -1006,13 +987,13 @@ namespace AssimilationSoftware.TodoSort.CLI
             // Set universal options.
             if (argSubs is UniversalOptions options)
             {
-                if (!(argSubs is MultiSearchSubOptions))
+                if (argSubs is MultiSearchSubOptions)
                 {
-                    vm.ShowHeadOnly = !options.ShowAllItems;
+                    vm.ShowHeadOnly = false;
                 }
                 else
                 {
-                    vm.ShowHeadOnly = false;
+                    vm.ShowHeadOnly = !options.ShowAllItems;
                 }
             }
         }
