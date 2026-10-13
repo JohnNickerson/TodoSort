@@ -57,7 +57,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                     .WithParsed<DeleteDoneOptions>(opts => DeleteDone(opts, vm, repo))
                     .WithParsed<DeleteOptions>(opts => new ItemController().Delete(opts, vm, repo, consoleView))
                     .WithParsed<DoneSearchSubOptions>(opts => new SearchController().SearchDone(opts, vm, repo, consoleView))
-                    .WithParsed<DoneSubOptions>(opts => Done(opts, vm, repo, consoleView))
+                    .WithParsed<DoneSubOptions>(opts => new WorkflowController().Done(opts, vm, repo, consoleView))
                     .WithParsed<ExportSubOptions>(opts => Export(opts, vm, repo, consoleView))
                     .WithParsed<FixTitlesOptions>(opts => FixTitles(opts, vm, repo, consoleView))
                     .WithParsed<ImportSubOptions>(opts => Import(opts, vm, repo, consoleView))
@@ -236,21 +236,6 @@ namespace AssimilationSoftware.TodoSort.CLI
             throw new NotImplementedException("The delete-done command was never implemented.");
 
             //TidyUp(vm, repo);
-        }
-
-        private static void Done(DoneSubOptions doneOpts, ViewModel vm, TodoRepository repo, IItemDisplay view)
-        {
-            SetUniversalOptions(doneOpts, vm);
-
-            // If there is a next action, create a new item and add it to the correct context.
-            vm.SearchSpecification = doneOpts.SearchSpecification;
-            selected = view.Disambiguate(vm.SearchResults, repo, view, !string.IsNullOrEmpty(doneOpts.ItemId));
-            if (selected != null)
-            {
-                vm.MarkDone(doneOpts.DoneDate, selected);
-            }
-
-            TidyUp(vm, repo, view);
         }
 
         private static void Export(ExportSubOptions exportOptions, ViewModel vm, TodoRepository repo, IItemDisplay view)
