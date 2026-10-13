@@ -78,7 +78,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                     .WithParsed<UndeferOptions>(opts => new WorkflowController().Undefer(opts, vm, repo, consoleView))
                     .WithParsed<UndoSubOptions>(opts => new WorkflowController().Undo(opts, vm, repo, consoleView))
                     .WithParsed<SummaryOptions>(opts => new SearchController().Summary(opts, vm, repo, consoleView))
-                    .WithParsed<UnrankAllOptions>(opts => UnrankAll(opts, vm, repo, consoleView))
+                    .WithParsed<UnrankAllOptions>(opts => new RankingController().UnrankAll(opts, vm, repo, consoleView))
                     .WithParsed<UnRankOptions>(opts => new RankingController().Unrank(opts, vm, repo, consoleView))
                     .WithNotParsed(errs => HandleErrors(errs));
         }
@@ -504,20 +504,6 @@ namespace AssimilationSoftware.TodoSort.CLI
             if (child != null && project != null)
             {
                 vm.SetProject(child, project);
-            }
-
-            TidyUp(vm, repo, view);
-        }
-
-        private static void UnrankAll(UnrankAllOptions unrankAllOptions, ViewModel vm, TodoRepository repo, IItemDisplay view)
-        {
-            SetUniversalOptions(unrankAllOptions, vm);
-
-            vm.SearchSpecification = unrankAllOptions.GetSearchSpecification(repo);
-            view.WriteLine("About to delete all ranking data for {0} items. Continue [Y/N]?", vm.SearchResults.Count());
-            if (Console.ReadKey().KeyChar.ToString().ToLower() == "y")
-            {
-                vm.ResetPriorityParents(vm.SearchResults.ToArray());
             }
 
             TidyUp(vm, repo, view);

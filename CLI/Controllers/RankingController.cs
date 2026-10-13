@@ -89,4 +89,18 @@ public class RankingController
             vm.Save();
         }
     }
+
+    public void UnrankAll(UnrankAllOptions unrankAllOptions, ViewModel vm, TodoRepository repo, IItemDisplay view)
+    {
+        vm.ShowHeadOnly = false;
+
+        vm.SearchSpecification = unrankAllOptions.GetSearchSpecification(repo);
+        view.WriteLine("About to delete all ranking data for {0} items. Continue [Y/N]?", vm.SearchResults.Count());
+        if (Console.ReadKey().KeyChar.ToString().ToLower() == "y")
+        {
+            vm.ResetPriorityParents(vm.SearchResults.ToArray());
+        }
+
+        vm.Save();
+    }
 }
