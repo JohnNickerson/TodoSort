@@ -51,7 +51,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                     .WithParsed<BumpOptions>(opts => new RankingController().Bump(opts, vm, repo, consoleView))
                     .WithParsed<CheckChainOptions>(opts => new IntegrityController().CheckChain(opts, vm, repo, consoleView))
                     .WithParsed<CommitOptions>(opts => Commit(opts, vm, repo, consoleView))
-                    .WithParsed<DedupeOptions>(opts => Dedupe(opts, vm, repo, consoleView))
+                    .WithParsed<DedupeOptions>(opts => new IntegrityController().Dedupe(opts, vm, repo, consoleView))
                     .WithParsed<DeferAllOptions>(opts => new WorkflowController().DeferAll(opts, vm, repo, consoleView))
                     .WithParsed<DeferSubOptions>(opts => new WorkflowController().Defer(opts, vm, repo, consoleView))
                     .WithParsed<DeleteOptions>(opts => new ItemController().Delete(opts, vm, repo, consoleView))
@@ -128,63 +128,6 @@ namespace AssimilationSoftware.TodoSort.CLI
             var commitCount = repo.CommitChanges();
             view.WriteLine($"{commitCount} pending changes committed.");
             repo.SaveChanges();
-
-            TidyUp(vm, repo, view);
-        }
-
-        private static void Dedupe(DedupeOptions dupe, ViewModel vm, TodoRepository repo, IItemDisplay view)
-        {
-            SetUniversalOptions(dupe, vm);
-
-            vm.SearchSpecification = new TrueSpecification<ActionItem>();
-            foreach (var duplicate in vm.GetDuplicateTitles())
-            {
-                // Search by title
-                vm.SearchSpecification = new ExactPropertyValueSpecification<ActionItem, string>(i => i.Title, duplicate);
-                // Quick hack: If we have two items with the same title but different type tags, skip them.
-                if (vm.SearchResults.Count() == 2 &&
-                    vm.SearchResults.All(i => i.Tags.ContainsKey("type")) &&
-                    vm.SearchResults.ElementAt(0).Tags["type"].ToLower() !=
-                    vm.SearchResults.ElementAt(1).Tags["type"].ToLower())
-                {
-                    continue;
-                }
-                // Present options for merging
-                // Get user input
-                view.WriteLine();
-                view.WriteLine("Select one item to merge all others into (or Cancel to stop):");
-                var survivor = view.Disambiguate(vm.SearchResults, repo, view, includeCancel: true);
-                if (survivor != null)
-                {
-                    // Merge all into survivor.
-                    foreach (var c in vm.SearchResults.Except(new[] { survivor }).ToList())
-                    {
-                        vm.Merge(c, survivor);
-                    }
-                }
-            }
-            if (!string.IsNullOrEmpty(dupe.Tag))
-            {
-                foreach (var dupeTag in vm.GetDuplicateTags(dupe.Tag))
-                {
-                    // Search by tag
-                    vm.SearchSpecification = new TagValueSpecification(dupe.Tag, dupeTag);
-                    // Present options for merging
-                    // Get user input.
-                    view.WriteLine();
-                    view.WriteLine("Select one item to merge all others into (i = ignore):");
-                    var survivor = view.Disambiguate(vm.SearchResults, repo, view);
-                    if (survivor != null)
-                    {
-                        // Merge into survivor.
-                        foreach (var c in vm.SearchResults.Except(new[] { survivor }).ToList())
-                        {
-                            vm.Merge(c, survivor);
-                        }
-                    }
-                }
-            }
-            vm.Save();
 
             TidyUp(vm, repo, view);
         }

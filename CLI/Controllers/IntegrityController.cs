@@ -1,7 +1,9 @@
+using AssimilationSoftware.Maroon.Model;
 using AssimilationSoftware.TodoSort.CLI.Interfaces;
 using AssimilationSoftware.TodoSort.CLI.Options;
 using AssimilationSoftware.TodoSort.Core;
 using AssimilationSoftware.TodoSort.Core.Data;
+using AssimilationSoftware.TodoSort.Core.Search;
 
 namespace AssimilationSoftware.TodoSort.CLI.Controllers;
 
@@ -69,6 +71,61 @@ public class IntegrityController
             Console.ReadKey();
         }
 
+        vm.Save();
+    }
+
+    public void Dedupe(DedupeOptions dupe, ViewModel vm, TodoRepository repo, IItemDisplay view)
+    {
+        vm.ShowHeadOnly = !dupe.ShowAllItems;
+
+        vm.SearchSpecification = new TrueSpecification<ActionItem>();
+        foreach (var duplicate in vm.GetDuplicateTitles())
+        {
+            // Search by title
+            vm.SearchSpecification = new ExactPropertyValueSpecification<ActionItem, string>(i => i.Title, duplicate);
+            // Quick hack: If we have two items with the same title but different type tags, skip them.
+            if (vm.SearchResults.Count() == 2 &&
+                vm.SearchResults.All(i => i.Tags.ContainsKey("type")) &&
+                vm.SearchResults.ElementAt(0).Tags["type"].ToLower() !=
+                vm.SearchResults.ElementAt(1).Tags["type"].ToLower())
+            {
+                continue;
+            }
+            // Present options for merging
+            // Get user input
+            view.WriteLine();
+            view.WriteLine("Select one item to merge all others into (or Cancel to stop):");
+            var survivor = view.Disambiguate(vm.SearchResults, repo, view, includeCancel: true);
+            if (survivor != null)
+            {
+                // Merge all into survivor.
+                foreach (var c in vm.SearchResults.Except(new[] { survivor }).ToList())
+                {
+                    vm.Merge(c, survivor);
+                }
+            }
+        }
+        if (!string.IsNullOrEmpty(dupe.Tag))
+        {
+            foreach (var dupeTag in vm.GetDuplicateTags(dupe.Tag))
+            {
+                // Search by tag
+                vm.SearchSpecification = new TagValueSpecification(dupe.Tag, dupeTag);
+                // Present options for merging
+                // Get user input.
+                view.WriteLine();
+                view.WriteLine("Select one item to merge all others into (i = ignore):");
+                var survivor = view.Disambiguate(vm.SearchResults, repo, view);
+                if (survivor != null)
+                {
+                    // Merge into survivor.
+                    foreach (var c in vm.SearchResults.Except(new[] { survivor }).ToList())
+                    {
+                        vm.Merge(c, survivor);
+                    }
+                }
+            }
+        }
         vm.Save();
     }
 }
