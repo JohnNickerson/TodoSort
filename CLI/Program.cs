@@ -18,6 +18,7 @@ using Humanizer;
 using AssimilationSoftware.TodoSort.CLI.Enums;
 using AssimilationSoftware.TodoSort.CLI.Views;
 using AssimilationSoftware.TodoSort.CLI.Interfaces;
+using AssimilationSoftware.TodoSort.Core.Controllers;
 
 namespace AssimilationSoftware.TodoSort.CLI
 {
@@ -45,7 +46,7 @@ namespace AssimilationSoftware.TodoSort.CLI
 
             var parser = new Parser(with => { with.CaseInsensitiveEnumValues = true; with.HelpWriter = Console.Error; });
             parser.ParseArguments(args, types)
-                    .WithParsed<AddSubOptions>(opts => AddItem(opts, vm, repo, consoleView))
+                    .WithParsed<AddSubOptions>(opts => new EditController().AddItem(opts, vm, repo, consoleView))
                     .WithParsed<AdvancedSearchOptions>(opts => AdvancedSearch(opts, vm, repo, consoleView))
                     .WithParsed<BalanceOptions>(opts => Balance(opts, vm, repo, consoleView))
                     .WithParsed<BumpOptions>(opts => Bump(opts, vm, repo, consoleView))
@@ -1106,13 +1107,6 @@ namespace AssimilationSoftware.TodoSort.CLI
 
         private static void TidyUp(ViewModel vm, ITodoRepository repo, IItemDisplay view, bool verbose = false, bool forceSave = false)
         {
-            #region Tidy up
-            // Delete any items with a context of "delete".
-            vm.SearchSpecification = new ContextSearchSpecification("delete");
-            vm.Delete(vm.SearchResults.ToArray());
-            #endregion
-
-
             if (selected != null)
             {
                 view.PrintItem(selected, null, repo, false, verbose);
@@ -1120,21 +1114,6 @@ namespace AssimilationSoftware.TodoSort.CLI
 
             // Rewrite the files
             vm.Save(forceSave);
-        }
-
-        private static void AddItem(AddSubOptions a, ViewModel vm, TodoRepository repo, IItemDisplay view)
-        {
-            SetUniversalOptions(a, vm);
-            selected = new ActionItem { Context = a.Context, Title = a.ActionTitle };
-            if (!string.IsNullOrWhiteSpace(a.Note))
-            {
-                selected.Notes.Add(a.Note);
-            }
-            view.WriteLine("Adding action '{0}' to context @{1}", a.ActionTitle, a.Context);
-            vm.AddItem(selected);
-            // Allow tagging right away.
-            TagItem(vm, selected, view);
-            TidyUp(vm, repo, view, true);
         }
 
         private static void AdvancedSearch(AdvancedSearchOptions argSubs, ViewModel vm, TodoRepository repo, IItemDisplay view)
