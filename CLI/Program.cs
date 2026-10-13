@@ -53,7 +53,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                     .WithParsed<CommitOptions>(opts => Commit(opts, vm, repo, consoleView))
                     .WithParsed<DedupeOptions>(opts => Dedupe(opts, vm, repo, consoleView))
                     .WithParsed<DeferAllOptions>(opts => DeferAll(opts, vm, repo, consoleView))
-                    .WithParsed<DeferSubOptions>(opts => Defer(opts, vm, repo, consoleView))
+                    .WithParsed<DeferSubOptions>(opts => new WorkflowController().Defer(opts, vm, repo, consoleView))
                     .WithParsed<DeleteDoneOptions>(opts => DeleteDone(opts, vm, repo))
                     .WithParsed<DeleteOptions>(opts => new ItemController().Delete(opts, vm, repo, consoleView))
                     .WithParsed<DoneSearchSubOptions>(opts => new SearchController().SearchDone(opts, vm, repo, consoleView))
@@ -202,27 +202,6 @@ namespace AssimilationSoftware.TodoSort.CLI
             if (k.KeyChar.ToString().ToLower() == "y")
             {
                 vm.Defer(vm.SearchResults.ToArray());
-            }
-
-            TidyUp(vm, repo, view);
-        }
-
-        private static void Defer(DeferSubOptions deferOpts, ViewModel vm, TodoRepository repo, IItemDisplay view)
-        {
-            SetUniversalOptions(deferOpts, vm);
-
-            vm.SearchSpecification = deferOpts.SearchSpecification;
-            selected = view.Disambiguate(vm.SearchResults, repo, view, !string.IsNullOrEmpty(deferOpts.ItemId));
-            if (selected != null)
-            {
-                if (deferOpts.TickleDate.HasValue)
-                {
-                    vm.Defer(selected, deferOpts.TickleDate.Value);
-                }
-                else
-                {
-                    vm.Defer(selected);
-                }
             }
 
             TidyUp(vm, repo, view);

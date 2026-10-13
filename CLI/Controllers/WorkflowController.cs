@@ -7,6 +7,27 @@ namespace AssimilationSoftware.TodoSort.CLI.Controllers;
 
 public class WorkflowController
 {
+    public void Defer(DeferSubOptions deferOpts, ViewModel vm, TodoRepository repo, IItemDisplay view)
+    {
+        vm.ShowHeadOnly = !deferOpts.ShowAllItems;
+
+        vm.SearchSpecification = deferOpts.SearchSpecification;
+        var selected = view.Disambiguate(vm.SearchResults, repo, view, !string.IsNullOrEmpty(deferOpts.ItemId));
+        if (selected != null)
+        {
+            if (deferOpts.TickleDate.HasValue)
+            {
+                vm.Defer(selected, deferOpts.TickleDate.Value);
+            }
+            else
+            {
+                vm.Defer(selected);
+            }
+            view.PrintItem(selected, null, repo, false, deferOpts.Verbose);
+            vm.Save();
+        }
+    }
+
     public void Done(DoneSubOptions doneOpts, ViewModel vm, TodoRepository repo, IItemDisplay view)
     {
         vm.ShowHeadOnly = !doneOpts.ShowAllItems;
