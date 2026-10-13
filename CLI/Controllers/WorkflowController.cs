@@ -28,6 +28,21 @@ public class WorkflowController
         }
     }
 
+    public void DeferAll(DeferAllOptions pruneOptions, ViewModel vm, TodoRepository repo, IItemDisplay view)
+    {
+        vm.ShowHeadOnly = false;
+
+        vm.SearchSpecification = pruneOptions.GetSearchSpecification(repo);
+        view.WriteLine("About to defer {0} items. Continue [Y/N]?", vm.SearchResults.Count());
+        var k = Console.ReadKey();
+        if (k.KeyChar.ToString().ToLower() == "y")
+        {
+            vm.Defer(vm.SearchResults.ToArray());
+        }
+
+        vm.Save();
+    }
+
     public void Done(DoneSubOptions doneOpts, ViewModel vm, TodoRepository repo, IItemDisplay view)
     {
         vm.ShowHeadOnly = !doneOpts.ShowAllItems;

@@ -52,7 +52,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                     .WithParsed<CheckChainOptions>(opts => CheckChain(opts, vm, repo, consoleView))
                     .WithParsed<CommitOptions>(opts => Commit(opts, vm, repo, consoleView))
                     .WithParsed<DedupeOptions>(opts => Dedupe(opts, vm, repo, consoleView))
-                    .WithParsed<DeferAllOptions>(opts => DeferAll(opts, vm, repo, consoleView))
+                    .WithParsed<DeferAllOptions>(opts => new WorkflowController().DeferAll(opts, vm, repo, consoleView))
                     .WithParsed<DeferSubOptions>(opts => new WorkflowController().Defer(opts, vm, repo, consoleView))
                     .WithParsed<DeleteDoneOptions>(opts => DeleteDone(opts, vm, repo))
                     .WithParsed<DeleteOptions>(opts => new ItemController().Delete(opts, vm, repo, consoleView))
@@ -188,21 +188,6 @@ namespace AssimilationSoftware.TodoSort.CLI
                 }
             }
             vm.Save();
-
-            TidyUp(vm, repo, view);
-        }
-
-        private static void DeferAll(DeferAllOptions pruneOptions, ViewModel vm, TodoRepository repo, IItemDisplay view)
-        {
-            SetUniversalOptions(pruneOptions, vm);
-
-            vm.SearchSpecification = pruneOptions.GetSearchSpecification(repo);
-            view.WriteLine("About to defer {0} items. Continue [Y/N]?", vm.SearchResults.Count());
-            var k = Console.ReadKey();
-            if (k.KeyChar.ToString().ToLower() == "y")
-            {
-                vm.Defer(vm.SearchResults.ToArray());
-            }
 
             TidyUp(vm, repo, view);
         }
