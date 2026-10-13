@@ -50,7 +50,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                     .WithParsed<BalanceOptions>(opts => new RankingController().Balance(opts, vm, repo, consoleView))
                     .WithParsed<BumpOptions>(opts => new RankingController().Bump(opts, vm, repo, consoleView))
                     .WithParsed<CheckChainOptions>(opts => new IntegrityController().CheckChain(opts, vm, repo, consoleView))
-                    .WithParsed<CommitOptions>(opts => Commit(opts, vm, repo, consoleView))
+                    .WithParsed<CommitOptions>(opts => new IntegrityController().Commit(opts, vm, repo, consoleView))
                     .WithParsed<DedupeOptions>(opts => new IntegrityController().Dedupe(opts, vm, repo, consoleView))
                     .WithParsed<DeferAllOptions>(opts => new WorkflowController().DeferAll(opts, vm, repo, consoleView))
                     .WithParsed<DeferSubOptions>(opts => new WorkflowController().Defer(opts, vm, repo, consoleView))
@@ -80,56 +80,6 @@ namespace AssimilationSoftware.TodoSort.CLI
                     .WithParsed<UnrankAllOptions>(opts => new RankingController().UnrankAll(opts, vm, repo, consoleView))
                     .WithParsed<UnRankOptions>(opts => new RankingController().Unrank(opts, vm, repo, consoleView))
                     .WithNotParsed(errs => HandleErrors(errs));
-        }
-
-        private static void Commit(CommitOptions opts, ViewModel vm, TodoRepository repo, IItemDisplay view)
-        {
-            SetUniversalOptions(opts, vm);
-
-            var conflicts = repo.FindConflicts();
-            foreach (var conflictSet in conflicts)
-            {
-                // Present conflicts for resolution.
-                var i = 0;
-                view.WriteLine("Updates:");
-                foreach (var edit in conflictSet.Updates)
-                {
-                    view.PrintItem(edit, i, repo, opts.NSFW, opts.Verbose);
-                    i++;
-                }
-                // Present options: Delete, Update (one particular version), Revert.
-                view.WriteLine("Options:");
-                view.WriteLine("R: Revert all pending changes to this record");
-                view.WriteLine("D: Delete this item, including any pending changes");
-                view.WriteLine("[number]: Accept a specific revision above");
-                var optKey = Console.ReadKey();
-                switch (optKey.KeyChar.ToString().ToLower())
-                {
-                    case "r":
-                        repo.Revert(conflictSet.Id);
-                        break;
-                    case "d":
-                        repo.ResolveByDelete(conflictSet.Id);
-                        break;
-                    default:
-                        if (char.IsDigit(optKey.KeyChar))
-                        {
-                            var index = int.Parse(optKey.KeyChar.ToString());
-                            if (index < conflictSet.Updates.Count)
-                            {
-                                repo.ResolveConflict(conflictSet.Updates[index]);
-                            }
-                        }
-                        break;
-                }
-
-                view.WriteLine(Environment.NewLine);
-            }
-            var commitCount = repo.CommitChanges();
-            view.WriteLine($"{commitCount} pending changes committed.");
-            repo.SaveChanges();
-
-            TidyUp(vm, repo, view);
         }
 
         private static void Init(InitSubOptions initOpts, string settingsPath)

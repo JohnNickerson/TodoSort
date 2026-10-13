@@ -77,6 +77,53 @@ public class IntegrityController
         vm.Save();
     }
 
+    public void Commit(CommitOptions opts, ViewModel vm, TodoRepository repo, IItemDisplay view)
+    {
+        var conflicts = repo.FindConflicts();
+        foreach (var conflictSet in conflicts)
+        {
+            // Present conflicts for resolution.
+            var i = 0;
+            view.WriteLine("Updates:");
+            foreach (var edit in conflictSet.Updates)
+            {
+                view.PrintItem(edit, i, repo, opts.NSFW, opts.Verbose);
+                i++;
+            }
+            // Present options: Delete, Update (one particular version), Revert.
+            view.WriteLine("Options:");
+            view.WriteLine("R: Revert all pending changes to this record");
+            view.WriteLine("D: Delete this item, including any pending changes");
+            view.WriteLine("[number]: Accept a specific revision above");
+            var optKey = Console.ReadKey();
+            switch (optKey.KeyChar.ToString().ToLower())
+            {
+                case "r":
+                    repo.Revert(conflictSet.Id);
+                    break;
+                case "d":
+                    repo.ResolveByDelete(conflictSet.Id);
+                    break;
+                default:
+                    if (char.IsDigit(optKey.KeyChar))
+                    {
+                        var index = int.Parse(optKey.KeyChar.ToString());
+                        if (index < conflictSet.Updates.Count)
+                        {
+                            repo.ResolveConflict(conflictSet.Updates[index]);
+                        }
+                    }
+                    break;
+            }
+
+            view.WriteLine(Environment.NewLine);
+        }
+        var commitCount = repo.CommitChanges();
+        view.WriteLine($"{commitCount} pending changes committed.");
+        repo.SaveChanges();
+        vm.Save(); // Is this necessary in this case?
+    }
+
     public void Dedupe(DedupeOptions dupe, ViewModel vm, TodoRepository repo, IItemDisplay view)
     {
         vm.ShowHeadOnly = !dupe.ShowAllItems;
