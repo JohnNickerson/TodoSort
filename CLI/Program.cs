@@ -48,7 +48,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                     .WithParsed<AddSubOptions>(opts => new ItemController().AddItem(opts, vm, repo, consoleView))
                     .WithParsed<AdvancedSearchOptions>(opts => new SearchController().AdvancedSearch(opts, vm, repo, consoleView))
                     .WithParsed<BalanceOptions>(opts => new RankingController().Balance(opts, vm, repo, consoleView))
-                    .WithParsed<BumpOptions>(opts => Bump(opts, vm, repo, consoleView))
+                    .WithParsed<BumpOptions>(opts => new RankingController().Bump(opts, vm, repo, consoleView))
                     .WithParsed<CheckChainOptions>(opts => CheckChain(opts, vm, repo, consoleView))
                     .WithParsed<CommitOptions>(opts => Commit(opts, vm, repo, consoleView))
                     .WithParsed<DedupeOptions>(opts => Dedupe(opts, vm, repo, consoleView))
@@ -600,72 +600,9 @@ namespace AssimilationSoftware.TodoSort.CLI
             vm.Save(forceSave);
         }
 
-        private static void Bump(BumpOptions bumpOpts, ViewModel vm, TodoRepository repo, IItemDisplay view)
-        {
-            SetUniversalOptions(bumpOpts, vm);
-            vm.SearchSpecification = bumpOpts.SearchSpecification;
-            var bumpItems = new List<ActionItem>();
-            if (bumpOpts.Top == 0)
-            {
-                // Manually pick one item.
-                var chosen = view.Disambiguate(vm.SearchResults, repo, view, true);
-                if (chosen != null) bumpItems.Add(chosen);
-            }
-            else if (!string.IsNullOrEmpty(bumpOpts.SortTag))
-            {
-                // First items.
-                bumpItems.AddRange(view.ApplySort(bumpOpts.SortTag, vm.SearchResults).Take(bumpOpts.Top));
-            }
-            else if (!string.IsNullOrEmpty(bumpOpts.SortDescTag))
-            {
-                bumpItems.AddRange(view.ApplySort(bumpOpts.SortTag ?? string.Empty, vm.SearchResults, SortOrder.Descending).Take(bumpOpts.Top));
-            }
-            else
-            {
-                bumpItems.AddRange(vm.SearchResults.Take(bumpOpts.Top));
-            }
-            // TODO: Display the before and after positions together.
-            // Before: red and strike-through.
-            // After: yellow and bold.
-            view.PrintTree(new List<ActionItem>(), bumpItems, repo, bumpOpts.NSFW, bumpOpts.Verbose);
-            foreach (var target in bumpItems)
-            {
-                var depth = target.GetRankDepth(repo) / 2;
-                if (depth == 0)
-                {
-                    target.Upvotes++;
-                    vm.Update(target);
-                }
-                while (target.GetRankDepth(repo) > depth && target.ParentId != null)
-                {
-                    vm.SetParent(target, target.GetParent(repo)?.GetParent(repo));
-                }
-            }
-            // After
-            view.PrintTree(bumpItems, new List<ActionItem>(), repo, bumpOpts.NSFW, bumpOpts.Verbose);
-            TidyUp(vm, repo, view);
-        }
-
         private static int HandleErrors(object errs)
         {
             return 1;
-        }
-
-        // TODO: Remove this and do better.
-        private static void VmOnPropertyChanged(object? sender, PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == nameof(ViewModel.ProgressPercent))
-            {
-                Console.WriteLine($"{((ViewModel?)sender)?.ProgressPercent}%");
-            }
-        }
-
-        private static void PrintContexts(ViewModel vm, IItemDisplay view)
-        {
-            foreach (var c in vm.GetContextNames())
-            {
-                view.WriteLine(c);
-            }
         }
 
         private static void OpenItemTag(string tagValue)
