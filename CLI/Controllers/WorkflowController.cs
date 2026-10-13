@@ -21,4 +21,18 @@ public class WorkflowController
             vm.Save();
         }
     }
+
+    public void Undo(UndoSubOptions undoOptions, ViewModel vm, TodoRepository repo, IItemDisplay view)
+    {
+        vm.ShowHeadOnly = !undoOptions.ShowAllItems;
+
+        vm.DoneSearchSpecification = undoOptions.SearchSpecification;
+        var selected = view.Disambiguate(vm.DoneSearchResults, repo, view, !string.IsNullOrEmpty(undoOptions.ItemId));
+        if (selected != null)
+        {
+            vm.Undo(undoOptions.NewContext, selected);
+            view.PrintItem(selected, null, repo, false, undoOptions.Verbose);
+            vm.Save();
+        }
+    }
 }

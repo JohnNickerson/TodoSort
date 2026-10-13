@@ -78,7 +78,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                     .WithParsed<TagAllSubOptions>(opts => new ItemController().TagAll(opts, vm, repo, consoleView))
                     .WithParsed<TagOptions>(opts => new ItemController().Tag(opts, vm, repo, consoleView))
                     .WithParsed<UndeferOptions>(opts => Undefer(opts, vm, repo, consoleView))
-                    .WithParsed<UndoSubOptions>(opts => Undo(opts, vm, repo, consoleView))
+                    .WithParsed<UndoSubOptions>(opts => new WorkflowController().Undo(opts, vm, repo, consoleView))
                     .WithParsed<SummaryOptions>(opts => new SearchController().Summary(opts, vm, repo, consoleView))
                     .WithParsed<UnrankAllOptions>(opts => UnrankAll(opts, vm, repo, consoleView))
                     .WithParsed<UnRankOptions>(opts => Unrank(opts, vm, repo, consoleView))
@@ -658,20 +658,6 @@ namespace AssimilationSoftware.TodoSort.CLI
             if (selected != null)
             {
                 vm.Undefer("inbox", selected);
-            }
-
-            TidyUp(vm, repo, view);
-        }
-
-        private static void Undo(UndoSubOptions undoOptions, ViewModel vm, TodoRepository repo, IItemDisplay view)
-        {
-            SetUniversalOptions(undoOptions, vm);
-
-            vm.DoneSearchSpecification = undoOptions.SearchSpecification;
-            selected = view.Disambiguate(vm.DoneSearchResults, repo, view, !string.IsNullOrEmpty(undoOptions.ItemId));
-            if (selected != null)
-            {
-                vm.Undo(undoOptions.NewContext, selected);
             }
 
             TidyUp(vm, repo, view);
