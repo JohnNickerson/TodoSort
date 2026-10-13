@@ -70,7 +70,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                     .WithParsed<ProcessOptions>(opts => Process(opts, vm, repo, consoleView))
                     .WithParsed<RankOptions>(opts => Rank(opts, vm, repo, consoleView))
                     .WithParsed<RenameSubOptions>(opts => new ItemController().Rename(opts, vm, repo, consoleView))
-                    .WithParsed<SearchOptions>(opts => Search(opts, vm, repo, consoleView))
+                    .WithParsed<SearchOptions>(opts => new SearchController().Search(opts, vm, repo, consoleView))
                     .WithParsed<SetParentSubOptions>(opts => SetParent(opts, vm, repo, consoleView))
                     .WithParsed<SetProjectSubOptions>(opts => SetProject(opts, vm, repo, consoleView))
                     .WithParsed<SomedaySearchSubOptions>(opts => SearchSomeday(opts, vm, repo, consoleView))
@@ -589,31 +589,6 @@ namespace AssimilationSoftware.TodoSort.CLI
                             return;
                     }
                     view.WriteLine();
-                }
-            }
-
-            TidyUp(vm, repo, view);
-        }
-
-        private static void Search(SearchOptions searchOptions, ViewModel vm, TodoRepository repo, IItemDisplay view)
-        {
-            SetUniversalOptions(searchOptions, vm);
-
-            vm.SearchSpecification = searchOptions.GetSearchSpecification(repo);
-            if (vm.SearchResults.Count() == 0)
-            {
-                view.WriteLine("No results found.");
-            }
-            else if (searchOptions.PrintTree)
-            {
-                view.PrintTree(vm.SearchResults.ToList(), new List<ActionItem>(), repo, searchOptions.NSFW, searchOptions.Verbose);
-            }
-            else
-            {
-                view.PrintItems(searchOptions.SortTag ?? string.Empty, vm.SearchResults, repo, searchOptions.NSFW, searchOptions.Verbose);
-                if (!searchOptions.NoCount)
-                {
-                    view.WriteLine("{0} item(s) found.", vm.SearchResults.Count());
                 }
             }
 
