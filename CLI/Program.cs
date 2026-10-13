@@ -47,7 +47,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             parser.ParseArguments(args, types)
                     .WithParsed<AddSubOptions>(opts => new ItemController().AddItem(opts, vm, repo, consoleView))
                     .WithParsed<AdvancedSearchOptions>(opts => new SearchController().AdvancedSearch(opts, vm, repo, consoleView))
-                    .WithParsed<BalanceOptions>(opts => Balance(opts, vm, repo, consoleView))
+                    .WithParsed<BalanceOptions>(opts => new RankingController().Balance(opts, vm, repo, consoleView))
                     .WithParsed<BumpOptions>(opts => Bump(opts, vm, repo, consoleView))
                     .WithParsed<CheckChainOptions>(opts => CheckChain(opts, vm, repo, consoleView))
                     .WithParsed<CommitOptions>(opts => Commit(opts, vm, repo, consoleView))
@@ -598,37 +598,6 @@ namespace AssimilationSoftware.TodoSort.CLI
 
             // Rewrite the files
             vm.Save(forceSave);
-        }
-
-        private static void Balance(BalanceOptions balanceOpts, ViewModel vm, TodoRepository repo, IItemDisplay view)
-        {
-            SetUniversalOptions(balanceOpts, vm);
-            if (balanceOpts.Verbose)
-            {
-                // Show progress percentage if in verbose mode.
-                vm.PropertyChanged += VmOnPropertyChanged;
-            }
-            // Validate the branching factor: must be greater than zero.
-            if (balanceOpts.BranchFactor > 0)
-            {
-                vm.SearchSpecification = balanceOpts.GetSearchSpecification(repo);
-                var depths = vm.GetDepthsView();
-                var vine = vm.SearchResults.OrderBy(i => depths[i.ID]).ThenByDescending(i => i.Upvotes).ToArray();
-                vm.Balance(vine, balanceOpts.BranchFactor);
-                if (balanceOpts.Commit)
-                {
-                    // In large lists, rather than writing out thousands of changes, then reading them again to commit, just commit everything now.
-                    var commitCount = repo.CommitChanges();
-                    view.WriteLine($"{commitCount} pending changes committed.");
-                    repo.SaveChanges();
-                }
-            }
-            else
-            {
-                view.WriteLine("Branching factor must be greater than zero.");
-            }
-
-            TidyUp(vm, repo, view);
         }
 
         private static void Bump(BumpOptions bumpOpts, ViewModel vm, TodoRepository repo, IItemDisplay view)

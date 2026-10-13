@@ -9,6 +9,38 @@ namespace AssimilationSoftware.TodoSort.CLI.Controllers;
 
 public class RankingController
 {
+    public void Balance(BalanceOptions balanceOpts, ViewModel vm, TodoRepository repo, IItemDisplay view)
+    {
+        vm.ShowHeadOnly = false;
+        if (balanceOpts.Verbose)
+        {
+            // Show progress percentage if in verbose mode.
+            // TODO: Maybe Spectre has better ways of showing progress.
+            //vm.PropertyChanged += VmOnPropertyChanged;
+        }
+        // Validate the branching factor: must be greater than zero.
+        if (balanceOpts.BranchFactor > 0)
+        {
+            vm.SearchSpecification = balanceOpts.GetSearchSpecification(repo);
+            var depths = vm.GetDepthsView();
+            var vine = vm.SearchResults.OrderBy(i => depths[i.ID]).ThenByDescending(i => i.Upvotes).ToArray();
+            vm.Balance(vine, balanceOpts.BranchFactor);
+            if (balanceOpts.Commit)
+            {
+                // In large lists, rather than writing out thousands of changes, then reading them again to commit, just commit everything now.
+                var commitCount = repo.CommitChanges();
+                view.WriteLine($"{commitCount} pending changes committed.");
+                repo.SaveChanges();
+            }
+        }
+        else
+        {
+            view.WriteLine("Branching factor must be greater than zero.");
+        }
+
+        vm.Save();
+    }
+
     public void Rank(MultiSearchSubOptions rankOptions, ViewModel vm, TodoRepository repo, IItemDisplay view)
     {
         // for each context..
