@@ -54,7 +54,6 @@ namespace AssimilationSoftware.TodoSort.CLI
                     .WithParsed<DedupeOptions>(opts => Dedupe(opts, vm, repo, consoleView))
                     .WithParsed<DeferAllOptions>(opts => new WorkflowController().DeferAll(opts, vm, repo, consoleView))
                     .WithParsed<DeferSubOptions>(opts => new WorkflowController().Defer(opts, vm, repo, consoleView))
-                    .WithParsed<DeleteDoneOptions>(opts => DeleteDone(opts, vm, repo))
                     .WithParsed<DeleteOptions>(opts => new ItemController().Delete(opts, vm, repo, consoleView))
                     .WithParsed<DoneSearchSubOptions>(opts => new SearchController().SearchDone(opts, vm, repo, consoleView))
                     .WithParsed<DoneSubOptions>(opts => new WorkflowController().Done(opts, vm, repo, consoleView))
@@ -188,16 +187,6 @@ namespace AssimilationSoftware.TodoSort.CLI
             vm.Save();
 
             TidyUp(vm, repo, view);
-        }
-
-        private static void DeleteDone(object opts, ViewModel vm, TodoRepository repo)
-        {
-            SetUniversalOptions(opts, vm);
-
-            // TODO: Paste Process section
-            throw new NotImplementedException("The delete-done command was never implemented.");
-
-            //TidyUp(vm, repo);
         }
 
         private static void Export(ExportSubOptions exportOptions, ViewModel vm, TodoRepository repo, IItemDisplay view)
