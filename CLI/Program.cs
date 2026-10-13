@@ -49,7 +49,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                     .WithParsed<AdvancedSearchOptions>(opts => new SearchController().AdvancedSearch(opts, vm, repo, consoleView))
                     .WithParsed<BalanceOptions>(opts => new RankingController().Balance(opts, vm, repo, consoleView))
                     .WithParsed<BumpOptions>(opts => new RankingController().Bump(opts, vm, repo, consoleView))
-                    .WithParsed<CheckChainOptions>(opts => CheckChain(opts, vm, repo, consoleView))
+                    .WithParsed<CheckChainOptions>(opts => new IntegrityController().CheckChain(opts, vm, repo, consoleView))
                     .WithParsed<CommitOptions>(opts => Commit(opts, vm, repo, consoleView))
                     .WithParsed<DedupeOptions>(opts => Dedupe(opts, vm, repo, consoleView))
                     .WithParsed<DeferAllOptions>(opts => new WorkflowController().DeferAll(opts, vm, repo, consoleView))
@@ -69,8 +69,8 @@ namespace AssimilationSoftware.TodoSort.CLI
                     .WithParsed<RankOptions>(opts => new RankingController().Rank(opts, vm, repo, consoleView))
                     .WithParsed<RenameSubOptions>(opts => new ItemController().Rename(opts, vm, repo, consoleView))
                     .WithParsed<SearchOptions>(opts => new SearchController().Search(opts, vm, repo, consoleView))
-                    .WithParsed<SetParentSubOptions>(opts => SetParent(opts, vm, repo, consoleView))
-                    .WithParsed<SetProjectSubOptions>(opts => SetProject(opts, vm, repo, consoleView))
+                    .WithParsed<SetParentSubOptions>(opts => new RankingController().SetParent(opts, vm, repo, consoleView))
+                    .WithParsed<SetProjectSubOptions>(opts => new ItemController().SetProject(opts, vm, repo, consoleView))
                     .WithParsed<SomedaySearchSubOptions>(opts => new SearchController().SearchSomeday(opts, vm, repo, consoleView))
                     .WithParsed<TagAllSubOptions>(opts => new ItemController().TagAll(opts, vm, repo, consoleView))
                     .WithParsed<TagOptions>(opts => new ItemController().Tag(opts, vm, repo, consoleView))
@@ -342,123 +342,6 @@ namespace AssimilationSoftware.TodoSort.CLI
                 {
                     view.WriteLine("Tag not found: {0}", openTagOptions.Tag);
                 }
-            }
-
-            TidyUp(vm, repo, view);
-        }
-
-        private static void SetParent(SetParentSubOptions setParentOptions, ViewModel vm, TodoRepository repo, IItemDisplay view)
-        {
-            SetUniversalOptions(setParentOptions, vm);
-
-            view.WriteLine("Confirm child item:");
-            vm.SearchSpecification = setParentOptions.GetChildSearchSpecification(repo);
-            var child = view.Disambiguate(vm.SearchResults, repo, view);
-            view.WriteLine("Confirm parent item:");
-            vm.SearchSpecification = setParentOptions.GetParentSearchSpecification(repo);
-            if (child != null)
-            {
-                var parent = view.Disambiguate(vm.SearchResults.Where(x => x.ID != child.ID), repo, view);
-                if (parent != null)
-                {
-                    vm.SetParent(child, parent);
-                    view.WriteLine();
-                    view.PrintTree(new List<ActionItem> { { child }, { parent } }, new List<ActionItem>(), repo, setParentOptions.NSFW, setParentOptions.Verbose);
-                }
-                else
-                {
-                    // Null parent. Confirm to set to nothing.
-                    view.WriteLine("No parent selected. Remove current priority parent? [Y/N]");
-                    var k = Console.ReadKey();
-                    if (k.KeyChar.ToString().ToLower() == "y")
-                    {
-                        vm.SetParent(child, null);
-                        view.WriteLine();
-                        view.PrintTree(new List<ActionItem> { child }, new List<ActionItem>(), repo, setParentOptions.NSFW, setParentOptions.Verbose);
-                    }
-                }
-            }
-
-            TidyUp(vm, repo, view);
-        }
-
-        private static void SetProject(SetProjectSubOptions commandOptions, ViewModel vm, TodoRepository repo, IItemDisplay view)
-        {
-            SetUniversalOptions(commandOptions, vm);
-
-            view.WriteLine("Confirm child item:");
-            vm.SearchTerm = commandOptions.ChildSearchTerm;
-            var child = view.Disambiguate(vm.SearchResults, repo, view);
-            view.WriteLine("Confirm project:");
-            vm.SearchTerm = commandOptions.ProjectSearchTerm ?? commandOptions.ChildSearchTerm;
-            var project = view.Disambiguate(vm.SearchResults, repo, view);
-            if (child != null && project != null)
-            {
-                vm.SetProject(child, project);
-            }
-
-            TidyUp(vm, repo, view);
-        }
-
-        private static void CheckChain(CheckChainOptions chainOptions, ViewModel vm, TodoRepository repo, IItemDisplay view)
-        {
-            SetUniversalOptions(chainOptions, vm);
-            var problemsFound = 0;
-
-            vm.SearchSpecification = chainOptions.GetSearchSpecification(repo);
-            // 1. Make sure there is at least one item.
-            if (!vm.SearchResults.Any())
-            {
-                view.WriteLine("No items found in the chain.");
-                problemsFound++;
-            }
-            else
-            {
-                // 2. Make sure there are no gaps.
-                var min = vm.SearchResults.Min(i => i.GetIntTag("order", Int32.MaxValue));
-                var max = vm.SearchResults.Max(i => i.GetIntTag("order", Int32.MinValue));
-                // Special case: If searching in a project, and the project specifies a size, use that for maximum. Must specify full project ID.
-                if (Guid.TryParse(chainOptions.ProjectID, out var projId))
-                {
-                    // Look for a "length" tag on the project.
-                    var project = repo.Find(projId);
-                    if (project.Tags.TryGetValue("length", out var maxString))
-                    {
-                        max = int.Parse(maxString);
-                    }
-                }
-                for (var i = min; i <= max; i++)
-                {
-                    var count = vm.SearchResults.Count(j => j.GetIntTag("order", 0) == i);
-                    if (count == 0)
-                    {
-                        view.WriteLine($"Item missing at index {i}");
-                        problemsFound++;
-                    }
-                    else if (count > 1)
-                    {
-                        view.WriteLine($"Too many items with index {i}");
-                        problemsFound++;
-                    }
-                }
-
-                if (min == max)
-                {
-                    view.WriteLine("Only one item in chain.");
-                    problemsFound++;
-                }
-                // 3. Find and add items that might belong in the chain.
-                foreach (var excluded in vm.SearchResults.Where(i => !i.Tags.ContainsKey("order") || (!i.Tags.ContainsKey("series") && !i.ProjectId.HasValue)))
-                {
-                    view.WriteLine("Item potentially excluded:");
-                    view.PrintItem(excluded, null, repo, chainOptions.NSFW, chainOptions.Verbose);
-                    problemsFound++;
-                }
-            }
-            if (chainOptions.PauseOnProblems && problemsFound > 0)
-            {
-                view.WriteLine("Press a key to continue...");
-                Console.ReadKey();
             }
 
             TidyUp(vm, repo, view);

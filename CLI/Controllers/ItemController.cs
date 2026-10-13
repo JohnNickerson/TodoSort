@@ -91,6 +91,24 @@ public class ItemController
         }
     }
 
+    public void SetProject(SetProjectSubOptions commandOptions, ViewModel vm, TodoRepository repo, IItemDisplay view)
+    {
+        vm.ShowHeadOnly = !commandOptions.ShowAllItems;
+
+        view.WriteLine("Confirm child item:");
+        vm.SearchTerm = commandOptions.ChildSearchTerm;
+        var child = view.Disambiguate(vm.SearchResults, repo, view);
+        view.WriteLine("Confirm project:");
+        vm.SearchTerm = commandOptions.ProjectSearchTerm ?? commandOptions.ChildSearchTerm;
+        var project = view.Disambiguate(vm.SearchResults, repo, view);
+        if (child != null && project != null)
+        {
+            vm.SetProject(child, project);
+        }
+
+        vm.Save();
+    }
+
     public void Tag(SingleSearchSubOptions tagOptions, ViewModel vm, TodoRepository repo, IItemDisplay view)
     {
         vm.ShowHeadOnly = !tagOptions.ShowAllItems;

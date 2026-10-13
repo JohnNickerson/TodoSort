@@ -156,6 +156,41 @@ public class RankingController
         vm.Save();
     }
 
+    public void SetParent(SetParentSubOptions setParentOptions, ViewModel vm, TodoRepository repo, IItemDisplay view)
+    {
+        vm.ShowHeadOnly = !setParentOptions.ShowAllItems;
+
+        view.WriteLine("Confirm child item:");
+        vm.SearchSpecification = setParentOptions.GetChildSearchSpecification(repo);
+        var child = view.Disambiguate(vm.SearchResults, repo, view);
+        view.WriteLine("Confirm parent item:");
+        vm.SearchSpecification = setParentOptions.GetParentSearchSpecification(repo);
+        if (child != null)
+        {
+            var parent = view.Disambiguate(vm.SearchResults.Where(x => x.ID != child.ID), repo, view);
+            if (parent != null)
+            {
+                vm.SetParent(child, parent);
+                view.WriteLine();
+                view.PrintTree(new List<ActionItem> { { child }, { parent } }, new List<ActionItem>(), repo, setParentOptions.NSFW, setParentOptions.Verbose);
+            }
+            else
+            {
+                // Null parent. Confirm to set to nothing.
+                view.WriteLine("No parent selected. Remove current priority parent? [Y/N]");
+                var k = Console.ReadKey();
+                if (k.KeyChar.ToString().ToLower() == "y")
+                {
+                    vm.SetParent(child, null);
+                    view.WriteLine();
+                    view.PrintTree(new List<ActionItem> { child }, new List<ActionItem>(), repo, setParentOptions.NSFW, setParentOptions.Verbose);
+                }
+            }
+        }
+
+        vm.Save();
+    }
+
     public void Unrank(UnRankOptions unrankOptions, ViewModel vm, TodoRepository repo, IItemDisplay view)
     {
         vm.ShowHeadOnly = !unrankOptions.ShowAllItems;
