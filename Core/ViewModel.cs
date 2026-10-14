@@ -210,7 +210,7 @@ namespace AssimilationSoftware.TodoSort.Core
         #endregion
 
         #region Methods
-        public void Save(bool forceSave = false)
+        public void Save()
         {
             _repository.SaveChanges();
             UnsavedChanges = false;
