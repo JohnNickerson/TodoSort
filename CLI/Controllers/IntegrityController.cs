@@ -7,6 +7,7 @@ using AssimilationSoftware.TodoSort.CLI.Options;
 using AssimilationSoftware.TodoSort.Core;
 using AssimilationSoftware.TodoSort.Core.Data;
 using AssimilationSoftware.TodoSort.Core.Search;
+using Spectre.Console;
 
 namespace AssimilationSoftware.TodoSort.CLI.Controllers;
 
@@ -186,42 +187,44 @@ public class IntegrityController
         var client = new HttpClient(); // new RedirectWebClient();
 
         var totalCount = 0;
-        decimal progress = 0;
         decimal progressTotal = vm.SearchResults.Count();
-        foreach (var tem in vm.SearchResults.ToArray())
+        AnsiConsole.Progress().Start(ctx =>
         {
-            progress++;
-            try
+            var task = ctx.AddTask("Fetching titles", maxValue: decimal.ToDouble(progressTotal));
+
+            foreach (var tem in vm.SearchResults.ToArray())
             {
-                var source = client.GetStringAsync(tem.Tags["url"]).Result;
-                //// Get the redirected URL, if any.
-                //Debug.WriteLine(client.ResponseUri.OriginalString);
-                //if (client.ResponseUri?.OriginalString != tem.Tags["url"])
-                //{
-                //    source = client.DownloadString(client.ResponseUri);
-                //}
-
-                var title = Regex.Match(source, @"\<title\b[^>]*\>\s*(?<Title>[\s\S]*?)\</title\>", RegexOptions.IgnoreCase).Groups["Title"].Value;
-                title = WebUtility.HtmlDecode(title);
-                if (!String.IsNullOrWhiteSpace(title) && title != tem.Title)
+                task.Increment(1);
+                try
                 {
-                    view.WriteLine("Renaming:\n\t{0}\n\t{1}", tem.Title, title);
-                    totalCount++;
-                    tem.Title = title;
-                    if (!string.IsNullOrEmpty(fixOptions.MoveTo))
-                    {
-                        tem.Context = fixOptions.MoveTo;
-                    }
+                    var source = client.GetStringAsync(tem.Tags["url"]).Result;
+                    //// Get the redirected URL, if any.
+                    //Debug.WriteLine(client.ResponseUri.OriginalString);
+                    //if (client.ResponseUri?.OriginalString != tem.Tags["url"])
+                    //{
+                    //    source = client.DownloadString(client.ResponseUri);
+                    //}
 
-                    vm.Update(tem);
-                    view.WriteLine("{0:0}% complete", 100m * progress / progressTotal);
+                    var title = Regex.Match(source, @"\<title\b[^>]*\>\s*(?<Title>[\s\S]*?)\</title\>", RegexOptions.IgnoreCase).Groups["Title"].Value;
+                    title = WebUtility.HtmlDecode(title);
+                    if (!string.IsNullOrWhiteSpace(title) && title != tem.Title)
+                    {
+                        totalCount++;
+                        tem.Title = title;
+                        if (!string.IsNullOrEmpty(fixOptions.MoveTo))
+                        {
+                            tem.Context = fixOptions.MoveTo;
+                        }
+
+                        repo.Update(tem);
+                    }
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine(e.Message);
                 }
             }
-            catch (Exception e)
-            {
-                Debug.WriteLine(e.Message);
-            }
-        }
+        });
 
         if (totalCount > 0)
         {
