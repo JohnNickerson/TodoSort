@@ -14,8 +14,7 @@ public class ImportExportController
     {
         vm.ShowHeadOnly = false;
 
-        // TODO: Work with Mustache# to externalise the formatting.
-        // Write to the console if the filename is empty.
+        // TODO: Write to the console if the filename is empty?
         if (string.IsNullOrEmpty(exportOptions.Filename))
         {
             view.WriteLine("Target filename is empty. You must specify a file name to write to.");

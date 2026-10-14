@@ -18,6 +18,7 @@ public class ConsoleItemDisplay : IItemDisplay
         _verbose = verbose;
     }
 
+    // TODO: Move this somewhere else. It doesn't seem to make sense here.
     public IOrderedEnumerable<ActionItem> ApplySort(string sortTag, IEnumerable<ActionItem> list, SortOrder sort = SortOrder.Ascending)
     {
         var sortedList = sort == SortOrder.Descending ? list.OrderByDescending(a => a.Context) : from a in list orderby a.Context select a;
