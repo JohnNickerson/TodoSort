@@ -17,27 +17,16 @@ public class SearchController
     {
         _view = view;
     }
+    
     public void AdvancedSearch(AdvancedSearchOptions argSubs, TodoRepository repo)
     {
-        var searchResults = PerformSearch(repo, argSubs.SearchSpecification, argSubs.ShowAllItems);
+        var searchResults = repo.Search(argSubs.SearchSpecification, argSubs.ShowAllItems);
         _view.PrintItems("title", searchResults, repo, argSubs.NSFW, argSubs.Verbose);
-    }
-
-    private IEnumerable<ActionItem> PerformSearch(TodoRepository repo, ISearchSpecification<ActionItem> searchSpecification, bool showAllItems)
-    {
-        if (!showAllItems)
-        {
-            return repo.Items.Where(i => searchSpecification.And(new HeadOnlySearchSpecification()).IsSatisfiedBy(i));
-        }
-        else
-        {
-            return repo.Items.Where(i => searchSpecification.IsSatisfiedBy(i));
-        }
     }
 
     public void Search(SearchOptions searchOptions, TodoRepository repo)
     {
-        var searchResults = PerformSearch(repo, searchOptions.GetSearchSpecification(repo), searchOptions.ShowAllItems);
+        var searchResults = repo.Search(searchOptions.GetSearchSpecification(repo), searchOptions.ShowAllItems);
         if (searchResults.Count() == 0)
         {
             _view.WriteLine("No results found.");
