@@ -11,7 +11,14 @@ namespace AssimilationSoftware.TodoSort.CLI.Controllers;
 
 public class RankingController
 {
-    public void Balance(BalanceOptions balanceOpts, ViewModel vm, TodoRepository repo, IItemDisplay view)
+    private readonly IItemDisplay _view;
+
+    public RankingController(IItemDisplay view)
+    {
+        _view = view;
+    }
+
+    public void Balance(BalanceOptions balanceOpts, ViewModel vm, TodoRepository repo)
     {
         vm.ShowHeadOnly = false;
         if (balanceOpts.Verbose)
@@ -31,19 +38,19 @@ public class RankingController
             {
                 // In large lists, rather than writing out thousands of changes, then reading them again to commit, just commit everything now.
                 var commitCount = repo.CommitChanges();
-                view.WriteLine($"{commitCount} pending changes committed.");
+                _view.WriteLine($"{commitCount} pending changes committed.");
                 repo.SaveChanges();
             }
         }
         else
         {
-            view.WriteLine("Branching factor must be greater than zero.");
+            _view.WriteLine("Branching factor must be greater than zero.");
         }
 
         repo.SaveChanges();
     }
 
-    public void Bump(BumpOptions bumpOpts, ViewModel vm, TodoRepository repo, IItemDisplay view)
+    public void Bump(BumpOptions bumpOpts, ViewModel vm, TodoRepository repo)
     {
         vm.ShowHeadOnly = !bumpOpts.ShowAllItems;
         vm.SearchSpecification = bumpOpts.SearchSpecification;
@@ -51,17 +58,17 @@ public class RankingController
         if (bumpOpts.Top == 0)
         {
             // Manually pick one item.
-            var chosen = view.Disambiguate(vm.SearchResults, repo, true);
+            var chosen = _view.Disambiguate(vm.SearchResults, repo, true);
             if (chosen != null) bumpItems.Add(chosen);
         }
         else if (!string.IsNullOrEmpty(bumpOpts.SortTag))
         {
             // First items.
-            bumpItems.AddRange(view.ApplySort(bumpOpts.SortTag, vm.SearchResults).Take(bumpOpts.Top));
+            bumpItems.AddRange(_view.ApplySort(bumpOpts.SortTag, vm.SearchResults).Take(bumpOpts.Top));
         }
         else if (!string.IsNullOrEmpty(bumpOpts.SortDescTag))
         {
-            bumpItems.AddRange(view.ApplySort(bumpOpts.SortTag ?? string.Empty, vm.SearchResults, SortOrder.Descending).Take(bumpOpts.Top));
+            bumpItems.AddRange(_view.ApplySort(bumpOpts.SortTag ?? string.Empty, vm.SearchResults, SortOrder.Descending).Take(bumpOpts.Top));
         }
         else
         {
@@ -70,7 +77,7 @@ public class RankingController
         // TODO: Display the before and after positions together.
         // Before: red and strike-through.
         // After: yellow and bold.
-        view.PrintTree(new List<ActionItem>(), bumpItems, repo, bumpOpts.NSFW, bumpOpts.Verbose);
+        _view.PrintTree(new List<ActionItem>(), bumpItems, repo, bumpOpts.NSFW, bumpOpts.Verbose);
         foreach (var target in bumpItems)
         {
             var depth = target.GetRankDepth(repo) / 2;
@@ -85,11 +92,11 @@ public class RankingController
             }
         }
         // After
-        view.PrintTree(bumpItems, new List<ActionItem>(), repo, bumpOpts.NSFW, bumpOpts.Verbose);
+        _view.PrintTree(bumpItems, new List<ActionItem>(), repo, bumpOpts.NSFW, bumpOpts.Verbose);
         repo.SaveChanges();
     }
 
-    public void Rank(MultiSearchSubOptions rankOptions, ViewModel vm, TodoRepository repo, IItemDisplay view)
+    public void Rank(MultiSearchSubOptions rankOptions, ViewModel vm, TodoRepository repo)
     {
         // for each context..
         var quitAndSave = false;
@@ -119,15 +126,15 @@ public class RankingController
             // show pairs of items
             if (items.Count() > 1)
             {
-                view.WriteLine(string.Format("{1}{1}@{0}", con, Environment.NewLine));
+                _view.WriteLine(string.Format("{1}{1}@{0}", con, Environment.NewLine));
             }
             for (var x = 0; x < items.Count() - 1; x += 2)
             {
                 if (quitAndSave) break;
                 // get vote
-                view.WriteLine("{0}/{1} ({2}%) complete", x, items.Count(), 100 * x / items.Count());
-                view.PrintItem(items.ElementAt(index[x]), 1, repo, rankOptions.NSFW, rankOptions.Verbose);
-                view.PrintItem(items.ElementAt(index[x + 1]), 2, repo, rankOptions.NSFW, rankOptions.Verbose);
+                _view.WriteLine("{0}/{1} ({2}%) complete", x, items.Count(), 100 * x / items.Count());
+                _view.PrintItem(items.ElementAt(index[x]), 1, repo, rankOptions.NSFW, rankOptions.Verbose);
+                _view.PrintItem(items.ElementAt(index[x + 1]), 2, repo, rankOptions.NSFW, rankOptions.Verbose);
                 var choice = AnsiConsole.Prompt(new Spectre.Console.TextPrompt<string>("Which of these is more important? (q=quit and save, c=cancel)")
                     .AddChoices(["1", "2", "q", "c"]));
                 // assign parents based on vote
@@ -141,49 +148,49 @@ public class RankingController
                         break;
                     case "q":
                         quitAndSave = true;
-                        view.WriteLine();
-                        view.WriteLine("Saving changes.");
+                        _view.WriteLine();
+                        _view.WriteLine("Saving changes.");
                         break;
                     case "c":
-                        view.WriteLine();
-                        view.WriteLine("Cancelling. No changes saved.");
+                        _view.WriteLine();
+                        _view.WriteLine("Cancelling. No changes saved.");
                         return;
                 }
-                view.WriteLine();
+                _view.WriteLine();
             }
         }
 
         repo.SaveChanges();
     }
 
-    public void SetParent(SetParentSubOptions setParentOptions, ViewModel vm, TodoRepository repo, IItemDisplay view)
+    public void SetParent(SetParentSubOptions setParentOptions, ViewModel vm, TodoRepository repo)
     {
         vm.ShowHeadOnly = !setParentOptions.ShowAllItems;
 
-        view.WriteLine("Confirm child item:");
+        _view.WriteLine("Confirm child item:");
         vm.SearchSpecification = setParentOptions.GetChildSearchSpecification(repo);
-        var child = view.Disambiguate(vm.SearchResults, repo);
-        view.WriteLine("Confirm parent item:");
+        var child = _view.Disambiguate(vm.SearchResults, repo);
+        _view.WriteLine("Confirm parent item:");
         vm.SearchSpecification = setParentOptions.GetParentSearchSpecification(repo);
         if (child != null)
         {
-            var parent = view.Disambiguate(vm.SearchResults.Where(x => x.ID != child.ID), repo);
+            var parent = _view.Disambiguate(vm.SearchResults.Where(x => x.ID != child.ID), repo);
             if (parent != null)
             {
                 vm.SetParent(child, parent);
-                view.WriteLine();
-                view.PrintTree(new List<ActionItem> { { child }, { parent } }, new List<ActionItem>(), repo, setParentOptions.NSFW, setParentOptions.Verbose);
+                _view.WriteLine();
+                _view.PrintTree(new List<ActionItem> { { child }, { parent } }, new List<ActionItem>(), repo, setParentOptions.NSFW, setParentOptions.Verbose);
             }
             else
             {
                 // Null parent. Confirm to set to nothing.
-                view.WriteLine("No parent selected. Remove current priority parent? [Y/N]");
+                _view.WriteLine("No parent selected. Remove current priority parent? [Y/N]");
                 var k = Console.ReadKey();
                 if (k.KeyChar.ToString().ToLower() == "y")
                 {
                     vm.SetParent(child, null);
-                    view.WriteLine();
-                    view.PrintTree(new List<ActionItem> { child }, new List<ActionItem>(), repo, setParentOptions.NSFW, setParentOptions.Verbose);
+                    _view.WriteLine();
+                    _view.PrintTree(new List<ActionItem> { child }, new List<ActionItem>(), repo, setParentOptions.NSFW, setParentOptions.Verbose);
                 }
             }
         }
@@ -191,26 +198,26 @@ public class RankingController
         repo.SaveChanges();
     }
 
-    public void Unrank(UnRankOptions unrankOptions, ViewModel vm, TodoRepository repo, IItemDisplay view)
+    public void Unrank(UnRankOptions unrankOptions, ViewModel vm, TodoRepository repo)
     {
         vm.ShowHeadOnly = !unrankOptions.ShowAllItems;
 
         vm.SearchSpecification = unrankOptions.SearchSpecification;
-        var selected = view.Disambiguate(vm.SearchResults, repo, !string.IsNullOrEmpty(unrankOptions.ItemId));
+        var selected = _view.Disambiguate(vm.SearchResults, repo, !string.IsNullOrEmpty(unrankOptions.ItemId));
         if (selected != null)
         {
             vm.ResetPriorityParents(selected);
-            view.PrintItem(selected, null, repo, false, unrankOptions.Verbose);
+            _view.PrintItem(selected, null, repo, false, unrankOptions.Verbose);
             repo.SaveChanges();
         }
     }
 
-    public void UnrankAll(UnrankAllOptions unrankAllOptions, ViewModel vm, TodoRepository repo, IItemDisplay view)
+    public void UnrankAll(UnrankAllOptions unrankAllOptions, ViewModel vm, TodoRepository repo)
     {
         vm.ShowHeadOnly = false;
 
         vm.SearchSpecification = unrankAllOptions.GetSearchSpecification(repo);
-        view.WriteLine("About to delete all ranking data for {0} items. Continue [Y/N]?", vm.SearchResults.Count());
+        _view.WriteLine("About to delete all ranking data for {0} items. Continue [Y/N]?", vm.SearchResults.Count());
         if (Console.ReadKey().KeyChar.ToString().ToLower() == "y")
         {
             vm.ResetPriorityParents(vm.SearchResults.ToArray());

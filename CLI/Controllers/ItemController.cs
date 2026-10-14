@@ -8,7 +8,14 @@ namespace AssimilationSoftware.TodoSort.CLI.Controllers;
 
 public class ItemController
 {
-    public void AddItem(AddSubOptions a, ViewModel vm, TodoRepository repo, IItemDisplay view)
+    private readonly IItemDisplay _view;
+
+    public ItemController(IItemDisplay view)
+    {
+        _view = view;
+    }
+
+    public void AddItem(AddSubOptions a, ViewModel vm, TodoRepository repo)
     {
         vm.ShowHeadOnly = false;
         var selected = new ActionItem { Context = a.Context, Title = a.ActionTitle };
@@ -16,54 +23,54 @@ public class ItemController
         {
             selected.Notes.Add(a.Note);
         }
-        view.WriteLine("Adding action '{0}' to context @{1}", a.ActionTitle, a.Context);
+        _view.WriteLine("Adding action '{0}' to context @{1}", a.ActionTitle, a.Context);
         vm.AddItem(selected);
         // Allow tagging right away.
-        TagItem(vm, selected, view);
-        view.PrintItem(selected, null, repo, false, true);
+        TagItem(vm, selected);
+        _view.PrintItem(selected, null, repo, false, true);
         repo.SaveChanges();
     }
 
-    public void Delete(DeleteOptions delOpts, ViewModel vm, TodoRepository repo, IItemDisplay view)
+    public void Delete(DeleteOptions delOpts, ViewModel vm, TodoRepository repo)
     {
         vm.ShowHeadOnly = !delOpts.ShowAllItems;
 
         // Find a matching item to delete.
         vm.SearchSpecification = delOpts.SearchSpecification;
-        var selected = view.Disambiguate(vm.SearchResults, repo, !string.IsNullOrEmpty(delOpts.ItemId));
+        var selected = _view.Disambiguate(vm.SearchResults, repo, !string.IsNullOrEmpty(delOpts.ItemId));
         if (selected != null)
         {
             vm.Delete(selected);
-            view.PrintItem(selected, null, repo, false, delOpts.Verbose);
+            _view.PrintItem(selected, null, repo, false, delOpts.Verbose);
             repo.SaveChanges();
         }
     }
 
-    public void Merge(MergeSubOptions mergeOptions, ViewModel vm, TodoRepository repo, IItemDisplay view)
+    public void Merge(MergeSubOptions mergeOptions, ViewModel vm, TodoRepository repo)
         {
-            view.WriteLine("Confirm child item:");
+            _view.WriteLine("Confirm child item:");
             vm.SearchTerm = mergeOptions.ChildSearchTerm ?? mergeOptions.TargetSearchTerm;
-            var mergeVictim = view.Disambiguate(vm.SearchResults, repo);
+            var mergeVictim = _view.Disambiguate(vm.SearchResults, repo);
             if (mergeVictim != null)
             {
-                view.WriteLine("Confirm item to merge into:");
+                _view.WriteLine("Confirm item to merge into:");
                 vm.SearchTerm = mergeOptions.TargetSearchTerm;
-                var combined = view.Disambiguate(vm.SearchResults.Where(x => x.ID != mergeVictim.ID), repo);
+                var combined = _view.Disambiguate(vm.SearchResults.Where(x => x.ID != mergeVictim.ID), repo);
                 if (mergeVictim != null && combined != null)
                 {
                     vm.Merge(mergeVictim, combined);
-                    view.PrintItem(combined, null, repo, false, mergeOptions.Verbose);
+                    _view.PrintItem(combined, null, repo, false, mergeOptions.Verbose);
                     repo.SaveChanges();
                 }
             }
         }
 
-    public void Move(MoveSubOptions moveOptions, ViewModel vm, TodoRepository repo, IItemDisplay view)
+    public void Move(MoveSubOptions moveOptions, ViewModel vm, TodoRepository repo)
     {
         vm.ShowHeadOnly = !moveOptions.ShowAllItems;
 
         vm.SearchSpecification = moveOptions.SearchSpecification;
-        var selected = view.Disambiguate(vm.SearchResults, repo, !string.IsNullOrEmpty(moveOptions.ItemId));
+        var selected = _view.Disambiguate(vm.SearchResults, repo, !string.IsNullOrEmpty(moveOptions.ItemId));
         if (selected != null)
         {
             vm.SetContext(selected, moveOptions.NewContext);
@@ -71,12 +78,12 @@ public class ItemController
             {
                 vm.ResetPriorityParents(selected);
             }
-            view.PrintItem(selected, null, repo, false, moveOptions.Verbose);
+            _view.PrintItem(selected, null, repo, false, moveOptions.Verbose);
             repo.SaveChanges();
         }
     }
 
-    public void MoveAll(MoveAllSubOptions moveAllOptions, ViewModel vm, TodoRepository repo, IItemDisplay view)
+    public void MoveAll(MoveAllSubOptions moveAllOptions, ViewModel vm, TodoRepository repo)
     {
         vm.ShowHeadOnly = false;
 
@@ -90,55 +97,55 @@ public class ItemController
             items.RemoveAt(0);
             counter++;
         }
-        view.WriteLine(string.Format("{0} items moved to @{1}", counter, moveAllOptions.NewContext));
+        _view.WriteLine(string.Format("{0} items moved to @{1}", counter, moveAllOptions.NewContext));
 
         repo.SaveChanges();
     }
 
-    public void Note(NoteSubOptions noteOptions, ViewModel vm, TodoRepository repo, IItemDisplay view)
+    public void Note(NoteSubOptions noteOptions, ViewModel vm, TodoRepository repo)
     {
         vm.ShowHeadOnly = !noteOptions.ShowAllItems;
 
         // Add a note to a task.
         vm.SearchSpecification = noteOptions.SearchSpecification;
-        var selected = view.Disambiguate(vm.SearchResults, repo, !string.IsNullOrEmpty(noteOptions.ItemId));
+        var selected = _view.Disambiguate(vm.SearchResults, repo, !string.IsNullOrEmpty(noteOptions.ItemId));
         if (selected != null)
         {
             vm.AddNote(selected, noteOptions.NewNote);
-            view.PrintItem(selected, null, repo, false, noteOptions.Verbose);
+            _view.PrintItem(selected, null, repo, false, noteOptions.Verbose);
             repo.SaveChanges();
         }
     }
 
-    public void Rename(RenameSubOptions renameOptions, ViewModel vm, TodoRepository repo, IItemDisplay view)
+    public void Rename(RenameSubOptions renameOptions, ViewModel vm, TodoRepository repo)
     {
         vm.ShowHeadOnly = !renameOptions.ShowAllItems;
 
         vm.SearchSpecification = renameOptions.SearchSpecification;
-        var selected = view.Disambiguate(vm.SearchResults, repo, !string.IsNullOrEmpty(renameOptions.ItemId));
+        var selected = _view.Disambiguate(vm.SearchResults, repo, !string.IsNullOrEmpty(renameOptions.ItemId));
         if (selected != null)
         {
             vm.Rename(selected, renameOptions.NewTitle);
-            view.WriteLine("Item renamed.");
+            _view.WriteLine("Item renamed.");
             if (renameOptions.ReTag)
             {
-                TagItem(vm, selected, view);
+                TagItem(vm, selected);
             }
-            view.PrintItem(selected, null, repo, false, renameOptions.Verbose);
+            _view.PrintItem(selected, null, repo, false, renameOptions.Verbose);
             repo.SaveChanges();
         }
     }
 
-    public void SetProject(SetProjectSubOptions commandOptions, ViewModel vm, TodoRepository repo, IItemDisplay view)
+    public void SetProject(SetProjectSubOptions commandOptions, ViewModel vm, TodoRepository repo)
     {
         vm.ShowHeadOnly = !commandOptions.ShowAllItems;
 
-        view.WriteLine("Confirm child item:");
+        _view.WriteLine("Confirm child item:");
         vm.SearchTerm = commandOptions.ChildSearchTerm;
-        var child = view.Disambiguate(vm.SearchResults, repo);
-        view.WriteLine("Confirm project:");
+        var child = _view.Disambiguate(vm.SearchResults, repo);
+        _view.WriteLine("Confirm project:");
         vm.SearchTerm = commandOptions.ProjectSearchTerm ?? commandOptions.ChildSearchTerm;
-        var project = view.Disambiguate(vm.SearchResults, repo);
+        var project = _view.Disambiguate(vm.SearchResults, repo);
         if (child != null && project != null)
         {
             vm.SetProject(child, project);
@@ -147,22 +154,22 @@ public class ItemController
         repo.SaveChanges();
     }
 
-    public void Tag(SingleSearchSubOptions tagOptions, ViewModel vm, TodoRepository repo, IItemDisplay view)
+    public void Tag(SingleSearchSubOptions tagOptions, ViewModel vm, TodoRepository repo)
     {
         vm.ShowHeadOnly = !tagOptions.ShowAllItems;
 
         // Search for a matching item.
         vm.SearchSpecification = tagOptions.SearchSpecification;
-        var selected = view.Disambiguate(vm.SearchResults, repo, !string.IsNullOrEmpty(tagOptions.ItemId));
+        var selected = _view.Disambiguate(vm.SearchResults, repo, !string.IsNullOrEmpty(tagOptions.ItemId));
         if (selected != null)
         {
-            TagItem(vm, selected, view);
-            view.PrintItem(selected, null, repo, false, tagOptions.Verbose);
+            TagItem(vm, selected);
+            _view.PrintItem(selected, null, repo, false, tagOptions.Verbose);
             repo.SaveChanges();
         }
     }
 
-    public void TagAll(TagAllSubOptions tagAllOptions, ViewModel vm, TodoRepository repo, IItemDisplay view)
+    public void TagAll(TagAllSubOptions tagAllOptions, ViewModel vm, TodoRepository repo)
     {
         vm.ShowHeadOnly = !tagAllOptions.ShowAllItems;
 
@@ -183,16 +190,16 @@ public class ItemController
         repo.SaveChanges();
     }
 
-    private void TagItem(ViewModel vm, ActionItem selected, IItemDisplay view)
+    private void TagItem(ViewModel vm, ActionItem selected)
     {
         string? tagName;
         do
         {
-            view.WriteLine("What should this new tag be called? (ENTER to quit)");
+            _view.WriteLine("What should this new tag be called? (ENTER to quit)");
             tagName = Console.ReadLine()?.ToLower()?.Trim();
             if (!string.IsNullOrEmpty(tagName))
             {
-                view.WriteLine("What is the value of the tag?");
+                _view.WriteLine("What is the value of the tag?");
                 var value = Console.ReadLine();
                 if (!string.IsNullOrWhiteSpace(value))
                 {
@@ -202,7 +209,7 @@ public class ItemController
                 {
                     vm.RemoveTag(selected, tagName);
                 }
-                view.WriteLine();
+                _view.WriteLine();
             }
         } while (!string.IsNullOrEmpty(tagName));
     }

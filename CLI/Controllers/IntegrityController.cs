@@ -13,7 +13,14 @@ namespace AssimilationSoftware.TodoSort.CLI.Controllers;
 
 public class IntegrityController
 {
-    public void CheckChain(CheckChainOptions chainOptions, ViewModel vm, TodoRepository repo, IItemDisplay view)
+    private readonly IItemDisplay _view;
+
+    public IntegrityController(IItemDisplay view)
+    {
+        _view = view;
+    }
+
+    public void CheckChain(CheckChainOptions chainOptions, ViewModel vm, TodoRepository repo)
     {
         vm.ShowHeadOnly = false;
         var problemsFound = 0;
@@ -22,7 +29,7 @@ public class IntegrityController
         // 1. Make sure there is at least one item.
         if (!vm.SearchResults.Any())
         {
-            view.WriteLine("No items found in the chain.");
+            _view.WriteLine("No items found in the chain.");
             problemsFound++;
         }
         else
@@ -45,12 +52,12 @@ public class IntegrityController
                 var count = vm.SearchResults.Count(j => j.GetIntTag("order", 0) == i);
                 if (count == 0)
                 {
-                    view.WriteLine($"Item missing at index {i}");
+                    _view.WriteLine($"Item missing at index {i}");
                     problemsFound++;
                 }
                 else if (count > 1)
                 {
-                    view.WriteLine($"Too many items with index {i}");
+                    _view.WriteLine($"Too many items with index {i}");
                     problemsFound++;
                 }
             }
@@ -58,44 +65,44 @@ public class IntegrityController
             if (min == max)
             {
                 // TODO: Do not raise this if we are down to the last item in the chain.
-                view.WriteLine("Only one item in chain.");
+                _view.WriteLine("Only one item in chain.");
                 problemsFound++;
             }
             // 3. Find and add items that might belong in the chain.
             foreach (var excluded in vm.SearchResults.Where(i => !i.Tags.ContainsKey("order") || (!i.Tags.ContainsKey("series") && !i.ProjectId.HasValue)))
             {
-                view.WriteLine("Item potentially excluded:");
-                view.PrintItem(excluded, null, repo, chainOptions.NSFW, chainOptions.Verbose);
+                _view.WriteLine("Item potentially excluded:");
+                _view.PrintItem(excluded, null, repo, chainOptions.NSFW, chainOptions.Verbose);
                 problemsFound++;
             }
         }
         if (chainOptions.PauseOnProblems && problemsFound > 0)
         {
-            view.WriteLine("Press a key to continue...");
+            _view.WriteLine("Press a key to continue...");
             Console.ReadKey();
         }
 
         repo.SaveChanges();
     }
 
-    public void Commit(CommitOptions opts, ViewModel vm, TodoRepository repo, IItemDisplay view)
+    public void Commit(CommitOptions opts, ViewModel vm, TodoRepository repo)
     {
         var conflicts = repo.FindConflicts();
         foreach (var conflictSet in conflicts)
         {
             // Present conflicts for resolution.
             var i = 0;
-            view.WriteLine("Updates:");
+            _view.WriteLine("Updates:");
             foreach (var edit in conflictSet.Updates)
             {
-                view.PrintItem(edit, i, repo, opts.NSFW, opts.Verbose);
+                _view.PrintItem(edit, i, repo, opts.NSFW, opts.Verbose);
                 i++;
             }
             // Present options: Delete, Update (one particular version), Revert.
-            view.WriteLine("Options:");
-            view.WriteLine("R: Revert all pending changes to this record");
-            view.WriteLine("D: Delete this item, including any pending changes");
-            view.WriteLine("[number]: Accept a specific revision above");
+            _view.WriteLine("Options:");
+            _view.WriteLine("R: Revert all pending changes to this record");
+            _view.WriteLine("D: Delete this item, including any pending changes");
+            _view.WriteLine("[number]: Accept a specific revision above");
             var optKey = Console.ReadKey();
             switch (optKey.KeyChar.ToString().ToLower())
             {
@@ -117,14 +124,14 @@ public class IntegrityController
                     break;
             }
 
-            view.WriteLine(Environment.NewLine);
+            _view.WriteLine(Environment.NewLine);
         }
         var commitCount = repo.CommitChanges();
-        view.WriteLine($"{commitCount} pending changes committed.");
+        _view.WriteLine($"{commitCount} pending changes committed.");
         repo.SaveChanges();
     }
 
-    public void Dedupe(DedupeOptions dupe, ViewModel vm, TodoRepository repo, IItemDisplay view)
+    public void Dedupe(DedupeOptions dupe, ViewModel vm, TodoRepository repo)
     {
         vm.ShowHeadOnly = !dupe.ShowAllItems;
 
@@ -143,9 +150,9 @@ public class IntegrityController
             }
             // Present options for merging
             // Get user input
-            view.WriteLine();
-            view.WriteLine("Select one item to merge all others into (or Cancel to stop):");
-            var survivor = view.Disambiguate(vm.SearchResults, repo, includeCancel: true);
+            _view.WriteLine();
+            _view.WriteLine("Select one item to merge all others into (or Cancel to stop):");
+            var survivor = _view.Disambiguate(vm.SearchResults, repo, includeCancel: true);
             if (survivor != null)
             {
                 // Merge all into survivor.
@@ -163,9 +170,9 @@ public class IntegrityController
                 vm.SearchSpecification = new TagValueSpecification(dupe.Tag, dupeTag);
                 // Present options for merging
                 // Get user input.
-                view.WriteLine();
-                view.WriteLine("Select one item to merge all others into (i = ignore):");
-                var survivor = view.Disambiguate(vm.SearchResults, repo);
+                _view.WriteLine();
+                _view.WriteLine("Select one item to merge all others into (i = ignore):");
+                var survivor = _view.Disambiguate(vm.SearchResults, repo);
                 if (survivor != null)
                 {
                     // Merge into survivor.
@@ -179,7 +186,7 @@ public class IntegrityController
         repo.SaveChanges();
     }
 
-    public void FixTitles(FixTitlesOptions fixOptions, ViewModel vm, TodoRepository repo, IItemDisplay view)
+    public void FixTitles(FixTitlesOptions fixOptions, ViewModel vm, TodoRepository repo)
     {
         vm.ShowHeadOnly = false;
 
@@ -228,7 +235,7 @@ public class IntegrityController
 
         if (totalCount > 0)
         {
-            view.WriteLine("{0} items updated.", totalCount);
+            _view.WriteLine("{0} items updated.", totalCount);
         }
 
         repo.SaveChanges();
