@@ -1,5 +1,6 @@
 ﻿using AssimilationSoftware.Maroon.Model;
 using AssimilationSoftware.Maroon.Repositories;
+using AssimilationSoftware.TodoSort.Core.Search;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -41,6 +42,18 @@ namespace AssimilationSoftware.TodoSort.Core.Data
         public IEnumerable<ActionItem> GetProjectItems(ActionItem i)
         {
             return Items.Where(a => a.ProjectId != null && a.ProjectId.Equals(i.ID));
+        }
+
+        public IEnumerable<ActionItem> Search(ISearchSpecification<ActionItem> searchSpecification, bool allDepths)
+        {
+            if (!allDepths)
+            {
+                return Items.Where(i => searchSpecification.And(new HeadOnlySearchSpecification()).IsSatisfiedBy(i));
+            }
+            else
+            {
+                return Items.Where(i => searchSpecification.IsSatisfiedBy(i));
+            }
         }
     }
 }

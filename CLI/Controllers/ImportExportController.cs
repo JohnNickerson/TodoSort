@@ -17,10 +17,8 @@ public class ImportExportController
         _view = view;
     }
 
-    public void Export(ExportSubOptions exportOptions, ViewModel vm, TodoRepository repo)
+    public void Export(ExportSubOptions exportOptions, TodoRepository repo)
     {
-        vm.ShowHeadOnly = false;
-
         // TODO: Write to the console if the filename is empty?
         if (string.IsNullOrEmpty(exportOptions.Filename))
         {
@@ -58,18 +56,18 @@ public class ImportExportController
         }
         if (exporter != null)
         {
-            vm.SearchSpecification = exportOptions.GetSearchSpecification(repo);
+            var searchResults = repo.Search(exportOptions.GetSearchSpecification(repo), exportOptions.ShowAllItems);
             if (!string.IsNullOrEmpty(exportOptions.SortTag))
             {
-                exporter.Export(_view.ApplySort(exportOptions.SortTag, vm.SearchResults).ToList());
+                exporter.Export(_view.ApplySort(exportOptions.SortTag, searchResults).ToList());
             }
             else if (!string.IsNullOrEmpty(exportOptions.SortDescTag))
             {
-                exporter.Export(_view.ApplySort(exportOptions.SortDescTag, vm.SearchResults, SortOrder.Descending).ToList());
+                exporter.Export(_view.ApplySort(exportOptions.SortDescTag, searchResults, SortOrder.Descending).ToList());
             }
             else
             {
-                exporter.Export(vm.SearchResults.ToList());
+                exporter.Export(searchResults.ToList());
             }
         }
 

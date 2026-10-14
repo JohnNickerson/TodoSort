@@ -1,5 +1,6 @@
 ﻿using AssimilationSoftware.Maroon.Interfaces;
 using AssimilationSoftware.Maroon.Model;
+using AssimilationSoftware.TodoSort.Core.Search;
 using System.Collections.Generic;
 
 namespace AssimilationSoftware.TodoSort.Core.Data
@@ -12,5 +13,7 @@ namespace AssimilationSoftware.TodoSort.Core.Data
         IEnumerable<ActionItem> GetProjectItems(ActionItem i);
         IEnumerable<string> GetContexts(params string[] exclude);
         IEnumerable<ActionItem> GetChildren(ActionItem selected);
+
+        IEnumerable<ActionItem> Search(ISearchSpecification<ActionItem> searchSpecification, bool allDepths);
     }
 }
