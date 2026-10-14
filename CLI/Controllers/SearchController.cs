@@ -11,68 +11,71 @@ namespace AssimilationSoftware.TodoSort.CLI.Controllers;
 
 public class SearchController
 {
-    public void AdvancedSearch(AdvancedSearchOptions argSubs, ViewModel vm, TodoRepository repo, IItemDisplay view)
-    {
-        vm.ShowHeadOnly = !argSubs.ShowAllItems;
 
-        vm.SearchSpecification = argSubs.SearchSpecification;
-        view.PrintItems("title", vm.SearchResults, repo, argSubs.NSFW, argSubs.Verbose);
+    public void AdvancedSearch(AdvancedSearchOptions argSubs, TodoRepository repo, IItemDisplay view)
+    {
+        var searchResults = PerformSearch(repo, argSubs.SearchSpecification, argSubs.ShowAllItems);
+        view.PrintItems("title", searchResults, repo, argSubs.NSFW, argSubs.Verbose);
     }
 
-    public void Search(SearchOptions searchOptions, ViewModel vm, TodoRepository repo, IItemDisplay view)
+    private IEnumerable<ActionItem> PerformSearch(TodoRepository repo, ISearchSpecification<ActionItem> searchSpecification, bool showAllItems)
     {
-        vm.ShowHeadOnly = false;
+        if (!showAllItems)
+        {
+            return repo.Items.Where(i => searchSpecification.And(new HeadOnlySearchSpecification()).IsSatisfiedBy(i));
+        }
+        else
+        {
+            return repo.Items.Where(i => searchSpecification.IsSatisfiedBy(i));
+        }
+    }
 
-        vm.SearchSpecification = searchOptions.GetSearchSpecification(repo);
-        if (vm.SearchResults.Count() == 0)
+    public void Search(SearchOptions searchOptions, TodoRepository repo, IItemDisplay view)
+    {
+        var searchResults = PerformSearch(repo, searchOptions.GetSearchSpecification(repo), searchOptions.ShowAllItems);
+        if (searchResults.Count() == 0)
         {
             view.WriteLine("No results found.");
         }
         else if (searchOptions.PrintTree)
         {
-            view.PrintTree(vm.SearchResults.ToList(), new List<ActionItem>(), repo, searchOptions.NSFW, searchOptions.Verbose);
+            view.PrintTree(searchResults.ToList(), new List<ActionItem>(), repo, searchOptions.NSFW, searchOptions.Verbose);
         }
         else
         {
-            view.PrintItems(searchOptions.SortTag ?? string.Empty, vm.SearchResults, repo, searchOptions.NSFW, searchOptions.Verbose);
+            view.PrintItems(searchOptions.SortTag ?? string.Empty, searchResults, repo, searchOptions.NSFW, searchOptions.Verbose);
             if (!searchOptions.NoCount)
             {
-                view.WriteLine("{0} item(s) found.", vm.SearchResults.Count());
+                view.WriteLine("{0} item(s) found.", searchResults.Count());
             }
         }
     }
 
-    public void SearchDone(DoneSearchSubOptions search, ViewModel vm, TodoRepository repo, IItemDisplay view)
+    public void SearchDone(DoneSearchSubOptions search, TodoRepository repo, IItemDisplay view)
     {
-        vm.ShowHeadOnly = false;
-
         // Construct a search specification.
-        // Set the ViewModel property.
-        vm.DoneSearchSpecification = search.GetSearchSpecification(repo);
+        var doneSearchResults = repo.DoneItems.Where(d => search.GetSearchSpecification(repo).IsSatisfiedBy(d));
         // Report the results.
-        view.PrintItems(search.SortTag ?? "done-date", vm.DoneSearchResults, repo, search.NSFW, search.Verbose);
+        view.PrintItems(search.SortTag ?? "done-date", doneSearchResults, repo, search.NSFW, search.Verbose);
         if (!search.NoCount)
         {
-            view.WriteLine("{0} item(s) found.", vm.DoneSearchResults.Count());
+            view.WriteLine("{0} item(s) found.", doneSearchResults.Count());
         }
     }
 
-    public void SearchSomeday(SomedaySearchSubOptions search, ViewModel vm, TodoRepository repo, IItemDisplay view)
+    public void SearchSomeday(SomedaySearchSubOptions search, TodoRepository repo, IItemDisplay view)
     {
-        vm.ShowHeadOnly = false;
-
         // Construct a search specification.
-        // Set the ViewModel property.
-        vm.SomedaySearchSpecification = search.GetSearchSpecification(repo);
+        var somedaySearchResults = repo.SomedayItems.Where(s => search.GetSearchSpecification(repo).IsSatisfiedBy(s));
         // Report the results.
-        view.PrintItems(search.SortTag ?? "tickle-date", vm.SomedaySearchResults, repo, search.NSFW, search.Verbose);
+        view.PrintItems(search.SortTag ?? "tickle-date", somedaySearchResults, repo, search.NSFW, search.Verbose);
         if (!search.NoCount)
         {
-            view.WriteLine("{0} item(s) found.", vm.SomedaySearchResults.Count());
+            view.WriteLine("{0} item(s) found.", somedaySearchResults.Count());
         }
     }
 
-    public void Summary(UniversalOptions summaryArgs, ViewModel vm, TodoRepository repo, IItemDisplay view)
+    public void Summary(UniversalOptions summaryArgs, ViewModel vm)
     {
         if (!summaryArgs.ShowAllItems)
         {
