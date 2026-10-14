@@ -1,5 +1,6 @@
 using System.IO.Abstractions;
 using AssimilationSoftware.Maroon.Model;
+using AssimilationSoftware.TodoSort.Core.Search;
 namespace UnitTests.Scaffolding;
 
 public class MockTodoRepository : AssimilationSoftware.TodoSort.Core.Data.ITodoRepository
@@ -93,6 +94,11 @@ public class MockTodoRepository : AssimilationSoftware.TodoSort.Core.Data.ITodoR
     public void SaveChanges()
     {
         // Do nothing. We are working in memory.
+    }
+
+    public IEnumerable<ActionItem> Search(ISearchSpecification<ActionItem> searchSpecification, bool allDepths)
+    {
+        return _items.Where(i => searchSpecification.IsSatisfiedBy(i));
     }
 
     public void Update(ActionItem entity)

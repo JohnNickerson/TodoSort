@@ -186,20 +186,18 @@ public class IntegrityController
         repo.SaveChanges();
     }
 
-    public void FixTitles(FixTitlesOptions fixOptions, ViewModel vm, TodoRepository repo)
+    public void FixTitles(FixTitlesOptions fixOptions, TodoRepository repo)
     {
-        vm.ShowHeadOnly = false;
-
-        vm.SearchSpecification = fixOptions.GetSearchSpecification(repo);
         var client = new HttpClient(); // new RedirectWebClient();
 
         var totalCount = 0;
-        decimal progressTotal = vm.SearchResults.Count();
+        var searchResults = repo.Search(fixOptions.GetSearchSpecification(repo), false);
+        decimal progressTotal = searchResults.Count();
         AnsiConsole.Progress().Start(ctx =>
         {
             var task = ctx.AddTask("Fetching titles", maxValue: decimal.ToDouble(progressTotal));
 
-            foreach (var tem in vm.SearchResults.ToArray())
+            foreach (var tem in searchResults.ToArray())
             {
                 task.Increment(1);
                 try
