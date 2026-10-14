@@ -71,10 +71,7 @@ public class SearchController
 
     public void Summary(UniversalOptions summaryArgs, ViewModel vm)
     {
-        if (!summaryArgs.ShowAllItems)
-        {
-            vm.ShowHeadOnly = !summaryArgs.Verbose;
-        }
+        vm.ShowHeadOnly = !summaryArgs.Verbose && !summaryArgs.ShowAllItems;
 
         vm.SearchSpecification = new TrueSpecification<ActionItem>();
         var summaryData = from i in vm.SearchResults group i by i.Context into c select new { Context = c.Key, Count = c.Count() };
