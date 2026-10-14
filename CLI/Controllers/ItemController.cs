@@ -21,7 +21,7 @@ public class ItemController
         // Allow tagging right away.
         TagItem(vm, selected, view);
         view.PrintItem(selected, null, repo, false, true);
-        vm.Save();
+        repo.SaveChanges();
     }
 
     public void Delete(DeleteOptions delOpts, ViewModel vm, TodoRepository repo, IItemDisplay view)
@@ -35,7 +35,7 @@ public class ItemController
         {
             vm.Delete(selected);
             view.PrintItem(selected, null, repo, false, delOpts.Verbose);
-            vm.Save();
+            repo.SaveChanges();
         }
     }
 
@@ -53,7 +53,7 @@ public class ItemController
                 {
                     vm.Merge(mergeVictim, combined);
                     view.PrintItem(combined, null, repo, false, mergeOptions.Verbose);
-                    vm.Save();
+                    repo.SaveChanges();
                 }
             }
         }
@@ -72,7 +72,7 @@ public class ItemController
                 vm.ResetPriorityParents(selected);
             }
             view.PrintItem(selected, null, repo, false, moveOptions.Verbose);
-            vm.Save();
+            repo.SaveChanges();
         }
     }
 
@@ -92,7 +92,7 @@ public class ItemController
         }
         view.WriteLine(string.Format("{0} items moved to @{1}", counter, moveAllOptions.NewContext));
 
-        vm.Save();
+        repo.SaveChanges();
     }
 
     public void Note(NoteSubOptions noteOptions, ViewModel vm, TodoRepository repo, IItemDisplay view)
@@ -106,7 +106,7 @@ public class ItemController
         {
             vm.AddNote(selected, noteOptions.NewNote);
             view.PrintItem(selected, null, repo, false, noteOptions.Verbose);
-            vm.Save();
+            repo.SaveChanges();
         }
     }
 
@@ -125,7 +125,7 @@ public class ItemController
                 TagItem(vm, selected, view);
             }
             view.PrintItem(selected, null, repo, false, renameOptions.Verbose);
-            vm.Save();
+            repo.SaveChanges();
         }
     }
 
@@ -144,7 +144,7 @@ public class ItemController
             vm.SetProject(child, project);
         }
 
-        vm.Save();
+        repo.SaveChanges();
     }
 
     public void Tag(SingleSearchSubOptions tagOptions, ViewModel vm, TodoRepository repo, IItemDisplay view)
@@ -158,7 +158,7 @@ public class ItemController
         {
             TagItem(vm, selected, view);
             view.PrintItem(selected, null, repo, false, tagOptions.Verbose);
-            vm.Save();
+            repo.SaveChanges();
         }
     }
 
@@ -180,7 +180,7 @@ public class ItemController
             }
         }
 
-        vm.Save();
+        repo.SaveChanges();
     }
 
     private void TagItem(ViewModel vm, ActionItem selected, IItemDisplay view)

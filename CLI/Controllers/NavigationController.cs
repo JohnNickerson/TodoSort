@@ -53,7 +53,7 @@ public class NavigationController
                 view.WriteLine("Tag not found: {0}", openTagOptions.Tag);
             }
             view.PrintItem(selected, null, repo, false, openTagOptions.Verbose);
-            vm.Save();
+            repo.SaveChanges();
         }
     }
 }

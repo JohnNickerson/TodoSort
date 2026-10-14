@@ -40,7 +40,7 @@ public class RankingController
             view.WriteLine("Branching factor must be greater than zero.");
         }
 
-        vm.Save();
+        repo.SaveChanges();
     }
 
     public void Bump(BumpOptions bumpOpts, ViewModel vm, TodoRepository repo, IItemDisplay view)
@@ -86,7 +86,7 @@ public class RankingController
         }
         // After
         view.PrintTree(bumpItems, new List<ActionItem>(), repo, bumpOpts.NSFW, bumpOpts.Verbose);
-        vm.Save();
+        repo.SaveChanges();
     }
 
     public void Rank(MultiSearchSubOptions rankOptions, ViewModel vm, TodoRepository repo, IItemDisplay view)
@@ -153,7 +153,7 @@ public class RankingController
             }
         }
 
-        vm.Save();
+        repo.SaveChanges();
     }
 
     public void SetParent(SetParentSubOptions setParentOptions, ViewModel vm, TodoRepository repo, IItemDisplay view)
@@ -188,7 +188,7 @@ public class RankingController
             }
         }
 
-        vm.Save();
+        repo.SaveChanges();
     }
 
     public void Unrank(UnRankOptions unrankOptions, ViewModel vm, TodoRepository repo, IItemDisplay view)
@@ -201,7 +201,7 @@ public class RankingController
         {
             vm.ResetPriorityParents(selected);
             view.PrintItem(selected, null, repo, false, unrankOptions.Verbose);
-            vm.Save();
+            repo.SaveChanges();
         }
     }
 
@@ -216,6 +216,6 @@ public class RankingController
             vm.ResetPriorityParents(vm.SearchResults.ToArray());
         }
 
-        vm.Save();
+        repo.SaveChanges();
     }
 }

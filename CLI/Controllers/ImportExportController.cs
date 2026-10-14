@@ -67,7 +67,7 @@ public class ImportExportController
             }
         }
 
-        vm.Save();
+        repo.SaveChanges();
     }
 
     public void Import(ImportSubOptions importOptions, ViewModel vm, ITodoRepository repo, IItemDisplay view)
@@ -103,6 +103,6 @@ public class ImportExportController
             view.WriteLine(vm.StatusMessage);
         }
 
-        vm.Save();
+        repo.SaveChanges();
     }
 }

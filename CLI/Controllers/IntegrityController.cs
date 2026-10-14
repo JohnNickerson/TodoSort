@@ -74,7 +74,7 @@ public class IntegrityController
             Console.ReadKey();
         }
 
-        vm.Save();
+        repo.SaveChanges();
     }
 
     public void Commit(CommitOptions opts, ViewModel vm, TodoRepository repo, IItemDisplay view)
@@ -121,7 +121,6 @@ public class IntegrityController
         var commitCount = repo.CommitChanges();
         view.WriteLine($"{commitCount} pending changes committed.");
         repo.SaveChanges();
-        vm.Save(); // Is this necessary in this case?
     }
 
     public void Dedupe(DedupeOptions dupe, ViewModel vm, TodoRepository repo, IItemDisplay view)
@@ -176,7 +175,7 @@ public class IntegrityController
                 }
             }
         }
-        vm.Save();
+        repo.SaveChanges();
     }
 
     public void FixTitles(FixTitlesOptions fixOptions, ViewModel vm, TodoRepository repo, IItemDisplay view)
@@ -229,6 +228,6 @@ public class IntegrityController
             view.WriteLine("{0} items updated.", totalCount);
         }
 
-        vm.Save();
+        repo.SaveChanges();
     }
 }

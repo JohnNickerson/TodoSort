@@ -24,7 +24,7 @@ public class WorkflowController
                 vm.Defer(selected);
             }
             view.PrintItem(selected, null, repo, false, deferOpts.Verbose);
-            vm.Save();
+            repo.SaveChanges();
         }
     }
 
@@ -40,7 +40,7 @@ public class WorkflowController
             vm.Defer(vm.SearchResults.ToArray());
         }
 
-        vm.Save();
+        repo.SaveChanges();
     }
 
     public void Done(DoneSubOptions doneOpts, ViewModel vm, TodoRepository repo, IItemDisplay view)
@@ -54,7 +54,7 @@ public class WorkflowController
         {
             vm.MarkDone(doneOpts.DoneDate, selected);
             view.PrintItem(selected, null, repo, false, doneOpts.Verbose);
-            vm.Save();
+            repo.SaveChanges();
         }
     }
 
@@ -68,7 +68,7 @@ public class WorkflowController
         {
             vm.Undefer("inbox", selected);
             view.PrintItem(selected, null, repo, false, undeferOptions.Verbose);
-            vm.Save();
+            repo.SaveChanges();
         }
     }
 
@@ -82,7 +82,7 @@ public class WorkflowController
         {
             vm.Undo(undoOptions.NewContext, selected);
             view.PrintItem(selected, null, repo, false, undoOptions.Verbose);
-            vm.Save();
+            repo.SaveChanges();
         }
     }
 }
