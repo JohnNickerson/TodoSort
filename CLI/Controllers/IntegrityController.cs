@@ -145,7 +145,7 @@ public class IntegrityController
             // Get user input
             view.WriteLine();
             view.WriteLine("Select one item to merge all others into (or Cancel to stop):");
-            var survivor = view.Disambiguate(vm.SearchResults, repo, view, includeCancel: true);
+            var survivor = view.Disambiguate(vm.SearchResults, repo, includeCancel: true);
             if (survivor != null)
             {
                 // Merge all into survivor.
@@ -165,7 +165,7 @@ public class IntegrityController
                 // Get user input.
                 view.WriteLine();
                 view.WriteLine("Select one item to merge all others into (i = ignore):");
-                var survivor = view.Disambiguate(vm.SearchResults, repo, view);
+                var survivor = view.Disambiguate(vm.SearchResults, repo);
                 if (survivor != null)
                 {
                     // Merge into survivor.

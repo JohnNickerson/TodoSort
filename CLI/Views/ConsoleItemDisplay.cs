@@ -60,19 +60,19 @@ public class ConsoleItemDisplay : IItemDisplay
         return sortedList;
     }
 
-    public ActionItem? Disambiguate(IEnumerable<ActionItem> todoList, ITodoRepository repo, IItemDisplay view, bool autoAcceptOne = false, bool nsfw = false, bool verbose = false, bool includeCancel = false)
+    public ActionItem? Disambiguate(IEnumerable<ActionItem> todoList, ITodoRepository repo, bool autoAcceptOne = false, bool nsfw = false, bool verbose = false, bool includeCancel = false)
     {
         ActionItem? selected = null;
 
         // Disambiguate or verify search results.
         if (todoList.Count() == 0)
         {
-            view.WriteLine("No search matches. No action will be taken.");
+            WriteLine("No search matches. No action will be taken.");
         }
         else if (todoList.Count() == 1 && autoAcceptOne)
         {
-            view.PrintItem(todoList.ElementAt(0), null, repo, nsfw, verbose);
-            view.WriteLine("Auto-accepting...");
+            PrintItem(todoList.ElementAt(0), null, repo, nsfw, verbose);
+            WriteLine("Auto-accepting...");
             selected = todoList.ElementAt(0);
         }
         else
@@ -94,7 +94,7 @@ public class ConsoleItemDisplay : IItemDisplay
             selected = AnsiConsole.Prompt(prompt);
             if (selected.Context == "cancel")
             {
-                view.WriteLine("Cancelled.");
+                WriteLine("Cancelled.");
                 return null;
             }
         }

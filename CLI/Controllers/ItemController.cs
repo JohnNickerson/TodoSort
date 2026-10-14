@@ -30,7 +30,7 @@ public class ItemController
 
         // Find a matching item to delete.
         vm.SearchSpecification = delOpts.SearchSpecification;
-        var selected = view.Disambiguate(vm.SearchResults, repo, view, !string.IsNullOrEmpty(delOpts.ItemId));
+        var selected = view.Disambiguate(vm.SearchResults, repo, !string.IsNullOrEmpty(delOpts.ItemId));
         if (selected != null)
         {
             vm.Delete(selected);
@@ -43,12 +43,12 @@ public class ItemController
         {
             view.WriteLine("Confirm child item:");
             vm.SearchTerm = mergeOptions.ChildSearchTerm ?? mergeOptions.TargetSearchTerm;
-            var mergeVictim = view.Disambiguate(vm.SearchResults, repo, view);
+            var mergeVictim = view.Disambiguate(vm.SearchResults, repo);
             if (mergeVictim != null)
             {
                 view.WriteLine("Confirm item to merge into:");
                 vm.SearchTerm = mergeOptions.TargetSearchTerm;
-                var combined = view.Disambiguate(vm.SearchResults.Where(x => x.ID != mergeVictim.ID), repo, view);
+                var combined = view.Disambiguate(vm.SearchResults.Where(x => x.ID != mergeVictim.ID), repo);
                 if (mergeVictim != null && combined != null)
                 {
                     vm.Merge(mergeVictim, combined);
@@ -63,7 +63,7 @@ public class ItemController
         vm.ShowHeadOnly = !moveOptions.ShowAllItems;
 
         vm.SearchSpecification = moveOptions.SearchSpecification;
-        var selected = view.Disambiguate(vm.SearchResults, repo, view, !string.IsNullOrEmpty(moveOptions.ItemId));
+        var selected = view.Disambiguate(vm.SearchResults, repo, !string.IsNullOrEmpty(moveOptions.ItemId));
         if (selected != null)
         {
             vm.SetContext(selected, moveOptions.NewContext);
@@ -101,7 +101,7 @@ public class ItemController
 
         // Add a note to a task.
         vm.SearchSpecification = noteOptions.SearchSpecification;
-        var selected = view.Disambiguate(vm.SearchResults, repo, view, !string.IsNullOrEmpty(noteOptions.ItemId));
+        var selected = view.Disambiguate(vm.SearchResults, repo, !string.IsNullOrEmpty(noteOptions.ItemId));
         if (selected != null)
         {
             vm.AddNote(selected, noteOptions.NewNote);
@@ -115,7 +115,7 @@ public class ItemController
         vm.ShowHeadOnly = !renameOptions.ShowAllItems;
 
         vm.SearchSpecification = renameOptions.SearchSpecification;
-        var selected = view.Disambiguate(vm.SearchResults, repo, view, !string.IsNullOrEmpty(renameOptions.ItemId));
+        var selected = view.Disambiguate(vm.SearchResults, repo, !string.IsNullOrEmpty(renameOptions.ItemId));
         if (selected != null)
         {
             vm.Rename(selected, renameOptions.NewTitle);
@@ -135,10 +135,10 @@ public class ItemController
 
         view.WriteLine("Confirm child item:");
         vm.SearchTerm = commandOptions.ChildSearchTerm;
-        var child = view.Disambiguate(vm.SearchResults, repo, view);
+        var child = view.Disambiguate(vm.SearchResults, repo);
         view.WriteLine("Confirm project:");
         vm.SearchTerm = commandOptions.ProjectSearchTerm ?? commandOptions.ChildSearchTerm;
-        var project = view.Disambiguate(vm.SearchResults, repo, view);
+        var project = view.Disambiguate(vm.SearchResults, repo);
         if (child != null && project != null)
         {
             vm.SetProject(child, project);
@@ -153,7 +153,7 @@ public class ItemController
 
         // Search for a matching item.
         vm.SearchSpecification = tagOptions.SearchSpecification;
-        var selected = view.Disambiguate(vm.SearchResults, repo, view, !string.IsNullOrEmpty(tagOptions.ItemId));
+        var selected = view.Disambiguate(vm.SearchResults, repo, !string.IsNullOrEmpty(tagOptions.ItemId));
         if (selected != null)
         {
             TagItem(vm, selected, view);

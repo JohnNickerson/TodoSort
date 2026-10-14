@@ -12,7 +12,7 @@ public class WorkflowController
         vm.ShowHeadOnly = !deferOpts.ShowAllItems;
 
         vm.SearchSpecification = deferOpts.SearchSpecification;
-        var selected = view.Disambiguate(vm.SearchResults, repo, view, !string.IsNullOrEmpty(deferOpts.ItemId));
+        var selected = view.Disambiguate(vm.SearchResults, repo, !string.IsNullOrEmpty(deferOpts.ItemId));
         if (selected != null)
         {
             if (deferOpts.TickleDate.HasValue)
@@ -49,7 +49,7 @@ public class WorkflowController
 
         // If there is a next action, create a new item and add it to the correct context.
         vm.SearchSpecification = doneOpts.SearchSpecification;
-        var selected = view.Disambiguate(vm.SearchResults, repo, view, !string.IsNullOrEmpty(doneOpts.ItemId));
+        var selected = view.Disambiguate(vm.SearchResults, repo, !string.IsNullOrEmpty(doneOpts.ItemId));
         if (selected != null)
         {
             vm.MarkDone(doneOpts.DoneDate, selected);
@@ -63,7 +63,7 @@ public class WorkflowController
         vm.ShowHeadOnly = !undeferOptions.ShowAllItems;
 
         vm.SomedaySearchSpecification = undeferOptions.SearchSpecification;
-        var selected = view.Disambiguate(vm.SomedaySearchResults, repo, view, !string.IsNullOrEmpty(undeferOptions.ItemId));
+        var selected = view.Disambiguate(vm.SomedaySearchResults, repo, !string.IsNullOrEmpty(undeferOptions.ItemId));
         if (selected != null)
         {
             vm.Undefer("inbox", selected);
@@ -77,7 +77,7 @@ public class WorkflowController
         vm.ShowHeadOnly = !undoOptions.ShowAllItems;
 
         vm.DoneSearchSpecification = undoOptions.SearchSpecification;
-        var selected = view.Disambiguate(vm.DoneSearchResults, repo, view, !string.IsNullOrEmpty(undoOptions.ItemId));
+        var selected = view.Disambiguate(vm.DoneSearchResults, repo, !string.IsNullOrEmpty(undoOptions.ItemId));
         if (selected != null)
         {
             vm.Undo(undoOptions.NewContext, selected);

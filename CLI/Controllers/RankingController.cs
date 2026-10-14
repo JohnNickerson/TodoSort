@@ -51,7 +51,7 @@ public class RankingController
         if (bumpOpts.Top == 0)
         {
             // Manually pick one item.
-            var chosen = view.Disambiguate(vm.SearchResults, repo, view, true);
+            var chosen = view.Disambiguate(vm.SearchResults, repo, true);
             if (chosen != null) bumpItems.Add(chosen);
         }
         else if (!string.IsNullOrEmpty(bumpOpts.SortTag))
@@ -162,12 +162,12 @@ public class RankingController
 
         view.WriteLine("Confirm child item:");
         vm.SearchSpecification = setParentOptions.GetChildSearchSpecification(repo);
-        var child = view.Disambiguate(vm.SearchResults, repo, view);
+        var child = view.Disambiguate(vm.SearchResults, repo);
         view.WriteLine("Confirm parent item:");
         vm.SearchSpecification = setParentOptions.GetParentSearchSpecification(repo);
         if (child != null)
         {
-            var parent = view.Disambiguate(vm.SearchResults.Where(x => x.ID != child.ID), repo, view);
+            var parent = view.Disambiguate(vm.SearchResults.Where(x => x.ID != child.ID), repo);
             if (parent != null)
             {
                 vm.SetParent(child, parent);
@@ -196,7 +196,7 @@ public class RankingController
         vm.ShowHeadOnly = !unrankOptions.ShowAllItems;
 
         vm.SearchSpecification = unrankOptions.SearchSpecification;
-        var selected = view.Disambiguate(vm.SearchResults, repo, view, !string.IsNullOrEmpty(unrankOptions.ItemId));
+        var selected = view.Disambiguate(vm.SearchResults, repo, !string.IsNullOrEmpty(unrankOptions.ItemId));
         if (selected != null)
         {
             vm.ResetPriorityParents(selected);
