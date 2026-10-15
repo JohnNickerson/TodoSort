@@ -261,3 +261,5 @@ TodoSort is a task list and reading list app with an emphasis on priority. It st
 	- Enable search without the Go button.
 - 2026-10-14: Build 1.14.0.0
 	- Display fix-titles progress bar with Spectre.
+- 2026-10-14: Build 1.14.0.1
+	- Fix verbose and show-all functionality in summary command.
