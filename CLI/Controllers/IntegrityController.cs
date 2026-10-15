@@ -20,14 +20,13 @@ public class IntegrityController
         _view = view;
     }
 
-    public void CheckChain(CheckChainOptions chainOptions, ViewModel vm, TodoRepository repo)
+    public void CheckChain(CheckChainOptions chainOptions, TodoRepository repo)
     {
-        vm.ShowHeadOnly = false;
         var problemsFound = 0;
 
-        vm.SearchSpecification = chainOptions.GetSearchSpecification(repo);
+        var searchResults = repo.Search(chainOptions.GetSearchSpecification(repo), true);
         // 1. Make sure there is at least one item.
-        if (!vm.SearchResults.Any())
+        if (!searchResults.Any())
         {
             _view.WriteLine("No items found in the chain.");
             problemsFound++;
@@ -35,8 +34,8 @@ public class IntegrityController
         else
         {
             // 2. Make sure there are no gaps.
-            var min = vm.SearchResults.Min(i => i.GetIntTag("order", Int32.MaxValue));
-            var max = vm.SearchResults.Max(i => i.GetIntTag("order", Int32.MinValue));
+            var min = searchResults.Min(i => i.GetIntTag("order", Int32.MaxValue));
+            var max = searchResults.Max(i => i.GetIntTag("order", Int32.MinValue));
             // Special case: If searching in a project, and the project specifies a size, use that for maximum. Must specify full project ID.
             if (Guid.TryParse(chainOptions.ProjectID, out var projId))
             {
@@ -49,7 +48,7 @@ public class IntegrityController
             }
             for (var i = min; i <= max; i++)
             {
-                var count = vm.SearchResults.Count(j => j.GetIntTag("order", 0) == i);
+                var count = searchResults.Count(j => j.GetIntTag("order", 0) == i);
                 if (count == 0)
                 {
                     _view.WriteLine($"Item missing at index {i}");
@@ -69,7 +68,7 @@ public class IntegrityController
                 problemsFound++;
             }
             // 3. Find and add items that might belong in the chain.
-            foreach (var excluded in vm.SearchResults.Where(i => !i.Tags.ContainsKey("order") || (!i.Tags.ContainsKey("series") && !i.ProjectId.HasValue)))
+            foreach (var excluded in searchResults.Where(i => !i.Tags.ContainsKey("order") || (!i.Tags.ContainsKey("series") && !i.ProjectId.HasValue)))
             {
                 _view.WriteLine("Item potentially excluded:");
                 _view.PrintItem(excluded, null, repo, chainOptions.NSFW, chainOptions.Verbose);
@@ -85,7 +84,7 @@ public class IntegrityController
         repo.SaveChanges();
     }
 
-    public void Commit(CommitOptions opts, ViewModel vm, TodoRepository repo)
+    public void Commit(CommitOptions opts, TodoRepository repo)
     {
         var conflicts = repo.FindConflicts();
         foreach (var conflictSet in conflicts)
@@ -193,6 +192,13 @@ public class IntegrityController
         var totalCount = 0;
         var searchResults = repo.Search(fixOptions.GetSearchSpecification(repo), false);
         decimal progressTotal = searchResults.Count();
+        
+        if (progressTotal == 0)
+        {
+            _view.WriteLine("No items found to fix.");
+            return;
+        }
+
         AnsiConsole.Progress().Start(ctx =>
         {
             var task = ctx.AddTask("Fetching titles", maxValue: decimal.ToDouble(progressTotal));
