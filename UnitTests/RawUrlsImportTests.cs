@@ -1,5 +1,3 @@
-using System.IO.Abstractions;
-using System.Text;
 using AssimilationSoftware.TodoSort.Core.Import;
 
 namespace UnitTests;

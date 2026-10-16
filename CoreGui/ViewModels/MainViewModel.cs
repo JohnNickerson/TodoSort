@@ -1,7 +1,5 @@
 ﻿using System.Collections.ObjectModel;
-using System.IO;
 using System.Runtime.CompilerServices;
-using System.Windows;
 using System.Windows.Input;
 using AssimilationSoftware.Maroon.Interfaces;
 using AssimilationSoftware.Maroon.Mappers.Text;

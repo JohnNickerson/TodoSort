@@ -1,8 +1,5 @@
 namespace AssimilationSoftware.TodoSort.Core.Import
 {
-    using System;
-    using System.IO;
-    using AssimilationSoftware.Maroon.Model;
     using System.Linq;
     using System.IO.Abstractions.TestingHelpers;
 

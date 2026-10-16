@@ -1,5 +1,4 @@
 ﻿using System.Windows.Input;
-using AssimilationSoftware.TodoSort.CoreGui.ViewModels;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 

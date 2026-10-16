@@ -2,7 +2,6 @@
 using AssimilationSoftware.Maroon.Model;
 using AssimilationSoftware.TodoSort.Core.Search;
 using AssimilationSoftware.TodoSort.CoreGui.Interfaces;
-using AssimilationSoftware.TodoSort.CoreGui.ViewModels;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 

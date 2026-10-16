@@ -1,5 +1,4 @@
-﻿using System;
-using System.Windows;
+﻿using System.Windows;
 using AssimilationSoftware.TodoSort.CoreGui.Interfaces;
 using AssimilationSoftware.TodoSort.CoreGui.Model;
 

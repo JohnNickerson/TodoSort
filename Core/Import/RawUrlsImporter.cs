@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO.Abstractions;
-using System.Linq;
 using AssimilationSoftware.Maroon.Model;
 using AssimilationSoftware.Maroon.Mappers.Csv;
 

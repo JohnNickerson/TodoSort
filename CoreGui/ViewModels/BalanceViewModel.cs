@@ -1,5 +1,4 @@
-﻿using System.Windows;
-using System.Windows.Input;
+﻿using System.Windows.Input;
 using AssimilationSoftware.TodoSort.Core;
 using AssimilationSoftware.TodoSort.Core.Search;
 using AssimilationSoftware.TodoSort.CoreGui.Interfaces;

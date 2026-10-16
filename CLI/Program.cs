@@ -1,5 +1,4 @@
 ﻿using AssimilationSoftware.Maroon.Mappers.Text;
-using AssimilationSoftware.Maroon.Model;
 using AssimilationSoftware.TodoSort.CLI.Options;
 using AssimilationSoftware.TodoSort.Core;
 using AssimilationSoftware.TodoSort.Core.Data;

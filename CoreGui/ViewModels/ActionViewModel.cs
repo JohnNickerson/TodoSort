@@ -1,12 +1,10 @@
 ﻿using System.Diagnostics;
 using System.Net;
-using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Input;
 using AssimilationSoftware.Maroon.Model;
-using AssimilationSoftware.TodoSort.CoreGui.ViewModels;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 

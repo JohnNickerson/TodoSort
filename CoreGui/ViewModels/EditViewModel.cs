@@ -1,10 +1,7 @@
 ﻿using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Windows;
 using System.Windows.Input;
 using AssimilationSoftware.Maroon.Model;
 using AssimilationSoftware.TodoSort.CoreGui.Interfaces;
-using AssimilationSoftware.TodoSort.CoreGui.Model;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
