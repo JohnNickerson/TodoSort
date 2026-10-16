@@ -26,7 +26,7 @@ public class ItemController
         _view.WriteLine("Adding action '{0}' to context @{1}", a.ActionTitle, a.Context);
         vm.AddItem(selected);
         // Allow tagging right away.
-        TagItem(vm, selected);
+        TagItem(repo, selected);
         _view.PrintItem(selected, null, repo, false, true);
         repo.SaveChanges();
     }
@@ -129,7 +129,7 @@ public class ItemController
             _view.WriteLine("Item renamed.");
             if (renameOptions.ReTag)
             {
-                TagItem(vm, selected);
+                TagItem(repo, selected);
             }
             _view.PrintItem(selected, null, repo, false, renameOptions.Verbose);
             repo.SaveChanges();
@@ -163,7 +163,7 @@ public class ItemController
         var selected = _view.Disambiguate(vm.SearchResults, repo, !string.IsNullOrEmpty(tagOptions.ItemId));
         if (selected != null)
         {
-            TagItem(vm, selected);
+            TagItem(repo, selected);
             _view.PrintItem(selected, null, repo, false, tagOptions.Verbose);
             repo.SaveChanges();
         }
@@ -190,7 +190,7 @@ public class ItemController
         repo.SaveChanges();
     }
 
-    private void TagItem(ViewModel vm, ActionItem selected)
+    private void TagItem(TodoRepository repo, ActionItem selected)
     {
         string? tagName;
         do
@@ -203,11 +203,13 @@ public class ItemController
                 var value = Console.ReadLine();
                 if (!string.IsNullOrWhiteSpace(value))
                 {
-                    vm.SetTag(selected, tagName, value);
+                    selected.Tags[tagName] = value;
+                    repo.Update(selected);
                 }
                 else if (selected.Tags.ContainsKey(tagName))
                 {
-                    vm.RemoveTag(selected, tagName);
+                    selected.Tags.Remove(tagName);
+                    repo.Update(selected);
                 }
                 _view.WriteLine();
             }
