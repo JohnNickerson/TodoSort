@@ -436,16 +436,6 @@ namespace AssimilationSoftware.TodoSort.Core
             }
         }
 
-        public void SetTag(ActionItem selected, string tagName, string value)
-        {
-            if (selected != null)
-            {
-                selected.Tags[tagName] = value;
-                _repository.Update(selected);
-                UnsavedChanges = true;
-            }
-        }
-
         public void SetParent(ActionItem child, ActionItem parent)
         {
             child.ParentId = parent?.ID;
@@ -507,13 +497,6 @@ namespace AssimilationSoftware.TodoSort.Core
             return a;
         }
 
-        public void SetProject(ActionItem child, ActionItem project)
-        {
-            child.ProjectId = project.ID;
-            _repository.Update(child);
-            UnsavedChanges = true;
-        }
-
         public void Defer(ActionItem deferItem, DateTime tickleDate)
         {
             deferItem.TickleDate = tickleDate;
@@ -528,23 +511,9 @@ namespace AssimilationSoftware.TodoSort.Core
             UnsavedChanges = true;
         }
 
-        public void AddNote(ActionItem item, string note)
-        {
-            item.Notes.Add(string.Format("{0} ({1:yyyy-MM-dd})", note, DateTime.Now));
-            _repository.Update(item);
-            UnsavedChanges = true;
-        }
-
         public void Rename(ActionItem item, string newTitle)
         {
             item.Title = newTitle;
-            _repository.Update(item);
-            UnsavedChanges = true;
-        }
-
-        public void RemoveTag(ActionItem item, string tagName)
-        {
-            item.Tags.Remove(tagName);
             _repository.Update(item);
             UnsavedChanges = true;
         }
