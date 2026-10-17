@@ -64,19 +64,23 @@ public class ItemController
             }
         }
 
-    public void Move(MoveSubOptions moveOptions, ViewModel vm, TodoRepository repo)
+    public void Move(MoveSubOptions moveOptions, TodoRepository repo)
     {
-        vm.ShowHeadOnly = !moveOptions.ShowAllItems;
-
-        vm.SearchSpecification = moveOptions.SearchSpecification;
-        var selected = _view.Disambiguate(vm.SearchResults, repo, !string.IsNullOrEmpty(moveOptions.ItemId));
+        var searchResults = repo.Search(moveOptions.SearchSpecification, moveOptions.ShowAllItems);
+        var selected = _view.Disambiguate(searchResults, repo, !string.IsNullOrEmpty(moveOptions.ItemId));
         if (selected != null)
         {
-            vm.SetContext(selected, moveOptions.NewContext);
+            selected.Context = moveOptions.NewContext;
             if (moveOptions.Unrank)
             {
-                vm.ResetPriorityParents(selected);
+                selected.ParentId = null;
+                foreach (var child in repo.GetChildren(selected))
+                {
+                    child.ParentId = null;
+                    repo.Update(child);
+                }
             }
+            repo.Update(selected);
             _view.PrintItem(selected, null, repo, false, moveOptions.Verbose);
             repo.SaveChanges();
         }

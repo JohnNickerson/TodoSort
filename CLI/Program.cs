@@ -51,7 +51,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                     .WithParsed<InitSubOptions>(opts => Init(opts, settingsPath))
                     .WithParsed<MergeSubOptions>(opts => new ItemController(consoleView).Merge(opts, vm, repo))
                     .WithParsed<MoveAllSubOptions>(opts => new ItemController(consoleView).MoveAll(opts, repo))
-                    .WithParsed<MoveSubOptions>(opts => new ItemController(consoleView).Move(opts, vm, repo))
+                    .WithParsed<MoveSubOptions>(opts => new ItemController(consoleView).Move(opts, repo))
                     .WithParsed<NoteSubOptions>(opts => new ItemController(consoleView).Note(opts, repo))
                     .WithParsed<OpenTagSubOptions>(opts => new NavigationController(consoleView).OpenTag(opts, vm, repo))
                     .WithParsed<RankOptions>(opts => new RankingController(consoleView).Rank(opts, vm, repo))
