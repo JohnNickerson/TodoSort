@@ -88,7 +88,7 @@ public class ItemController
         vm.ShowHeadOnly = false;
 
         vm.ShowHeadOnly = false; // Make sure we move all items in the context, not just the head.
-        vm.SearchSpecification = moveAllOptions.GetSearchSpecification(repo);
+        vm.SearchSpecification = moveAllOptions.GetSearchSpecification();
         var items = vm.SearchResults.ToList();
         var counter = 0;
         while (items.Count > 0)

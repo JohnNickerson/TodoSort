@@ -88,7 +88,7 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
             }
         }
 
-        public virtual ISearchSpecification<ActionItem> GetSearchSpecification(ITodoRepository repo)
+        public virtual ISearchSpecification<ActionItem> GetSearchSpecification()
         {
             ISearchSpecification<ActionItem> result = new TagValueSpecification(TagName, TagValue);
 
@@ -99,10 +99,6 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
             else if (MaxDepth == Int32.MaxValue)
             {
                 // No restriction. DepthRangeSearchSpecification is very slow.
-            }
-            else
-            {
-                result = result.And(new DepthRangeSearchSpecification(MinDepth, MaxDepth, repo));
             }
             if (!string.IsNullOrEmpty(Context))
             {

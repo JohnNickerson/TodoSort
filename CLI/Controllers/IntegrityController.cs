@@ -24,7 +24,7 @@ public class IntegrityController
     {
         var problemsFound = 0;
 
-        var searchResults = repo.Search(chainOptions.GetSearchSpecification(repo), true);
+        var searchResults = repo.Search(chainOptions.GetSearchSpecification(), true);
         // 1. Make sure there is at least one item.
         if (!searchResults.Any())
         {
@@ -190,7 +190,7 @@ public class IntegrityController
         var client = new HttpClient(); // new RedirectWebClient();
 
         var totalCount = 0;
-        var searchResults = repo.Search(fixOptions.GetSearchSpecification(repo), false);
+        var searchResults = repo.Search(fixOptions.GetSearchSpecification(), false);
         decimal progressTotal = searchResults.Count();
         
         if (progressTotal == 0)

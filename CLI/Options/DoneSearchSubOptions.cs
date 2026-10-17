@@ -14,19 +14,19 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
         [Option("maxdate", HelpText = "The maximum tickle date to look for.")]
         public DateTime? ToDoneDate { get; set; }
 
-        public override ISearchSpecification<ActionItem> GetSearchSpecification(ITodoRepository repo)
+        public override ISearchSpecification<ActionItem> GetSearchSpecification()
         {
             if (FromDoneDate.HasValue)
             {
                 if (ToDoneDate.HasValue)
                 {
-                    return base.GetSearchSpecification(repo)
+                    return base.GetSearchSpecification()
                         .And(new DoneDateLessThanSpecification(ToDoneDate))
                         .And(new DoneDateGreaterThanSpecification(FromDoneDate));
                 }
                 else
                 {
-                    return base.GetSearchSpecification(repo)
+                    return base.GetSearchSpecification()
                         .And(new DoneDateGreaterThanSpecification(FromDoneDate));
                 }
             }
@@ -34,12 +34,12 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
             {
                 if (ToDoneDate.HasValue)
                 {
-                    return base.GetSearchSpecification(repo)
+                    return base.GetSearchSpecification()
                         .And(new DoneDateLessThanSpecification(ToDoneDate));
                 }
                 else
                 {
-                    return base.GetSearchSpecification(repo);
+                    return base.GetSearchSpecification();
                 }
             }
         }

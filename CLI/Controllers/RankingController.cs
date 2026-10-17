@@ -30,7 +30,7 @@ public class RankingController
         // Validate the branching factor: must be greater than zero.
         if (balanceOpts.BranchFactor > 0)
         {
-            vm.SearchSpecification = balanceOpts.GetSearchSpecification(repo);
+            vm.SearchSpecification = balanceOpts.GetSearchSpecification();
             var depths = vm.GetDepthsView();
             var vine = vm.SearchResults.OrderBy(i => depths[i.ID]).ThenByDescending(i => i.Upvotes).ToArray();
             vm.Balance(vine, balanceOpts.BranchFactor);
@@ -107,7 +107,7 @@ public class RankingController
             var con = contextList[contextIndex];
             if (quitAndSave) break;
             // select all items without rank parents
-            vm.SearchSpecification = new ContextSearchSpecification(con).And(rankOptions.GetSearchSpecification(repo));
+            vm.SearchSpecification = new ContextSearchSpecification(con).And(rankOptions.GetSearchSpecification());
             var items = vm.SearchResults.ToArray();
             var index = new List<int>();
             for (var dex = 0; dex < items.Count(); dex++)
@@ -216,7 +216,7 @@ public class RankingController
     {
         vm.ShowHeadOnly = false;
 
-        vm.SearchSpecification = unrankAllOptions.GetSearchSpecification(repo);
+        vm.SearchSpecification = unrankAllOptions.GetSearchSpecification();
         _view.WriteLine("About to delete all ranking data for {0} items. Continue [Y/N]?", vm.SearchResults.Count());
         if (Console.ReadKey().KeyChar.ToString().ToLower() == "y")
         {

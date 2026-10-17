@@ -56,7 +56,7 @@ public class ImportExportController
         }
         if (exporter != null)
         {
-            var searchResults = repo.Search(exportOptions.GetSearchSpecification(repo), exportOptions.ShowAllItems);
+            var searchResults = repo.Search(exportOptions.GetSearchSpecification(), exportOptions.ShowAllItems);
             if (!string.IsNullOrEmpty(exportOptions.SortTag))
             {
                 exporter.Export(_view.ApplySort(exportOptions.SortTag, searchResults).ToList());

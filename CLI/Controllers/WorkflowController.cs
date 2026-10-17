@@ -39,7 +39,7 @@ public class WorkflowController
     {
         vm.ShowHeadOnly = false;
 
-        vm.SearchSpecification = pruneOptions.GetSearchSpecification(repo);
+        vm.SearchSpecification = pruneOptions.GetSearchSpecification();
         _view.WriteLine("About to defer {0} items. Continue [Y/N]?", vm.SearchResults.Count());
         var k = Console.ReadKey();
         if (k.KeyChar.ToString().ToLower() == "y")

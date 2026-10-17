@@ -26,7 +26,7 @@ public class SearchController
 
     public void Search(SearchOptions searchOptions, TodoRepository repo)
     {
-        var searchResults = repo.Search(searchOptions.GetSearchSpecification(repo), searchOptions.ShowAllItems);
+        var searchResults = repo.Search(searchOptions.GetSearchSpecification(), searchOptions.ShowAllItems);
         if (searchResults.Count() == 0)
         {
             _view.WriteLine("No results found.");
@@ -48,7 +48,7 @@ public class SearchController
     public void SearchDone(DoneSearchSubOptions search, TodoRepository repo)
     {
         // Construct a search specification.
-        var doneSearchResults = repo.DoneItems.Where(d => search.GetSearchSpecification(repo).IsSatisfiedBy(d));
+        var doneSearchResults = repo.DoneItems.Where(d => search.GetSearchSpecification().IsSatisfiedBy(d));
         // Report the results.
         _view.PrintItems(search.SortTag ?? "done-date", doneSearchResults, repo, search.NSFW, search.Verbose);
         if (!search.NoCount)
@@ -60,7 +60,7 @@ public class SearchController
     public void SearchSomeday(SomedaySearchSubOptions search, TodoRepository repo)
     {
         // Construct a search specification.
-        var somedaySearchResults = repo.SomedayItems.Where(s => search.GetSearchSpecification(repo).IsSatisfiedBy(s));
+        var somedaySearchResults = repo.SomedayItems.Where(s => search.GetSearchSpecification().IsSatisfiedBy(s));
         // Report the results.
         _view.PrintItems(search.SortTag ?? "tickle-date", somedaySearchResults, repo, search.NSFW, search.Verbose);
         if (!search.NoCount)
