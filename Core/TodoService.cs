@@ -180,6 +180,66 @@ namespace AssimilationSoftware.TodoSort.Core
         #endregion
 
         #region Methods
+        public ActionItem Find(Guid id)
+        {
+            return _repository.Find(id);
+        }
+
+        public IEnumerable<ActionItem> FindAll()
+        {
+            return _repository.FindAll();
+        }
+
+        public IEnumerable<ActionItem> Search(ISearchSpecification<ActionItem> searchSpecification, bool allDepths)
+        {
+            return _repository.Search(searchSpecification, allDepths);
+        }
+
+        public List<PendingChange<ActionItem>> GetPendingChanges()
+        {
+            return _repository.GetPendingChanges();
+        }
+
+        public int CommitChanges()
+        {
+            return _repository.CommitChanges();
+        }
+
+        public List<PendingChange<ActionItem>> FindConflicts()
+        {
+            return _repository.FindConflicts();
+        }
+
+        public void ResolveConflict(ActionItem entity)
+        {
+            _repository.ResolveConflict(entity);
+        }
+
+        public void ResolveByDelete(Guid id)
+        {
+            _repository.ResolveByDelete(id);
+        }
+
+        public void Revert(Guid id)
+        {
+            _repository.Revert(id);
+        }
+
+        public IEnumerable<ActionItem> GetChildren(ActionItem selected)
+        {
+            return _repository.GetChildren(selected);
+        }
+
+        public IEnumerable<ActionItem> GetProjectItems(ActionItem item)
+        {
+            return _repository.GetProjectItems(item);
+        }
+
+        public IEnumerable<string> GetContexts(params string[] exclude)
+        {
+            return _repository.GetContexts(exclude);
+        }
+
         public void Save()
         {
             _repository.SaveChanges();

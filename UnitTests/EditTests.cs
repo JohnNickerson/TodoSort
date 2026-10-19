@@ -2,6 +2,8 @@ using System.Reflection;
 using System.Runtime.Serialization;
 using AssimilationSoftware.Maroon.Mappers.Text;
 using AssimilationSoftware.Maroon.Model;
+using AssimilationSoftware.TodoSort.Core;
+using AssimilationSoftware.TodoSort.Core.Search;
 using AssimilationSoftware.TodoSort.CoreGui.Interfaces;
 using AssimilationSoftware.TodoSort.CoreGui.Model;
 using AssimilationSoftware.TodoSort.CoreGui.ViewModels;
@@ -31,6 +33,31 @@ public class EditTests
         // Assert
         _api.SearchSpecification = new Core.Search.TagValueSpecification(string.Empty, string.Empty);
         Assert.NotEmpty(_api.SearchResults);
+    }
+
+    [Fact]
+    public void TodoService_Exposes_Repository_Operations_Without_Leaking_The_Repository()
+    {
+        // Arrange
+        var fileName = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid():N}.csv");
+        var mapper = new ActionItemDiskMapper(fileName);
+        var repo = new Core.Data.TodoRepository(mapper, Path.GetDirectoryName(fileName)!, Environment.MachineName);
+        var service = new Core.TodoService(repo);
+
+        var item = new ActionItem { ID = Guid.NewGuid(), Title = "Alpha", Context = "inbox" };
+        repo.Create(item);
+
+        // Act
+        var byId = service.Find(item.ID);
+        var all = service.FindAll();
+        var search = service.Search(new TrueSpecification<ActionItem>(), true).ToList();
+        var pending = service.GetPendingChanges();
+
+        // Assert
+        Assert.NotNull(byId);
+        Assert.Contains(item, all);
+        Assert.Contains(item, search);
+        Assert.NotEmpty(pending);
     }
 
     [Fact]
