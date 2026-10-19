@@ -28,7 +28,6 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
         private List<ActionViewModel>? _currentItems;
         private const int CommitLimit = 256;
 
-        private ITodoRepository? _repo;
         private TodoService? _api;
 
         private RelayCommand<string>? _openRecentCommand;
@@ -126,8 +125,8 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
                     {
                         throw new InvalidOperationException($"Cannot determine directory for file: {FileName}");
                     }
-                    _repo = new TodoRepository(new ActionItemDiskMapper(FileName), directoryName, Environment.MachineName);
-                    _api = new TodoService(_repo);
+                    var repository = new TodoRepository(new ActionItemDiskMapper(FileName), directoryName, Environment.MachineName);
+                    _api = new TodoService(repository);
                 });
 
                 if (_api?.SomedayItems != null)
@@ -156,8 +155,8 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
 
         private void Cleanup()
         {
-            // Check that _api and _repo are initialized
-            if (_api == null || _repo == null)
+            // Check that _api is initialized
+            if (_api == null)
             {
                 StatusMessage = "Error: No file loaded.";
                 return;
@@ -174,7 +173,7 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
             }
 
 
-            foreach (var i in _repo.FindAll())
+            foreach (var i in _api.FindAll())
             {
                 if (string.IsNullOrEmpty(i.Context))
                 {
@@ -192,7 +191,7 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
             {
                 if (headItem.IsInChain)
                 {
-                    var chainItems = _repo.FindAll().Where(i => i.Context == headItem.Source.Context &&
+                    var chainItems = _api.FindAll().Where(i => i.Context == headItem.Source.Context &&
                         i.Tags.ContainsKey("order") && i.GetIntTag("order", 0) < headItem.Source.GetIntTag("order", 0));
                     if (headItem.Source.ProjectId != null)
                     {
@@ -219,13 +218,13 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
 
         private void CommitChanges()
         {
-            if (_repo == null || _api == null)
+            if (_api == null)
             {
                 StatusMessage = "Error: No file loaded.";
                 return;
             }
 
-            var pendingChanges = _repo.GetPendingChanges();
+            var pendingChanges = _api.GetPendingChanges();
             if (pendingChanges.Count == 0)
             {
                 StatusMessage = "No changes pending.";
@@ -236,7 +235,7 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
             }
             else
             {
-                var committed = _repo.CommitChanges();
+                var committed = _api.CommitChanges();
                 switch (committed)
                 {
                     case 0:
@@ -260,7 +259,7 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
 
         public void CheckForCommit()
         {
-            var pendingCount = _repo?.GetPendingChanges().Sum(p => p.Updates.Count);
+            var pendingCount = _api?.GetPendingChanges().Sum(p => p.Updates.Count);
             if (pendingCount > CommitLimit && _lastPendingCount != pendingCount)
             {
                 var response = _navigationService.ShowMessageBox($"{pendingCount} changes are pending. Commit now?", "Commit Changes");
@@ -999,8 +998,6 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
                 RaisePropertyChanged();
             }
         }
-
-        public IRepository<ActionItem> Repository => _repo;
 
         public TodoService Api => _api;
 

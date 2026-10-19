@@ -48,7 +48,7 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
                     });
                 }
                 _context = item.Source.Context;
-                _project = item.Source.GetProject(api.Repository);
+                _project = api.Api?.GetProject(item.Source);
                 _tickleDate = item.Source.TickleDate;
             }
         }

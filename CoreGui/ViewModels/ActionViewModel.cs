@@ -195,12 +195,14 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
                     toolTip.AppendLine($"#upvotes:{UpVotes}");
                 }
 
-                toolTip.AppendLine($"#depth:{Source.GetRankDepth(Api.Repository)}");
+                var depth = Api.Api != null ? Api.Api.GetDepthsView().TryGetValue(Source.ID, out var foundDepth) ? foundDepth : 0 : 0;
+                toolTip.AppendLine($"#depth:{depth}");
 
                 toolTip.AppendLine($"#ID:{Source.ID}");
                 if (Source.ProjectId != null)
                 {
-                    toolTip.AppendLine($"#project:{Source.GetProject(Api.Repository).Title}");
+                    var project = Api.Api?.GetProject(Source);
+                    toolTip.AppendLine($"#project:{project?.Title ?? "<unknown>"}");
                 }
 
                 return toolTip.ToString().TrimEnd();
@@ -262,7 +264,7 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
 
         public ICommand OpenUrlCommand => _openUrlCommand ?? (_openUrlCommand = new RelayCommand<string>(OpenUrlExecuted, s => !string.IsNullOrEmpty(s)));
 
-        public ICommand BumpCommand => _bumpCommand ?? (_bumpCommand = new RelayCommand(BumpExecuted, () => this.Source.GetRankDepth(Api.Repository) > 0));
+        public ICommand BumpCommand => _bumpCommand ?? (_bumpCommand = new RelayCommand(BumpExecuted, () => Api.Api != null && Api.Api.GetDepthsView().TryGetValue(Source.ID, out var depth) && depth > 0));
 
         public ICommand MoveToContextCommand => _moveToContextCommand ?? (_moveToContextCommand = new RelayCommand<ContextViewModel>(MoveToContextExecuted));
 
@@ -418,17 +420,18 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
 
         private void BumpExecuted()
         {
-            var targetParentDepth = (Source.GetRankDepth(Api.Repository) / 2) - 1;
+            var depths = Api.Api?.GetDepthsView() ?? new Dictionary<Guid, int>();
+            var targetParentDepth = depths.TryGetValue(Source.ID, out var currentDepth) ? (currentDepth / 2) - 1 : -1;
             if (targetParentDepth < 0)
             {
                 Source.ParentId = null;
             }
             else
             {
-                var newParent = Source.GetParent(Api.Repository);
-                while (newParent != null && newParent.GetRankDepth(Api.Repository) > targetParentDepth && newParent.ParentId != null)
+                var newParent = Api.Api?.GetParent(Source);
+                while (newParent != null && (Api.Api?.GetDepthsView().TryGetValue(newParent.ID, out var newParentDepth) ?? false) && newParentDepth > targetParentDepth && newParent.ParentId != null)
                 {
-                    newParent = newParent.GetParent(Api.Repository);
+                    newParent = Api.Api?.GetParent(newParent);
                 }
 
                 if (newParent != null) Source.ParentId = newParent.ID;
