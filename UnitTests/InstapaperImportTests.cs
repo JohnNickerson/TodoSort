@@ -97,7 +97,7 @@ public class InstapaperImportTests
             IsDeleted = false,
             Done = true
         });
-        ViewModel viewModel = new(mockRepository);
+        TodoService viewModel = new(mockRepository);
 
         // Act
         var importer = new InstapaperImporter("c:\\Downloads\\instapaper.csv", mockFileSystem);
@@ -109,7 +109,7 @@ public class InstapaperImportTests
             item.Tags.ContainsKey("url") &&
             item.Tags["url"] == "https://theoatmeal.com:443/"
         );
-        
+
         // Existing items should not be re-imported (deduplication by ImportHash)
         var allItems = mockRepository.FindAll().ToList();
         Assert.NotNull(allItems);

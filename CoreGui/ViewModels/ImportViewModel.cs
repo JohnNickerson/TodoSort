@@ -10,7 +10,7 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
 {
     public class ImportViewModel : ObservableObject
     {
-        private readonly ViewModel _vm;
+        private readonly TodoService _vm;
         private readonly IDialogWindow _view;
         private readonly INavigationService _navigationService;
         private string? _fileName;
@@ -20,7 +20,7 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
         private RelayCommand? _cancelCommand;
         private RelayCommand? _browseCommand;
 
-        public ImportViewModel(Core.ViewModel vm, IDialogWindow view, INavigationService navigationService)
+        public ImportViewModel(Core.TodoService vm, IDialogWindow view, INavigationService navigationService)
         {
             _vm = vm;
             _view = view;

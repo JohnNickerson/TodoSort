@@ -74,7 +74,7 @@ public class ImportExportController
         repo.SaveChanges();
     }
 
-    public void Import(ImportSubOptions importOptions, ViewModel vm, ITodoRepository repo)
+    public void Import(ImportSubOptions importOptions, TodoService vm, ITodoRepository repo)
     {
         IImporter? importer = null;
         switch (importOptions.Format)

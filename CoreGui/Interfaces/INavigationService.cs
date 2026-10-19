@@ -9,12 +9,12 @@ public interface INavigationService
     void CloseApplication();
     void CopyToClipboard(string v);
     AddUrlDialogResult ShowAddUrlView(MainViewModel mainViewModel);
-    void ShowBalanceView(ViewModel api);
+    void ShowBalanceView(TodoService api);
     ItemDialogResult ShowEditView(MainViewModel mainViewModel, ActionViewModel? item);
     FileDialogResult ShowImportFileDialog(ImportFileType fileType);
-    void ShowImportView(ViewModel api);
+    void ShowImportView(TodoService api);
     bool? ShowMessageBox(string message, string title, bool allowCancel = false);
     FileDialogResult ShowOpenFileDialog(bool checkFileExists = true);
     FolderDialogResult ShowOpenFolderDialog(string folder);
-    void ShowRankView(List<ActionViewModel> items, ViewModel api);
+    void ShowRankView(List<ActionViewModel> items, TodoService api);
 }

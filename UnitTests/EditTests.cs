@@ -22,7 +22,7 @@ public class EditTests
         var fileSystem = new System.IO.Abstractions.TestingHelpers.MockFileSystem();
         var mapper = new ActionItemDiskMapper(FileName);
         var repo = new Core.Data.TodoRepository(mapper, Path.GetDirectoryName(FileName), Environment.MachineName);
-        var _api = new Core.ViewModel(repo);
+        var _api = new Core.TodoService(repo);
 
         // Act
         item.Tags = editVmTags.ToDictionary(k => k.Tag, v => v.Value);

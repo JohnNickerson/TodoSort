@@ -14,9 +14,9 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
         private RelayCommand? _goCommand;
         private RelayCommand? _cancelCommand;
         public IDialogWindow? _view;
-        private ViewModel? _vm;
+        private TodoService? _vm;
 
-        public BalanceViewModel(IDialogWindow view, Core.ViewModel vm)
+        public BalanceViewModel(IDialogWindow view, Core.TodoService vm)
         {
             _view = view;
             _vm = vm;

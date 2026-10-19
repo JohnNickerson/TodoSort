@@ -26,7 +26,7 @@ namespace AssimilationSoftware.TodoSort.CLI
             var repo = new TodoRepository(todoMapper, Path.GetDirectoryName(f.TodoPath), Environment.MachineName);
             var consoleView = new ConsoleItemDisplay();
 
-            var vm = new ViewModel(repo);
+            var vm = new TodoService(repo);
 
 
             var types = Assembly.GetExecutingAssembly().GetTypes().Where(t => t.GetCustomAttribute<VerbAttribute>() != null).ToArray();

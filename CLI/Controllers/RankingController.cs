@@ -18,7 +18,7 @@ public class RankingController
         _view = view;
     }
 
-    public void Balance(BalanceOptions balanceOpts, ViewModel vm, TodoRepository repo)
+    public void Balance(BalanceOptions balanceOpts, TodoService vm, TodoRepository repo)
     {
         vm.ShowHeadOnly = false;
         if (balanceOpts.Verbose)
@@ -50,7 +50,7 @@ public class RankingController
         repo.SaveChanges();
     }
 
-    public void Bump(BumpOptions bumpOpts, ViewModel vm, TodoRepository repo)
+    public void Bump(BumpOptions bumpOpts, TodoService vm, TodoRepository repo)
     {
         vm.ShowHeadOnly = !bumpOpts.ShowAllItems;
         vm.SearchSpecification = bumpOpts.SearchSpecification;
@@ -96,7 +96,7 @@ public class RankingController
         repo.SaveChanges();
     }
 
-    public void Rank(MultiSearchSubOptions rankOptions, ViewModel vm, TodoRepository repo)
+    public void Rank(MultiSearchSubOptions rankOptions, TodoService vm, TodoRepository repo)
     {
         // for each context..
         var quitAndSave = false;
@@ -163,7 +163,7 @@ public class RankingController
         repo.SaveChanges();
     }
 
-    public void SetParent(SetParentSubOptions setParentOptions, ViewModel vm, TodoRepository repo)
+    public void SetParent(SetParentSubOptions setParentOptions, TodoService vm, TodoRepository repo)
     {
         vm.ShowHeadOnly = !setParentOptions.ShowAllItems;
 
@@ -198,7 +198,7 @@ public class RankingController
         repo.SaveChanges();
     }
 
-    public void Unrank(UnRankOptions unrankOptions, ViewModel vm, TodoRepository repo)
+    public void Unrank(UnRankOptions unrankOptions, TodoService vm, TodoRepository repo)
     {
         vm.ShowHeadOnly = !unrankOptions.ShowAllItems;
 
@@ -212,7 +212,7 @@ public class RankingController
         }
     }
 
-    public void UnrankAll(UnrankAllOptions unrankAllOptions, ViewModel vm, TodoRepository repo)
+    public void UnrankAll(UnrankAllOptions unrankAllOptions, TodoService vm, TodoRepository repo)
     {
         vm.ShowHeadOnly = false;
 

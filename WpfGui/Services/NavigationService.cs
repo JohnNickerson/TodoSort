@@ -28,7 +28,7 @@ public class NavigationService : INavigationService
         return new AddUrlDialogResult { DialogResult = result, Url = addVm.Url, Title = addVm.Title, Context = addVm.SelectedContext };
     }
 
-    public void ShowBalanceView(ViewModel api)
+    public void ShowBalanceView(TodoService api)
     {
         var balanceView = new BalanceView();
         var balanceVm = new BalanceViewModel(balanceView, api);
@@ -72,7 +72,7 @@ public class NavigationService : INavigationService
         return new FileDialogResult { DialogResult = result, FileName = dlg.FileName };
     }
 
-    public void ShowImportView(ViewModel api)
+    public void ShowImportView(TodoService api)
     {
         var importView = new ImportView();
         var importVm = new ImportViewModel(api, importView, this);
@@ -121,7 +121,7 @@ public class NavigationService : INavigationService
         return new FolderDialogResult { DialogResult = answer == DialogResult.OK, SelectedPath = fdlg.SelectedPath };
     }
 
-    public void ShowRankView(List<ActionViewModel> items, Core.ViewModel api)
+    public void ShowRankView(List<ActionViewModel> items, Core.TodoService api)
     {
         var rv = new RankView();
         var rvm = new RankViewModel(items, rv, api);

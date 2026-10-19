@@ -29,7 +29,7 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
         private const int CommitLimit = 256;
 
         private ITodoRepository? _repo;
-        private ViewModel? _api;
+        private TodoService? _api;
 
         private RelayCommand<string>? _openRecentCommand;
         private RelayCommand? _rankCommand;
@@ -127,7 +127,7 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
                         throw new InvalidOperationException($"Cannot determine directory for file: {FileName}");
                     }
                     _repo = new TodoRepository(new ActionItemDiskMapper(FileName), directoryName, Environment.MachineName);
-                    _api = new ViewModel(_repo);
+                    _api = new TodoService(_repo);
                 });
 
                 if (_api?.SomedayItems != null)
@@ -1002,7 +1002,7 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
 
         public IRepository<ActionItem> Repository => _repo;
 
-        public ViewModel Api => _api;
+        public TodoService Api => _api;
 
         public ContextViewModel? SearchContext
         {

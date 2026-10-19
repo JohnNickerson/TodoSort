@@ -21,7 +21,7 @@ public class NavigationController
         p.Start();
     }
 
-    public void OpenTag(OpenTagSubOptions openTagOptions, ViewModel vm, TodoRepository repo)
+    public void OpenTag(OpenTagSubOptions openTagOptions, TodoService vm, TodoRepository repo)
     {
         vm.ShowHeadOnly = !openTagOptions.ShowAllItems;
 

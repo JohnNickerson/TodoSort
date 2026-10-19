@@ -130,7 +130,7 @@ public class IntegrityController
         repo.SaveChanges();
     }
 
-    public void Dedupe(DedupeOptions dupe, ViewModel vm, TodoRepository repo)
+    public void Dedupe(DedupeOptions dupe, TodoService vm, TodoRepository repo)
     {
         vm.ShowHeadOnly = !dupe.ShowAllItems;
 
@@ -192,7 +192,7 @@ public class IntegrityController
         var totalCount = 0;
         var searchResults = repo.Search(fixOptions.GetSearchSpecification(), false);
         decimal progressTotal = searchResults.Count();
-        
+
         if (progressTotal == 0)
         {
             _view.WriteLine("No items found to fix.");

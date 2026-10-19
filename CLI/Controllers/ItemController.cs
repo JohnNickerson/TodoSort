@@ -16,7 +16,7 @@ public class ItemController
         _view = view;
     }
 
-    public void AddItem(AddSubOptions a, ViewModel vm, TodoRepository repo)
+    public void AddItem(AddSubOptions a, TodoService vm, TodoRepository repo)
     {
         vm.ShowHeadOnly = false;
         var selected = new ActionItem { Context = a.Context, Title = a.ActionTitle };
@@ -45,24 +45,24 @@ public class ItemController
         }
     }
 
-    public void Merge(MergeSubOptions mergeOptions, ViewModel vm, TodoRepository repo)
+    public void Merge(MergeSubOptions mergeOptions, TodoService vm, TodoRepository repo)
+    {
+        _view.WriteLine("Confirm child item:");
+        vm.SearchTerm = mergeOptions.ChildSearchTerm ?? mergeOptions.TargetSearchTerm;
+        var mergeVictim = _view.Disambiguate(vm.SearchResults, repo);
+        if (mergeVictim != null)
         {
-            _view.WriteLine("Confirm child item:");
-            vm.SearchTerm = mergeOptions.ChildSearchTerm ?? mergeOptions.TargetSearchTerm;
-            var mergeVictim = _view.Disambiguate(vm.SearchResults, repo);
-            if (mergeVictim != null)
+            _view.WriteLine("Confirm item to merge into:");
+            vm.SearchTerm = mergeOptions.TargetSearchTerm;
+            var combined = _view.Disambiguate(vm.SearchResults.Where(x => x.ID != mergeVictim.ID), repo);
+            if (mergeVictim != null && combined != null)
             {
-                _view.WriteLine("Confirm item to merge into:");
-                vm.SearchTerm = mergeOptions.TargetSearchTerm;
-                var combined = _view.Disambiguate(vm.SearchResults.Where(x => x.ID != mergeVictim.ID), repo);
-                if (mergeVictim != null && combined != null)
-                {
-                    vm.Merge(mergeVictim, combined);
-                    _view.PrintItem(combined, null, repo, false, mergeOptions.Verbose);
-                    repo.SaveChanges();
-                }
+                vm.Merge(mergeVictim, combined);
+                _view.PrintItem(combined, null, repo, false, mergeOptions.Verbose);
+                repo.SaveChanges();
             }
         }
+    }
 
     public void Move(MoveSubOptions moveOptions, TodoRepository repo)
     {
@@ -190,7 +190,7 @@ public class ItemController
 
         repo.SaveChanges();
     }
-        
+
     private void TagItem(TodoRepository repo, ActionItem selected)
     {
         string? tagName;

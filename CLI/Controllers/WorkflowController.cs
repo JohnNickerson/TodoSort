@@ -14,7 +14,7 @@ public class WorkflowController
         _view = view;
     }
 
-    public void Defer(DeferSubOptions deferOpts, ViewModel vm, TodoRepository repo)
+    public void Defer(DeferSubOptions deferOpts, TodoService vm, TodoRepository repo)
     {
         vm.ShowHeadOnly = !deferOpts.ShowAllItems;
 
@@ -35,7 +35,7 @@ public class WorkflowController
         }
     }
 
-    public void DeferAll(DeferAllOptions pruneOptions, ViewModel vm, TodoRepository repo)
+    public void DeferAll(DeferAllOptions pruneOptions, TodoService vm, TodoRepository repo)
     {
         vm.ShowHeadOnly = false;
 
@@ -50,7 +50,7 @@ public class WorkflowController
         repo.SaveChanges();
     }
 
-    public void Done(DoneSubOptions doneOpts, ViewModel vm, TodoRepository repo)
+    public void Done(DoneSubOptions doneOpts, TodoService vm, TodoRepository repo)
     {
         vm.ShowHeadOnly = !doneOpts.ShowAllItems;
 
@@ -65,7 +65,7 @@ public class WorkflowController
         }
     }
 
-    public void Undefer(UndeferOptions undeferOptions, ViewModel vm, TodoRepository repo)
+    public void Undefer(UndeferOptions undeferOptions, TodoService vm, TodoRepository repo)
     {
         vm.ShowHeadOnly = !undeferOptions.ShowAllItems;
 
@@ -79,7 +79,7 @@ public class WorkflowController
         }
     }
 
-    public void Undo(UndoSubOptions undoOptions, ViewModel vm, TodoRepository repo)
+    public void Undo(UndoSubOptions undoOptions, TodoService vm, TodoRepository repo)
     {
         vm.ShowHeadOnly = !undoOptions.ShowAllItems;
 

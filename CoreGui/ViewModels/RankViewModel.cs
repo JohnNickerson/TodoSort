@@ -11,7 +11,7 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
 
         private int _currentIndex;
         private IDialogWindow? _view;
-        private Core.ViewModel? _api;
+        private Core.TodoService? _api;
 
         private RelayCommand? _backCommand;
         private RelayCommand? _forwardCommand;
@@ -23,7 +23,7 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
 
         #region Constructors
 
-        public RankViewModel(List<ActionViewModel> items, IDialogWindow rv, Core.ViewModel api)
+        public RankViewModel(List<ActionViewModel> items, IDialogWindow rv, Core.TodoService api)
         {
             _view = rv;
             _api = api;

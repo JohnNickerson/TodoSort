@@ -17,7 +17,7 @@ public class SearchController
     {
         _view = view;
     }
-    
+
     public void AdvancedSearch(AdvancedSearchOptions argSubs, TodoRepository repo)
     {
         var searchResults = repo.Search(argSubs.SearchSpecification, argSubs.ShowAllItems);
@@ -69,7 +69,7 @@ public class SearchController
         }
     }
 
-    public void Summary(UniversalOptions summaryArgs, ViewModel vm)
+    public void Summary(UniversalOptions summaryArgs, TodoService vm)
     {
         vm.ShowHeadOnly = !summaryArgs.Verbose && !summaryArgs.ShowAllItems;
 

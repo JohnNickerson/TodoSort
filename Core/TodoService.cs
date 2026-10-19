@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace AssimilationSoftware.TodoSort.Core
 {
-    public class ViewModel
+    public class TodoService
     {
         #region Fields
 
@@ -25,7 +25,7 @@ namespace AssimilationSoftware.TodoSort.Core
 
         #endregion
 
-        public ViewModel(ITodoRepository repo)
+        public TodoService(ITodoRepository repo)
         {
             _repository = repo;
             SearchSpecification = null;
