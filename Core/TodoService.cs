@@ -544,10 +544,10 @@ namespace AssimilationSoftware.TodoSort.Core
             var parents = SearchResults.ToDictionary(ki => ki.ID, v => v.ParentId);
             // 2. Process parents dictionary for depths.
             var depths = new Dictionary<Guid, int>();
-            var proq = new Queue<Guid>(parents.Keys);
-            while (proq.Count > 0)
+            var processQueue = new Queue<Guid>(parents.Keys);
+            while (processQueue.Count > 0)
             {
-                var child = proq.Dequeue();
+                var child = processQueue.Dequeue();
                 if (depths.ContainsKey(child))
                 {
                     // skip it.
