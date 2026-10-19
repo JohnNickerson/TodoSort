@@ -20,9 +20,9 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
         private RelayCommand? _cancelCommand;
         private RelayCommand? _browseCommand;
 
-        public ImportViewModel(Core.TodoService vm, IDialogWindow view, INavigationService navigationService)
+        public ImportViewModel(TodoService svc, IDialogWindow view, INavigationService navigationService)
         {
-            _vm = vm;
+            _vm = svc;
             _view = view;
             _navigationService = navigationService;
             _targetContext = "import";

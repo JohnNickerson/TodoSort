@@ -20,13 +20,13 @@ public class NavigationController
         p.Start();
     }
 
-    public void OpenTag(OpenTagSubOptions openTagOptions, TodoService vm)
+    public void OpenTag(OpenTagSubOptions openTagOptions, TodoService svc)
     {
-        vm.ShowHeadOnly = !openTagOptions.ShowAllItems;
+        svc.ShowHeadOnly = !openTagOptions.ShowAllItems;
 
         // Read a tag and pass it through to the "start" argVerb. Intended for URLs and file names.
-        vm.SearchSpecification = openTagOptions.SearchSpecification;
-        var selected = _view.Disambiguate(vm.SearchResults, vm, !string.IsNullOrEmpty(openTagOptions.ItemId));
+        svc.SearchSpecification = openTagOptions.SearchSpecification;
+        var selected = _view.Disambiguate(svc.SearchResults, svc, !string.IsNullOrEmpty(openTagOptions.ItemId));
         if (selected != null)
         {
             if (selected.Tags.TryGetValue(openTagOptions.Tag ?? string.Empty, out string? tagValue))
@@ -46,20 +46,20 @@ public class NavigationController
                     var newTitle = Console.ReadLine();
                     if (!string.IsNullOrWhiteSpace(newTitle))
                     {
-                        vm.Rename(selected, newTitle);
+                        svc.Rename(selected, newTitle);
                     }
                 }
                 if (openTagOptions.MarkAsDone)
                 {
-                    vm.MarkDone(null, selected);
+                    svc.MarkDone(null, selected);
                 }
             }
             else
             {
                 _view.WriteLine("Tag not found: {0}", openTagOptions.Tag);
             }
-            _view.PrintItem(selected, null, vm, false, openTagOptions.Verbose);
-            vm.Save();
+            _view.PrintItem(selected, null, svc, false, openTagOptions.Verbose);
+            svc.Save();
         }
     }
 }

@@ -16,10 +16,10 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
         public IDialogWindow? _view;
         private TodoService? _vm;
 
-        public BalanceViewModel(IDialogWindow view, Core.TodoService vm)
+        public BalanceViewModel(IDialogWindow view, Core.TodoService svc)
         {
             _view = view;
-            _vm = vm;
+            _vm = svc;
             var contexts = new List<BranchOption>();
             foreach (var contextName in _vm.GetContextNames("Search", "someday", "done"))
             {

@@ -17,27 +17,27 @@ public class SearchController
         _view = view;
     }
 
-    public void AdvancedSearch(AdvancedSearchOptions argSubs, TodoService vm)
+    public void AdvancedSearch(AdvancedSearchOptions argSubs, TodoService svc)
     {
-        var searchResults = vm.Search(argSubs.SearchSpecification, argSubs.ShowAllItems);
-        _view.PrintItems("title", searchResults, vm, argSubs.NSFW, argSubs.Verbose);
+        var searchResults = svc.Search(argSubs.SearchSpecification, argSubs.ShowAllItems);
+        _view.PrintItems("title", searchResults, svc, argSubs.NSFW, argSubs.Verbose);
     }
 
-    public void Search(SearchOptions searchOptions, TodoService vm)
+    public void Search(SearchOptions searchOptions, TodoService svc)
     {
-        vm.SearchSpecification = searchOptions.GetSearchSpecification();
-        var searchResults = vm.SearchResults;
+        svc.SearchSpecification = searchOptions.GetSearchSpecification();
+        var searchResults = svc.SearchResults;
         if (searchResults.Count() == 0)
         {
             _view.WriteLine("No results found.");
         }
         else if (searchOptions.PrintTree)
         {
-            _view.PrintTree(searchResults.ToList(), new List<ActionItem>(), vm, searchOptions.NSFW, searchOptions.Verbose);
+            _view.PrintTree(searchResults.ToList(), new List<ActionItem>(), svc, searchOptions.NSFW, searchOptions.Verbose);
         }
         else
         {
-            _view.PrintItems(searchOptions.SortTag ?? string.Empty, searchResults, vm, searchOptions.NSFW, searchOptions.Verbose);
+            _view.PrintItems(searchOptions.SortTag ?? string.Empty, searchResults, svc, searchOptions.NSFW, searchOptions.Verbose);
             if (!searchOptions.NoCount)
             {
                 _view.WriteLine("{0} item(s) found.", searchResults.Count());
@@ -45,34 +45,34 @@ public class SearchController
         }
     }
 
-    public void SearchDone(DoneSearchSubOptions search, TodoService vm)
+    public void SearchDone(DoneSearchSubOptions search, TodoService svc)
     {
-        vm.DoneSearchSpecification = search.GetSearchSpecification();
-        var doneSearchResults = vm.DoneSearchResults;
-        _view.PrintItems(search.SortTag ?? "done-date", doneSearchResults, vm, search.NSFW, search.Verbose);
+        svc.DoneSearchSpecification = search.GetSearchSpecification();
+        var doneSearchResults = svc.DoneSearchResults;
+        _view.PrintItems(search.SortTag ?? "done-date", doneSearchResults, svc, search.NSFW, search.Verbose);
         if (!search.NoCount)
         {
             _view.WriteLine("{0} item(s) found.", doneSearchResults.Count());
         }
     }
 
-    public void SearchSomeday(SomedaySearchSubOptions search, TodoService vm)
+    public void SearchSomeday(SomedaySearchSubOptions search, TodoService svc)
     {
-        vm.SomedaySearchSpecification = search.GetSearchSpecification();
-        var somedaySearchResults = vm.SomedaySearchResults;
-        _view.PrintItems(search.SortTag ?? "tickle-date", somedaySearchResults, vm, search.NSFW, search.Verbose);
+        svc.SomedaySearchSpecification = search.GetSearchSpecification();
+        var somedaySearchResults = svc.SomedaySearchResults;
+        _view.PrintItems(search.SortTag ?? "tickle-date", somedaySearchResults, svc, search.NSFW, search.Verbose);
         if (!search.NoCount)
         {
             _view.WriteLine("{0} item(s) found.", somedaySearchResults.Count());
         }
     }
 
-    public void Summary(UniversalOptions summaryArgs, TodoService vm)
+    public void Summary(UniversalOptions summaryArgs, TodoService svc)
     {
-        vm.ShowHeadOnly = !summaryArgs.Verbose && !summaryArgs.ShowAllItems;
+        svc.ShowHeadOnly = !summaryArgs.Verbose && !summaryArgs.ShowAllItems;
 
-        vm.SearchSpecification = new TrueSpecification<ActionItem>();
-        var summaryData = from i in vm.SearchResults group i by i.Context into c select new { Context = c.Key, Count = c.Count() };
+        svc.SearchSpecification = new TrueSpecification<ActionItem>();
+        var summaryData = from i in svc.SearchResults group i by i.Context into c select new { Context = c.Key, Count = c.Count() };
 
         var table = new Table();
         table.AddColumn(new TableColumn("Context").Padding(2, 0));
@@ -91,12 +91,12 @@ public class SearchController
             if (summaryArgs.Verbose)
             {
                 // Show a summary of numbers at each depth.
-                vm.SearchSpecification = new ContextSearchSpecification(c.Context);
-                var depths = vm.GetDepthsView();
+                svc.SearchSpecification = new ContextSearchSpecification(c.Context);
+                var depths = svc.GetDepthsView();
 
                 var detailed = new Dictionary<int, int>();
                 var unknownCount = 0;
-                foreach (var i in vm.SearchResults)
+                foreach (var i in svc.SearchResults)
                 {
                     if (depths.ContainsKey(i.ID))
                     {

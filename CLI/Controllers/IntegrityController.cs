@@ -19,11 +19,11 @@ public class IntegrityController
         _view = view;
     }
 
-    public void CheckChain(CheckChainOptions chainOptions, TodoService vm)
+    public void CheckChain(CheckChainOptions chainOptions, TodoService svc)
     {
         var problemsFound = 0;
 
-        var searchResults = vm.Search(chainOptions.GetSearchSpecification(), true);
+        var searchResults = svc.Search(chainOptions.GetSearchSpecification(), true);
         // 1. Make sure there is at least one item.
         if (!searchResults.Any())
         {
@@ -39,7 +39,7 @@ public class IntegrityController
             if (Guid.TryParse(chainOptions.ProjectID, out var projId))
             {
                 // Look for a "length" tag on the project.
-                var project = vm.Find(projId);
+                var project = svc.Find(projId);
                 if (project.Tags.TryGetValue("length", out var maxString))
                 {
                     max = int.Parse(maxString);
@@ -70,7 +70,7 @@ public class IntegrityController
             foreach (var excluded in searchResults.Where(i => !i.Tags.ContainsKey("order") || (!i.Tags.ContainsKey("series") && !i.ProjectId.HasValue)))
             {
                 _view.WriteLine("Item potentially excluded:");
-                _view.PrintItem(excluded, null, vm, chainOptions.NSFW, chainOptions.Verbose);
+                _view.PrintItem(excluded, null, svc, chainOptions.NSFW, chainOptions.Verbose);
                 problemsFound++;
             }
         }
@@ -80,12 +80,12 @@ public class IntegrityController
             Console.ReadKey();
         }
 
-        vm.Save();
+        svc.Save();
     }
 
-    public void Commit(CommitOptions opts, TodoService vm)
+    public void Commit(CommitOptions opts, TodoService svc)
     {
-        var conflicts = vm.FindConflicts();
+        var conflicts = svc.FindConflicts();
         foreach (var conflictSet in conflicts)
         {
             // Present conflicts for resolution.
@@ -93,7 +93,7 @@ public class IntegrityController
             _view.WriteLine("Updates:");
             foreach (var edit in conflictSet.Updates)
             {
-                _view.PrintItem(edit, i, vm, opts.NSFW, opts.Verbose);
+                _view.PrintItem(edit, i, svc, opts.NSFW, opts.Verbose);
                 i++;
             }
             // Present options: Delete, Update (one particular version), Revert.
@@ -105,10 +105,10 @@ public class IntegrityController
             switch (optKey.KeyChar.ToString().ToLower())
             {
                 case "r":
-                    vm.Revert(conflictSet.Id);
+                    svc.Revert(conflictSet.Id);
                     break;
                 case "d":
-                    vm.ResolveByDelete(conflictSet.Id);
+                    svc.ResolveByDelete(conflictSet.Id);
                     break;
                 default:
                     if (char.IsDigit(optKey.KeyChar))
@@ -116,7 +116,7 @@ public class IntegrityController
                         var index = int.Parse(optKey.KeyChar.ToString());
                         if (index < conflictSet.Updates.Count)
                         {
-                            vm.ResolveConflict(conflictSet.Updates[index]);
+                            svc.ResolveConflict(conflictSet.Updates[index]);
                         }
                     }
                     break;
@@ -124,25 +124,25 @@ public class IntegrityController
 
             _view.WriteLine(Environment.NewLine);
         }
-        var commitCount = vm.CommitChanges();
+        var commitCount = svc.CommitChanges();
         _view.WriteLine($"{commitCount} pending changes committed.");
-        vm.Save();
+        svc.Save();
     }
 
-    public void Dedupe(DedupeOptions dupe, TodoService vm)
+    public void Dedupe(DedupeOptions dupe, TodoService svc)
     {
-        vm.ShowHeadOnly = !dupe.ShowAllItems;
+        svc.ShowHeadOnly = !dupe.ShowAllItems;
 
-        vm.SearchSpecification = new TrueSpecification<ActionItem>();
-        foreach (var duplicate in vm.GetDuplicateTitles())
+        svc.SearchSpecification = new TrueSpecification<ActionItem>();
+        foreach (var duplicate in svc.GetDuplicateTitles())
         {
             // Search by title
-            vm.SearchSpecification = new ExactPropertyValueSpecification<ActionItem, string>(i => i.Title, duplicate);
+            svc.SearchSpecification = new ExactPropertyValueSpecification<ActionItem, string>(i => i.Title, duplicate);
             // Quick hack: If we have two items with the same title but different type tags, skip them.
-            if (vm.SearchResults.Count() == 2 &&
-                vm.SearchResults.All(i => i.Tags.ContainsKey("type")) &&
-                vm.SearchResults.ElementAt(0).Tags["type"].ToLower() !=
-                vm.SearchResults.ElementAt(1).Tags["type"].ToLower())
+            if (svc.SearchResults.Count() == 2 &&
+                svc.SearchResults.All(i => i.Tags.ContainsKey("type")) &&
+                svc.SearchResults.ElementAt(0).Tags["type"].ToLower() !=
+                svc.SearchResults.ElementAt(1).Tags["type"].ToLower())
             {
                 continue;
             }
@@ -150,46 +150,46 @@ public class IntegrityController
             // Get user input
             _view.WriteLine();
             _view.WriteLine("Select one item to merge all others into (or Cancel to stop):");
-            var survivor = _view.Disambiguate(vm.SearchResults, vm, includeCancel: true);
+            var survivor = _view.Disambiguate(svc.SearchResults, svc, includeCancel: true);
             if (survivor != null)
             {
                 // Merge all into survivor.
-                foreach (var c in vm.SearchResults.Except(new[] { survivor }).ToList())
+                foreach (var c in svc.SearchResults.Except(new[] { survivor }).ToList())
                 {
-                    vm.Merge(c, survivor);
+                    svc.Merge(c, survivor);
                 }
             }
         }
         if (!string.IsNullOrEmpty(dupe.Tag))
         {
-            foreach (var dupeTag in vm.GetDuplicateTags(dupe.Tag))
+            foreach (var dupeTag in svc.GetDuplicateTags(dupe.Tag))
             {
                 // Search by tag
-                vm.SearchSpecification = new TagValueSpecification(dupe.Tag, dupeTag);
+                svc.SearchSpecification = new TagValueSpecification(dupe.Tag, dupeTag);
                 // Present options for merging
                 // Get user input.
                 _view.WriteLine();
                 _view.WriteLine("Select one item to merge all others into (i = ignore):");
-                var survivor = _view.Disambiguate(vm.SearchResults, vm);
+                var survivor = _view.Disambiguate(svc.SearchResults, svc);
                 if (survivor != null)
                 {
                     // Merge into survivor.
-                    foreach (var c in vm.SearchResults.Except(new[] { survivor }).ToList())
+                    foreach (var c in svc.SearchResults.Except(new[] { survivor }).ToList())
                     {
-                        vm.Merge(c, survivor);
+                        svc.Merge(c, survivor);
                     }
                 }
             }
         }
-        vm.Save();
+        svc.Save();
     }
 
-    public void FixTitles(FixTitlesOptions fixOptions, TodoService vm)
+    public void FixTitles(FixTitlesOptions fixOptions, TodoService svc)
     {
         var client = new HttpClient(); // new RedirectWebClient();
 
         var totalCount = 0;
-        var searchResults = vm.Search(fixOptions.GetSearchSpecification(), false);
+        var searchResults = svc.Search(fixOptions.GetSearchSpecification(), false);
         decimal progressTotal = searchResults.Count();
 
         if (progressTotal == 0)
@@ -226,7 +226,7 @@ public class IntegrityController
                             tem.Context = fixOptions.MoveTo;
                         }
 
-                        vm.Update(tem);
+                        svc.Update(tem);
                     }
                 }
                 catch (Exception e)
@@ -241,6 +241,6 @@ public class IntegrityController
             _view.WriteLine("{0} items updated.", totalCount);
         }
 
-        vm.Save();
+        svc.Save();
     }
 }
