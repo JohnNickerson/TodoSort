@@ -1,7 +1,6 @@
 using AssimilationSoftware.TodoSort.CLI.Interfaces;
 using AssimilationSoftware.TodoSort.CLI.Options;
 using AssimilationSoftware.TodoSort.Core;
-using AssimilationSoftware.TodoSort.Core.Data;
 
 namespace AssimilationSoftware.TodoSort.CLI.Controllers;
 
@@ -21,7 +20,7 @@ public class NavigationController
         p.Start();
     }
 
-    public void OpenTag(OpenTagSubOptions openTagOptions, TodoService vm, TodoRepository repo)
+    public void OpenTag(OpenTagSubOptions openTagOptions, TodoService vm)
     {
         vm.ShowHeadOnly = !openTagOptions.ShowAllItems;
 

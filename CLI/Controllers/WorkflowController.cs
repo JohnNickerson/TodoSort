@@ -1,7 +1,6 @@
 using AssimilationSoftware.TodoSort.CLI.Interfaces;
 using AssimilationSoftware.TodoSort.CLI.Options;
 using AssimilationSoftware.TodoSort.Core;
-using AssimilationSoftware.TodoSort.Core.Data;
 
 namespace AssimilationSoftware.TodoSort.CLI.Controllers;
 
@@ -14,7 +13,7 @@ public class WorkflowController
         _view = view;
     }
 
-    public void Defer(DeferSubOptions deferOpts, TodoService vm, TodoRepository repo)
+    public void Defer(DeferSubOptions deferOpts, TodoService vm)
     {
         vm.ShowHeadOnly = !deferOpts.ShowAllItems;
 
@@ -35,7 +34,7 @@ public class WorkflowController
         }
     }
 
-    public void DeferAll(DeferAllOptions pruneOptions, TodoService vm, TodoRepository repo)
+    public void DeferAll(DeferAllOptions pruneOptions, TodoService vm)
     {
         vm.ShowHeadOnly = false;
 
@@ -50,7 +49,7 @@ public class WorkflowController
         vm.Save();
     }
 
-    public void Done(DoneSubOptions doneOpts, TodoService vm, TodoRepository repo)
+    public void Done(DoneSubOptions doneOpts, TodoService vm)
     {
         vm.ShowHeadOnly = !doneOpts.ShowAllItems;
 
@@ -65,7 +64,7 @@ public class WorkflowController
         }
     }
 
-    public void Undefer(UndeferOptions undeferOptions, TodoService vm, TodoRepository repo)
+    public void Undefer(UndeferOptions undeferOptions, TodoService vm)
     {
         vm.ShowHeadOnly = !undeferOptions.ShowAllItems;
 
@@ -79,7 +78,7 @@ public class WorkflowController
         }
     }
 
-    public void Undo(UndoSubOptions undoOptions, TodoService vm, TodoRepository repo)
+    public void Undo(UndoSubOptions undoOptions, TodoService vm)
     {
         vm.ShowHeadOnly = !undoOptions.ShowAllItems;
 

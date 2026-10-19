@@ -79,7 +79,7 @@ public class EditTests
         var options = new DoneSearchSubOptions { Title = "Completed" };
 
         // Act
-        controller.SearchDone(options, service, repo);
+        controller.SearchDone(options, service);
 
         // Assert
         Assert.Single(view.Items);

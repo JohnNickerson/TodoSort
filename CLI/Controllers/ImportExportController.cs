@@ -2,7 +2,6 @@ using AssimilationSoftware.TodoSort.CLI.Enums;
 using AssimilationSoftware.TodoSort.CLI.Interfaces;
 using AssimilationSoftware.TodoSort.CLI.Options;
 using AssimilationSoftware.TodoSort.Core;
-using AssimilationSoftware.TodoSort.Core.Data;
 using AssimilationSoftware.TodoSort.Core.Export;
 using AssimilationSoftware.TodoSort.Core.Import;
 
@@ -17,7 +16,7 @@ public class ImportExportController
         _view = view;
     }
 
-    public void Export(ExportSubOptions exportOptions, TodoService vm, TodoRepository repo)
+    public void Export(ExportSubOptions exportOptions, TodoService vm)
     {
         // TODO: Write to the console if the filename is empty?
         if (string.IsNullOrEmpty(exportOptions.Filename))
@@ -74,7 +73,7 @@ public class ImportExportController
         vm.Save();
     }
 
-    public void Import(ImportSubOptions importOptions, TodoService vm, ITodoRepository repo)
+    public void Import(ImportSubOptions importOptions, TodoService vm)
     {
         IImporter? importer = null;
         switch (importOptions.Format)

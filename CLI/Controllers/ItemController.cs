@@ -2,7 +2,6 @@ using AssimilationSoftware.Maroon.Model;
 using AssimilationSoftware.TodoSort.CLI.Interfaces;
 using AssimilationSoftware.TodoSort.CLI.Options;
 using AssimilationSoftware.TodoSort.Core;
-using AssimilationSoftware.TodoSort.Core.Data;
 using AssimilationSoftware.TodoSort.Core.Search;
 
 namespace AssimilationSoftware.TodoSort.CLI.Controllers;
@@ -16,7 +15,7 @@ public class ItemController
         _view = view;
     }
 
-    public void AddItem(AddSubOptions a, TodoService vm, TodoRepository repo)
+    public void AddItem(AddSubOptions a, TodoService vm)
     {
         vm.ShowHeadOnly = false;
         var selected = new ActionItem { Context = a.Context, Title = a.ActionTitle };
@@ -32,7 +31,7 @@ public class ItemController
         vm.Save();
     }
 
-    public void Delete(DeleteOptions delOpts, TodoService vm, TodoRepository repo)
+    public void Delete(DeleteOptions delOpts, TodoService vm)
     {
         // Find a matching item to delete.
         var searchResults = vm.Search(delOpts.SearchSpecification, delOpts.ShowAllItems);
@@ -45,7 +44,7 @@ public class ItemController
         }
     }
 
-    public void Merge(MergeSubOptions mergeOptions, TodoService vm, TodoRepository repo)
+    public void Merge(MergeSubOptions mergeOptions, TodoService vm)
     {
         _view.WriteLine("Confirm child item:");
         vm.SearchTerm = mergeOptions.ChildSearchTerm ?? mergeOptions.TargetSearchTerm;
@@ -64,7 +63,7 @@ public class ItemController
         }
     }
 
-    public void Move(MoveSubOptions moveOptions, TodoService vm, TodoRepository repo)
+    public void Move(MoveSubOptions moveOptions, TodoService vm)
     {
         var searchResults = vm.Search(moveOptions.SearchSpecification, moveOptions.ShowAllItems);
         var selected = _view.Disambiguate(searchResults, vm, !string.IsNullOrEmpty(moveOptions.ItemId));
@@ -86,7 +85,7 @@ public class ItemController
         }
     }
 
-    public void MoveAll(MoveAllSubOptions moveAllOptions, TodoService vm, TodoRepository repo)
+    public void MoveAll(MoveAllSubOptions moveAllOptions, TodoService vm)
     {
         var items = vm.Search(moveAllOptions.GetSearchSpecification(), moveAllOptions.ShowAllItems).ToList();
         var counter = 0;
@@ -102,7 +101,7 @@ public class ItemController
         vm.Save();
     }
 
-    public void Note(NoteSubOptions noteOptions, TodoService vm, TodoRepository repo)
+    public void Note(NoteSubOptions noteOptions, TodoService vm)
     {
         // Add a note to a task.
         var searchResults = vm.Search(noteOptions.SearchSpecification, noteOptions.ShowAllItems);
@@ -116,7 +115,7 @@ public class ItemController
         }
     }
 
-    public void Rename(RenameSubOptions renameOptions, TodoService vm, TodoRepository repo)
+    public void Rename(RenameSubOptions renameOptions, TodoService vm)
     {
         var searchResults = vm.Search(renameOptions.SearchSpecification, renameOptions.ShowAllItems);
         var selected = _view.Disambiguate(searchResults, vm, !string.IsNullOrEmpty(renameOptions.ItemId));
@@ -134,7 +133,7 @@ public class ItemController
         }
     }
 
-    public void SetProject(SetProjectSubOptions commandOptions, TodoService vm, TodoRepository repo)
+    public void SetProject(SetProjectSubOptions commandOptions, TodoService vm)
     {
         _view.WriteLine("Confirm child item:");
         var childSearchResults = vm.Search(new FullTextSearchSpecification(commandOptions.ChildSearchTerm), commandOptions.ShowAllItems);
@@ -152,7 +151,7 @@ public class ItemController
         vm.Save();
     }
 
-    public void Tag(SingleSearchSubOptions tagOptions, TodoService vm, TodoRepository repo)
+    public void Tag(SingleSearchSubOptions tagOptions, TodoService vm)
     {
         // Search for a matching item.
         var searchResults = vm.Search(tagOptions.SearchSpecification, tagOptions.ShowAllItems);
@@ -165,7 +164,7 @@ public class ItemController
         }
     }
 
-    public void TagAll(TagAllSubOptions tagAllOptions, TodoService vm, TodoRepository repo)
+    public void TagAll(TagAllSubOptions tagAllOptions, TodoService vm)
     {
         if (string.IsNullOrWhiteSpace(tagAllOptions.TagName))
         {

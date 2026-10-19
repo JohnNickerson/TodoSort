@@ -5,7 +5,6 @@ using AssimilationSoftware.Maroon.Model;
 using AssimilationSoftware.TodoSort.CLI.Interfaces;
 using AssimilationSoftware.TodoSort.CLI.Options;
 using AssimilationSoftware.TodoSort.Core;
-using AssimilationSoftware.TodoSort.Core.Data;
 using AssimilationSoftware.TodoSort.Core.Search;
 using Spectre.Console;
 
@@ -20,7 +19,7 @@ public class IntegrityController
         _view = view;
     }
 
-    public void CheckChain(CheckChainOptions chainOptions, TodoService vm, TodoRepository repo)
+    public void CheckChain(CheckChainOptions chainOptions, TodoService vm)
     {
         var problemsFound = 0;
 
@@ -84,7 +83,7 @@ public class IntegrityController
         vm.Save();
     }
 
-    public void Commit(CommitOptions opts, TodoService vm, TodoRepository repo)
+    public void Commit(CommitOptions opts, TodoService vm)
     {
         var conflicts = vm.FindConflicts();
         foreach (var conflictSet in conflicts)
@@ -130,7 +129,7 @@ public class IntegrityController
         vm.Save();
     }
 
-    public void Dedupe(DedupeOptions dupe, TodoService vm, TodoRepository repo)
+    public void Dedupe(DedupeOptions dupe, TodoService vm)
     {
         vm.ShowHeadOnly = !dupe.ShowAllItems;
 
@@ -185,7 +184,7 @@ public class IntegrityController
         vm.Save();
     }
 
-    public void FixTitles(FixTitlesOptions fixOptions, TodoService vm, TodoRepository repo)
+    public void FixTitles(FixTitlesOptions fixOptions, TodoService vm)
     {
         var client = new HttpClient(); // new RedirectWebClient();
 
@@ -227,7 +226,7 @@ public class IntegrityController
                             tem.Context = fixOptions.MoveTo;
                         }
 
-                        repo.Update(tem);
+                        vm.Update(tem);
                     }
                 }
                 catch (Exception e)
@@ -242,6 +241,6 @@ public class IntegrityController
             _view.WriteLine("{0} items updated.", totalCount);
         }
 
-        repo.SaveChanges();
+        vm.Save();
     }
 }

@@ -2,7 +2,6 @@ using AssimilationSoftware.Maroon.Model;
 using AssimilationSoftware.TodoSort.CLI.Interfaces;
 using AssimilationSoftware.TodoSort.CLI.Options;
 using AssimilationSoftware.TodoSort.Core;
-using AssimilationSoftware.TodoSort.Core.Data;
 using AssimilationSoftware.TodoSort.Core.Search;
 using Humanizer;
 using Spectre.Console;
@@ -18,13 +17,13 @@ public class SearchController
         _view = view;
     }
 
-    public void AdvancedSearch(AdvancedSearchOptions argSubs, TodoService vm, TodoRepository repo)
+    public void AdvancedSearch(AdvancedSearchOptions argSubs, TodoService vm)
     {
         var searchResults = vm.Search(argSubs.SearchSpecification, argSubs.ShowAllItems);
         _view.PrintItems("title", searchResults, vm, argSubs.NSFW, argSubs.Verbose);
     }
 
-    public void Search(SearchOptions searchOptions, TodoService vm, TodoRepository repo)
+    public void Search(SearchOptions searchOptions, TodoService vm)
     {
         vm.SearchSpecification = searchOptions.GetSearchSpecification();
         var searchResults = vm.SearchResults;
@@ -46,7 +45,7 @@ public class SearchController
         }
     }
 
-    public void SearchDone(DoneSearchSubOptions search, TodoService vm, TodoRepository repo)
+    public void SearchDone(DoneSearchSubOptions search, TodoService vm)
     {
         vm.DoneSearchSpecification = search.GetSearchSpecification();
         var doneSearchResults = vm.DoneSearchResults;
@@ -57,7 +56,7 @@ public class SearchController
         }
     }
 
-    public void SearchSomeday(SomedaySearchSubOptions search, TodoService vm, TodoRepository repo)
+    public void SearchSomeday(SomedaySearchSubOptions search, TodoService vm)
     {
         vm.SomedaySearchSpecification = search.GetSearchSpecification();
         var somedaySearchResults = vm.SomedaySearchResults;

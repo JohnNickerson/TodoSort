@@ -3,7 +3,6 @@ using AssimilationSoftware.TodoSort.CLI.Enums;
 using AssimilationSoftware.TodoSort.CLI.Interfaces;
 using AssimilationSoftware.TodoSort.CLI.Options;
 using AssimilationSoftware.TodoSort.Core;
-using AssimilationSoftware.TodoSort.Core.Data;
 using AssimilationSoftware.TodoSort.Core.Search;
 using Spectre.Console;
 
@@ -18,7 +17,7 @@ public class RankingController
         _view = view;
     }
 
-    public void Balance(BalanceOptions balanceOpts, TodoService vm, TodoRepository repo)
+    public void Balance(BalanceOptions balanceOpts, TodoService vm)
     {
         vm.ShowHeadOnly = false;
         if (balanceOpts.Verbose)
@@ -50,7 +49,7 @@ public class RankingController
         vm.Save();
     }
 
-    public void Bump(BumpOptions bumpOpts, TodoService vm, TodoRepository repo)
+    public void Bump(BumpOptions bumpOpts, TodoService vm)
     {
         vm.ShowHeadOnly = !bumpOpts.ShowAllItems;
         vm.SearchSpecification = bumpOpts.SearchSpecification;
@@ -80,15 +79,20 @@ public class RankingController
         _view.PrintTree(new List<ActionItem>(), bumpItems, vm, bumpOpts.NSFW, bumpOpts.Verbose);
         foreach (var target in bumpItems)
         {
-            var depth = target.GetRankDepth(repo) / 2;
+            var depth = vm.GetDepthsView().TryGetValue(target.ID, out var targetDepth) ? targetDepth / 2 : 0;
             if (depth == 0)
             {
                 target.Upvotes++;
                 vm.Update(target);
             }
-            while (target.GetRankDepth(repo) > depth && target.ParentId != null)
+            while (vm.GetDepthsView().TryGetValue(target.ID, out var currentDepth) && currentDepth > depth && target.ParentId != null)
             {
-                vm.SetParent(target, target.GetParent(repo)?.GetParent(repo));
+                var currentParent = vm.GetParent(target);
+                if (currentParent == null)
+                {
+                    break;
+                }
+                vm.SetParent(target, vm.GetParent(currentParent));
             }
         }
         // After
@@ -96,7 +100,7 @@ public class RankingController
         vm.Save();
     }
 
-    public void Rank(MultiSearchSubOptions rankOptions, TodoService vm, TodoRepository repo)
+    public void Rank(MultiSearchSubOptions rankOptions, TodoService vm)
     {
         // for each context..
         var quitAndSave = false;
@@ -163,7 +167,7 @@ public class RankingController
         vm.Save();
     }
 
-    public void SetParent(SetParentSubOptions setParentOptions, TodoService vm, TodoRepository repo)
+    public void SetParent(SetParentSubOptions setParentOptions, TodoService vm)
     {
         vm.ShowHeadOnly = !setParentOptions.ShowAllItems;
 
@@ -195,10 +199,10 @@ public class RankingController
             }
         }
 
-        repo.SaveChanges();
+        vm.Save();
     }
 
-    public void Unrank(UnRankOptions unrankOptions, TodoService vm, TodoRepository repo)
+    public void Unrank(UnRankOptions unrankOptions, TodoService vm)
     {
         vm.ShowHeadOnly = !unrankOptions.ShowAllItems;
 
@@ -212,7 +216,7 @@ public class RankingController
         }
     }
 
-    public void UnrankAll(UnrankAllOptions unrankAllOptions, TodoService vm, TodoRepository repo)
+    public void UnrankAll(UnrankAllOptions unrankAllOptions, TodoService vm)
     {
         vm.ShowHeadOnly = false;
 
