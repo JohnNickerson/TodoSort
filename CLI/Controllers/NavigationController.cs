@@ -27,7 +27,7 @@ public class NavigationController
 
         // Read a tag and pass it through to the "start" argVerb. Intended for URLs and file names.
         vm.SearchSpecification = openTagOptions.SearchSpecification;
-        var selected = _view.Disambiguate(vm.SearchResults, repo, !string.IsNullOrEmpty(openTagOptions.ItemId));
+        var selected = _view.Disambiguate(vm.SearchResults, vm, !string.IsNullOrEmpty(openTagOptions.ItemId));
         if (selected != null)
         {
             if (selected.Tags.TryGetValue(openTagOptions.Tag ?? string.Empty, out string? tagValue))
@@ -59,8 +59,8 @@ public class NavigationController
             {
                 _view.WriteLine("Tag not found: {0}", openTagOptions.Tag);
             }
-            _view.PrintItem(selected, null, repo, false, openTagOptions.Verbose);
-            repo.SaveChanges();
+            _view.PrintItem(selected, null, vm, false, openTagOptions.Verbose);
+            vm.Save();
         }
     }
 }

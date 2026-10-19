@@ -60,7 +60,7 @@ public class ConsoleItemDisplay : IItemDisplay
         return sortedList;
     }
 
-    public ActionItem? Disambiguate(IEnumerable<ActionItem> todoList, ITodoRepository repo, bool autoAcceptOne = false, bool nsfw = false, bool verbose = false, bool includeCancel = false)
+    public ActionItem? Disambiguate(IEnumerable<ActionItem> todoList, TodoService api, bool autoAcceptOne = false, bool nsfw = false, bool verbose = false, bool includeCancel = false)
     {
         ActionItem? selected = null;
 
@@ -71,7 +71,7 @@ public class ConsoleItemDisplay : IItemDisplay
         }
         else if (todoList.Count() == 1 && autoAcceptOne)
         {
-            PrintItem(todoList.ElementAt(0), null, repo, nsfw, verbose);
+            PrintItem(todoList.ElementAt(0), null, api, nsfw, verbose);
             WriteLine("Auto-accepting...");
             selected = todoList.ElementAt(0);
         }
@@ -145,7 +145,7 @@ public class ConsoleItemDisplay : IItemDisplay
         return title;
     }
 
-    public void PrintItem(ActionItem i, int? index, ITodoRepository repo, bool nsfw = false, bool verbose = false)
+    public void PrintItem(ActionItem i, int? index, TodoService api, bool nsfw = false, bool verbose = false)
     {
         _verbose = verbose;
         var wrapWidth = Console.WindowWidth - 1;
@@ -207,14 +207,15 @@ public class ConsoleItemDisplay : IItemDisplay
             WrapOutput("        #ID:", i.ID.ToString(), wrapWidth);
             if (i.ProjectId != null)
             {
-                WrapOutput("        #project:", string.Format("{0} - {1}", i.ProjectId, i.GetProject(repo).Title), wrapWidth);
+                var project = api.GetProject(i);
+                WrapOutput("        #project:", string.Format("{0} - {1}", i.ProjectId, project?.Title ?? "<unknown>"), wrapWidth);
             }
             WrapOutput("        #context:", i.Context, wrapWidth);
             WrapOutput("        #last-modified:", i.LastModified.ToString("yyyy-MM-dd"), wrapWidth);
         }
     }
 
-    public void PrintItems(string sortTag, IEnumerable<ActionItem> list, ITodoRepository repo, bool nsfw = false, bool verbose = false)
+    public void PrintItems(string sortTag, IEnumerable<ActionItem> list, TodoService api, bool nsfw = false, bool verbose = false)
     {
         var last_context = string.Empty;
         var sortedList = ApplySort(sortTag, list);
@@ -224,12 +225,12 @@ public class ConsoleItemDisplay : IItemDisplay
             {
                 Console.WriteLine("@{0}", i.Context);
             }
-            PrintItem(i, null, repo, nsfw, verbose);
+            PrintItem(i, null, api, nsfw, verbose);
             last_context = i.Context;
         }
     }
 
-    public void PrintTree(List<ActionItem> bold, List<ActionItem> strike, ITodoRepository repo, bool nsfw = false, bool verbose = false)
+    public void PrintTree(List<ActionItem> bold, List<ActionItem> strike, TodoService api, bool nsfw = false, bool verbose = false)
     {
         var ancestors = new List<ActionItem>();
         ancestors.AddRange(bold);
@@ -245,8 +246,8 @@ public class ConsoleItemDisplay : IItemDisplay
 
             if (ancestors[i].ParentId != null)
             {
-                var parent = ancestors[i].GetParent(repo);
-                if (!ancestors.Contains(parent))
+                var parent = api.GetParent(ancestors[i]);
+                if (parent != null && !ancestors.Contains(parent))
                 {
                     ancestors.Add(parent);
                 }

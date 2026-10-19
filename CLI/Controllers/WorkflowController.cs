@@ -19,7 +19,7 @@ public class WorkflowController
         vm.ShowHeadOnly = !deferOpts.ShowAllItems;
 
         vm.SearchSpecification = deferOpts.SearchSpecification;
-        var selected = _view.Disambiguate(vm.SearchResults, repo, !string.IsNullOrEmpty(deferOpts.ItemId));
+        var selected = _view.Disambiguate(vm.SearchResults, vm, !string.IsNullOrEmpty(deferOpts.ItemId));
         if (selected != null)
         {
             if (deferOpts.TickleDate.HasValue)
@@ -30,8 +30,8 @@ public class WorkflowController
             {
                 vm.Defer(selected);
             }
-            _view.PrintItem(selected, null, repo, false, deferOpts.Verbose);
-            repo.SaveChanges();
+            _view.PrintItem(selected, null, vm, false, deferOpts.Verbose);
+            vm.Save();
         }
     }
 
@@ -47,7 +47,7 @@ public class WorkflowController
             vm.Defer(vm.SearchResults.ToArray());
         }
 
-        repo.SaveChanges();
+        vm.Save();
     }
 
     public void Done(DoneSubOptions doneOpts, TodoService vm, TodoRepository repo)
@@ -56,12 +56,12 @@ public class WorkflowController
 
         // If there is a next action, create a new item and add it to the correct context.
         vm.SearchSpecification = doneOpts.SearchSpecification;
-        var selected = _view.Disambiguate(vm.SearchResults, repo, !string.IsNullOrEmpty(doneOpts.ItemId));
+        var selected = _view.Disambiguate(vm.SearchResults, vm, !string.IsNullOrEmpty(doneOpts.ItemId));
         if (selected != null)
         {
             vm.MarkDone(doneOpts.DoneDate, selected);
-            _view.PrintItem(selected, null, repo, false, doneOpts.Verbose);
-            repo.SaveChanges();
+            _view.PrintItem(selected, null, vm, false, doneOpts.Verbose);
+            vm.Save();
         }
     }
 
@@ -70,12 +70,12 @@ public class WorkflowController
         vm.ShowHeadOnly = !undeferOptions.ShowAllItems;
 
         vm.SomedaySearchSpecification = undeferOptions.SearchSpecification;
-        var selected = _view.Disambiguate(vm.SomedaySearchResults, repo, !string.IsNullOrEmpty(undeferOptions.ItemId));
+        var selected = _view.Disambiguate(vm.SomedaySearchResults, vm, !string.IsNullOrEmpty(undeferOptions.ItemId));
         if (selected != null)
         {
             vm.Undefer("inbox", selected);
-            _view.PrintItem(selected, null, repo, false, undeferOptions.Verbose);
-            repo.SaveChanges();
+            _view.PrintItem(selected, null, vm, false, undeferOptions.Verbose);
+            vm.Save();
         }
     }
 
@@ -84,12 +84,12 @@ public class WorkflowController
         vm.ShowHeadOnly = !undoOptions.ShowAllItems;
 
         vm.DoneSearchSpecification = undoOptions.SearchSpecification;
-        var selected = _view.Disambiguate(vm.DoneSearchResults, repo, !string.IsNullOrEmpty(undoOptions.ItemId));
+        var selected = _view.Disambiguate(vm.DoneSearchResults, vm, !string.IsNullOrEmpty(undoOptions.ItemId));
         if (selected != null)
         {
             vm.Undo(undoOptions.NewContext, selected);
-            _view.PrintItem(selected, null, repo, false, undoOptions.Verbose);
-            repo.SaveChanges();
+            _view.PrintItem(selected, null, vm, false, undoOptions.Verbose);
+            vm.Save();
         }
     }
 }

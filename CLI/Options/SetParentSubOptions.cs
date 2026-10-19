@@ -14,7 +14,7 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
         [Option('g', "target", HelpText = "A search term to find the parent item. Defaults to same as 'search' option.")]
         public string? ParentSearchTerm { get; set; }
 
-        public ISearchSpecification<ActionItem> GetChildSearchSpecification(ITodoRepository repo)
+        public ISearchSpecification<ActionItem> GetChildSearchSpecification()
         {
             ISearchSpecification<ActionItem> spec = new FullTextSearchSpecification(ChildSearchTerm);
             if (!ShowAllItems)
@@ -25,7 +25,7 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
             return spec;
         }
 
-        public ISearchSpecification<ActionItem> GetParentSearchSpecification(ITodoRepository repo)
+        public ISearchSpecification<ActionItem> GetParentSearchSpecification()
         {
             ISearchSpecification<ActionItem> spec = new FullTextSearchSpecification(ParentSearchTerm ?? ChildSearchTerm);
             if (!ShowAllItems)

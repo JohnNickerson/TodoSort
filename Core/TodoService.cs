@@ -592,6 +592,16 @@ namespace AssimilationSoftware.TodoSort.Core
             return _repository.Items.Where(p => p.Context == "projects").ToList();
         }
 
+        public ActionItem? GetProject(ActionItem item)
+        {
+            return item.ProjectId.HasValue ? Find(item.ProjectId.Value) : null;
+        }
+
+        public ActionItem? GetParent(ActionItem item)
+        {
+            return item.ParentId.HasValue ? Find(item.ParentId.Value) : null;
+        }
+
         public void Update(ActionItem item)
         {
             _repository.Update(item);

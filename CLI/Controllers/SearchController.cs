@@ -18,26 +18,27 @@ public class SearchController
         _view = view;
     }
 
-    public void AdvancedSearch(AdvancedSearchOptions argSubs, TodoRepository repo)
+    public void AdvancedSearch(AdvancedSearchOptions argSubs, TodoService vm, TodoRepository repo)
     {
-        var searchResults = repo.Search(argSubs.SearchSpecification, argSubs.ShowAllItems);
-        _view.PrintItems("title", searchResults, repo, argSubs.NSFW, argSubs.Verbose);
+        var searchResults = vm.Search(argSubs.SearchSpecification, argSubs.ShowAllItems);
+        _view.PrintItems("title", searchResults, vm, argSubs.NSFW, argSubs.Verbose);
     }
 
-    public void Search(SearchOptions searchOptions, TodoRepository repo)
+    public void Search(SearchOptions searchOptions, TodoService vm, TodoRepository repo)
     {
-        var searchResults = repo.Search(searchOptions.GetSearchSpecification(), searchOptions.ShowAllItems);
+        vm.SearchSpecification = searchOptions.GetSearchSpecification();
+        var searchResults = vm.SearchResults;
         if (searchResults.Count() == 0)
         {
             _view.WriteLine("No results found.");
         }
         else if (searchOptions.PrintTree)
         {
-            _view.PrintTree(searchResults.ToList(), new List<ActionItem>(), repo, searchOptions.NSFW, searchOptions.Verbose);
+            _view.PrintTree(searchResults.ToList(), new List<ActionItem>(), vm, searchOptions.NSFW, searchOptions.Verbose);
         }
         else
         {
-            _view.PrintItems(searchOptions.SortTag ?? string.Empty, searchResults, repo, searchOptions.NSFW, searchOptions.Verbose);
+            _view.PrintItems(searchOptions.SortTag ?? string.Empty, searchResults, vm, searchOptions.NSFW, searchOptions.Verbose);
             if (!searchOptions.NoCount)
             {
                 _view.WriteLine("{0} item(s) found.", searchResults.Count());
@@ -45,24 +46,22 @@ public class SearchController
         }
     }
 
-    public void SearchDone(DoneSearchSubOptions search, TodoRepository repo)
+    public void SearchDone(DoneSearchSubOptions search, TodoService vm, TodoRepository repo)
     {
-        // Construct a search specification.
-        var doneSearchResults = repo.DoneItems.Where(d => search.GetSearchSpecification().IsSatisfiedBy(d));
-        // Report the results.
-        _view.PrintItems(search.SortTag ?? "done-date", doneSearchResults, repo, search.NSFW, search.Verbose);
+        vm.DoneSearchSpecification = search.GetSearchSpecification();
+        var doneSearchResults = vm.DoneSearchResults;
+        _view.PrintItems(search.SortTag ?? "done-date", doneSearchResults, vm, search.NSFW, search.Verbose);
         if (!search.NoCount)
         {
             _view.WriteLine("{0} item(s) found.", doneSearchResults.Count());
         }
     }
 
-    public void SearchSomeday(SomedaySearchSubOptions search, TodoRepository repo)
+    public void SearchSomeday(SomedaySearchSubOptions search, TodoService vm, TodoRepository repo)
     {
-        // Construct a search specification.
-        var somedaySearchResults = repo.SomedayItems.Where(s => search.GetSearchSpecification().IsSatisfiedBy(s));
-        // Report the results.
-        _view.PrintItems(search.SortTag ?? "tickle-date", somedaySearchResults, repo, search.NSFW, search.Verbose);
+        vm.SomedaySearchSpecification = search.GetSearchSpecification();
+        var somedaySearchResults = vm.SomedaySearchResults;
+        _view.PrintItems(search.SortTag ?? "tickle-date", somedaySearchResults, vm, search.NSFW, search.Verbose);
         if (!search.NoCount)
         {
             _view.WriteLine("{0} item(s) found.", somedaySearchResults.Count());

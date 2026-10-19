@@ -2,6 +2,10 @@ using System.Reflection;
 using System.Runtime.Serialization;
 using AssimilationSoftware.Maroon.Mappers.Text;
 using AssimilationSoftware.Maroon.Model;
+using AssimilationSoftware.TodoSort.CLI.Controllers;
+using AssimilationSoftware.TodoSort.CLI.Enums;
+using AssimilationSoftware.TodoSort.CLI.Interfaces;
+using AssimilationSoftware.TodoSort.CLI.Options;
 using AssimilationSoftware.TodoSort.Core;
 using AssimilationSoftware.TodoSort.Core.Search;
 using AssimilationSoftware.TodoSort.CoreGui.Interfaces;
@@ -61,6 +65,28 @@ public class EditTests
     }
 
     [Fact]
+    public void SearchDone_Uses_Done_Collection_Not_Main_Search_Results()
+    {
+        // Arrange
+        var fileName = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid():N}.csv");
+        var mapper = new ActionItemDiskMapper(fileName);
+        var repo = new Core.Data.TodoRepository(mapper, Path.GetDirectoryName(fileName)!, Environment.MachineName);
+        var service = new Core.TodoService(repo);
+        var doneItem = new ActionItem { ID = Guid.NewGuid(), Title = "Completed item", Context = "done", DoneDate = DateTime.Today };
+        repo.Create(doneItem);
+        var view = new RecordingItemDisplay();
+        var controller = new SearchController(view);
+        var options = new DoneSearchSubOptions { Title = "Completed" };
+
+        // Act
+        controller.SearchDone(options, service, repo);
+
+        // Assert
+        Assert.Single(view.Items);
+        Assert.Equal(doneItem, view.Items.Single());
+    }
+
+    [Fact]
     public void Editing_MultiLine_Notes_Preserves_Notes_Without_Blank_Lines()
     {
         // Arrange
@@ -98,6 +124,35 @@ public class EditTests
         Assert.Equal(2, originalItem.Notes.Count);
         Assert.Equal(new[] { "First line", "Second line" }, originalItem.Notes);
         Assert.DoesNotContain(string.Empty, originalItem.Notes);
+    }
+}
+
+internal class RecordingItemDisplay : IItemDisplay
+{
+    public List<ActionItem> Items { get; } = new();
+
+    public IOrderedEnumerable<ActionItem> ApplySort(string sortTag, IEnumerable<ActionItem> list, SortOrder sort = SortOrder.Ascending)
+        => list.OrderBy(x => x.Title);
+
+    public ActionItem? Disambiguate(IEnumerable<ActionItem> todoList, TodoService api, bool autoAcceptOne = false, bool nsfw = false, bool verbose = false, bool includeCancel = false)
+        => todoList.FirstOrDefault();
+
+    public string FormatTitle(ActionItem i, bool nsfw = false) => i.Title;
+
+    public void PrintItem(ActionItem i, int? index, TodoService api, bool nsfw = false, bool verbose = false)
+        => Items.Add(i);
+
+    public void PrintItems(string sortTag, IEnumerable<ActionItem> list, TodoService api, bool nsfw = false, bool verbose = false)
+        => Items.AddRange(list);
+
+    public void PrintTree(List<ActionItem> bold, List<ActionItem> strike, TodoService api, bool nsfw = false, bool verbose = false)
+    {
+        Items.AddRange(bold);
+        Items.AddRange(strike);
+    }
+
+    public void WriteLine(string message = "", params object?[]? args)
+    {
     }
 }
 

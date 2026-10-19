@@ -20,11 +20,11 @@ public class IntegrityController
         _view = view;
     }
 
-    public void CheckChain(CheckChainOptions chainOptions, TodoRepository repo)
+    public void CheckChain(CheckChainOptions chainOptions, TodoService vm, TodoRepository repo)
     {
         var problemsFound = 0;
 
-        var searchResults = repo.Search(chainOptions.GetSearchSpecification(), true);
+        var searchResults = vm.Search(chainOptions.GetSearchSpecification(), true);
         // 1. Make sure there is at least one item.
         if (!searchResults.Any())
         {
@@ -40,7 +40,7 @@ public class IntegrityController
             if (Guid.TryParse(chainOptions.ProjectID, out var projId))
             {
                 // Look for a "length" tag on the project.
-                var project = repo.Find(projId);
+                var project = vm.Find(projId);
                 if (project.Tags.TryGetValue("length", out var maxString))
                 {
                     max = int.Parse(maxString);
@@ -71,7 +71,7 @@ public class IntegrityController
             foreach (var excluded in searchResults.Where(i => !i.Tags.ContainsKey("order") || (!i.Tags.ContainsKey("series") && !i.ProjectId.HasValue)))
             {
                 _view.WriteLine("Item potentially excluded:");
-                _view.PrintItem(excluded, null, repo, chainOptions.NSFW, chainOptions.Verbose);
+                _view.PrintItem(excluded, null, vm, chainOptions.NSFW, chainOptions.Verbose);
                 problemsFound++;
             }
         }
@@ -81,12 +81,12 @@ public class IntegrityController
             Console.ReadKey();
         }
 
-        repo.SaveChanges();
+        vm.Save();
     }
 
-    public void Commit(CommitOptions opts, TodoRepository repo)
+    public void Commit(CommitOptions opts, TodoService vm, TodoRepository repo)
     {
-        var conflicts = repo.FindConflicts();
+        var conflicts = vm.FindConflicts();
         foreach (var conflictSet in conflicts)
         {
             // Present conflicts for resolution.
@@ -94,7 +94,7 @@ public class IntegrityController
             _view.WriteLine("Updates:");
             foreach (var edit in conflictSet.Updates)
             {
-                _view.PrintItem(edit, i, repo, opts.NSFW, opts.Verbose);
+                _view.PrintItem(edit, i, vm, opts.NSFW, opts.Verbose);
                 i++;
             }
             // Present options: Delete, Update (one particular version), Revert.
@@ -106,10 +106,10 @@ public class IntegrityController
             switch (optKey.KeyChar.ToString().ToLower())
             {
                 case "r":
-                    repo.Revert(conflictSet.Id);
+                    vm.Revert(conflictSet.Id);
                     break;
                 case "d":
-                    repo.ResolveByDelete(conflictSet.Id);
+                    vm.ResolveByDelete(conflictSet.Id);
                     break;
                 default:
                     if (char.IsDigit(optKey.KeyChar))
@@ -117,7 +117,7 @@ public class IntegrityController
                         var index = int.Parse(optKey.KeyChar.ToString());
                         if (index < conflictSet.Updates.Count)
                         {
-                            repo.ResolveConflict(conflictSet.Updates[index]);
+                            vm.ResolveConflict(conflictSet.Updates[index]);
                         }
                     }
                     break;
@@ -125,9 +125,9 @@ public class IntegrityController
 
             _view.WriteLine(Environment.NewLine);
         }
-        var commitCount = repo.CommitChanges();
+        var commitCount = vm.CommitChanges();
         _view.WriteLine($"{commitCount} pending changes committed.");
-        repo.SaveChanges();
+        vm.Save();
     }
 
     public void Dedupe(DedupeOptions dupe, TodoService vm, TodoRepository repo)
@@ -151,7 +151,7 @@ public class IntegrityController
             // Get user input
             _view.WriteLine();
             _view.WriteLine("Select one item to merge all others into (or Cancel to stop):");
-            var survivor = _view.Disambiguate(vm.SearchResults, repo, includeCancel: true);
+            var survivor = _view.Disambiguate(vm.SearchResults, vm, includeCancel: true);
             if (survivor != null)
             {
                 // Merge all into survivor.
@@ -171,7 +171,7 @@ public class IntegrityController
                 // Get user input.
                 _view.WriteLine();
                 _view.WriteLine("Select one item to merge all others into (i = ignore):");
-                var survivor = _view.Disambiguate(vm.SearchResults, repo);
+                var survivor = _view.Disambiguate(vm.SearchResults, vm);
                 if (survivor != null)
                 {
                     // Merge into survivor.
@@ -182,15 +182,15 @@ public class IntegrityController
                 }
             }
         }
-        repo.SaveChanges();
+        vm.Save();
     }
 
-    public void FixTitles(FixTitlesOptions fixOptions, TodoRepository repo)
+    public void FixTitles(FixTitlesOptions fixOptions, TodoService vm, TodoRepository repo)
     {
         var client = new HttpClient(); // new RedirectWebClient();
 
         var totalCount = 0;
-        var searchResults = repo.Search(fixOptions.GetSearchSpecification(), false);
+        var searchResults = vm.Search(fixOptions.GetSearchSpecification(), false);
         decimal progressTotal = searchResults.Count();
 
         if (progressTotal == 0)

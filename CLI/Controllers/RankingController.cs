@@ -37,9 +37,9 @@ public class RankingController
             if (balanceOpts.Commit)
             {
                 // In large lists, rather than writing out thousands of changes, then reading them again to commit, just commit everything now.
-                var commitCount = repo.CommitChanges();
+                var commitCount = vm.CommitChanges();
                 _view.WriteLine($"{commitCount} pending changes committed.");
-                repo.SaveChanges();
+                vm.Save();
             }
         }
         else
@@ -47,7 +47,7 @@ public class RankingController
             _view.WriteLine("Branching factor must be greater than zero.");
         }
 
-        repo.SaveChanges();
+        vm.Save();
     }
 
     public void Bump(BumpOptions bumpOpts, TodoService vm, TodoRepository repo)
@@ -58,7 +58,7 @@ public class RankingController
         if (bumpOpts.Top == 0)
         {
             // Manually pick one item.
-            var chosen = _view.Disambiguate(vm.SearchResults, repo, true);
+            var chosen = _view.Disambiguate(vm.SearchResults, vm, true);
             if (chosen != null) bumpItems.Add(chosen);
         }
         else if (!string.IsNullOrEmpty(bumpOpts.SortTag))
@@ -77,7 +77,7 @@ public class RankingController
         // TODO: Display the before and after positions together.
         // Before: red and strike-through.
         // After: yellow and bold.
-        _view.PrintTree(new List<ActionItem>(), bumpItems, repo, bumpOpts.NSFW, bumpOpts.Verbose);
+        _view.PrintTree(new List<ActionItem>(), bumpItems, vm, bumpOpts.NSFW, bumpOpts.Verbose);
         foreach (var target in bumpItems)
         {
             var depth = target.GetRankDepth(repo) / 2;
@@ -92,8 +92,8 @@ public class RankingController
             }
         }
         // After
-        _view.PrintTree(bumpItems, new List<ActionItem>(), repo, bumpOpts.NSFW, bumpOpts.Verbose);
-        repo.SaveChanges();
+        _view.PrintTree(bumpItems, new List<ActionItem>(), vm, bumpOpts.NSFW, bumpOpts.Verbose);
+        vm.Save();
     }
 
     public void Rank(MultiSearchSubOptions rankOptions, TodoService vm, TodoRepository repo)
@@ -133,8 +133,8 @@ public class RankingController
                 if (quitAndSave) break;
                 // get vote
                 _view.WriteLine("{0}/{1} ({2}%) complete", x, items.Count(), 100 * x / items.Count());
-                _view.PrintItem(items.ElementAt(index[x]), 1, repo, rankOptions.NSFW, rankOptions.Verbose);
-                _view.PrintItem(items.ElementAt(index[x + 1]), 2, repo, rankOptions.NSFW, rankOptions.Verbose);
+                _view.PrintItem(items.ElementAt(index[x]), 1, vm, rankOptions.NSFW, rankOptions.Verbose);
+                _view.PrintItem(items.ElementAt(index[x + 1]), 2, vm, rankOptions.NSFW, rankOptions.Verbose);
                 var choice = AnsiConsole.Prompt(new Spectre.Console.TextPrompt<string>("Which of these is more important? (q=quit and save, c=cancel)")
                     .AddChoices(["1", "2", "q", "c"]));
                 // assign parents based on vote
@@ -160,7 +160,7 @@ public class RankingController
             }
         }
 
-        repo.SaveChanges();
+        vm.Save();
     }
 
     public void SetParent(SetParentSubOptions setParentOptions, TodoService vm, TodoRepository repo)
@@ -168,18 +168,18 @@ public class RankingController
         vm.ShowHeadOnly = !setParentOptions.ShowAllItems;
 
         _view.WriteLine("Confirm child item:");
-        vm.SearchSpecification = setParentOptions.GetChildSearchSpecification(repo);
-        var child = _view.Disambiguate(vm.SearchResults, repo);
+        vm.SearchSpecification = setParentOptions.GetChildSearchSpecification();
+        var child = _view.Disambiguate(vm.SearchResults, vm);
         _view.WriteLine("Confirm parent item:");
-        vm.SearchSpecification = setParentOptions.GetParentSearchSpecification(repo);
+        vm.SearchSpecification = setParentOptions.GetParentSearchSpecification();
         if (child != null)
         {
-            var parent = _view.Disambiguate(vm.SearchResults.Where(x => x.ID != child.ID), repo);
+            var parent = _view.Disambiguate(vm.SearchResults.Where(x => x.ID != child.ID), vm);
             if (parent != null)
             {
                 vm.SetParent(child, parent);
                 _view.WriteLine();
-                _view.PrintTree(new List<ActionItem> { { child }, { parent } }, new List<ActionItem>(), repo, setParentOptions.NSFW, setParentOptions.Verbose);
+                _view.PrintTree(new List<ActionItem> { { child }, { parent } }, new List<ActionItem>(), vm, setParentOptions.NSFW, setParentOptions.Verbose);
             }
             else
             {
@@ -190,7 +190,7 @@ public class RankingController
                 {
                     vm.SetParent(child, null);
                     _view.WriteLine();
-                    _view.PrintTree(new List<ActionItem> { child }, new List<ActionItem>(), repo, setParentOptions.NSFW, setParentOptions.Verbose);
+                    _view.PrintTree(new List<ActionItem> { child }, new List<ActionItem>(), vm, setParentOptions.NSFW, setParentOptions.Verbose);
                 }
             }
         }
@@ -203,12 +203,12 @@ public class RankingController
         vm.ShowHeadOnly = !unrankOptions.ShowAllItems;
 
         vm.SearchSpecification = unrankOptions.SearchSpecification;
-        var selected = _view.Disambiguate(vm.SearchResults, repo, !string.IsNullOrEmpty(unrankOptions.ItemId));
+        var selected = _view.Disambiguate(vm.SearchResults, vm, !string.IsNullOrEmpty(unrankOptions.ItemId));
         if (selected != null)
         {
             vm.ResetPriorityParents(selected);
-            _view.PrintItem(selected, null, repo, false, unrankOptions.Verbose);
-            repo.SaveChanges();
+            _view.PrintItem(selected, null, vm, false, unrankOptions.Verbose);
+            vm.Save();
         }
     }
 
@@ -223,6 +223,6 @@ public class RankingController
             vm.ResetPriorityParents(vm.SearchResults.ToArray());
         }
 
-        repo.SaveChanges();
+        vm.Save();
     }
 }

@@ -27,21 +27,21 @@ public class ItemController
         _view.WriteLine("Adding action '{0}' to context @{1}", a.ActionTitle, a.Context);
         vm.AddItem(selected);
         // Allow tagging right away.
-        TagItem(repo, selected);
-        _view.PrintItem(selected, null, repo, false, true);
-        repo.SaveChanges();
+        TagItem(vm, selected);
+        _view.PrintItem(selected, null, vm, false, true);
+        vm.Save();
     }
 
-    public void Delete(DeleteOptions delOpts, TodoRepository repo)
+    public void Delete(DeleteOptions delOpts, TodoService vm, TodoRepository repo)
     {
         // Find a matching item to delete.
-        var searchResults = repo.Search(delOpts.SearchSpecification, delOpts.ShowAllItems);
-        var selected = _view.Disambiguate(searchResults, repo, !string.IsNullOrEmpty(delOpts.ItemId));
+        var searchResults = vm.Search(delOpts.SearchSpecification, delOpts.ShowAllItems);
+        var selected = _view.Disambiguate(searchResults, vm, !string.IsNullOrEmpty(delOpts.ItemId));
         if (selected != null)
         {
-            repo.Delete(selected);
-            _view.PrintItem(selected, null, repo, false, delOpts.Verbose);
-            repo.SaveChanges();
+            vm.Delete(selected);
+            _view.PrintItem(selected, null, vm, false, delOpts.Verbose);
+            vm.Save();
         }
     }
 
@@ -49,123 +49,123 @@ public class ItemController
     {
         _view.WriteLine("Confirm child item:");
         vm.SearchTerm = mergeOptions.ChildSearchTerm ?? mergeOptions.TargetSearchTerm;
-        var mergeVictim = _view.Disambiguate(vm.SearchResults, repo);
+        var mergeVictim = _view.Disambiguate(vm.SearchResults, vm);
         if (mergeVictim != null)
         {
             _view.WriteLine("Confirm item to merge into:");
             vm.SearchTerm = mergeOptions.TargetSearchTerm;
-            var combined = _view.Disambiguate(vm.SearchResults.Where(x => x.ID != mergeVictim.ID), repo);
+            var combined = _view.Disambiguate(vm.SearchResults.Where(x => x.ID != mergeVictim.ID), vm);
             if (mergeVictim != null && combined != null)
             {
                 vm.Merge(mergeVictim, combined);
-                _view.PrintItem(combined, null, repo, false, mergeOptions.Verbose);
-                repo.SaveChanges();
+                _view.PrintItem(combined, null, vm, false, mergeOptions.Verbose);
+                vm.Save();
             }
         }
     }
 
-    public void Move(MoveSubOptions moveOptions, TodoRepository repo)
+    public void Move(MoveSubOptions moveOptions, TodoService vm, TodoRepository repo)
     {
-        var searchResults = repo.Search(moveOptions.SearchSpecification, moveOptions.ShowAllItems);
-        var selected = _view.Disambiguate(searchResults, repo, !string.IsNullOrEmpty(moveOptions.ItemId));
+        var searchResults = vm.Search(moveOptions.SearchSpecification, moveOptions.ShowAllItems);
+        var selected = _view.Disambiguate(searchResults, vm, !string.IsNullOrEmpty(moveOptions.ItemId));
         if (selected != null)
         {
             selected.Context = moveOptions.NewContext;
             if (moveOptions.Unrank)
             {
                 selected.ParentId = null;
-                foreach (var child in repo.GetChildren(selected))
+                foreach (var child in vm.GetChildren(selected))
                 {
                     child.ParentId = null;
-                    repo.Update(child);
+                    vm.Update(child);
                 }
             }
-            repo.Update(selected);
-            _view.PrintItem(selected, null, repo, false, moveOptions.Verbose);
-            repo.SaveChanges();
+            vm.Update(selected);
+            _view.PrintItem(selected, null, vm, false, moveOptions.Verbose);
+            vm.Save();
         }
     }
 
-    public void MoveAll(MoveAllSubOptions moveAllOptions, TodoRepository repo)
+    public void MoveAll(MoveAllSubOptions moveAllOptions, TodoService vm, TodoRepository repo)
     {
-        var items = repo.Search(moveAllOptions.GetSearchSpecification(), moveAllOptions.ShowAllItems).ToList();
+        var items = vm.Search(moveAllOptions.GetSearchSpecification(), moveAllOptions.ShowAllItems).ToList();
         var counter = 0;
         while (items.Count > 0)
         {
             items[0].Context = moveAllOptions.NewContext;
-            repo.Update(items[0]);
+            vm.Update(items[0]);
             items.RemoveAt(0);
             counter++;
         }
         _view.WriteLine(string.Format("{0} items moved to @{1}", counter, moveAllOptions.NewContext));
 
-        repo.SaveChanges();
+        vm.Save();
     }
 
-    public void Note(NoteSubOptions noteOptions, TodoRepository repo)
+    public void Note(NoteSubOptions noteOptions, TodoService vm, TodoRepository repo)
     {
         // Add a note to a task.
-        var searchResults = repo.Search(noteOptions.SearchSpecification, noteOptions.ShowAllItems);
-        var selected = _view.Disambiguate(searchResults, repo, !string.IsNullOrEmpty(noteOptions.ItemId));
+        var searchResults = vm.Search(noteOptions.SearchSpecification, noteOptions.ShowAllItems);
+        var selected = _view.Disambiguate(searchResults, vm, !string.IsNullOrEmpty(noteOptions.ItemId));
         if (selected != null)
         {
             selected.Notes.Add(string.Format("{0} ({1:yyyy-MM-dd})", noteOptions.NewNote, DateTime.Now));
-            repo.Update(selected);
-            _view.PrintItem(selected, null, repo, false, noteOptions.Verbose);
-            repo.SaveChanges();
+            vm.Update(selected);
+            _view.PrintItem(selected, null, vm, false, noteOptions.Verbose);
+            vm.Save();
         }
     }
 
-    public void Rename(RenameSubOptions renameOptions, TodoRepository repo)
+    public void Rename(RenameSubOptions renameOptions, TodoService vm, TodoRepository repo)
     {
-        var searchResults = repo.Search(renameOptions.SearchSpecification, renameOptions.ShowAllItems);
-        var selected = _view.Disambiguate(searchResults, repo, !string.IsNullOrEmpty(renameOptions.ItemId));
+        var searchResults = vm.Search(renameOptions.SearchSpecification, renameOptions.ShowAllItems);
+        var selected = _view.Disambiguate(searchResults, vm, !string.IsNullOrEmpty(renameOptions.ItemId));
         if (selected != null)
         {
             selected.Title = renameOptions.NewTitle;
-            repo.Update(selected);
+            vm.Update(selected);
             _view.WriteLine("Item renamed.");
             if (renameOptions.ReTag)
             {
-                TagItem(repo, selected);
+                TagItem(vm, selected);
             }
-            _view.PrintItem(selected, null, repo, false, renameOptions.Verbose);
-            repo.SaveChanges();
+            _view.PrintItem(selected, null, vm, false, renameOptions.Verbose);
+            vm.Save();
         }
     }
 
-    public void SetProject(SetProjectSubOptions commandOptions, TodoRepository repo)
+    public void SetProject(SetProjectSubOptions commandOptions, TodoService vm, TodoRepository repo)
     {
         _view.WriteLine("Confirm child item:");
-        var childSearchResults = repo.Search(new FullTextSearchSpecification(commandOptions.ChildSearchTerm), commandOptions.ShowAllItems);
-        var child = _view.Disambiguate(childSearchResults, repo);
+        var childSearchResults = vm.Search(new FullTextSearchSpecification(commandOptions.ChildSearchTerm), commandOptions.ShowAllItems);
+        var child = _view.Disambiguate(childSearchResults, vm);
 
         _view.WriteLine("Confirm project:");
-        var projectSearchResults = repo.Search(new FullTextSearchSpecification(commandOptions.ProjectSearchTerm ?? commandOptions.ChildSearchTerm), commandOptions.ShowAllItems);
-        var project = _view.Disambiguate(projectSearchResults, repo);
+        var projectSearchResults = vm.Search(new FullTextSearchSpecification(commandOptions.ProjectSearchTerm ?? commandOptions.ChildSearchTerm), commandOptions.ShowAllItems);
+        var project = _view.Disambiguate(projectSearchResults, vm);
         if (child != null && project != null)
         {
             child.ProjectId = project.ID;
-            repo.Update(child);
+            vm.Update(child);
         }
 
-        repo.SaveChanges();
+        vm.Save();
     }
 
-    public void Tag(SingleSearchSubOptions tagOptions, TodoRepository repo)
+    public void Tag(SingleSearchSubOptions tagOptions, TodoService vm, TodoRepository repo)
     {
         // Search for a matching item.
-        var searchResults = repo.Search(tagOptions.SearchSpecification, tagOptions.ShowAllItems);
-        var selected = _view.Disambiguate(searchResults, repo, !string.IsNullOrEmpty(tagOptions.ItemId));
+        var searchResults = vm.Search(tagOptions.SearchSpecification, tagOptions.ShowAllItems);
+        var selected = _view.Disambiguate(searchResults, vm, !string.IsNullOrEmpty(tagOptions.ItemId));
         if (selected != null)
         {
-            TagItem(repo, selected);
-            _view.PrintItem(selected, null, repo, false, tagOptions.Verbose);
-            repo.SaveChanges();
+            TagItem(vm, selected);
+            _view.PrintItem(selected, null, vm, false, tagOptions.Verbose);
+            vm.Save();
         }
     }
 
-    public void TagAll(TagAllSubOptions tagAllOptions, TodoRepository repo)
+    public void TagAll(TagAllSubOptions tagAllOptions, TodoService vm, TodoRepository repo)
     {
         if (string.IsNullOrWhiteSpace(tagAllOptions.TagName))
         {
@@ -173,25 +173,25 @@ public class ItemController
             return;
         }
 
-        var items = repo.Search(tagAllOptions.SearchSpecification, tagAllOptions.ShowAllItems).ToArray();
+        var items = vm.Search(tagAllOptions.SearchSpecification, tagAllOptions.ShowAllItems).ToArray();
         foreach (var i in items)
         {
             if (string.IsNullOrWhiteSpace(tagAllOptions.TagValue))
             {
                 i.Tags.Remove(tagAllOptions.TagName);
-                repo.Update(i);
+                vm.Update(i);
             }
             else
             {
                 i.Tags[tagAllOptions.TagName] = tagAllOptions.TagValue;
-                repo.Update(i);
+                vm.Update(i);
             }
         }
 
-        repo.SaveChanges();
+        vm.Save();
     }
 
-    private void TagItem(TodoRepository repo, ActionItem selected)
+    private void TagItem(TodoService vm, ActionItem selected)
     {
         string? tagName;
         do
@@ -205,12 +205,12 @@ public class ItemController
                 if (!string.IsNullOrWhiteSpace(value))
                 {
                     selected.Tags[tagName] = value;
-                    repo.Update(selected);
+                    vm.Update(selected);
                 }
                 else if (selected.Tags.ContainsKey(tagName))
                 {
                     selected.Tags.Remove(tagName);
-                    repo.Update(selected);
+                    vm.Update(selected);
                 }
                 _view.WriteLine();
             }
