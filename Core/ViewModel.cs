@@ -8,8 +8,7 @@ using System.Linq;
 
 namespace AssimilationSoftware.TodoSort.Core
 {
-    // TODO: Remove INotifyPropertyChanged. I don't think it's actually used now.
-    public class ViewModel : INotifyPropertyChanged
+    public class ViewModel
     {
         #region Fields
 
@@ -33,28 +32,6 @@ namespace AssimilationSoftware.TodoSort.Core
             _unsavedChanges = false;
         }
 
-        #region Events
-        /// <summary>
-        /// An event that indicates a property has changed value.
-        /// </summary>
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        /// <summary>
-        /// Fires the PropertyChanged event with given arguments.
-        /// </summary>
-        public void RaisePropertyChanged(params string[] propNames)
-        {
-            if (PropertyChanged != null)
-            {
-                foreach (string prop in propNames)
-                {
-                    var e = new PropertyChangedEventArgs(prop);
-                    PropertyChanged(this, e);
-                }
-            }
-        }
-        #endregion
-
         #region Properties
 
         public List<ActionItem> SomedayItems => _repository.SomedayItems.ToList();
@@ -64,7 +41,6 @@ namespace AssimilationSoftware.TodoSort.Core
             set
             {
                 SearchSpecification = new FullTextSearchSpecification(value);
-                RaisePropertyChanged(nameof(SearchResults));
             }
         }
 
@@ -89,7 +65,6 @@ namespace AssimilationSoftware.TodoSort.Core
             set
             {
                 _showHeadOnly = value;
-                RaisePropertyChanged(nameof(SearchResults));
             }
         }
 
@@ -112,7 +87,6 @@ namespace AssimilationSoftware.TodoSort.Core
             {
                 // Always exclude "done" and "someday" contexts, now that we're working with just one list.
                 _todoSearchSpec = value.And(new NotSpecification<ActionItem>(new ContextSearchSpecification("done"), new ContextSearchSpecification("someday")));
-                RaisePropertyChanged(nameof(SearchSpecification), nameof(SearchResults));
             }
         }
 
@@ -125,7 +99,6 @@ namespace AssimilationSoftware.TodoSort.Core
             set
             {
                 _somedaySearchSpec = value;
-                RaisePropertyChanged(nameof(SomedaySearchSpecification), nameof(SomedaySearchResults));
             }
         }
 
@@ -149,7 +122,6 @@ namespace AssimilationSoftware.TodoSort.Core
             set
             {
                 _doneSearchSpec = value;
-                RaisePropertyChanged(nameof(DoneSearchSpecification), nameof(DoneSearchResults));
             }
         }
 
@@ -192,7 +164,6 @@ namespace AssimilationSoftware.TodoSort.Core
             {
                 if (_unsavedChanges == value) return;
                 _unsavedChanges = value;
-                RaisePropertyChanged(nameof(UnsavedChanges));
             }
         }
 
@@ -203,7 +174,6 @@ namespace AssimilationSoftware.TodoSort.Core
             {
                 if (_progressPercent == value) return;
                 _progressPercent = value;
-                RaisePropertyChanged(nameof(ProgressPercent));
             }
         }
 
@@ -314,7 +284,6 @@ namespace AssimilationSoftware.TodoSort.Core
                     _showHeadOnly = restoreHead;
                 }
             }
-            RaisePropertyChanged(nameof(SearchResults), nameof(DoneSearchResults));
             UnsavedChanges = true;
         }
 
@@ -345,7 +314,6 @@ namespace AssimilationSoftware.TodoSort.Core
                     }
                 }
             }
-            RaisePropertyChanged(nameof(SearchResults), nameof(SomedaySearchResults));
             UnsavedChanges = true;
         }
 
@@ -409,7 +377,6 @@ namespace AssimilationSoftware.TodoSort.Core
             {
                 _repository.Delete(i);
             }
-            RaisePropertyChanged(nameof(SearchResults));
             UnsavedChanges = true;
         }
 
