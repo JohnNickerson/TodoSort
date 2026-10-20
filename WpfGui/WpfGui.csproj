@@ -12,10 +12,10 @@
     <Company>Assimilation Software</Company>
     <Product>TodoSort</Product>
     <Copyright>Copyright © Assimilation Software 2026</Copyright>
-    <Version>1.14.0.1</Version>
-    <FileVersion>1.14.0.1</FileVersion>
-    <InformationalVersion>1.14.0.1</InformationalVersion>
-    <PackageVersion>1.14.0.1</PackageVersion>
+    <Version>1.14.1.0</Version>
+    <FileVersion>1.14.1.0</FileVersion>
+    <InformationalVersion>1.14.1.0</InformationalVersion>
+    <PackageVersion>1.14.1.0</PackageVersion>
     <ApplicationIcon>Resources\Task.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
