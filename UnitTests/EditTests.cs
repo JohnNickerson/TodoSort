@@ -4,7 +4,7 @@ using AssimilationSoftware.Maroon.Mappers.Text;
 using AssimilationSoftware.Maroon.Model;
 using AssimilationSoftware.TodoSort.CLI.Controllers;
 using AssimilationSoftware.TodoSort.Core.Enums;
-using AssimilationSoftware.TodoSort.CLI.Interfaces;
+using AssimilationSoftware.TodoSort.Core.Interfaces;
 using AssimilationSoftware.TodoSort.CLI.Options;
 using AssimilationSoftware.TodoSort.Core;
 using AssimilationSoftware.TodoSort.Core.Search;

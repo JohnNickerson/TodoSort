@@ -1,7 +1,7 @@
 using System.Text;
 using AssimilationSoftware.Maroon.Model;
 using AssimilationSoftware.TodoSort.Core.Enums;
-using AssimilationSoftware.TodoSort.CLI.Interfaces;
+using AssimilationSoftware.TodoSort.Core.Interfaces;
 using AssimilationSoftware.TodoSort.Core;
 using AssimilationSoftware.TodoSort.Core.Data;
 using Humanizer;

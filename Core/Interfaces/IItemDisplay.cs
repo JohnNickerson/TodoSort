@@ -2,8 +2,10 @@ using AssimilationSoftware.Maroon.Model;
 using AssimilationSoftware.TodoSort.Core.Enums;
 using AssimilationSoftware.TodoSort.Core;
 using AssimilationSoftware.TodoSort.Core.Data;
+using System.Collections.Generic;
+using System.Linq;
 
-namespace AssimilationSoftware.TodoSort.CLI.Interfaces;
+namespace AssimilationSoftware.TodoSort.Core.Interfaces;
 
 public interface IItemDisplay
 {

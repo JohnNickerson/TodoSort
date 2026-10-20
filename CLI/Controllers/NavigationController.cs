@@ -1,4 +1,4 @@
-using AssimilationSoftware.TodoSort.CLI.Interfaces;
+using AssimilationSoftware.TodoSort.Core.Interfaces;
 using AssimilationSoftware.TodoSort.CLI.Options;
 using AssimilationSoftware.TodoSort.Core;
 
