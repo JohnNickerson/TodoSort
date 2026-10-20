@@ -47,7 +47,7 @@ namespace AssimilationSoftware.TodoSort.CLI
                     .WithParsed<DoneSubOptions>(opts => new WorkflowController(vm, consoleView).Done(opts))
                     .WithParsed<ExportSubOptions>(opts => new ImportExportController(vm, consoleView).Export(opts.Filename, opts.TemplateFilename, opts.Format, opts.ShowAllItems, opts. SortTag, opts.SortDescTag, opts.GetSearchSpecification()))
                     .WithParsed<FixTitlesOptions>(opts => new IntegrityController(vm, consoleView).FixTitles(opts))
-                    .WithParsed<ImportSubOptions>(opts => new ImportExportController(vm, consoleView).Import(opts))
+                    .WithParsed<ImportSubOptions>(opts => new ImportExportController(vm, consoleView).Import(opts.Filename, opts.Format, opts.Context))
                     .WithParsed<InitSubOptions>(opts => Init(opts, settingsPath))
                     .WithParsed<MergeSubOptions>(opts => new ItemController(vm, consoleView).Merge(opts))
                     .WithParsed<MoveAllSubOptions>(opts => new ItemController(vm, consoleView).MoveAll(opts))

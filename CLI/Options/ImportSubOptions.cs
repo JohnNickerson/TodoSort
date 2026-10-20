@@ -10,7 +10,7 @@ namespace AssimilationSoftware.TodoSort.CLI.Options
         public ImportFormat? Format { get; set; }
 
         [Option('f', "file", HelpText = "The filename or folder to read from.", Required = true)]
-        public string? Filename { get; set; }
+        public string Filename { get; set; } = string.Empty;
 
         [Option('c', "context", HelpText = "The context to assign to imported items.")]
         public string? Context { get; set; }

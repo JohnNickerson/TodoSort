@@ -1,7 +1,6 @@
 using AssimilationSoftware.Maroon.Model;
 using AssimilationSoftware.TodoSort.Core.Enums;
 using AssimilationSoftware.TodoSort.Core.Interfaces;
-using AssimilationSoftware.TodoSort.CLI.Options;
 using AssimilationSoftware.TodoSort.Core;
 using AssimilationSoftware.TodoSort.Core.Export;
 using AssimilationSoftware.TodoSort.Core.Import;
@@ -76,36 +75,36 @@ public class ImportExportController
         _svc.Save();
     }
 
-    public void Import(ImportSubOptions importOptions)
+    public void Import(string filename, ImportFormat? format, string? context)
     {
         IImporter? importer = null;
-        switch (importOptions.Format)
+        switch (format)
         {
             case ImportFormat.todosort:
-                if (Directory.Exists(importOptions.Filename))
+                if (Directory.Exists(filename))
                 {
-                    importer = new TextFolderImporter { Folder = importOptions.Filename };
+                    importer = new TextFolderImporter { Folder = filename };
                 }
                 else
                 {
-                    importer = new TextImporter { Filename = importOptions.Filename };
+                    importer = new TextImporter { Filename = filename };
                 }
                 break;
             case ImportFormat.instapaper:
-                importer = new InstapaperImporter(importOptions.Filename);
+                importer = new InstapaperImporter(filename);
                 break;
             case ImportFormat.urls:
-                importer = new RawUrlsImporter(importOptions.Filename);
+                importer = new RawUrlsImporter(filename);
                 break;
             default:
-                _view.WriteLine($"Unknown import format: {importOptions.Format}");
+                _view.WriteLine($"Unknown import format: {format}");
                 break;
         }
         if (importer != null)
         {
             // Get everything from the source file.
             // Exclude anything already seen, according to its import hash field.
-            _svc.AddAllItems(importOptions.Context, true, importer.GetAllItems());
+            _svc.AddAllItems(context ?? "inbox", true, importer.GetAllItems());
             _view.WriteLine(_svc.StatusMessage);
         }
 
