@@ -10,13 +10,15 @@ namespace AssimilationSoftware.TodoSort.CLI.Controllers;
 public class ImportExportController
 {
     private readonly IItemDisplay _view;
+    private readonly TodoService _svc;
 
-    public ImportExportController(IItemDisplay view)
+    public ImportExportController(TodoService svc, IItemDisplay view)
     {
         _view = view;
+        _svc = svc;
     }
 
-    public void Export(ExportSubOptions exportOptions, TodoService svc)
+    public void Export(ExportSubOptions exportOptions)
     {
         // TODO: Write to the console if the filename is empty?
         if (string.IsNullOrEmpty(exportOptions.Filename))
@@ -55,7 +57,7 @@ public class ImportExportController
         }
         if (exporter != null)
         {
-            var searchResults = svc.Search(exportOptions.GetSearchSpecification(), exportOptions.ShowAllItems);
+            var searchResults = _svc.Search(exportOptions.GetSearchSpecification(), exportOptions.ShowAllItems);
             if (!string.IsNullOrEmpty(exportOptions.SortTag))
             {
                 exporter.Export(_view.ApplySort(exportOptions.SortTag, searchResults).ToList());
@@ -70,10 +72,10 @@ public class ImportExportController
             }
         }
 
-        svc.Save();
+        _svc.Save();
     }
 
-    public void Import(ImportSubOptions importOptions, TodoService svc)
+    public void Import(ImportSubOptions importOptions)
     {
         IImporter? importer = null;
         switch (importOptions.Format)
@@ -102,10 +104,10 @@ public class ImportExportController
         {
             // Get everything from the source file.
             // Exclude anything already seen, according to its import hash field.
-            svc.AddAllItems(importOptions.Context, true, importer.GetAllItems());
-            _view.WriteLine(svc.StatusMessage);
+            _svc.AddAllItems(importOptions.Context, true, importer.GetAllItems());
+            _view.WriteLine(_svc.StatusMessage);
         }
 
-        svc.Save();
+        _svc.Save();
     }
 }

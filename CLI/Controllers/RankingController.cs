@@ -11,15 +11,17 @@ namespace AssimilationSoftware.TodoSort.CLI.Controllers;
 public class RankingController
 {
     private readonly IItemDisplay _view;
+    private readonly TodoService _svc;
 
-    public RankingController(IItemDisplay view)
+    public RankingController(TodoService svc, IItemDisplay view)
     {
         _view = view;
+        _svc = svc;
     }
 
-    public void Balance(BalanceOptions balanceOpts, TodoService svc)
+    public void Balance(BalanceOptions balanceOpts)
     {
-        svc.ShowHeadOnly = false;
+        _svc.ShowHeadOnly = false;
         if (balanceOpts.Verbose)
         {
             // Show progress percentage if in verbose mode.
@@ -29,16 +31,16 @@ public class RankingController
         // Validate the branching factor: must be greater than zero.
         if (balanceOpts.BranchFactor > 0)
         {
-            svc.SearchSpecification = balanceOpts.GetSearchSpecification();
-            var depths = svc.GetDepthsView();
-            var vine = svc.SearchResults.OrderBy(i => depths[i.ID]).ThenByDescending(i => i.Upvotes).ToArray();
-            svc.Balance(vine, balanceOpts.BranchFactor);
+            _svc.SearchSpecification = balanceOpts.GetSearchSpecification();
+            var depths = _svc.GetDepthsView();
+            var vine = _svc.SearchResults.OrderBy(i => depths[i.ID]).ThenByDescending(i => i.Upvotes).ToArray();
+            _svc.Balance(vine, balanceOpts.BranchFactor);
             if (balanceOpts.Commit)
             {
                 // In large lists, rather than writing out thousands of changes, then reading them again to commit, just commit everything now.
-                var commitCount = svc.CommitChanges();
+                var commitCount = _svc.CommitChanges();
                 _view.WriteLine($"{commitCount} pending changes committed.");
-                svc.Save();
+                _svc.Save();
             }
         }
         else
@@ -46,73 +48,73 @@ public class RankingController
             _view.WriteLine("Branching factor must be greater than zero.");
         }
 
-        svc.Save();
+        _svc.Save();
     }
 
-    public void Bump(BumpOptions bumpOpts, TodoService svc)
+    public void Bump(BumpOptions bumpOpts)
     {
-        svc.ShowHeadOnly = !bumpOpts.ShowAllItems;
-        svc.SearchSpecification = bumpOpts.SearchSpecification;
+        _svc.ShowHeadOnly = !bumpOpts.ShowAllItems;
+        _svc.SearchSpecification = bumpOpts.SearchSpecification;
         var bumpItems = new List<ActionItem>();
         if (bumpOpts.Top == 0)
         {
             // Manually pick one item.
-            var chosen = _view.Disambiguate(svc.SearchResults, svc, true);
+            var chosen = _view.Disambiguate(_svc.SearchResults, _svc, true);
             if (chosen != null) bumpItems.Add(chosen);
         }
         else if (!string.IsNullOrEmpty(bumpOpts.SortTag))
         {
             // First items.
-            bumpItems.AddRange(_view.ApplySort(bumpOpts.SortTag, svc.SearchResults).Take(bumpOpts.Top));
+            bumpItems.AddRange(_view.ApplySort(bumpOpts.SortTag, _svc.SearchResults).Take(bumpOpts.Top));
         }
         else if (!string.IsNullOrEmpty(bumpOpts.SortDescTag))
         {
-            bumpItems.AddRange(_view.ApplySort(bumpOpts.SortTag ?? string.Empty, svc.SearchResults, SortOrder.Descending).Take(bumpOpts.Top));
+            bumpItems.AddRange(_view.ApplySort(bumpOpts.SortTag ?? string.Empty, _svc.SearchResults, SortOrder.Descending).Take(bumpOpts.Top));
         }
         else
         {
-            bumpItems.AddRange(svc.SearchResults.Take(bumpOpts.Top));
+            bumpItems.AddRange(_svc.SearchResults.Take(bumpOpts.Top));
         }
         // TODO: Display the before and after positions together.
         // Before: red and strike-through.
         // After: yellow and bold.
-        _view.PrintTree(new List<ActionItem>(), bumpItems, svc, bumpOpts.NSFW, bumpOpts.Verbose);
+        _view.PrintTree(new List<ActionItem>(), bumpItems, _svc, bumpOpts.NSFW, bumpOpts.Verbose);
         foreach (var target in bumpItems)
         {
-            var depth = svc.GetDepthsView().TryGetValue(target.ID, out var targetDepth) ? targetDepth / 2 : 0;
+            var depth = _svc.GetDepthsView().TryGetValue(target.ID, out var targetDepth) ? targetDepth / 2 : 0;
             if (depth == 0)
             {
                 target.Upvotes++;
-                svc.Update(target);
+                _svc.Update(target);
             }
-            while (svc.GetDepthsView().TryGetValue(target.ID, out var currentDepth) && currentDepth > depth && target.ParentId != null)
+            while (_svc.GetDepthsView().TryGetValue(target.ID, out var currentDepth) && currentDepth > depth && target.ParentId != null)
             {
-                var currentParent = svc.GetParent(target);
+                var currentParent = _svc.GetParent(target);
                 if (currentParent == null)
                 {
                     break;
                 }
-                svc.SetParent(target, svc.GetParent(currentParent));
+                _svc.SetParent(target, _svc.GetParent(currentParent));
             }
         }
         // After
-        _view.PrintTree(bumpItems, new List<ActionItem>(), svc, bumpOpts.NSFW, bumpOpts.Verbose);
-        svc.Save();
+        _view.PrintTree(bumpItems, new List<ActionItem>(), _svc, bumpOpts.NSFW, bumpOpts.Verbose);
+        _svc.Save();
     }
 
-    public void Rank(MultiSearchSubOptions rankOptions, TodoService svc)
+    public void Rank(MultiSearchSubOptions rankOptions)
     {
         // for each context..
         var quitAndSave = false;
-        svc.ShowHeadOnly = true;
-        var contextList = svc.GetContextNames("inbox", "done").ToArray();
+        _svc.ShowHeadOnly = true;
+        var contextList = _svc.GetContextNames("inbox", "done").ToArray();
         for (int contextIndex = 0; contextIndex < contextList.Length; contextIndex++)
         {
             var con = contextList[contextIndex];
             if (quitAndSave) break;
             // select all items without rank parents
-            svc.SearchSpecification = new ContextSearchSpecification(con).And(rankOptions.GetSearchSpecification());
-            var items = svc.SearchResults.ToArray();
+            _svc.SearchSpecification = new ContextSearchSpecification(con).And(rankOptions.GetSearchSpecification());
+            var items = _svc.SearchResults.ToArray();
             var index = new List<int>();
             for (var dex = 0; dex < items.Count(); dex++)
             {
@@ -137,18 +139,18 @@ public class RankingController
                 if (quitAndSave) break;
                 // get vote
                 _view.WriteLine("{0}/{1} ({2}%) complete", x, items.Count(), 100 * x / items.Count());
-                _view.PrintItem(items.ElementAt(index[x]), 1, svc, rankOptions.NSFW, rankOptions.Verbose);
-                _view.PrintItem(items.ElementAt(index[x + 1]), 2, svc, rankOptions.NSFW, rankOptions.Verbose);
+                _view.PrintItem(items.ElementAt(index[x]), 1, _svc, rankOptions.NSFW, rankOptions.Verbose);
+                _view.PrintItem(items.ElementAt(index[x + 1]), 2, _svc, rankOptions.NSFW, rankOptions.Verbose);
                 var choice = AnsiConsole.Prompt(new Spectre.Console.TextPrompt<string>("Which of these is more important? (q=quit and save, c=cancel)")
                     .AddChoices(["1", "2", "q", "c"]));
                 // assign parents based on vote
                 switch (choice)
                 {
                     case "1":
-                        svc.SetParent(items.ElementAt(index[x + 1]), items.ElementAt(index[x]));
+                        _svc.SetParent(items.ElementAt(index[x + 1]), items.ElementAt(index[x]));
                         break;
                     case "2":
-                        svc.SetParent(items.ElementAt(index[x]), items.ElementAt(index[x + 1]));
+                        _svc.SetParent(items.ElementAt(index[x]), items.ElementAt(index[x + 1]));
                         break;
                     case "q":
                         quitAndSave = true;
@@ -164,26 +166,26 @@ public class RankingController
             }
         }
 
-        svc.Save();
+        _svc.Save();
     }
 
-    public void SetParent(SetParentSubOptions setParentOptions, TodoService svc)
+    public void SetParent(SetParentSubOptions setParentOptions)
     {
-        svc.ShowHeadOnly = !setParentOptions.ShowAllItems;
+        _svc.ShowHeadOnly = !setParentOptions.ShowAllItems;
 
         _view.WriteLine("Confirm child item:");
-        svc.SearchSpecification = setParentOptions.GetChildSearchSpecification();
-        var child = _view.Disambiguate(svc.SearchResults, svc);
+        _svc.SearchSpecification = setParentOptions.GetChildSearchSpecification();
+        var child = _view.Disambiguate(_svc.SearchResults, _svc);
         _view.WriteLine("Confirm parent item:");
-        svc.SearchSpecification = setParentOptions.GetParentSearchSpecification();
+        _svc.SearchSpecification = setParentOptions.GetParentSearchSpecification();
         if (child != null)
         {
-            var parent = _view.Disambiguate(svc.SearchResults.Where(x => x.ID != child.ID), svc);
+            var parent = _view.Disambiguate(_svc.SearchResults.Where(x => x.ID != child.ID), _svc);
             if (parent != null)
             {
-                svc.SetParent(child, parent);
+                _svc.SetParent(child, parent);
                 _view.WriteLine();
-                _view.PrintTree(new List<ActionItem> { { child }, { parent } }, new List<ActionItem>(), svc, setParentOptions.NSFW, setParentOptions.Verbose);
+                _view.PrintTree(new List<ActionItem> { { child }, { parent } }, new List<ActionItem>(), _svc, setParentOptions.NSFW, setParentOptions.Verbose);
             }
             else
             {
@@ -192,41 +194,41 @@ public class RankingController
                 var k = Console.ReadKey();
                 if (k.KeyChar.ToString().ToLower() == "y")
                 {
-                    svc.SetParent(child, null);
+                    _svc.SetParent(child, null);
                     _view.WriteLine();
-                    _view.PrintTree(new List<ActionItem> { child }, new List<ActionItem>(), svc, setParentOptions.NSFW, setParentOptions.Verbose);
+                    _view.PrintTree(new List<ActionItem> { child }, new List<ActionItem>(), _svc, setParentOptions.NSFW, setParentOptions.Verbose);
                 }
             }
         }
 
-        svc.Save();
+        _svc.Save();
     }
 
-    public void Unrank(UnRankOptions unrankOptions, TodoService svc)
+    public void Unrank(UnRankOptions unrankOptions)
     {
-        svc.ShowHeadOnly = !unrankOptions.ShowAllItems;
+        _svc.ShowHeadOnly = !unrankOptions.ShowAllItems;
 
-        svc.SearchSpecification = unrankOptions.SearchSpecification;
-        var selected = _view.Disambiguate(svc.SearchResults, svc, !string.IsNullOrEmpty(unrankOptions.ItemId));
+        _svc.SearchSpecification = unrankOptions.SearchSpecification;
+        var selected = _view.Disambiguate(_svc.SearchResults, _svc, !string.IsNullOrEmpty(unrankOptions.ItemId));
         if (selected != null)
         {
-            svc.ResetPriorityParents(selected);
-            _view.PrintItem(selected, null, svc, false, unrankOptions.Verbose);
-            svc.Save();
+            _svc.ResetPriorityParents(selected);
+            _view.PrintItem(selected, null, _svc, false, unrankOptions.Verbose);
+            _svc.Save();
         }
     }
 
-    public void UnrankAll(UnrankAllOptions unrankAllOptions, TodoService svc)
+    public void UnrankAll(UnrankAllOptions unrankAllOptions)
     {
-        svc.ShowHeadOnly = false;
+        _svc.ShowHeadOnly = false;
 
-        svc.SearchSpecification = unrankAllOptions.GetSearchSpecification();
-        _view.WriteLine("About to delete all ranking data for {0} items. Continue [Y/N]?", svc.SearchResults.Count());
+        _svc.SearchSpecification = unrankAllOptions.GetSearchSpecification();
+        _view.WriteLine("About to delete all ranking data for {0} items. Continue [Y/N]?", _svc.SearchResults.Count());
         if (Console.ReadKey().KeyChar.ToString().ToLower() == "y")
         {
-            svc.ResetPriorityParents(svc.SearchResults.ToArray());
+            _svc.ResetPriorityParents(_svc.SearchResults.ToArray());
         }
 
-        svc.Save();
+        _svc.Save();
     }
 }

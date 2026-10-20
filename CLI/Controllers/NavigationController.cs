@@ -7,10 +7,12 @@ namespace AssimilationSoftware.TodoSort.CLI.Controllers;
 public class NavigationController
 {
     private readonly IItemDisplay _view;
+    private readonly TodoService _svc;
 
-    public NavigationController(IItemDisplay view)
+    public NavigationController(TodoService svc, IItemDisplay view)
     {
         _view = view;
+        _svc = svc;
     }
 
     private void OpenItemTag(string tagValue)
@@ -20,13 +22,13 @@ public class NavigationController
         p.Start();
     }
 
-    public void OpenTag(OpenTagSubOptions openTagOptions, TodoService svc)
+    public void OpenTag(OpenTagSubOptions openTagOptions)
     {
-        svc.ShowHeadOnly = !openTagOptions.ShowAllItems;
+        _svc.ShowHeadOnly = !openTagOptions.ShowAllItems;
 
         // Read a tag and pass it through to the "start" argVerb. Intended for URLs and file names.
-        svc.SearchSpecification = openTagOptions.SearchSpecification;
-        var selected = _view.Disambiguate(svc.SearchResults, svc, !string.IsNullOrEmpty(openTagOptions.ItemId));
+        _svc.SearchSpecification = openTagOptions.SearchSpecification;
+        var selected = _view.Disambiguate(_svc.SearchResults, _svc, !string.IsNullOrEmpty(openTagOptions.ItemId));
         if (selected != null)
         {
             if (selected.Tags.TryGetValue(openTagOptions.Tag ?? string.Empty, out string? tagValue))
@@ -46,20 +48,20 @@ public class NavigationController
                     var newTitle = Console.ReadLine();
                     if (!string.IsNullOrWhiteSpace(newTitle))
                     {
-                        svc.Rename(selected, newTitle);
+                        _svc.Rename(selected, newTitle);
                     }
                 }
                 if (openTagOptions.MarkAsDone)
                 {
-                    svc.MarkDone(null, selected);
+                    _svc.MarkDone(null, selected);
                 }
             }
             else
             {
                 _view.WriteLine("Tag not found: {0}", openTagOptions.Tag);
             }
-            _view.PrintItem(selected, null, svc, false, openTagOptions.Verbose);
-            svc.Save();
+            _view.PrintItem(selected, null, _svc, false, openTagOptions.Verbose);
+            _svc.Save();
         }
     }
 }

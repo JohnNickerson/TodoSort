@@ -75,11 +75,11 @@ public class EditTests
         var doneItem = new ActionItem { ID = Guid.NewGuid(), Title = "Completed item", Context = "done", DoneDate = DateTime.Today };
         repo.Create(doneItem);
         var view = new RecordingItemDisplay();
-        var controller = new SearchController(view);
+        var controller = new SearchController(service, view);
         var options = new DoneSearchSubOptions { Title = "Completed" };
 
         // Act
-        controller.SearchDone(options, service);
+        controller.SearchDone(options);
 
         // Assert
         Assert.Single(view.Items);

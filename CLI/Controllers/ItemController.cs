@@ -9,162 +9,164 @@ namespace AssimilationSoftware.TodoSort.CLI.Controllers;
 public class ItemController
 {
     private readonly IItemDisplay _view;
+    private readonly TodoService _svc;
 
-    public ItemController(IItemDisplay view)
+    public ItemController(TodoService svc, IItemDisplay view)
     {
         _view = view;
+        _svc = svc;
     }
 
-    public void AddItem(AddSubOptions a, TodoService svc)
+    public void AddItem(AddSubOptions a)
     {
-        svc.ShowHeadOnly = false;
+        _svc.ShowHeadOnly = false;
         var selected = new ActionItem { Context = a.Context, Title = a.ActionTitle };
         if (!string.IsNullOrWhiteSpace(a.Note))
         {
             selected.Notes.Add(a.Note);
         }
         _view.WriteLine("Adding action '{0}' to context @{1}", a.ActionTitle, a.Context);
-        svc.AddItem(selected);
+        _svc.AddItem(selected);
         // Allow tagging right away.
-        TagItem(svc, selected);
-        _view.PrintItem(selected, null, svc, false, true);
-        svc.Save();
+        TagItem(selected);
+        _view.PrintItem(selected, null, _svc, false, true);
+        _svc.Save();
     }
 
-    public void Delete(DeleteOptions delOpts, TodoService svc)
+    public void Delete(DeleteOptions delOpts)
     {
         // Find a matching item to delete.
-        var searchResults = svc.Search(delOpts.SearchSpecification, delOpts.ShowAllItems);
-        var selected = _view.Disambiguate(searchResults, svc, !string.IsNullOrEmpty(delOpts.ItemId));
+        var searchResults = _svc.Search(delOpts.SearchSpecification, delOpts.ShowAllItems);
+        var selected = _view.Disambiguate(searchResults, _svc, !string.IsNullOrEmpty(delOpts.ItemId));
         if (selected != null)
         {
-            svc.Delete(selected);
-            _view.PrintItem(selected, null, svc, false, delOpts.Verbose);
-            svc.Save();
+            _svc.Delete(selected);
+            _view.PrintItem(selected, null, _svc, false, delOpts.Verbose);
+            _svc.Save();
         }
     }
 
-    public void Merge(MergeSubOptions mergeOptions, TodoService svc)
+    public void Merge(MergeSubOptions mergeOptions)
     {
         _view.WriteLine("Confirm child item:");
-        svc.SearchTerm = mergeOptions.ChildSearchTerm ?? mergeOptions.TargetSearchTerm;
-        var mergeVictim = _view.Disambiguate(svc.SearchResults, svc);
+        _svc.SearchTerm = mergeOptions.ChildSearchTerm ?? mergeOptions.TargetSearchTerm;
+        var mergeVictim = _view.Disambiguate(_svc.SearchResults, _svc);
         if (mergeVictim != null)
         {
             _view.WriteLine("Confirm item to merge into:");
-            svc.SearchTerm = mergeOptions.TargetSearchTerm;
-            var combined = _view.Disambiguate(svc.SearchResults.Where(x => x.ID != mergeVictim.ID), svc);
+            _svc.SearchTerm = mergeOptions.TargetSearchTerm;
+            var combined = _view.Disambiguate(_svc.SearchResults.Where(x => x.ID != mergeVictim.ID), _svc);
             if (mergeVictim != null && combined != null)
             {
-                svc.Merge(mergeVictim, combined);
-                _view.PrintItem(combined, null, svc, false, mergeOptions.Verbose);
-                svc.Save();
+                _svc.Merge(mergeVictim, combined);
+                _view.PrintItem(combined, null, _svc, false, mergeOptions.Verbose);
+                _svc.Save();
             }
         }
     }
 
-    public void Move(MoveSubOptions moveOptions, TodoService svc)
+    public void Move(MoveSubOptions moveOptions)
     {
-        var searchResults = svc.Search(moveOptions.SearchSpecification, moveOptions.ShowAllItems);
-        var selected = _view.Disambiguate(searchResults, svc, !string.IsNullOrEmpty(moveOptions.ItemId));
+        var searchResults = _svc.Search(moveOptions.SearchSpecification, moveOptions.ShowAllItems);
+        var selected = _view.Disambiguate(searchResults, _svc, !string.IsNullOrEmpty(moveOptions.ItemId));
         if (selected != null)
         {
             selected.Context = moveOptions.NewContext;
             if (moveOptions.Unrank)
             {
                 selected.ParentId = null;
-                foreach (var child in svc.GetChildren(selected))
+                foreach (var child in _svc.GetChildren(selected))
                 {
                     child.ParentId = null;
-                    svc.Update(child);
+                    _svc.Update(child);
                 }
             }
-            svc.Update(selected);
-            _view.PrintItem(selected, null, svc, false, moveOptions.Verbose);
-            svc.Save();
+            _svc.Update(selected);
+            _view.PrintItem(selected, null, _svc, false, moveOptions.Verbose);
+            _svc.Save();
         }
     }
 
-    public void MoveAll(MoveAllSubOptions moveAllOptions, TodoService svc)
+    public void MoveAll(MoveAllSubOptions moveAllOptions)
     {
-        var items = svc.Search(moveAllOptions.GetSearchSpecification(), moveAllOptions.ShowAllItems).ToList();
+        var items = _svc.Search(moveAllOptions.GetSearchSpecification(), moveAllOptions.ShowAllItems).ToList();
         var counter = 0;
         while (items.Count > 0)
         {
             items[0].Context = moveAllOptions.NewContext;
-            svc.Update(items[0]);
+            _svc.Update(items[0]);
             items.RemoveAt(0);
             counter++;
         }
         _view.WriteLine(string.Format("{0} items moved to @{1}", counter, moveAllOptions.NewContext));
 
-        svc.Save();
+        _svc.Save();
     }
 
-    public void Note(NoteSubOptions noteOptions, TodoService svc)
+    public void Note(NoteSubOptions noteOptions)
     {
         // Add a note to a task.
-        var searchResults = svc.Search(noteOptions.SearchSpecification, noteOptions.ShowAllItems);
-        var selected = _view.Disambiguate(searchResults, svc, !string.IsNullOrEmpty(noteOptions.ItemId));
+        var searchResults = _svc.Search(noteOptions.SearchSpecification, noteOptions.ShowAllItems);
+        var selected = _view.Disambiguate(searchResults, _svc, !string.IsNullOrEmpty(noteOptions.ItemId));
         if (selected != null)
         {
             selected.Notes.Add(string.Format("{0} ({1:yyyy-MM-dd})", noteOptions.NewNote, DateTime.Now));
-            svc.Update(selected);
-            _view.PrintItem(selected, null, svc, false, noteOptions.Verbose);
-            svc.Save();
+            _svc.Update(selected);
+            _view.PrintItem(selected, null, _svc, false, noteOptions.Verbose);
+            _svc.Save();
         }
     }
 
-    public void Rename(RenameSubOptions renameOptions, TodoService svc)
+    public void Rename(RenameSubOptions renameOptions)
     {
-        var searchResults = svc.Search(renameOptions.SearchSpecification, renameOptions.ShowAllItems);
-        var selected = _view.Disambiguate(searchResults, svc, !string.IsNullOrEmpty(renameOptions.ItemId));
+        var searchResults = _svc.Search(renameOptions.SearchSpecification, renameOptions.ShowAllItems);
+        var selected = _view.Disambiguate(searchResults, _svc, !string.IsNullOrEmpty(renameOptions.ItemId));
         if (selected != null)
         {
             selected.Title = renameOptions.NewTitle;
-            svc.Update(selected);
+            _svc.Update(selected);
             _view.WriteLine("Item renamed.");
             if (renameOptions.ReTag)
             {
-                TagItem(svc, selected);
+                TagItem(selected);
             }
-            _view.PrintItem(selected, null, svc, false, renameOptions.Verbose);
-            svc.Save();
+            _view.PrintItem(selected, null, _svc, false, renameOptions.Verbose);
+            _svc.Save();
         }
     }
 
-    public void SetProject(SetProjectSubOptions commandOptions, TodoService svc)
+    public void SetProject(SetProjectSubOptions commandOptions)
     {
         _view.WriteLine("Confirm child item:");
-        var childSearchResults = svc.Search(new FullTextSearchSpecification(commandOptions.ChildSearchTerm), commandOptions.ShowAllItems);
-        var child = _view.Disambiguate(childSearchResults, svc);
+        var childSearchResults = _svc.Search(new FullTextSearchSpecification(commandOptions.ChildSearchTerm), commandOptions.ShowAllItems);
+        var child = _view.Disambiguate(childSearchResults, _svc);
 
         _view.WriteLine("Confirm project:");
-        var projectSearchResults = svc.Search(new FullTextSearchSpecification(commandOptions.ProjectSearchTerm ?? commandOptions.ChildSearchTerm), commandOptions.ShowAllItems);
-        var project = _view.Disambiguate(projectSearchResults, svc);
+        var projectSearchResults = _svc.Search(new FullTextSearchSpecification(commandOptions.ProjectSearchTerm ?? commandOptions.ChildSearchTerm), commandOptions.ShowAllItems);
+        var project = _view.Disambiguate(projectSearchResults, _svc);
         if (child != null && project != null)
         {
             child.ProjectId = project.ID;
-            svc.Update(child);
+            _svc.Update(child);
         }
 
-        svc.Save();
+        _svc.Save();
     }
 
-    public void Tag(SingleSearchSubOptions tagOptions, TodoService svc)
+    public void Tag(SingleSearchSubOptions tagOptions)
     {
         // Search for a matching item.
-        var searchResults = svc.Search(tagOptions.SearchSpecification, tagOptions.ShowAllItems);
-        var selected = _view.Disambiguate(searchResults, svc, !string.IsNullOrEmpty(tagOptions.ItemId));
+        var searchResults = _svc.Search(tagOptions.SearchSpecification, tagOptions.ShowAllItems);
+        var selected = _view.Disambiguate(searchResults, _svc, !string.IsNullOrEmpty(tagOptions.ItemId));
         if (selected != null)
         {
-            TagItem(svc, selected);
-            _view.PrintItem(selected, null, svc, false, tagOptions.Verbose);
-            svc.Save();
+            TagItem(selected);
+            _view.PrintItem(selected, null, _svc, false, tagOptions.Verbose);
+            _svc.Save();
         }
     }
 
-    public void TagAll(TagAllSubOptions tagAllOptions, TodoService svc)
+    public void TagAll(TagAllSubOptions tagAllOptions)
     {
         if (string.IsNullOrWhiteSpace(tagAllOptions.TagName))
         {
@@ -172,25 +174,25 @@ public class ItemController
             return;
         }
 
-        var items = svc.Search(tagAllOptions.SearchSpecification, tagAllOptions.ShowAllItems).ToArray();
+        var items = _svc.Search(tagAllOptions.SearchSpecification, tagAllOptions.ShowAllItems).ToArray();
         foreach (var i in items)
         {
             if (string.IsNullOrWhiteSpace(tagAllOptions.TagValue))
             {
                 i.Tags.Remove(tagAllOptions.TagName);
-                svc.Update(i);
+                _svc.Update(i);
             }
             else
             {
                 i.Tags[tagAllOptions.TagName] = tagAllOptions.TagValue;
-                svc.Update(i);
+                _svc.Update(i);
             }
         }
 
-        svc.Save();
+        _svc.Save();
     }
 
-    private void TagItem(TodoService svc, ActionItem selected)
+    private void TagItem(ActionItem selected)
     {
         string? tagName;
         do
@@ -204,12 +206,12 @@ public class ItemController
                 if (!string.IsNullOrWhiteSpace(value))
                 {
                     selected.Tags[tagName] = value;
-                    svc.Update(selected);
+                    _svc.Update(selected);
                 }
                 else if (selected.Tags.ContainsKey(tagName))
                 {
                     selected.Tags.Remove(tagName);
-                    svc.Update(selected);
+                    _svc.Update(selected);
                 }
                 _view.WriteLine();
             }

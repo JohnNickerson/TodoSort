@@ -7,88 +7,90 @@ namespace AssimilationSoftware.TodoSort.CLI.Controllers;
 public class WorkflowController
 {
     private readonly IItemDisplay _view;
+    private readonly TodoService _svc;
 
-    public WorkflowController(IItemDisplay view)
+    public WorkflowController(TodoService svc, IItemDisplay view)
     {
         _view = view;
+        _svc = svc;
     }
 
-    public void Defer(DeferSubOptions deferOpts, TodoService svc)
+    public void Defer(DeferSubOptions deferOpts)
     {
-        svc.ShowHeadOnly = !deferOpts.ShowAllItems;
+        _svc.ShowHeadOnly = !deferOpts.ShowAllItems;
 
-        svc.SearchSpecification = deferOpts.SearchSpecification;
-        var selected = _view.Disambiguate(svc.SearchResults, svc, !string.IsNullOrEmpty(deferOpts.ItemId));
+        _svc.SearchSpecification = deferOpts.SearchSpecification;
+        var selected = _view.Disambiguate(_svc.SearchResults, _svc, !string.IsNullOrEmpty(deferOpts.ItemId));
         if (selected != null)
         {
             if (deferOpts.TickleDate.HasValue)
             {
-                svc.Defer(selected, deferOpts.TickleDate.Value);
+                _svc.Defer(selected, deferOpts.TickleDate.Value);
             }
             else
             {
-                svc.Defer(selected);
+                _svc.Defer(selected);
             }
-            _view.PrintItem(selected, null, svc, false, deferOpts.Verbose);
-            svc.Save();
+            _view.PrintItem(selected, null, _svc, false, deferOpts.Verbose);
+            _svc.Save();
         }
     }
 
-    public void DeferAll(DeferAllOptions pruneOptions, TodoService svc)
+    public void DeferAll(DeferAllOptions pruneOptions)
     {
-        svc.ShowHeadOnly = false;
+        _svc.ShowHeadOnly = false;
 
-        svc.SearchSpecification = pruneOptions.GetSearchSpecification();
-        _view.WriteLine("About to defer {0} items. Continue [Y/N]?", svc.SearchResults.Count());
+        _svc.SearchSpecification = pruneOptions.GetSearchSpecification();
+        _view.WriteLine("About to defer {0} items. Continue [Y/N]?", _svc.SearchResults.Count());
         var k = Console.ReadKey();
         if (k.KeyChar.ToString().ToLower() == "y")
         {
-            svc.Defer(svc.SearchResults.ToArray());
+            _svc.Defer(_svc.SearchResults.ToArray());
         }
 
-        svc.Save();
+        _svc.Save();
     }
 
-    public void Done(DoneSubOptions doneOpts, TodoService svc)
+    public void Done(DoneSubOptions doneOpts)
     {
-        svc.ShowHeadOnly = !doneOpts.ShowAllItems;
+        _svc.ShowHeadOnly = !doneOpts.ShowAllItems;
 
         // If there is a next action, create a new item and add it to the correct context.
-        svc.SearchSpecification = doneOpts.SearchSpecification;
-        var selected = _view.Disambiguate(svc.SearchResults, svc, !string.IsNullOrEmpty(doneOpts.ItemId));
+        _svc.SearchSpecification = doneOpts.SearchSpecification;
+        var selected = _view.Disambiguate(_svc.SearchResults, _svc, !string.IsNullOrEmpty(doneOpts.ItemId));
         if (selected != null)
         {
-            svc.MarkDone(doneOpts.DoneDate, selected);
-            _view.PrintItem(selected, null, svc, false, doneOpts.Verbose);
-            svc.Save();
+            _svc.MarkDone(doneOpts.DoneDate, selected);
+            _view.PrintItem(selected, null, _svc, false, doneOpts.Verbose);
+            _svc.Save();
         }
     }
 
-    public void Undefer(UndeferOptions undeferOptions, TodoService svc)
+    public void Undefer(UndeferOptions undeferOptions)
     {
-        svc.ShowHeadOnly = !undeferOptions.ShowAllItems;
+        _svc.ShowHeadOnly = !undeferOptions.ShowAllItems;
 
-        svc.SomedaySearchSpecification = undeferOptions.SearchSpecification;
-        var selected = _view.Disambiguate(svc.SomedaySearchResults, svc, !string.IsNullOrEmpty(undeferOptions.ItemId));
+        _svc.SomedaySearchSpecification = undeferOptions.SearchSpecification;
+        var selected = _view.Disambiguate(_svc.SomedaySearchResults, _svc, !string.IsNullOrEmpty(undeferOptions.ItemId));
         if (selected != null)
         {
-            svc.Undefer("inbox", selected);
-            _view.PrintItem(selected, null, svc, false, undeferOptions.Verbose);
-            svc.Save();
+            _svc.Undefer("inbox", selected);
+            _view.PrintItem(selected, null, _svc, false, undeferOptions.Verbose);
+            _svc.Save();
         }
     }
 
-    public void Undo(UndoSubOptions undoOptions, TodoService svc)
+    public void Undo(UndoSubOptions undoOptions)
     {
-        svc.ShowHeadOnly = !undoOptions.ShowAllItems;
+        _svc.ShowHeadOnly = !undoOptions.ShowAllItems;
 
-        svc.DoneSearchSpecification = undoOptions.SearchSpecification;
-        var selected = _view.Disambiguate(svc.DoneSearchResults, svc, !string.IsNullOrEmpty(undoOptions.ItemId));
+        _svc.DoneSearchSpecification = undoOptions.SearchSpecification;
+        var selected = _view.Disambiguate(_svc.DoneSearchResults, _svc, !string.IsNullOrEmpty(undoOptions.ItemId));
         if (selected != null)
         {
-            svc.Undo(undoOptions.NewContext, selected);
-            _view.PrintItem(selected, null, svc, false, undoOptions.Verbose);
-            svc.Save();
+            _svc.Undo(undoOptions.NewContext, selected);
+            _view.PrintItem(selected, null, _svc, false, undoOptions.Verbose);
+            _svc.Save();
         }
     }
 }
