@@ -1,4 +1,5 @@
-using AssimilationSoftware.TodoSort.CLI.Enums;
+using AssimilationSoftware.Maroon.Model;
+using AssimilationSoftware.TodoSort.Core.Enums;
 using AssimilationSoftware.TodoSort.CLI.Interfaces;
 using AssimilationSoftware.TodoSort.CLI.Options;
 using AssimilationSoftware.TodoSort.Core;
@@ -18,37 +19,37 @@ public class ImportExportController
         _svc = svc;
     }
 
-    public void Export(ExportSubOptions exportOptions)
+    public void Export(string? filename, string? templateFilename, ExportFormat? format, bool showAllItems, string? sortTag, string? sortDescTag, Core.Search.ISearchSpecification<ActionItem> searchSpecification)
     {
         // TODO: Write to the console if the filename is empty?
-        if (string.IsNullOrEmpty(exportOptions.Filename))
+        if (string.IsNullOrEmpty(filename))
         {
             _view.WriteLine("Target filename is empty. You must specify a file name to write to.");
             return;
         }
         IExporter? exporter = null;
-        if (!string.IsNullOrEmpty(exportOptions.TemplateFilename))
+        if (!string.IsNullOrEmpty(templateFilename))
         {
-            exporter = new TemplateExporter(exportOptions.Filename, exportOptions.TemplateFilename);
+            exporter = new TemplateExporter(filename, templateFilename);
         }
         else
         {
-            switch (exportOptions.Format)
+            switch (format)
             {
                 case ExportFormat.html:
-                    exporter = new HtmlExporter { Filename = exportOptions.Filename };
+                    exporter = new HtmlExporter { Filename = filename };
                     break;
                 case ExportFormat.graphviz:
-                    exporter = new GraphVizExporter { Filename = exportOptions.Filename };
+                    exporter = new GraphVizExporter { Filename = filename };
                     break;
                 case ExportFormat.todosort:
-                    exporter = new TextExporter { Filename = exportOptions.Filename };
+                    exporter = new TextExporter { Filename = filename };
                     break;
                 case ExportFormat.json:
-                    exporter = new JsonExporter { Filename = exportOptions.Filename };
+                    exporter = new JsonExporter { Filename = filename };
                     break;
                 case ExportFormat.todotxt:
-                    exporter = new TodoTxtExporter { Filename = exportOptions.Filename };
+                    exporter = new TodoTxtExporter { Filename = filename };
                     break;
                 default:
                     _view.WriteLine("Unknown output file format.");
@@ -57,14 +58,14 @@ public class ImportExportController
         }
         if (exporter != null)
         {
-            var searchResults = _svc.Search(exportOptions.GetSearchSpecification(), exportOptions.ShowAllItems);
-            if (!string.IsNullOrEmpty(exportOptions.SortTag))
+            var searchResults = _svc.Search(searchSpecification, showAllItems);
+            if (!string.IsNullOrEmpty(sortTag))
             {
-                exporter.Export(_view.ApplySort(exportOptions.SortTag, searchResults).ToList());
+                exporter.Export(_view.ApplySort(sortTag, searchResults).ToList());
             }
-            else if (!string.IsNullOrEmpty(exportOptions.SortDescTag))
+            else if (!string.IsNullOrEmpty(sortDescTag))
             {
-                exporter.Export(_view.ApplySort(exportOptions.SortDescTag, searchResults, SortOrder.Descending).ToList());
+                exporter.Export(_view.ApplySort(sortDescTag, searchResults, SortOrder.Descending).ToList());
             }
             else
             {

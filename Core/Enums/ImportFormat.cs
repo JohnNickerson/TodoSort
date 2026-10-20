@@ -1,4 +1,4 @@
-namespace AssimilationSoftware.TodoSort.CLI.Enums
+namespace AssimilationSoftware.TodoSort.Core.Enums
 {
     public enum ImportFormat
     {

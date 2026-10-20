@@ -1,5 +1,5 @@
 using AssimilationSoftware.Maroon.Model;
-using AssimilationSoftware.TodoSort.CLI.Enums;
+using AssimilationSoftware.TodoSort.Core.Enums;
 using AssimilationSoftware.TodoSort.Core;
 using AssimilationSoftware.TodoSort.Core.Data;
 

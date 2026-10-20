@@ -1,4 +1,4 @@
-﻿using AssimilationSoftware.TodoSort.CLI.Enums;
+﻿using AssimilationSoftware.TodoSort.Core.Enums;
 using CommandLine;
 
 namespace AssimilationSoftware.TodoSort.CLI.Options
