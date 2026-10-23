@@ -123,6 +123,11 @@ public class NavigationService : INavigationService
 
     public void ShowRankView(List<ActionViewModel> items, Core.TodoService api)
     {
+        if (items.Count < 2)
+        {
+            System.Windows.MessageBox.Show("Not enough items to rank.", "Rank", MessageBoxButton.OK, MessageBoxImage.Information);
+            return;
+        }
         var rv = new RankView();
         var rvm = new RankViewModel(items, rv, api);
         rv.DataContext = rvm;
