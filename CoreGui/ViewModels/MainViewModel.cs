@@ -325,6 +325,11 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
                 StatusMessage = "Error: No file loaded.";
                 return;
             }
+            if (Items.Count < 2)
+            {
+                StatusMessage = "Error: Not enough items to rank.";
+                return;
+            }
             // Open up a ranking window.
             _navigationService.ShowRankView(Items, _api);
             RaisePropertyChanged(nameof(Items));
