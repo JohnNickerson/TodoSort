@@ -84,7 +84,7 @@ public class RankingController
             var depth = _svc.GetDepthsView().TryGetValue(target.ID, out var targetDepth) ? targetDepth / 2 : 0;
             if (depth == 0)
             {
-                target.Upvotes++;
+                target.Upvotes = Math.Min(target.Upvotes + 1, 1000);
                 _svc.Update(target);
             }
             while (_svc.GetDepthsView().TryGetValue(target.ID, out var currentDepth) && currentDepth > depth && target.ParentId != null)

@@ -469,7 +469,7 @@ namespace AssimilationSoftware.TodoSort.Core
             // Increment the "upvotes" counter.
             if (parent != null)
             {
-                parent.Upvotes++;
+                parent.Upvotes = Math.Min(parent.Upvotes + 1, 1000);
                 _repository.Update(parent);
             }
             _repository.Update(child);
@@ -551,7 +551,7 @@ namespace AssimilationSoftware.TodoSort.Core
             // Add notes and tags from second to first.
             target.Notes.AddRange(child.Notes);
             // Update the vote count.
-            target.Upvotes = child.Upvotes + target.Upvotes;
+            target.Upvotes = Math.Min(child.Upvotes + target.Upvotes, 1000);
             foreach (var tag in child.Tags)
             {
                 if (!target.Tags.ContainsKey(tag.Key))

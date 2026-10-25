@@ -135,7 +135,7 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
             set
             {
                 if (Source.Upvotes == value) return;
-                Source.Upvotes = value;
+                Source.Upvotes = Math.Min(value, 1000);
                 RaisePropertyChanged();
             }
         }
