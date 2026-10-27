@@ -3,107 +3,108 @@
 		- Unable to be voted down, automatically win votes, skipped when two important ones are against each other.
 		#type:feature
 		#id:0e40530b-c740-414b-bfed-e88394b8f9fa
-		#revision:00000000-0000-0000-0000-000000000000
+		#revision:3d173297-cd83-4424-a45f-1f8eecf6eb17
 		#priority-parent:f10b1166-8dff-432b-869f-4cc29dccef22
 	Trash context
 		- To allow undeleting items if required.
 		#type:feature
 		#id:11761e28-949d-470d-aeb8-b7cd1d4bc58a
-		#revision:00000000-0000-0000-0000-000000000000
+		#revision:53391cd8-3f5d-411c-8b21-4fc5e55a333d
 	Recurring reminders and items
 		- Serialise with "repeats" tags? Need to prototype it.
 		- When a recurring item is marked as done, instead of moving, one copy goes to the "done" list and one to the "someday" list.
 		- Might benefit from an "IRepeatable" interface in Maroon.
 		#id:8da843b9-8dc7-47c7-9db3-e7209b1068fe
-		#revision:00000000-0000-0000-0000-000000000000
+		#revision:40be2412-0d7e-4db0-b5f3-4b5da4c5b545
 		#priority-parent:f10b1166-8dff-432b-869f-4cc29dccef22
 @cli
 	Make "export" a universal option for output instead of its own command
 		#type:feature
 		#id:05e78d12-11a3-4a31-9906-d0ca2ca3b0c1
-		#revision:00000000-0000-0000-0000-000000000000
+		#revision:f0ba64c0-da0e-47fc-9507-d9a76c215d49
 		#priority-parent:37ed25d1-cd26-4ad0-b86b-896cca3f783c
 	Copy tag to clipboard
 		- Or export directly to clipboard instead of file.
 		#type:feature
 		#id:0cfcf140-77f1-455e-a762-f432499512de
-		#revision:00000000-0000-0000-0000-000000000000
+		#revision:45e5e69f-4e5d-4eb9-a4d1-8e500ffeed17
 		#priority-parent:734bc716-c2d6-44d6-8a7a-04fb0374238c
 	Edit Notes command
 		- Just to modify existing notes if required.
 		#type:feature
 		#id:2fd5a81e-3ded-45d4-b777-1e889fcf1126
-		#revision:00000000-0000-0000-0000-000000000000
+		#revision:89357f4a-8a6b-4484-bcba-e45da5d59540
 		#priority-parent:b27942a1-1960-41fe-a38a-1189d75d1700
-	Hide NSFW-tagged items
-		- Might be easiest to specify with advanced search.
-		#type:feature
-		#id:314d8cbb-f519-4b49-bd2c-b3ceeb05a912
-		#revision:00000000-0000-0000-0000-000000000000
 	Change console output to an export module used by default
 		#type:feature
 		#id:37ed25d1-cd26-4ad0-b86b-896cca3f783c
-		#revision:00000000-0000-0000-0000-000000000000
+		#revision:d440fc86-e65a-40ec-a798-c81e83b3b510
 		#priority-parent:b27942a1-1960-41fe-a38a-1189d75d1700
 	Multi-line notes on new items
 		- It would be nice to be able to enter a lot of notes for a new item, if relevant.
 		#type:feature
 		#id:3bdcfae0-d59e-4097-8a53-9ed8a4bafc6e
-		#revision:00000000-0000-0000-0000-000000000000
+		#revision:3bfd5028-1040-4e86-b274-2da5a4101577
 		#priority-parent:eafd7429-120e-4126-b710-cc143659bca2
 	Display depth for individual item search results
 		- Might be nice to know, but fairly easy to determine from Show-Ancestors.
 		#type:feature
 		#id:4158a739-966a-45e5-88e0-e9169a84b298
-		#revision:00000000-0000-0000-0000-000000000000
+		#revision:2b5ecdc9-20d9-424a-9636-fa7617c4c844
 	Show priority depth in verbose output
 		- I want to know how deep certain items are. (2014-06-02)
 		- Maybe merge this with the individual item tree display idea. (2014-06-02)
 		#type:feature
 		#id:540d5e5a-e748-48d4-8131-ba284623b73a
-		#revision:00000000-0000-0000-0000-000000000000
+		#revision:716bb300-8d0a-4623-894b-e08d163b0172
 	Sort by dynamic child count
 		- Instead of requiring a precalculation.
 		#type:feature
 		#id:71b48b73-88c5-4196-a379-46ef9964288b
-		#revision:00000000-0000-0000-0000-000000000000
+		#revision:df3a2703-c271-4f66-b95f-4d58749b5dc3
 	Add tags on command line with add command
 		- Currently interactive. Allow as an argument.
 		#type:feature
 		#id:734bc716-c2d6-44d6-8a7a-04fb0374238c
-		#revision:00000000-0000-0000-0000-000000000000
+		#revision:f4be0dee-234a-467a-9f45-04a67548901b
 	Allow more specific advanced search functions
 		- For instance, parse (tag foo) as looking for a tag called foo.
 		#type:feature
 		#id:9d3a89f1-3f37-4af0-89cb-0ddf43b7d707
-		#revision:00000000-0000-0000-0000-000000000000
+		#revision:c960ab4f-34a5-44e0-9247-5996cf6a1ebb
 	Export iCal format for Someday items
 		- Might comprise two new features.
 		- Useful for my upcoming movies list. (2015-03-16)
 		#type:feature
 		#id:b27942a1-1960-41fe-a38a-1189d75d1700
-		#revision:00000000-0000-0000-0000-000000000000
+		#revision:671558e0-a485-4d68-979e-7caa1c2ac98c
 	'Make-List' command to make a priority chain out of several items
 		- Could come in handy for book and movie sequences, perhaps.
 		#type:feature
 		#id:c7f20b28-948a-4530-be53-7234e8fbdb65
-		#revision:00000000-0000-0000-0000-000000000000
+		#revision:65e1a34d-54a7-4e4e-b76e-cc2386b44508
 		#priority-parent:76757caa-17d7-4a14-a337-afda259a9ab6
 	Set project on add
 		- Allow the user to search for and set a project as part of the Add command.
 		#type:feature
 		#id:df1b6700-a5c7-4ef0-a41c-337758dda012
-		#revision:00000000-0000-0000-0000-000000000000
+		#revision:66fde8d2-d2f1-403e-8687-098f2b37fd9b
 	Use word wrap for status messages while adding new items
 		#type:feature
 		#id:e4807656-e261-4f76-9db6-181d4387d118
-		#revision:00000000-0000-0000-0000-000000000000
+		#revision:6525f07c-6eff-4c5b-bfd2-b6d076be3ab1
 	Option interfaces
 		- Standard option interfaces to specify what kind of options are available to a command. Would help prevent bugs like improper handling of general flags.
 		#type:feature
 		#id:eafd7429-120e-4126-b710-cc143659bca2
-		#revision:00000000-0000-0000-0000-000000000000
+		#revision:46a1a93c-fcb3-436e-b60f-9bed6e6b8a62
 @done
+	Hide NSFW-tagged items
+		- Might be easiest to specify with advanced search.
+		#type:feature
+		#done-date:2026-10-27
+		#id:314d8cbb-f519-4b49-bd2c-b3ceeb05a912
+		#revision:0e4bf07a-5213-48ac-94f6-21dbbc49711a
 	Empty tags
 		- Allow tags where their existence is all that matters.
 		#type:feature
@@ -114,47 +115,47 @@
 		#type:feature
 		#done-date:2017-11-21
 		#id:650e2c9b-784d-4687-9d62-1d8d950c3989
-		#revision:00000000-0000-0000-0000-000000000000
+		#revision:4158b933-0b26-4782-93e3-059a8f951cfe
 	De-duplicate command
 		- Search and merge duplicates
 		- Kind of difficult with this data, but worth it. (2014-06-17)
 		- Perhaps specify the tags to match on. (2015-06-16)
 		#done-date:2017-11-21
 		#id:841c5d7b-d1c5-4a3e-8618-cfff08ef4c20
-		#revision:00000000-0000-0000-0000-000000000000
+		#revision:ed801dab-3ffe-4441-b6cc-9c38cc18f03f
 	Mustache-sharp template engine for exports
 		#url:https://github.com/jehugaleahsa/mustache-sharp
 		#done-date:2017-11-21
 		#id:c16bf60e-abb0-4847-867b-cba0df9e7e3e
-		#revision:00000000-0000-0000-0000-000000000000
+		#revision:f8cfc71e-c94d-407b-8339-2812a8731973
 @gui
 	Warn when closing without saving
 		#type:feature
 		#id:6bb0c52c-6f9a-4676-81a3-608db07e917a
-		#revision:00000000-0000-0000-0000-000000000000
+		#revision:15cd188a-74fc-4a8d-a48c-a9345eb9122e
 		#priority-parent:6ce50539-3ffe-4f30-b85e-d947f7699788
 	Add follow-up actions via GUI
 		#id:bdf4dbf2-cc3c-4004-811b-1d8371c37d3f
-		#revision:00000000-0000-0000-0000-000000000000
+		#revision:8f9513d1-bedd-4b78-8f05-32772e09c435
 		#priority-parent:eac9e80b-2f1b-4fb6-bb79-75c8d850a07f
 	A Chrome/Firefox plugin to add a page to the playlist
 		#id:d4e41a1d-782b-4f1d-959a-61e8cefcf892
-		#revision:00000000-0000-0000-0000-000000000000
+		#revision:0a950986-3b39-4c43-a3e7-c56005d3a8ef
 		#priority-parent:6ce50539-3ffe-4f30-b85e-d947f7699788
 @someday
 	Import from RSS
 		- Can be used for just about anything, then.
 		#type:feature
 		#id:3d069478-d751-492c-8ca0-6fdd551f31eb
-		#revision:00000000-0000-0000-0000-000000000000
+		#revision:f5234b0b-09a4-4dc7-8ad8-ad4435ee15e1
 	Sync with external services
 		- Outlook, Google Tasks, Google Keep?
 		- API mappers where possible.
 		- Google Tasks API: https://www.nuget.org/packages/Google.Apis.Tasks.v1/
 		#id:43b0868b-d3e5-477f-82cd-b7da7c01a092
-		#revision:00000000-0000-0000-0000-000000000000
+		#revision:e2500bea-7faf-4843-9bca-4736768c60d6
 		#priority-parent:b84a8574-a3eb-4208-ba13-8746a9bca871
 	Detect "[x]" marks as completed items
 		#tickle-date:2014-04-16
 		#id:aa8b5a86-32d5-4445-a90e-ed517b77c292
-		#revision:00000000-0000-0000-0000-000000000000
+		#revision:325fd7a7-3ed7-45bc-ba48-194325e7561a
