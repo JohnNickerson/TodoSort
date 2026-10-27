@@ -5,7 +5,6 @@
         private string? todoPath;
 
         public string? TodoPath { get => Environment.ExpandEnvironmentVariables(todoPath ?? string.Empty); set => todoPath = value; }
-        public string? AccessCode { get; set; }
 
         public static FolderSettings LoadFrom(string path)
         {
