@@ -242,6 +242,13 @@ namespace AssimilationSoftware.TodoSort.Core
 
         public void Save()
         {
+            // Fix legacy items that were read from a file without a RevisionGuid. Assign a new one to them.
+            foreach (var item in _repository.FindAll().Where(item => item.RevisionGuid == Guid.Empty).ToList())
+            {
+                item.RevisionGuid = Guid.NewGuid();
+                _repository.Update(item);
+            }
+
             _repository.SaveChanges();
             UnsavedChanges = false;
         }
