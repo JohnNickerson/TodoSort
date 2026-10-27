@@ -10,31 +10,14 @@
         {
             if (File.Exists(path))
             {
-                var lines = File.ReadAllLines(path);
-                // New: JSON serialisation mode
                 try
                 {
+                    var lines = File.ReadAllLines(path);
                     return Newtonsoft.Json.JsonConvert.DeserializeObject<FolderSettings>(string.Join(' ', lines)) ?? new();
                 }
                 catch
                 {
-                    // Backwards compatibility: old INI format.
                     var result = new FolderSettings();
-                    foreach (string line in lines)
-                    {
-                        var setting = line.Split(new char[] { '=' }, 2);
-                        if (setting.Length == 2)
-                        {
-                            switch (setting[0].Trim().ToLower())
-                            {
-                                case "todopath":
-                                    result.TodoPath = setting[1];
-                                    break;
-                                default:
-                                    break;
-                            }
-                        }
-                    }
                     SaveTo(path, result);
                     return result;
                 }
