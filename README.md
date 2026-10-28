@@ -265,3 +265,6 @@ TodoSort is a task list and reading list app with an emphasis on priority. It st
 	- Fix verbose and show-all functionality in summary command.
 - 2026-10-21: Build 1.14.1.0
 	- Refactoring controller methods.
+- 2026-10-28: Build 1.14.2.0
+	- Do not rank if only one item shown.
+	- Add revision IDs if missing.
