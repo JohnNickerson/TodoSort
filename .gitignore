@@ -7,3 +7,5 @@ obj/
 packages/
 appsettings.*.json
 *.bat
+.agents/
+.scratch/
