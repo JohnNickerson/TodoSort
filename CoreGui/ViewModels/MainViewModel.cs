@@ -216,12 +216,18 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
             RaisePropertyChanged(nameof(Items));
         }
 
-        private void CommitChanges()
+        public void CommitChanges()
         {
             if (_api == null)
             {
                 StatusMessage = "Error: No file loaded.";
                 return;
+            }
+
+            // Save any unsaved changes first.
+            if (_api.UnsavedChanges)
+            {
+                _api.Save();
             }
 
             var pendingChanges = _api.GetPendingChanges();
@@ -259,7 +265,10 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
 
         public void CheckForCommit()
         {
-            var pendingCount = _api?.GetPendingChanges().Sum(p => p.Updates.Count);
+            if (_api == null) return;
+            var pendingChanges = _api.GetPendingChanges();
+            if (pendingChanges.Count == 0) return;
+            var pendingCount = pendingChanges.Sum(p => p.Updates?.Count ?? 0);
             if (pendingCount > CommitLimit && _lastPendingCount != pendingCount)
             {
                 var response = _navigationService.ShowMessageBox($"{pendingCount} changes are pending. Commit now?", "Commit Changes");
