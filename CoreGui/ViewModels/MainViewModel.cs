@@ -224,12 +224,6 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
                 return;
             }
 
-            // Save any unsaved changes first.
-            if (_api.UnsavedChanges)
-            {
-                _api.Save();
-            }
-
             var pendingChanges = _api.GetPendingChanges();
             if (pendingChanges.Count == 0)
             {
