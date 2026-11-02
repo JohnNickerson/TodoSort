@@ -23,3 +23,7 @@ _Avoid_: someday item, parked item
 **List state**:
 The current arrangement of action items, including the active context, search results, and visible sorting.
 _Avoid_: view state, UI state
+
+**File lifecycle**:
+The phases through which a TodoSort file moves: opened, tracked, saved, and reloaded as the working copy changes.
+_Avoid_: file state, document state

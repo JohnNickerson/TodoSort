@@ -108,12 +108,12 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
                 // Store the file name as the most recent one opened.
                 if (!string.IsNullOrEmpty(filename))
                 {
-                    RecentFileList.Remove(filename);
-                    RecentFileList.Insert(0, filename);
-                }
-                while (RecentFileList.Count > 10)
-                {
-                    RecentFileList.RemoveAt(10);
+                    var orderedRecentFiles = FileLifecycleState.OrderRecentFiles(RecentFileList, filename);
+                    RecentFileList.Clear();
+                    foreach (var recentFile in orderedRecentFiles)
+                    {
+                        RecentFileList.Add(recentFile);
+                    }
                 }
                 _settings.RecentFiles = RecentFileList.ToArray();
                 SaveSettings();
