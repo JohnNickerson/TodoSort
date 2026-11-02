@@ -665,8 +665,12 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
             if (_lastOpenedFile != null)
             {
                 var fileOnDisk = new FileInfo(_lastOpenedFile.FullName);
-                var changeCount = ChangeCountOnDisk(fileOnDisk.DirectoryName!);
-                if (_lastOpenedFile.LastWriteTime != fileOnDisk.LastWriteTime || changeCount != _lastOpenedFile.ChangeCount)
+                var lifecycle = new FileLifecycleState();
+                var changedOnDisk = lifecycle.HasChangedOnDisk(
+                    fileOnDisk.FullName,
+                    _lastOpenedFile.LastWriteTime,
+                    _lastOpenedFile.ChangeCount);
+                if (changedOnDisk)
                 {
                     // Confirm.
                     bool doOpen;

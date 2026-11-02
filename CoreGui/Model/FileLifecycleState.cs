@@ -44,6 +44,26 @@ public sealed class FileLifecycleState
         IsDirty = false;
     }
 
+    public bool HasChangedOnDisk(string? filePath, DateTime lastKnownWriteTime, int lastKnownChangeCount)
+    {
+        if (string.IsNullOrWhiteSpace(filePath) || !File.Exists(filePath))
+        {
+            return false;
+        }
+
+        var fileInfo = new FileInfo(filePath);
+        var currentChangeCount = fileInfo.DirectoryName is not null
+            ? Directory.EnumerateFiles(fileInfo.DirectoryName, "*.xml").Count()
+            : 0;
+
+        return fileInfo.LastWriteTime != lastKnownWriteTime || currentChangeCount != lastKnownChangeCount;
+    }
+
+    public bool RequiresReload(int currentChangeCount, int lastKnownChangeCount, int dirtyState)
+    {
+        return currentChangeCount != lastKnownChangeCount || dirtyState > 0;
+    }
+
     public static string[] OrderRecentFiles(IEnumerable<string> existingFiles, string? newestFile, int limit = MaxRecentFiles)
     {
         var normalized = existingFiles

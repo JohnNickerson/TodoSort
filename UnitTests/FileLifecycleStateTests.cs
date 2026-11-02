@@ -55,4 +55,36 @@ public class FileLifecycleStateTests
         lifecycle.MarkSaved();
         Assert.False(lifecycle.IsDirty);
     }
+
+    [Fact]
+    public void ChangedOnDisk_Is_True_When_The_File_Timestamp_Or_Change_Count_Has_Changed()
+    {
+        var tempDirectory = Directory.CreateTempSubdirectory();
+        try
+        {
+            var filePath = Path.Combine(tempDirectory.FullName, "todos.txt");
+            File.WriteAllText(filePath, "@inbox");
+
+            var originalTime = File.GetLastWriteTime(filePath);
+            var lifecycle = new FileLifecycleState();
+
+            Assert.False(lifecycle.HasChangedOnDisk(filePath, originalTime, 0));
+
+            File.WriteAllText(filePath, "@inbox\n\tNew item");
+            Assert.True(lifecycle.HasChangedOnDisk(filePath, originalTime, 0));
+        }
+        finally
+        {
+            tempDirectory.Delete(recursive: true);
+        }
+    }
+
+    [Fact]
+    public void ReloadRequired_Is_True_When_The_View_Is_Out_Of_Date_With_The_File_Snapshot()
+    {
+        var lifecycle = new FileLifecycleState();
+
+        Assert.False(lifecycle.RequiresReload(0, 0, 0));
+        Assert.True(lifecycle.RequiresReload(1, 0, 0));
+    }
 }
