@@ -87,4 +87,31 @@ public class FileLifecycleStateTests
         Assert.False(lifecycle.RequiresReload(0, 0, 0));
         Assert.True(lifecycle.RequiresReload(1, 0, 0));
     }
+
+    [Fact]
+    public void DeferredItems_Ready_For_Reentry_Are_Filtered_By_Due_Date_And_Deduplicated()
+    {
+        var id = Guid.NewGuid();
+        var itemReady = new AssimilationSoftware.Maroon.Model.ActionItem
+        {
+            ID = id,
+            TickleDate = DateTime.Today.AddDays(-1)
+        };
+        var itemNotReady = new AssimilationSoftware.Maroon.Model.ActionItem
+        {
+            ID = Guid.NewGuid(),
+            TickleDate = DateTime.Today.AddDays(1)
+        };
+        var duplicate = new AssimilationSoftware.Maroon.Model.ActionItem
+        {
+            ID = id,
+            TickleDate = DateTime.Today.AddDays(-2)
+        };
+
+        var lifecycle = new FileLifecycleState();
+        var ready = lifecycle.GetDeferredItemsReadyForReentry(new[] { itemReady, itemNotReady, duplicate }, DateTime.Today).ToList();
+
+        Assert.Single(ready);
+        Assert.Equal(id, ready[0].ID);
+    }
 }

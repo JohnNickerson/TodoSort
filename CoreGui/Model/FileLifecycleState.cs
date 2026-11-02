@@ -1,3 +1,5 @@
+using AssimilationSoftware.Maroon.Model;
+
 namespace AssimilationSoftware.TodoSort.CoreGui.Model;
 
 public sealed class FileLifecycleState
@@ -62,6 +64,22 @@ public sealed class FileLifecycleState
     public bool RequiresReload(int currentChangeCount, int lastKnownChangeCount, int dirtyState)
     {
         return currentChangeCount != lastKnownChangeCount || dirtyState > 0;
+    }
+
+    public IReadOnlyCollection<ActionItem> GetDeferredItemsReadyForReentry(IEnumerable<ActionItem>? items, DateTime? today = null)
+    {
+        if (items is null)
+        {
+            return Array.Empty<ActionItem>();
+        }
+
+        var referenceDate = today ?? DateTime.Today;
+        var seenIds = new HashSet<Guid>();
+
+        return items
+            .Where(item => item.TickleDate.HasValue && item.TickleDate.Value <= referenceDate)
+            .Where(item => seenIds.Add(item.ID))
+            .ToList();
     }
 
     public static string[] OrderRecentFiles(IEnumerable<string> existingFiles, string? newestFile, int limit = MaxRecentFiles)

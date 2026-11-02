@@ -297,27 +297,21 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
             _lastDeferredCheckDate = DateTime.Today;
 
             // Get items ready to return to the main list
-            var readyItems = _api.SomedayItems.Where(s => s.TickleDate <= DateTime.Today).ToArray();
+            var lifecycle = new FileLifecycleState();
+            var readyItems = lifecycle.GetDeferredItemsReadyForReentry(_api.SomedayItems, DateTime.Today).ToArray();
 
             if (readyItems.Any())
             {
                 // Process pending items without showing a confirmation dialog
-                _api.SomedaySearchSpecification = new TickleDateSearchSpecification(null, DateTime.Today);
-                var itemsToUndefer = _api.SomedaySearchResults.ToArray();
+                _api.Undefer(_defaultContext, readyItems);
+                _api.Save();
 
-                if (itemsToUndefer.Any())
-                {
-                    // Only process if there are unsaved changes or we need to save new ones
-                    _api.Undefer(_defaultContext, itemsToUndefer);
-                    _api.Save();
+                // Refresh the UI
+                RaisePropertyChanged(nameof(Items));
+                RaisePropertyChanged(nameof(Contexts));
 
-                    // Refresh the UI
-                    RaisePropertyChanged(nameof(Items));
-                    RaisePropertyChanged(nameof(Contexts));
-
-                    // Notify the user (status message only, no dialog)
-                    StatusMessage = $"Auto-processed {itemsToUndefer.Length} deferred item(s) ready to return.";
-                }
+                // Notify the user (status message only, no dialog)
+                StatusMessage = $"Auto-processed {readyItems.Length} deferred item(s) ready to return.";
             }
         }
 
