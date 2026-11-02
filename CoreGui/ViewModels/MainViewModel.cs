@@ -259,7 +259,7 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
 
         public void CheckForCommit()
         {
-            if (_api == null) return;
+            if (_api == null || _api.UnsavedChanges) return;
             var pendingChanges = _api.GetPendingChanges();
             if (pendingChanges.Count == 0) return;
             var pendingCount = pendingChanges.Sum(p => p.Updates?.Count ?? 0);
