@@ -335,8 +335,11 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
         private async void ReloadFile()
         {
             if (string.IsNullOrEmpty(FileName)) return;
-            var result = HasUnsavedChanges ? _navigationService.ShowMessageBox("You have unsaved changes in memory. Abandon these changes and reload the file?", "Abandon changes?") : false;
-            if (!HasUnsavedChanges || (result ?? false))
+            var lifecycle = new FileLifecycleState();
+            var result = lifecycle.RequiresConfirmation(HasUnsavedChanges)
+                ? _navigationService.ShowMessageBox("You have unsaved changes in memory. Abandon these changes and reload the file?", "Abandon changes?")
+                : false;
+            if (lifecycle.CanProceedWithTransition(HasUnsavedChanges, result))
             {
                 await OpenFileAsync(FileName);
             }
@@ -593,7 +596,8 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
 
         private bool? ConfirmSaveCancel(string message)
         {
-            if (!HasUnsavedChanges) return false;
+            var lifecycle = new FileLifecycleState();
+            if (!lifecycle.RequiresConfirmation(HasUnsavedChanges)) return false;
             var result = _navigationService.ShowMessageBox(message, "Save changes?", allowCancel: true);
             return result;
         }

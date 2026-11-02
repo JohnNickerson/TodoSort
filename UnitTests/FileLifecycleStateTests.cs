@@ -114,4 +114,23 @@ public class FileLifecycleStateTests
         Assert.Single(ready);
         Assert.Equal(id, ready[0].ID);
     }
+
+    [Fact]
+    public void Confirmation_Is_Required_When_The_File_Has_Unsaved_Changes()
+    {
+        var lifecycle = new FileLifecycleState();
+
+        Assert.True(lifecycle.RequiresConfirmation(true));
+        Assert.False(lifecycle.RequiresConfirmation(false));
+    }
+
+    [Fact]
+    public void Transition_Can_Proceed_Only_When_There_Are_No_Unsaved_Changes_Or_The_User_Agrees()
+    {
+        var lifecycle = new FileLifecycleState();
+
+        Assert.True(lifecycle.CanProceedWithTransition(false, null));
+        Assert.True(lifecycle.CanProceedWithTransition(true, true));
+        Assert.False(lifecycle.CanProceedWithTransition(true, false));
+    }
 }

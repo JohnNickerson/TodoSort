@@ -66,6 +66,16 @@ public sealed class FileLifecycleState
         return currentChangeCount != lastKnownChangeCount || dirtyState > 0;
     }
 
+    public bool RequiresConfirmation(bool hasUnsavedChanges)
+    {
+        return hasUnsavedChanges;
+    }
+
+    public bool CanProceedWithTransition(bool hasUnsavedChanges, bool? userAccepted)
+    {
+        return !hasUnsavedChanges || userAccepted == true;
+    }
+
     public IReadOnlyCollection<ActionItem> GetDeferredItemsReadyForReentry(IEnumerable<ActionItem>? items, DateTime? today = null)
     {
         if (items is null)
