@@ -27,6 +27,7 @@ public class SearchController
 
     public void Search(SearchOptions searchOptions)
     {
+        _svc.ShowHeadOnly = !searchOptions.ShowAllItems;
         _svc.SearchSpecification = searchOptions.GetSearchSpecification();
         var searchResults = _svc.SearchResults;
         if (searchResults.Count() == 0)
