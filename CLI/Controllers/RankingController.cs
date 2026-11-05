@@ -95,7 +95,7 @@ public class RankingController
             }
 
             var targetDepth = ancestorsFromRoot.Count;
-            if (targetDepth <= 1)
+            if (targetDepth == 0)
             {
                 target.Upvotes++;
                 _svc.Update(target);
