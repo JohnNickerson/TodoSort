@@ -75,28 +75,44 @@ public class RankingController
         {
             bumpItems.AddRange(_svc.SearchResults.Take(bumpOpts.Top));
         }
+
         // TODO: Display the before and after positions together.
         // Before: red and strike-through.
         // After: yellow and bold.
         _view.PrintTree(new List<ActionItem>(), bumpItems, _svc, bumpOpts.NSFW, bumpOpts.Verbose);
+
         foreach (var target in bumpItems)
         {
-            var depth = _svc.GetDepthsView().TryGetValue(target.ID, out var targetDepth) ? targetDepth / 2 : 0;
-            if (depth == 0)
+            // Collect all ancestors from target up to the root in root-to-parent order
+            var ancestorsFromRoot = new List<ActionItem>();
+            var current = target;
+            while (true)
+            {
+                var parent = _svc.GetParent(current);
+                if (parent == null) break;
+                ancestorsFromRoot.Insert(0, parent);
+                current = parent;
+            }
+
+            var targetDepth = ancestorsFromRoot.Count;
+            if (targetDepth <= 1)
             {
                 target.Upvotes++;
                 _svc.Update(target);
+                continue;
             }
-            while (_svc.GetDepthsView().TryGetValue(target.ID, out var currentDepth) && currentDepth > depth && target.ParentId != null)
-            {
-                var currentParent = _svc.GetParent(target);
-                if (currentParent == null)
-                {
-                    break;
-                }
-                _svc.SetParent(target, _svc.GetParent(currentParent));
-            }
+
+            // New item depth is half current depth; new parent depth is one level above that.
+            var newDepth = targetDepth / 2;
+            var desiredParentDepth = newDepth - 1;
+
+            ActionItem? newParent = (desiredParentDepth >= 0 && desiredParentDepth < ancestorsFromRoot.Count)
+                ? ancestorsFromRoot[desiredParentDepth]
+                : null;
+
+            _svc.SetParent(target, newParent);
         }
+
         // After
         _view.PrintTree(bumpItems, new List<ActionItem>(), _svc, bumpOpts.NSFW, bumpOpts.Verbose);
         _svc.Save();
