@@ -86,7 +86,7 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
             await OpenFileAsync(filename);
         }
 
-        private async Task OpenFileAsync(string? filename)
+        private async Task OpenFileAsync(string? filename, bool createNew = false)
         {
             try
             {
@@ -99,8 +99,24 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
 
                 if (!File.Exists(filename))
                 {
-                    StatusMessage = $"Error: File not found: {filename}";
-                    return;
+                    if (createNew)
+                    {
+                        // Create a new file with an empty repository.
+                        var directoryName = Path.GetDirectoryName(filename);
+                        if (string.IsNullOrEmpty(directoryName))
+                        {
+                            throw new InvalidOperationException($"Cannot determine directory for file: {filename}");
+                        }
+                        Directory.CreateDirectory(directoryName);
+                        var repository = new TodoRepository(new ActionItemDiskMapper(filename), directoryName, Environment.MachineName);
+                        _api = new TodoService(repository);
+                        _api.Save(); // Save the empty repository to create the file.
+                    }
+                    else
+                    {
+                        StatusMessage = $"Error: File not found: {filename}";
+                        return;
+                    }
                 }
 
                 FileName = filename;
@@ -391,7 +407,7 @@ namespace AssimilationSoftware.TodoSort.CoreGui.ViewModels
             var result = _navigationService.ShowOpenFileDialog(checkFileExists: false);
             if (result.DialogResult == true)
             {
-                await OpenFileAsync(result.FileName);
+                await OpenFileAsync(result.FileName, createNew: true);
             }
         }
 
