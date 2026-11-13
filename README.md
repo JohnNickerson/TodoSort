@@ -272,3 +272,5 @@ TodoSort is a task list and reading list app with an emphasis on priority. It st
 	- Do not offer to commit if there are unsaved changes.
 - 2026-11-05: Build 1.14.2.2
 	- Bug fixes for search and bump commands.
+- 2026-11-05: Build 1.14.2.3
+	- Allow depth 1 items to bump to depth 0.
