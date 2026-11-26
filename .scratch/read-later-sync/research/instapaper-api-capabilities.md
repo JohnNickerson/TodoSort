@@ -1,0 +1,28 @@
+# Instapaper API capabilities for TodoSort sync
+
+Research checked 2026-11-26 against Instapaper's published developer documentation. New integration work should use API v2; v1 remains in long-term support, while v1 xAuth is deprecated. ([v1 overview](https://www.instapaper.com/developers/v1/full-api/overview), [v1 authentication](https://www.instapaper.com/developers/v1/full-api/authentication))
+
+## What the supported API provides
+
+- **Add and retrieve:** API v2 `POST /api/2/bookmarks` saves a URL and returns a bookmark. `GET /api/2/bookmarks` lists bookmarks; the object includes stable numeric `id` and an `archived` boolean. The `archive` section and `POST /api/2/bookmarks/{id}/move` also expose/archive that state. Therefore TodoSort can pull whether a bookmark is archived, but should describe this as Instapaper's archive state rather than assume it is a distinct “completed” event. ([Bookmarks](https://www.instapaper.com/developers/v2/reference/bookmarks))
+- **Completion time:** The bookmark object has `time` (when saved) and `progress.timestamp` (when reading progress was recorded), but no documented archive/completion timestamp. The API can report current archived state, not when it became archived. V1 likewise lists reading progress and `progress_timestamp`, not an archive time. ([v2 Bookmarks](https://www.instapaper.com/developers/v2/reference/bookmarks), [v1 Responses](https://www.instapaper.com/developers/v1/full-api/responses))
+- **Incremental pull:** V2 list supports `since` (Unix timestamp, at least 1), which returns account-wide changes plus `deleted_ids`; `section` is ignored in this mode. Pages are limited to 1–500 (default 25), with `offset` pagination. Changes and deletions both count toward the page limit. ([Bookmarks](https://www.instapaper.com/developers/v2/reference/bookmarks))
+
+## Identity and duplicate saves
+
+V2 documents `id` as a stable bookmark identifier. Saving a URL already in the account does **not** create a duplicate: it updates the existing bookmark with submitted fields and moves it to the top of the list. V1's Full API describes the same existing-URL behavior, and the Simple API explicitly says an existing URL is marked unread and moved to the top instead of duplicated. V2 does not explicitly promise that a duplicate save resets `archived`, so do not depend on that without testing/documentation. Save responses provide the bookmark identity to retain for later synchronization. URL canonicalization is on by default in v2 (`canonicalize: false` disables it). ([v2 Bookmarks](https://www.instapaper.com/developers/v2/reference/bookmarks), [v1 Bookmark API](https://www.instapaper.com/developers/v1/full-api/bookmark-api), [Simple API: Adding URLs](https://www.instapaper.com/developers/v1/simple-api/adding-urls))
+
+## Authentication and account access
+
+- **Recommended for new integrations:** API v2 uses OAuth 2 bearer tokens and an authorization-code flow; the user signs in and consents on Instapaper, so TodoSort does not receive their password. Applications start **Owner Only**; access for other users requires review and approval. For a tool used only by its developer, the application page can generate a personal access token. Tokens do not expire, but can be revoked or regenerated. ([Authentication](https://www.instapaper.com/developers/overview/authentication))
+- **Account creation:** There is no third-party v2 account-creation endpoint; users must sign up on Instapaper, then authorize the application. ([Account](https://www.instapaper.com/developers/v2/reference/account))
+- **Legacy alternatives:** The v1 Full API uses OAuth 1.0a (HMAC-SHA1); its documented xAuth password exchange is deprecated. The Simple API accepts username/password (including HTTP Basic Auth) but only adds URLs and validates credentials—it cannot list bookmarks or pull status. Do not store user passwords; the API terms prohibit it. ([v1 Authentication](https://www.instapaper.com/developers/v1/full-api/authentication), [Simple API overview](https://www.instapaper.com/developers/v1/simple-api/overview), [API Terms](https://www.instapaper.com/developers/overview/api-terms))
+
+## Limits and constraints
+
+- V2 bookmark listing allows 1–500 results per page (default 25), with `offset` and a section `total`. V2 documents HTTP `429` for rate limiting (often caused by saving too quickly) and recommends backing off and retrying; it publishes no numeric request-rate allowance. V1 exposes rate-limit errors but likewise no numeric quota. ([Bookmarks](https://www.instapaper.com/developers/v2/reference/bookmarks), [Errors](https://www.instapaper.com/developers/v2/reference/errors), [v1 Responses](https://www.instapaper.com/developers/v1/full-api/responses))
+- Bookmark additions must be explicitly requested by the user. The API may reject a URL that requires supplied full content (`1220`) or whose publisher opted out (`1221`); the terms prohibit circumventing the opt-out. Use only published API methods, not website scraping. ([API Terms](https://www.instapaper.com/developers/overview/api-terms), [v1 Bookmark API](https://www.instapaper.com/developers/v1/full-api/bookmark-api))
+
+## Implication for the sync spec
+
+Instapaper supports the essential add/list/archive-state flow and stable per-bookmark IDs, but does not expose an archive timestamp. Use OAuth 2 for a new CLI integration; treat `since` as a pull optimization, not as a substitute for durable local linkage/checkpoint decisions. A retry of an uncertain add is not a harmless no-op: a duplicate URL updates the existing record and moves it, so recovery policy should account for that behavior.
